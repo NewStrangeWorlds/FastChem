@@ -1,7 +1,7 @@
 # FastChem #
 #### Authors: Daniel Kitzmann, Joachim Stock ####
 
-This readme is currently incomplete and will be expanded in the near future. We will also provide a guide on using the internal methods provided by FastChem and  more details on the actual implementation of the methods discussed in Stock et al (2018).
+This readme is currently incomplete and will be expanded in the near future. We will also provide a guide on using the internal methods provided by FastChem and  more details on the actual implementation of the methods discussed in Stock et al. (2018).
 
 # Overview #
 
@@ -34,7 +34,7 @@ The aim of these demos is, to give an overview of the different ways to call Fas
 Before you can run FastChem on your computer, the code needs to be compiled and linked to create the executable file. Additionally, you may need to edit the config files. 
 If you intend to move FastChem from one computer to another, you should always recompile the code, even if both computers use the same operating system. The standard options in FastChem's makefile result in optimisations that are tied to the specific CPU type the code was compiled on. Running it with a different CPU type might result in degraded computational performance.
 
-###Compiling the demo codes###
+### Compiling the demo codes ###
 
 FastChem includes a makefile that should make the compilation process easy. The makefile is currently configured to use the g++ compiler from the GNU Compiler Collection and requires no additional libraries. In case you want to use a different compiler, you have to edit the *make\_global.options* file with you compiler's executable file and the corresponding compiler options.
 Note that in case you intend to use the demo1 version, that includes OpenMP support, the OpenMP extensions of the compiler need to installed on your computer. If those are not present, use another of the provided demo codes instead (e.g. demo2). To compile and link any of the demos, just type
@@ -156,7 +156,7 @@ In case FastChem does not produce the desired output, yields strange results, or
 * Check the monitor file for non-conserved elements - in this case you might need to increase the number of chemistry iterations
 
 
-## Known Issues ##
+## Known issues ##
 
 Including electrons and ions in the network can considerably decrease the computational performance, especially under conditions, where their number densities are expected to be extremely small (low temperature and high pressure). In this case, FastChem uses a Nelder-Mead downhill simplex method to calculate the electron density, which can require a lot of computational time. Thus, under conditions, where ions are not expected to form in large abundances, it is better to run FastChem without ions. Note that there are two files with equilibrium constants present in the *input* folder, one with the full network (*logK.dat*) and a second one without ions (*logK\_wo\_ions.dat*). For a calculation without ions you, therefore, just have to specify using the second file in FastChem's parameter config file.
 
