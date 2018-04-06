@@ -124,7 +124,7 @@ There are also some examples for temperature-pressure profiles of various atmosp
 If you want to change the format of this input file, you have to edit the corresponding code in the *demo* folder.
 
 
-##Starting a calculation##
+## Starting a calculation ##
 
 Starting the compiled FastChem demos is done via the console command
 
@@ -133,13 +133,13 @@ Starting the compiled FastChem demos is done via the console command
 The executable must be called with the location of the main config file as a command line parameter. FastChem will complain in case this file parameter is not present or the file could not be found. Depending on the verbose level set in the config file, FastChem will provide very detailed console outputs or be almost silent. With the lowest verbose level 1, FastChem will only report back critical errors, such as non-converging chemistry or pressure iterations.
 
 
-##Output files##
+## Output files ##
 
 The demo versions of FastChem will create two output files, placed at the location indicated in the config file. The first output file contains the chemistry output file. It will list either the mixing ratios or number densities of all species in the network, depending on what option is specified in the config file. Additionally, it will also repeat the temperatures and pressures that were used in the calculation, the total hydrogen density, and the mean molecular weight. The content of each column (including the unit) is marked in the first line of the output file. If you chose number densities as output option in the config file, cm-3 will be used as the corresponding unit for each species.
 
 In a second file, the FastChem demos will provide a diagnostic output - except in the case of demo5 that runs FastChem without a such a diagnostic. The location of this monitor file is also supplied in the corresponding config file (see above). The monitor file will list the number of chemistry and pressure iterations for each temperature-pressure point. Additionally, it will also give information on the state of element conservation for each element in the network, as well as the charge conservation. If either of those is violated, *fail* will we printed for the corresponding element, otherwise *ok* if everything worked fine.
 
-##Benchmark outputs##
+## Benchmark outputs ##
 
 In the folder *output_benchmarks* we also provide the chemistry output for the sample of temperature-pressure profiles that can be found in the input folder. The files contain the full network provided with FastChem and were calculated by using the *demo1* version of FastChem for solar metallicities. The abundances of the chemical species are listed as mixing ratios. You can use those benchmarks to verify that FastChem is working correctly on your computer.
 
@@ -156,7 +156,7 @@ In case FastChem does not produce the desired output, yields strange results, or
 * Check the monitor file for non-conserved elements - in this case you might need to increase the number of chemistry iterations
 
 
-##Known Issues##
+## Known Issues ##
 
 Including electrons and ions in the network can considerably decrease the computational performance, especially under conditions, where their number densities are expected to be extremely small (low temperature and high pressure). In this case, FastChem uses a Nelder-Mead downhill simplex method to calculate the electron density, which can require a lot of computational time. Thus, under conditions, where ions are not expected to form in large abundances, it is better to run FastChem without ions. Note that there are two files with equilibrium constants present in the *input* folder, one with the full network (*logK.dat*) and a second one without ions (*logK\_wo\_ions.dat*). For a calculation without ions you, therefore, just have to specify using the second file in FastChem's parameter config file.
 
@@ -165,7 +165,7 @@ Under certain conditions, FastChem can require a rather large number of iteratio
 Currently, FastChem is designed for hydrogen-dominated cases. We tested the code also for cases, where hydrogen is only a minor species. In principle, FastChem also works for such a case. However, the pressure iteration - that is tied to n\_\<H\> - will be **very** slow. We intend to improve this behaviour in the future. Additionally, FastChem will currently **not work at all** when hydrogen is missing in the chemistry network.
 
 
-#References#
+# References #
 
 Stock, J., Kitzmann, D., Patzer, A.B.C., Sedlmayr, S. (2018), MNRAS submitted  
 Asplund M., Grevesse N., Sauval A. J., Scott P., 2009, ARA&A, 47, 481  
