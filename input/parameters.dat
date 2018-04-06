@@ -1,0 +1,26 @@
+#element abundance file   
+input/element_abundances_solar.dat
+
+#elements data file         
+fastchem_src/chem_input/chemical_elements.dat
+
+#species data file    
+input/logK.dat
+
+#accuracy of chemistry iteration
+1.0e-4
+
+#accuracy of pressure iteration
+1.0e-4
+
+#max error of Newton's method
+1.0e-4
+
+#max number of chemistry iterations 
+300  
+
+#max number of pressure iterations                   
+100
+
+#max number of Nelder-Mead iterations
+20000
