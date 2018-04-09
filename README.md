@@ -115,7 +115,7 @@ The second, required config file is the one for FastChem itself. It contains the
 >20000
 
 The first parameter is the location of the file with the element abundances. You can find an example of this file with the abundances from Asplund et al. (2009) in the *input* directory of FastChem. The second parameter is the location of the input file with information about the chemical elements (such as their atomic masses). The standard version of this file can be found within the *fastchem\_src/chem\_input* directory. 
-The third parameter is the location of the input file with information about the stoichiometry and mass action constants. The mass action constants are fitted according to Stock et al. (2018) based on thermochemical data from Barin (1995), Burcat and Ruscic (2005), Chase (1998), Goos et al. (2016) and Tsuji (1973). Molecules can be removed from or added to the list by deleting the corresponding line or adding a line in the same format with new user provided thermochemical data. The user should feel encouraged to optmise this file according to his or her needs. There are two different files inlcuded in the input folder, *logK.dat* for the full set of chemical species listed in Stock et al. (2018) and *logK_wo_ions* for the same set but without ions. The next three parameters set the accuracy of the chemistry and pressure iterations, as well as the convergence criterion for Newton's method. The last three parameters are the maximum number of iterations for the chemistry, the pressure iteration, and the Nelder-Mead method. 
+The third parameter is the location of the input file with information about the stoichiometry and mass action constants. The mass action constants are fitted according to Stock et al. (2018) based on thermochemical data from Barin (1995), Burcat and Ruscic (2005), Chase (1998), Goos et al. (2016) and Tsuji (1973). Molecules can be removed from or added to the list by deleting the corresponding line or adding a line in the same format with new user provided thermochemical data. The user should feel encouraged to optmise this file according to his or her needs. There are two different files inlcuded in the input folder, *logK.dat* for the full set of chemical species listed in Stock et al. (2018) and *logK_wo_ions.dat* for the same set but without ions. The next three parameters set the accuracy of the chemistry and pressure iterations, as well as the convergence criterion for Newton's method. The last three parameters are the maximum number of iterations for the chemistry, the pressure iteration, and the Nelder-Mead method. 
 
 ## Temperature-pressure input file ##
 
@@ -132,6 +132,11 @@ Starting the compiled FastChem demos is done via the console command
 >./fastchem input/config.input
 
 The executable must be called with the location of the main config file as a command line parameter. FastChem will terminate with an error message in case this file parameter is not present or the file could not be found. Depending on the verbose level set in the config file, FastChem will provide very detailed console outputs or be almost silent. With the lowest verbose level 1, FastChem will only report back critical errors, such as non-converging chemistry or pressure iterations.
+If you run FastChem on a Unix/Linux system, you can also redirect the console output to a file by adding
+
+> \> filename
+
+to the command above. This will allow you to analyse the FastChem output more efficiently.
 
 
 ## Output files ##
