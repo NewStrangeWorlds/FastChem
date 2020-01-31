@@ -3,8 +3,6 @@
 
 This readme is currently incomplete and will be expanded in the near future. We will also provide a guide on using the internal methods provided by FastChem and  more details on the actual implementation of the methods discussed in Stock et al. (2018).
 
-THIS IS A TEST
-
 # Overview #
 
 FastChem is an equilibrium chemistry code that calculates the chemical composition of the gas phase for given temperatures and pressures. It is based on a semi-analytic approach, described in detail in Stock et al. (2018). The code is optimised for extremely fast and accurate calculations.
@@ -51,6 +49,8 @@ without any further parameter will automatically compile the demo1 version.
 After successful compilation and linking, the FastChem executable *fastchem* can be found in the root directory. You can change the name of the executable in the *make\_global.options* file, if necessary. Compiled object files are placed in the *obj* folder.
 
 Compilation has, so far, only been tested with the gcc compiler version 5.x. Since FastChem is written in standard C++, other compilers should work as well. Note, however, that the compiler needs to provide at least the C++11 standard to compile FastChem.
+
+When compiling on MacOS (tested OS 10.14, g++ compiler Apple LLVM version 10.0.1 (clang-1001.0.46.4)), you may get a compilation error, and will need to change the `--fast-math` into `--ffast-math` in `make.global_options`.
 
 ### Removing compiled files ###
 
