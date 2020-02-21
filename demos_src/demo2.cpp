@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  
+
   //set up the config parameters
   std::string config_file_name = argv[1];
 
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
   //this assumes that the columns in the file are: temperature pressure
   //temperature in K, pressure in bar
   std::string line;
-  
+
   //read in the comment header
   std::getline(file, line);
 
@@ -148,11 +148,11 @@ int main(int argc, char *argv[])
   //set terminal output of FastChem
   fastchem.setVerboseLevel(verbose_level);
 
-  
+
   //we call FastChem for the entire temperature-pressure profile
   fastchem.calcDensities(temperature, pressure, densities, h_densities, mean_molecular_weights,
                          element_conserved, fastchem_flags, nb_pressure_iterations, nb_chemistry_iterations);
-  
+
 
   //now we write the output
   //first the chemistry output
@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
 
   file.close();
 
-  
+
 
   //now we write the diagnostic output
   file.open(monitor_output_file.c_str(), std::ios::out);
@@ -256,6 +256,17 @@ int main(int argc, char *argv[])
 
     file << "\n";
   }
+
+  file.close();
+  file.open("output/chem_species_map.py", std::ios::out);
+  for (unsigned int j=0; j<nb_species; j++)
+   {
+     std::string species_variable_name = fastchem.getSpeciesSymbol(j) + "_i=";
+     std::replace(species_variable_name.begin(), species_variable_name.end(), '+', 'p');
+     std::replace(species_variable_name.begin(), species_variable_name.end(), '-', 'm');
+
+     file << species_variable_name << j+1+5 << "\n";
+   }
 
   file.close();
 

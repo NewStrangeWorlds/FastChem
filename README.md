@@ -5,13 +5,13 @@ This readme is currently incomplete and will be expanded in the near future. We 
 
 # Overview #
 
-FastChem is an equilibrium chemistry code that calculates the chemical composition of the gas phase for given temperatures and pressures. It is based on a semi-analytic approach, described in detail in Stock et al. (2018). The code is optimised for extremely fast and accurate calculations. 
+FastChem is an equilibrium chemistry code that calculates the chemical composition of the gas phase for given temperatures and pressures. It is based on a semi-analytic approach, described in detail in Stock et al. (2018). The code is optimised for extremely fast and accurate calculations.
 
 The code is written in object-oriented C++, including template programming that allows the model to run with either *double* or *long double* precision. The exact computational precision of *long double* depends on your compiler and operating system. *Long double* precision usually allows the model to properly converge for very low temperatures. FastChem has been tested for temperatures as low as 100 K. For many cases, we were also able to obtain converged results for temperatures well below 100 K. As shown by Stock et al. (2018), the model has been successfully tested for temperatures from 100 K to 2500 K and pressures from 1e-13 bar to 1000 bar.
 
 The FastChem code itself has been designed to be coupled to other models. Because FastChem is written as a C++ object class, several instances of FastChem can be created and run simultaneously within your model code. For example, it is possible to have a *double* and *long double* version of FastChem working in parallel. The object class contains several methods that allow you to query the chemistry for certain molecules and their corresponding chemical symbols or names.
 
-Besides the FastChem code itself, this release also provides several demo wrappers that show how FastChem is called from inside other programs. 
+Besides the FastChem code itself, this release also provides several demo wrappers that show how FastChem is called from inside other programs.
 These demos can be used as stand-alone versions of FastChem, but are quite limited in terms of input and output options. You might want to modify them if you intend to use FastChem as a stand-alone code.
 
 
@@ -31,7 +31,7 @@ The aim of these demos is, to give an overview of the different ways to call Fas
 
 # Compiling and running FastChem #
 
-Before you can run FastChem on your computer, the code needs to be compiled and linked to create the executable file. Additionally, you may need to edit the config files. 
+Before you can run FastChem on your computer, the code needs to be compiled and linked to create the executable file. Additionally, you may need to edit the config files.
 If you intend to move FastChem from one computer to another, you should always recompile the code, even if both computers use the same operating system. The standard options in FastChem's makefile result in optimisations that are tied to the specific CPU type the code was compiled on. Running it on a different CPU type might result in degraded computational performance.
 
 ### Compiling the demo codes ###
@@ -41,21 +41,23 @@ Note that in case you intend to use the demo1 version, that includes OpenMP supp
 
 > make demo\#   
 
-in your console, where \# is the number of the demo version you want to compile. Just using 
+in your console, where \# is the number of the demo version you want to compile. Just using
 
 > make  
- 
+
 without any further parameter will automatically compile the demo1 version.
-After successful compilation and linking, the FastChem executable *fastchem* can be found in the root directory. You can change the name of the executable in the *make\_global.options* file, if necessary. Compiled object files are placed in the *obj* folder. 
+After successful compilation and linking, the FastChem executable *fastchem* can be found in the root directory. You can change the name of the executable in the *make\_global.options* file, if necessary. Compiled object files are placed in the *obj* folder.
 
 Compilation has, so far, only been tested with the gcc compiler version 5.x. Since FastChem is written in standard C++, other compilers should work as well. Note, however, that the compiler needs to provide at least the C++11 standard to compile FastChem.
+
+When compiling on MacOS (tested OS 10.14, g++ compiler Apple LLVM version 10.0.1 (clang-1001.0.46.4)), you may get a compilation error, and will need to change the `--fast-math` into `--ffast-math` in `make.global_options`.
 
 ### Removing compiled files ###
 
 Calling the makefile with
 
 > make clean
- 
+
 will delete all compiled object files and the executable. Use this command, if you want to recompile all files from scratch (e.g. when moving FastChem to a different computer).
 
 
@@ -114,8 +116,8 @@ The second, required config file is the one for FastChem itself. It contains the
 >\#max number of Nelder-Mead iterations  
 >20000
 
-The first parameter is the location of the file with the element abundances. You can find an example of this file with the abundances from Asplund et al. (2009) in the *input* directory of FastChem. The second parameter is the location of the input file with information about the chemical elements (such as their atomic masses). The standard version of this file can be found within the *fastchem\_src/chem\_input* directory. 
-The third parameter is the location of the input file with information about the stoichiometry and mass action constants. The mass action constants are fitted according to Stock et al. (2018) based on thermochemical data from Barin (1995), Burcat and Ruscic (2005), Chase (1998), Goos et al. (2016) and Tsuji (1973). Molecules can be removed from or added to the list by deleting the corresponding line or adding a line in the same format with new user provided thermochemical data. The user should feel encouraged to optmise this file according to his or her needs. There are two different files inlcuded in the input folder, *logK.dat* for the full set of chemical species listed in Stock et al. (2018) and *logK_wo_ions.dat* for the same set but without ions. The next three parameters set the accuracy of the chemistry and pressure iterations, as well as the convergence criterion for Newton's method. The last three parameters are the maximum number of iterations for the chemistry, the pressure iteration, and the Nelder-Mead method. 
+The first parameter is the location of the file with the element abundances. You can find an example of this file with the abundances from Asplund et al. (2009) in the *input* directory of FastChem. The second parameter is the location of the input file with information about the chemical elements (such as their atomic masses). The standard version of this file can be found within the *fastchem\_src/chem\_input* directory.
+The third parameter is the location of the input file with information about the stoichiometry and mass action constants. The mass action constants are fitted according to Stock et al. (2018) based on thermochemical data from Barin (1995), Burcat and Ruscic (2005), Chase (1998), Goos et al. (2016) and Tsuji (1973). Molecules can be removed from or added to the list by deleting the corresponding line or adding a line in the same format with new user provided thermochemical data. The user should feel encouraged to optmise this file according to his or her needs. There are two different files inlcuded in the input folder, *logK.dat* for the full set of chemical species listed in Stock et al. (2018) and *logK_wo_ions.dat* for the same set but without ions. The next three parameters set the accuracy of the chemistry and pressure iterations, as well as the convergence criterion for Newton's method. The last three parameters are the maximum number of iterations for the chemistry, the pressure iteration, and the Nelder-Mead method.
 
 ## Temperature-pressure input file ##
 
