@@ -149,6 +149,14 @@ void FastChem<double_type>::init()
     std::cout << "\n";
   }
 
+
+  if (checkForDuplicates() == true)
+  {
+    is_initialized = false;
+    return;
+  }
+
+
   /*std::fstream file("nu.dat", std::ios::out);
   
   for (auto & i : molecules)
@@ -229,6 +237,26 @@ void FastChem<double_type>::setMoleculeAbundances()
   createMoleculeLists();
 }
 
+
+template <class double_type>
+bool FastChem<double_type>::checkForDuplicates()
+{
+  //make a copy of the species vector
+  std::vector< ChemicalSpecies<double_type>* > species_cp = species;
+  
+  std::sort(species_cp.begin(), 
+            species_cp.end(),
+            [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol > b->symbol;});
+
+  auto it = std::adjacent_find( species_cp.begin(), species_cp.end(), [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol == b->symbol;} );
+  
+  bool duplicate_exits = (it != species_cp.end() );
+
+  if (duplicate_exits)
+    std::cout << "Species " << (*it)->symbol << " seems to appear twice in the species data file. Please check!\n";
+
+  return duplicate_exits;
+}
 
 
 

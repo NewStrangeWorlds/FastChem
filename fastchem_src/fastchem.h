@@ -109,6 +109,7 @@ class FastChem{
     bool readElementAbundances();
     void setElementAbundance(const std::string symbol, const double abundance);
     void setMoleculeAbundances();
+    bool checkForDuplicates();
   
     bool readSpeciesData();
     void addMolecule(const std::string name, const std::string symbol,
