@@ -18,32 +18,39 @@
 */
 
 
-#include "fastchem.h"
+#ifndef _input_output_struct_h
+#define _input_output_struct_h
+
 
 #include <vector>
-#include <cmath>
-
 
 
 namespace fastchem {
 
 
-//Calculate the mean molecular weight of the converged network
-//See Paper I, Eq. (2.10)
-template <class double_type>
-double FastChem<double_type>::meanMolecularWeight(const double gas_density)
+
+struct FastChemInput
 {
-  double mean_molecular_weight = 0.0;
+  std::vector<double> temperature; 
+  std::vector<double> pressure;
+};
 
-  for (auto & i : species) mean_molecular_weight += i->molecular_weight * i->number_density;
 
-  mean_molecular_weight /= gas_density;
 
-  return mean_molecular_weight;
+struct FastChemOutput
+{
+  std::vector<std::vector<double>> number_densities;
+  std::vector<double> total_element_density;
+  std::vector<double> mean_molecular_weight;
+
+  //diagnostic output
+  std::vector<std::vector<unsigned int>> element_conserved;
+  std::vector<unsigned int> nb_chemistry_iterations;
+  std::vector<unsigned int> fastchem_flag;
+};
+
+
 }
 
 
-
-template class FastChem<double>;
-template class FastChem<long double>;
-}
+#endif

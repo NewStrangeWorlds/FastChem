@@ -18,32 +18,31 @@
 */
 
 
-#include "fastchem.h"
+#ifndef _fastchem_constants_h
+#define _fastchem_constants_h
 
+#include <string>
 #include <vector>
-#include <cmath>
-
-
 
 namespace fastchem {
 
 
-//Calculate the mean molecular weight of the converged network
-//See Paper I, Eq. (2.10)
-template <class double_type>
-double FastChem<double_type>::meanMolecularWeight(const double gas_density)
-{
-  double mean_molecular_weight = 0.0;
+//FastChem constants
+constexpr unsigned int FASTCHEM_UNKNOWN_SPECIES = 9999999;
 
-  for (auto & i : species) mean_molecular_weight += i->molecular_weight * i->number_density;
+constexpr unsigned int FASTCHEM_SUCCESS = 0;
+constexpr unsigned int FASTCHEM_NO_CONVERGENCE = 1;
+constexpr unsigned int FASTCHEM_INITIALIZATION_FAILED = 2;
+constexpr unsigned int FASTCHEM_IS_BUSY = 3;
+constexpr unsigned int FASTCHEM_WRONG_INPUT_VALUES = 4;
 
-  mean_molecular_weight /= gas_density;
+const std::vector<std::string> FASTCHEM_MSG = {"convergence ok", "convergence failed", "initialization failed", "is busy", "wrong input value"};
 
-  return mean_molecular_weight;
+
+//Physical constants
+constexpr double CONST_K = 1.3806504e-16;    //Boltzmann's constant in erg K-1
+constexpr double CONST_AMU = 1.66055e-24;    //Atomic mass unit in g
+
+
 }
-
-
-
-template class FastChem<double>;
-template class FastChem<long double>;
-}
+#endif

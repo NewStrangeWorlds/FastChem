@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2018 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2019 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,21 +42,20 @@ void FastChem<double_type>::addAtom(std::string symbol)
   Element<double_type> species;
 
   species.symbol = symbol;
-  species.element_index = getChemicalElementIndex(symbol);
+  species.element_data_index = getChemicalElementIndex(symbol);
 
 
-  if (species.element_index == FASTCHEM_UNKNOWN_SPECIES)
-    std::cout << "Element " << symbol << " from element abundance file not found in elements.dat. Neglected!\n";
+  if (species.element_data_index == FASTCHEM_UNKNOWN_SPECIES)
+    std::cout << "Element " << symbol << " from element abundance file not found in element data file. Neglected!\n";
   else
   {
-    species.name = chemical_elements[species.element_index].name;
-    species.molecular_weight = chemical_elements[species.element_index].atomic_weight;
-    species.abundance = chemical_elements[species.element_index].abundance;
+    species.name = chemical_element_data[species.element_data_index].name;
+    species.molecular_weight = chemical_element_data[species.element_data_index].atomic_weight;
+    species.abundance = chemical_element_data[species.element_data_index].abundance;
     elements.push_back(species);
 
     elements.back().index = elements.size()-1;
   }
-
 
 }
 
@@ -71,7 +70,10 @@ void FastChem<double_type>::setElementAbundance(const std::string symbol, const 
   if (index == FASTCHEM_UNKNOWN_SPECIES)
     std::cout << "Element " << symbol << " for setting abundances not found. Neglected!\n";
   else
-    chemical_elements[index].abundance = abundance;
+    chemical_element_data[index].abundance = abundance;
+
+
+  if (symbol == "e-") chemical_element_data[index].abundance = 0.0;
 }
 
 
@@ -79,7 +81,7 @@ void FastChem<double_type>::setElementAbundance(const std::string symbol, const 
 //Add a molecule to the system and update all of its elements
 template <class double_type>
 void FastChem<double_type>::addMolecule(const std::string name, const std::string symbol,
-                                        const std::vector<std::string> species_elements, const std::vector<int> stoichometric_coeff,
+                                        const std::vector<std::string> species_elements, const std::vector<int> stoichiometric_coeff,
                                         const std::vector<double_type> mass_action_coeff, const int charge)
 {
   Molecule<double_type> species;
@@ -90,10 +92,10 @@ void FastChem<double_type>::addMolecule(const std::string name, const std::strin
   species.mass_action_coeff = mass_action_coeff;
 
 
-  species.stoichometric_vector.assign(nb_elements, 0);
+  species.stoichiometric_vector.assign(nb_elements, 0);
 
 
-  bool is_stoichometry_complete = true;
+  bool is_stoichiometry_complete = true;
   unsigned int nb_species_elements = 0;
 
   for (size_t i=0; i<species_elements.size(); ++i)
@@ -101,67 +103,41 @@ void FastChem<double_type>::addMolecule(const std::string name, const std::strin
     unsigned int index = getElementIndex(species_elements[i]);
 
     if (index == FASTCHEM_UNKNOWN_SPECIES)
-      is_stoichometry_complete = false;
+      is_stoichiometry_complete = false;
     else
     {
-      species.stoichometric_vector[index] = stoichometric_coeff[i];
+      species.stoichiometric_vector[index] = stoichiometric_coeff[i];
       species.element_indices.push_back(index);
     }
 
-    nb_species_elements += stoichometric_coeff[i];
+    nb_species_elements += stoichiometric_coeff[i];
   }
 
 
-
-  if (!is_stoichometry_complete)
-    std::cout << "Stoichometry of species " << symbol << " incomplete. Neglected!\n";
-  else
+  if (is_stoichiometry_complete)
   {
-    for(size_t j=0; j<nb_elements; ++j)
-     species.sigma += species.stoichometric_vector[j];
+    for (size_t j=0; j<nb_elements; ++j)
+     species.sigma += species.stoichiometric_vector[j];
 
     species.sigma = 1 - species.sigma;
-
     species.charge = charge;
-
-    //definition of the molecular abundances
-    species.abundance = 1e42;
-
-    for (size_t j=0; j<species.element_indices.size(); ++j)
-      if (species.abundance > elements[species.element_indices[j]].abundance && elements[species.element_indices[j]].symbol != "e-")
-        species.abundance = elements[species.element_indices[j]].abundance;
-
-    //scaled abundances
-    species.abundance_scaled = 1e42;
-
-    for (size_t j=0; j<species.element_indices.size(); ++j)
-    {
-      unsigned element_index = species.element_indices[j];
-
-      if (species.abundance_scaled > elements[element_index].abundance/species.stoichometric_vector[element_index] && elements[species.element_indices[j]].symbol != "e-")
-        species.abundance_scaled = elements[element_index].abundance/species.stoichometric_vector[element_index];
-    }
-
-
-
-    for (size_t j=0; j<species.element_indices.size(); ++j)
-      species.molecular_weight += elements[species.element_indices[j]].molecular_weight * std::fabs(species.stoichometric_vector[species.element_indices[j]]);
+    
+    for (auto & j : species.element_indices)
+      species.molecular_weight += elements[j].molecular_weight * std::fabs(species.stoichiometric_vector[j]);
 
     molecules.push_back(species);
+
+    //add the current molecule index to their respective elements
+    for (auto & j : species.element_indices)
+      elements[j].molecule_list.push_back(molecules.size()-1);
   }
+  else 
+    std::cout << "Stoichiometry of species " << symbol << " incomplete. Neglected!\n";
 
-
-  //add the current molecule index to their respective elements
-  if (is_stoichometry_complete)
-    for (size_t i=0; i<species.element_indices.size(); ++i)
-      elements[species.element_indices[i]].molecule_list.push_back(molecules.size()-1);
 }
-
 
 
 
 template class FastChem<double>;
 template class FastChem<long double>;
-
-
 }

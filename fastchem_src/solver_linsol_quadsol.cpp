@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2018 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2019 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 */
 
 
-#include "fastchem.h"
+#include "solver.h"
 
 #include <iostream>
 #include <iomanip>
@@ -32,174 +32,79 @@
 namespace fastchem {
 
 
-//Analytic solution for linear equation, see Sect. 2.4.2 and Eq. (2.32)
+//Solver for an element that is not part of other species
+//See Paper I, Eq. (2.32)
 template <class double_type>
-void FastChem<double_type>::linSol(Element<double_type>& species, const double_type h_density, const double_type number_density_min, const unsigned int grid_index)
+void FastChemSolver<double_type>::intertSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
+                                            const double_type gas_density)
 {
 
-  double_type scaling_factor = 0.0;
+  species.number_density = species.epsilon * gas_density - species.number_density_min - species.number_density_maj;
 
-  //in case we use the scaling factor, see Appendix A for details
-  if (use_scaling_factor)
-    scaling_factor = solverScalingFactor(species, number_density_min, h_density, grid_index);
+}
 
 
-
-  if (scaling_factor > 700.0 && verbose_level >= 3)
+//Analytic solution for linear equation, see Paper I, Sect. 2.4.2 and Eq. (2.32)
+template <class double_type>
+void FastChemSolver<double_type>::linSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
+                                         const double_type gas_density)
+{
+  if (species.solver_scaling_factor > 700.0 && options->verbose_level >= 3)
     std::cout << "FastChem: WARNING: Underflow in LinSol for element " << species.symbol << "\n";
 
 
-
-  //calculation of coefficient A_j1, see Eq. (2.28)
-  //referred to as B_j in the following
-  unsigned int index = species.index;
-
-  double_type Bj = std::exp(-scaling_factor);
+  //calculation of coefficient A_j1, see Paper I, Eq. (2.28)
+  const double_type A1 = A1Coeff(species, elements, molecules);
 
 
-  for (size_t j=0; j<species.molecule_list.size(); ++j)
-  {
-    unsigned int i = species.molecule_list[j];
+  //calculation of coefficient A_j0, see Paper I, Eq. (2.27)
+  const double_type A0 = A0Coeff(species, gas_density);
 
 
-    if (molecules[i].stoichometric_vector[index] == 1 && molecules[i].abundance == species.abundance)
-    {
-      molecules[i].sum[grid_index] = 0;
-
-      for (size_t k=0; k<molecules[i].element_indices.size(); ++k)
-      {
-        unsigned int l = molecules[i].element_indices[k];
-
-        if (l != species.index && molecules[i].stoichometric_vector[l] != 0)
-          molecules[i].sum[grid_index] += molecules[i].stoichometric_vector[l] * std::log(elements[l].number_density[grid_index]);
-      }
-
-      Bj += std::exp(molecules[i].mass_action_constant[grid_index] + molecules[i].sum[grid_index] - scaling_factor);
-    }
-  }
-
-
-  //calculation of coefficient A_j0, see Eq. (2.27)
-  //referred to as C_j in the following
-  double_type Cj = std::exp(-scaling_factor) * (number_density_min - species.abundance * h_density);
-
-
-  //calculation of n_j, Eq. (2.32)
-  species.number_density[grid_index] = -Cj/Bj;
-  checkN(species, h_density, grid_index);
+  //calculation of n_j, Paper I, Eq. (2.32)
+  species.number_density = -A0/A1;
 }
 
 
-
-//Analytic solution for quadratic equation, see Sect. 2.4.2 and Eq. (2.32)
+//Analytic solution for quadratic equation, see Paper I, Sect. 2.4.2 and Eq. (2.32)
 template <class double_type>
-void FastChem<double_type>::quadSol(Element<double_type>& species, const double_type h_density, const double_type number_density_min, const unsigned int grid_index)
+void FastChemSolver<double_type>::quadSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
+                                          const double_type gas_density)
 {
-
-  double_type scaling_factor = 0.0;
-
-
-  //in case we use the scaling factor, see Appendix A for details
-  if (use_scaling_factor)
-    scaling_factor = solverScalingFactor(species,number_density_min, h_density, grid_index);
-
-
-
-  if (scaling_factor > 700.0 && verbose_level >= 3)
+  if (species.solver_scaling_factor > 700.0 && options->verbose_level >= 3)
     std::cout << "FastChem: WARNING: Underflow in QuadSol for element " << species.symbol << "\n";
 
 
-
   //calculation of coefficient A_j2, see Eq. (2.29)
-  //referred to as A_j in the following
-  unsigned int index = species.index;
+  const double_type A2 = A2Coeff(species, elements, molecules);
 
-  double_type Aj = 0;
-
-
-  for (size_t j=0; j<species.molecule_list.size(); ++j)
+  if (A2<1.e-4900L)
   {
-    unsigned int i = species.molecule_list[j];
+    if (options->verbose_level >= 3) std::cout << "FastChem: Underflow in QuadSol for species " <<  species.symbol << " : switching to LinSol.\n";
 
+    linSol(species, elements, molecules, gas_density);
 
-    if (molecules[i].stoichometric_vector[index] == 2 && molecules[i].abundance == species.abundance)
-    {
-      molecules[i].sum[grid_index] = 0;
-
-      for (size_t k=0; k<molecules[i].element_indices.size(); ++k)
-      {
-        unsigned int l = molecules[i].element_indices[k];
-
-        if (l != species.index && molecules[i].stoichometric_vector[l] != 0)
-          molecules[i].sum[grid_index] += molecules[i].stoichometric_vector[l] * std::log(elements[l].number_density[grid_index]);
-
-      }
-
-      Aj += std::exp(molecules[i].mass_action_constant[grid_index] + molecules[i].sum[grid_index] - scaling_factor);
-    }
+    return;
   }
 
+  
+  //calculation of coefficient A_j1, see Paper I, Eq. (2.28)
+  const double_type A1 = A1Coeff(species, elements, molecules);
 
-  Aj *= 2.;
+  //calculation of coefficient A_j0, see Paper I, Eq. (2.27)
+  const double_type A0 = A0Coeff(species, gas_density);
+  
 
-
-  if (Aj<1.e-4900L)
-  {
-    if (verbose_level >= 3) std::cout << "FastChem: Underflow in QuadSol for species " <<  species.symbol << " : switching to LinSol.\n";
-
-    linSol(species, h_density, number_density_min, grid_index);
-  }
-  else
-  {
-    //calculation of coefficient A_j1, see Eq. (2.28)
-    //referred to as B_j in the following
-    double_type Bj = std::exp(-scaling_factor);
-
-
-    for (size_t j=0; j<species.molecule_list.size(); ++j)
-    {
-      unsigned int i = species.molecule_list[j];
-
-
-      if (molecules[i].stoichometric_vector[index] == 1 && molecules[i].abundance == species.abundance)
-      {
-        molecules[i].sum[grid_index] = 0;
-
-        for (size_t k=0; k<molecules[i].element_indices.size(); ++k)
-        {
-          unsigned int l = molecules[i].element_indices[k];
-
-          if (l != species.index && molecules[i].stoichometric_vector[l] != 0)
-            molecules[i].sum[grid_index] += molecules[i].stoichometric_vector[l] * std::log(elements[l].number_density[grid_index]);
-        }
-
-        Bj += std::exp(molecules[i].mass_action_constant[grid_index] + molecules[i].sum[grid_index] - scaling_factor);
-      }
-    }
-
-
-    //calculation of coefficient A_j0, see Eq. (2.27)
-    //referred to as C_j in the following
-    double_type Cj = std::exp(-scaling_factor) * (number_density_min - species.abundance*h_density);
-
-
-    //calculation of n_j, Eq. (2.32)
-    double_type Qj = -0.5 * (Bj + std::sqrt(Bj*Bj - 4.*Aj*Cj));
-
-    species.number_density[grid_index] = Cj/Qj;
-    checkN(species, h_density, grid_index);
-  }
-
-
+  //calculation of n_j, Paper I, Eq. (2.32)
+  const double_type Qj = -0.5 * (A1 + std::sqrt(A1*A1 - 4.*A2*A0));
+    
+  species.number_density = A0/Qj;
 }
 
 
 
-
-
-template class FastChem<double>;
-template class FastChem<long double>;
-
+template class FastChemSolver<double>;
+template class FastChemSolver<long double>;
 }
 
 

@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2018 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2019 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,37 +36,38 @@ namespace fastchem {
 
 
 
-
 template <class double_type>
 void FastChem<double_type>::determineSolverOrder()
 {
-
-  for (size_t i=0; i<nb_elements; ++i)
-    elements[i].solver_order = determineSolverOrder(elements[i]);
+  
+  for (auto & i : elements)
+    i.solver_order = determineSolverOrder(i);
 
 }
 
 
 
 //Determine the solver order for an element
+//For the electrons this is the highest stage of ionisation
 template <class double_type>
 unsigned int FastChem<double_type>::determineSolverOrder(const Element<double_type>& species)
 {
   unsigned int solver_order = 0;
 
-  for (size_t i=0; i<nb_molecules; ++i)
-    for (size_t j=0; j<molecules[i].element_indices.size(); ++j)
-    {
-      if (molecules[i].element_indices[j] == species.index && species.symbol != "e-")
-        if ( unsigned (molecules[i].stoichometric_vector[ molecules[i].element_indices[j] ]) > solver_order && molecules[i].abundance == species.abundance)
-        {
-          solver_order = molecules[i].stoichometric_vector[ molecules[i].element_indices[j] ];
 
-          break;
-        }
+  if (species.symbol != "e-") //first the normal elements
+  {
+    for (auto & i : species.molecule_list)
+      if (unsigned (molecules[i].stoichiometric_vector[species.index]) > solver_order && molecules[i].abundance == species.abundance)
+        solver_order = molecules[i].stoichiometric_vector[species.index];
+  }
+  else //then the electrons
+  {
+    for (auto & i : species.molecule_list)
+      if (std::abs(molecules[i].stoichiometric_vector[species.index]) > solver_order)
+        solver_order = std::abs(molecules[i].stoichiometric_vector[species.index]); 
 
-
-    }
+  }
 
 
   return solver_order;
@@ -79,50 +80,30 @@ unsigned int FastChem<double_type>::determineSolverOrder(const Element<double_ty
 template <class double_type>
 void FastChem<double_type>::determineElementCalculationOrder()
 {
-  element_calculation_order.reserve(nb_elements);
-
-  element_calculation_order.push_back(elements[0].index);
-
-
-  for (size_t i=1; i<elements.size(); ++i)
-  {
-    if (elements[i].abundance <= elements[element_calculation_order.back()].abundance)
+  //make sure that there is a unique abundance for each element in case they are initially identical
+  for (auto & i : elements_wo_e)
+    for (auto & j : elements_wo_e)
     {
-      element_calculation_order.push_back(elements[i].index);
-
-      continue;
+      if (i == j) continue;
+  
+      if (i->abundance == j->abundance)
+        j->abundance += std::numeric_limits<double_type>::epsilon()*j->abundance;
     }
 
 
-    if (elements[i].abundance >= elements[element_calculation_order.front()].abundance)
-    {
-      element_calculation_order.insert(element_calculation_order.begin(), elements[i].index);
-
-      continue;
-    }
-
-
-    for (std::vector<unsigned int>::iterator it = element_calculation_order.begin()+1; it<element_calculation_order.end(); it++)
-    {
-       if (elements[*(it-1)].abundance > elements[i].abundance && elements[*it].abundance <= elements[i].abundance)
-       {
-         element_calculation_order.insert(it, elements[i].index);
-
-         break;
-       }
-
-
-    }
-
-  }
-
-
+  //sort the element list according to their abundance
+  std::sort(std::begin(elements_wo_e), 
+            std::end(elements_wo_e),
+            [&](Element<double_type>* a, Element<double_type>* b) {return a->abundance > b->abundance;});
+  
+  element_calculation_order.assign(elements_wo_e.size(), 0);
+  //for (auto & i : elements_wo_e) std::cout << i->symbol << "\t" << std::setprecision(20) << i->abundance << "\n"; exit(0);
+  for (size_t i=0; i<element_calculation_order.size(); ++i)
+    element_calculation_order[i] = elements_wo_e[i]->index;
 }
 
 
 
 template class FastChem<double>;
 template class FastChem<long double>;
-
-
 }

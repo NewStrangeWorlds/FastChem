@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2018 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2019 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 */
 
 
-#include "fastchem.h"
+#include "species_struct.h"
 
 
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 
 namespace fastchem {
@@ -30,83 +31,62 @@ namespace fastchem {
 
 //Check for the number density of elements
 template <class double_type>
-void FastChem<double_type>::checkN(Element<double_type>& species, const double_type h_density, const unsigned int grid_index)
+void Element<double_type>::checkN(const double_type& min_limit, const double_type& gas_density)
 {
-  double_type minlimit = element_density_minlimit;
 
-  if (species.number_density[grid_index] < minlimit) species.number_density[grid_index] = minlimit;
+  if (this->number_density < min_limit) this->number_density = min_limit;
 
-
-  //an element can not be more abundant than determined by its elemental abundance
-  double_type maxlimit = h_density*species.abundance;
-
-
-  if (species.number_density[grid_index] > maxlimit) species.number_density[grid_index] = maxlimit;
+  if (this->number_density > gas_density) this->number_density = gas_density;
+  
 }
 
 
 
 //Check for the number density of molecules
 template <class double_type>
-void FastChem<double_type>::checkN(Molecule<double_type>& species, const double_type h_density, const unsigned int grid_index)
+void Molecule<double_type>::checkN(const double_type& min_limit, const double_type& gas_density)
 {
-  double_type minlimit = molecule_density_minlimit;
 
-  if (species.number_density[grid_index] < minlimit) species.number_density[grid_index] = minlimit;
+  if (this->number_density < min_limit) this->number_density = min_limit;
 
+  if (this->number_density > gas_density) this->number_density = gas_density;
 
-  //a molecule can not be more abundant than its least abundant element
-  double_type maxlimit = h_density*species.abundance_scaled;
-
-
-  if (species.number_density[grid_index] > maxlimit) species.number_density[grid_index] = maxlimit;
 }
 
 
 
 //Check for charge conservation
 template <class double_type>
-bool FastChem<double_type>::checkChargeConservation(const unsigned int grid_index)
+bool Element<double_type>::checkChargeConservation(const std::vector< Molecule<double_type> >& molecules, const double_type& accuracy)
 {
-  bool charge_conserved = false;
+
+  //Am I the electron?
+  if (this->symbol != "e-") return false;
 
 
-  unsigned int e_ = getElementIndex("e-");
-
-  if (e_ == FASTCHEM_UNKNOWN_SPECIES) return true; //no electrons in the system
-
-
-  //if no ions present, charge conservation is automatically satisfied
-  if (elements[e_].molecule_list.size() == 0)
+  //If no ions present, charge conservation is automatically satisfied
+  if (molecule_list.size() == 0)
   {
-    elements[e_].element_conserved[grid_index] = 1;
+    element_conserved = 1;
 
     return true;
   }
 
+   
+  bool charge_conserved = false;
 
   //sum up all positive and negative charges in the network
   double_type positive_charge = 0;
-  double_type negative_charge = elements[e_].number_density[grid_index];
+  double_type negative_charge = this->number_density;
 
-
-  for (size_t i=0; i<elements[e_].molecule_list.size(); ++i)
+  for (auto & i : molecule_list)
   {
-    unsigned int molecule_index = elements[e_].molecule_list[i];
+    if (molecules[i].stoichiometric_vector[index] < 0)
+      positive_charge -= molecules[i].stoichiometric_vector[index] * molecules[i].number_density;
 
-    if (molecules[molecule_index].stoichometric_vector[e_] < 0)
-      positive_charge -= molecules[molecule_index].stoichometric_vector[e_] * molecules[molecule_index].number_density[grid_index];
-
-    if (molecules[molecule_index].stoichometric_vector[e_] > 0)
-      negative_charge += molecules[molecule_index].stoichometric_vector[e_] * molecules[molecule_index].number_density[grid_index];
+    if (molecules[i].stoichiometric_vector[index] > 0)
+      negative_charge += molecules[i].stoichiometric_vector[index] * molecules[i].number_density;
   }
-
-
-
-  if (verbose_level >= 4)
-    std::cout << "charge conservation " << positive_charge << "\t"
-                                        << negative_charge << "\t"
-                                        << std::fabs(positive_charge - negative_charge)/std::sqrt(positive_charge*negative_charge) << "\n";
 
 
   if (std::fabs(positive_charge - negative_charge)/std::sqrt(positive_charge*negative_charge) < accuracy)
@@ -114,7 +94,7 @@ bool FastChem<double_type>::checkChargeConservation(const unsigned int grid_inde
   else
     charge_conserved = false;
 
-  elements[e_].element_conserved[grid_index] = charge_conserved;
+  element_conserved = charge_conserved;
 
 
   return charge_conserved;
@@ -124,41 +104,37 @@ bool FastChem<double_type>::checkChargeConservation(const unsigned int grid_inde
 
 //Check for element conservation
 template <class double_type>
-bool FastChem<double_type>::checkElementConservation(Element<double_type>& species, const double_type h_density, const unsigned int grid_index)
+bool Element<double_type>::checkElementConservation(const std::vector< Molecule<double_type> >& molecules, const double_type total_density, const double_type& accuracy)
 {
 
   //electrons are subject to charge conservation
-  if (species.symbol == "e-")
-    return checkChargeConservation(grid_index);
+  if (this->symbol == "e-")
+    return checkChargeConservation(molecules, accuracy);
 
 
   //sum up the elements contained in each molecule and compare the result to its elemental abundance
-  double_type sum = species.number_density[grid_index];
+  double_type sum = this->number_density;
+
+  
+  for (auto & i : molecule_list)
+    sum += molecules[i].stoichiometric_vector[index] * molecules[i].number_density;
+
+  sum /= total_density*epsilon;
 
 
-  for (size_t i=0; i<species.molecule_list.size(); ++i)
-    sum += molecules[species.molecule_list[i]].stoichometric_vector[species.index] * molecules[species.molecule_list[i]].number_density[grid_index];
-
-  sum /= chemical_elements[species.element_index].abundance * h_density;
-
-
-  if (verbose_level >= 4)
-    std::cout << "element conservation " << species.symbol << "\t" << std::fabs(sum - 1.0L) << "\t"
-              << sum*chemical_elements[species.element_index].abundance * h_density << "\t" << chemical_elements[species.element_index].abundance * h_density << "\n";
-
-
-  if (std::fabs(sum - 1.0L) < accuracy || species.molecule_list.size() == 0)
-    species.element_conserved[grid_index] = 1;
+  if (std::fabs(sum - 1.0L) < accuracy || molecule_list.size() == 0)
+    element_conserved = 1;
   else
-    species.element_conserved[grid_index] = 0;
+    element_conserved = 0;
+  
 
-
-  return species.element_conserved[grid_index];
+  return element_conserved;
 }
 
 
 
-template class FastChem<double>;
-template class FastChem<long double>;
-
+template struct Element<double>;
+template struct Element<long double>;
+template struct Molecule<double>;
+template struct Molecule<long double>;
 }

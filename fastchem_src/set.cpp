@@ -20,26 +20,39 @@
 
 #include "fastchem.h"
 
+#include <iostream>
+#include <string>
 #include <vector>
-#include <cmath>
 
 
 
 namespace fastchem {
 
 
-//Calculate the mean molecular weight of the converged network
-//See Paper I, Eq. (2.10)
+//Set the element abundances for all elements
 template <class double_type>
-double FastChem<double_type>::meanMolecularWeight(const double gas_density)
+void FastChem<double_type>::setElementAbundances(std::vector<double> abundances)
 {
-  double mean_molecular_weight = 0.0;
 
-  for (auto & i : species) mean_molecular_weight += i->molecular_weight * i->number_density;
+  if (abundances.size() != nb_elements)
+  {
+    std::cout << "Setting element abundances with an incorrect vector size\n";
 
-  mean_molecular_weight /= gas_density;
+    return;
+  }
+  
+  
+  for (size_t i=0; i<nb_elements; ++i)
+  { 
+    if (i == e_) continue; //the abundance of the electron remains at zero
 
-  return mean_molecular_weight;
+    chemical_element_data[elements[i].element_data_index].abundance = abundances[i];
+    elements[i].abundance = abundances[i];
+
+  }
+
+
+  reInitialiseFastChem();
 }
 
 

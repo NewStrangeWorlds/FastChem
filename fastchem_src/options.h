@@ -18,32 +18,45 @@
 */
 
 
-#include "fastchem.h"
+#ifndef _options_h
+#define _options_h
 
 #include <vector>
-#include <cmath>
+#include <iostream>
+#include <string>
 
 
 
 namespace fastchem {
 
 
-//Calculate the mean molecular weight of the converged network
-//See Paper I, Eq. (2.10)
+//Options class
 template <class double_type>
-double FastChem<double_type>::meanMolecularWeight(const double gas_density)
-{
-  double mean_molecular_weight = 0.0;
+struct FastChemOptions{
+    unsigned int nb_max_fastchem_iter   = 1000;
+    unsigned int nb_max_bisection_iter  = 3000;
+    unsigned int nb_max_newton_iter     = 3000;
+    unsigned int nb_max_neldermead_iter = 3000;
 
-  for (auto & i : species) mean_molecular_weight += i->molecular_weight * i->number_density;
+    double_type accuracy = 1e-4;
+    double_type newton_err = 1e-4;
 
-  mean_molecular_weight /= gas_density;
+    double_type element_density_minlimit = 1e-300; //smallest allowed particle number densities
+    double_type molecule_density_minlimit = 1e-300;
 
-  return mean_molecular_weight;
+    unsigned int verbose_level = 1;
+
+    bool use_scaling_factor = false;
+    double additional_scaling_factor = 0.0;
+
+    std::string chemical_element_file;
+    std::string species_data_file;
+    std::string element_abundances_file;
+
+    bool readParameterFile(const std::string& model_parameter_file);
+};
+
+
+
 }
-
-
-
-template class FastChem<double>;
-template class FastChem<long double>;
-}
+#endif

@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2018 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2019 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,58 +32,53 @@ namespace fastchem {
 
 //This is the main FastChem iteration
 template <class double_type>
-bool FastChem<double_type>::solveFastchem(const double temperature_gas, const double_type h_density, const unsigned int grid_index, unsigned int& nb_iterations)
+bool FastChem<double_type>::solveFastchem(const double temperature_gas, const double gas_density, unsigned int& nb_iterations)
 {
-  std::vector<double_type> number_density_old(nb_species, 0.0);
-
-  for (size_t i=0; i<nb_species; ++i)
-    number_density_old[i] = species[i]->number_density[grid_index];
+  for (auto & i : elements) i.number_density_maj = 0.0;
 
 
   //starting values for contribution of minor species
-  std::vector<double_type> number_density_min(nb_elements, 0.0);
+  for (auto & i : elements) i.calcMinorSpeciesDensities(molecules);
 
 
-  unsigned int O_ = getSpeciesIndex("O");
-  unsigned int C_ = getSpeciesIndex("C");
-  unsigned int e_ = getSpeciesIndex("e-");
+  std::vector<double_type> number_density_old(nb_species, 0.0);
 
-
-  if (elements[O_].abundance > elements[C_].abundance)
-    number_density_min[O_] = elements[C_].abundance * h_density;
-  else
-    number_density_min[C_] = elements[O_].abundance * h_density;
+  for (size_t i=0; i<nb_species; ++i)
+    number_density_old[i] = species[i]->number_density;
 
 
   bool converged = false;
   unsigned int iter_step = 0;
   bool use_backup_solver = false;
 
-
-  unsigned int max_iter = nb_max_fastchem_iter;
+  unsigned int max_iter = options.nb_max_fastchem_iter;
 
   for (iter_step=0; iter_step<max_iter; ++iter_step)
   {
-    for (std::vector<unsigned int>::iterator it = element_calculation_order.begin(); it<element_calculation_order.end(); it++)
-      calculateElementDensities(elements[*it], h_density, number_density_min[*it], grid_index, use_backup_solver);
-
-    calculateMoleculeDensities(h_density, grid_index);
-
-    calculateMinorSpeciesDensities(number_density_min, grid_index);
-
-    if (e_ != FASTCHEM_UNKNOWN_SPECIES)  //only calculate electrons if they are present in the element list
-      calculateElectronDensities(number_density_old[e_], h_density, grid_index);
+    double_type n_maj = 0.0;
+   
+    //calculate the element densities in their respective order
+    for (auto it = element_calculation_order.begin(); it<element_calculation_order.end(); it++)
+      calculateElementDensities(elements[*it], gas_density, use_backup_solver, n_maj);
 
 
+    //calculate the molecule densities
+    for (auto & i : elements) i.calcMinorSpeciesDensities(molecules);
+
+
+    //only calculate electrons if they are present
+    if (e_ != FASTCHEM_UNKNOWN_SPECIES) 
+      calculateElectronDensities(elements[e_], number_density_old[e_], gas_density);
+ 
 
     //check if n_j_min are small enough, if not use backup solver
-    for (unsigned int i=0; i<nb_elements; i++)
-      if (number_density_min[i] > elements[i].abundance * h_density)
+    for (auto & i : elements)
+      if ( (i.number_density_min + i.number_density_maj > i.epsilon * gas_density) && use_backup_solver == false)
       {
         use_backup_solver = true;
-
-        if (verbose_level >= 4)
-        std::cout << "Too large n_j_min. Switching to backup. Grid index: " << grid_index << "\t Iteration step: " << iter_step << "\n";
+       
+        if (options.verbose_level >= 4)
+          std::cout << "Too large n_min and n_maj for species " << i.symbol << ". Switching to backup.  Iteration step: " << iter_step << "\n";
 
         break;
       }
@@ -95,9 +90,9 @@ bool FastChem<double_type>::solveFastchem(const double temperature_gas, const do
       converged = true;
 
       for (size_t i=0; i<nb_species; ++i)
-        if (std::fabs((species[i]->number_density[grid_index] - number_density_old[i])) > accuracy*number_density_old[i]
-             && species[i]->number_density[grid_index]/h_density > 1.e-155)
-        {
+        if (std::fabs((species[i]->number_density - number_density_old[i])) > options.accuracy*number_density_old[i]
+             && species[i]->number_density/gas_density > 1.e-155)
+        { //std::cout << iter_step << "\t" << species[i]->symbol << "\t" << std::fabs((species[i]->number_density - number_density_old[i]))/number_density_old[i] << "\t" << options.accuracy*number_density_old[i] << "\t" << species[i]->number_density << "\t" <<  number_density_old[i] << "\t" << use_backup_solver << "\n";
           converged = false;
           break;
         }
@@ -111,24 +106,21 @@ bool FastChem<double_type>::solveFastchem(const double temperature_gas, const do
     //in case the standard FastChem iteration doesn't converge, switch to the backup solver
     if (iter_step == max_iter-1 && !converged && use_backup_solver == false)
     {
-      if (verbose_level >= 4)
-        std::cout << "Standard FastChem iteration failed. Switching to backup. Grid index " << grid_index << "\n";
+      if (options.verbose_level >= 4)
+        std::cout << "Standard FastChem iteration failed. Switching to backup. " << "\n";
 
       use_backup_solver = true;
-      max_iter += nb_max_fastchem_iter;
+      max_iter += options.nb_max_fastchem_iter;
     }
 
 
     for (size_t i=0; i<nb_species; ++i)
-      number_density_old[i] = species[i]->number_density[grid_index];
+      number_density_old[i] = species[i]->number_density;
   }
-
-
-  if (!converged && verbose_level >= 3) std::cout << "Intermediate convergence problem in FastChem. :(\n";
-
+  
 
   nb_iterations = iter_step;
-
+  
   return converged;
 }
 
@@ -136,5 +128,4 @@ bool FastChem<double_type>::solveFastchem(const double temperature_gas, const do
 
 template class FastChem<double>;
 template class FastChem<long double>;
-
 }
