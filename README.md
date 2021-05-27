@@ -1,4 +1,4 @@
-# FastChem 2.0 Development Version#
+# FastChem 2.0 Development Version #
 #### Authors: Daniel Kitzmann, Joachim Stock ####
 
 This is the developement branch for FastChem 2.0. Check fastchem_manual.pdf for details.
