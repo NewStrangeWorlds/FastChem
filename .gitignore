@@ -1,4 +1,5 @@
 /CMakeFiles/*
+/output/*
 /build
 python/pyfastchem.cpython*
 fastchem
