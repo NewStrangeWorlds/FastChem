@@ -1,0 +1,4 @@
+/CMakeFiles/*
+/build
+python/pyfastchem.cpython*
+fastchem
