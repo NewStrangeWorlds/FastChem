@@ -65,9 +65,7 @@ unsigned int FastChem<double_type>::calcDensities(FastChemInput& input, FastChem
   output.total_element_density.resize(nb_gridpoints);
   output.nb_chemistry_iterations.resize(nb_gridpoints);
   output.mean_molecular_weight.resize(nb_gridpoints);
-  output.fastchem_flag.resize(nb_gridpoints);
-
-  std::vector<unsigned int> fastchem_flags(nb_gridpoints, 0);
+  output.fastchem_flag.assign(nb_gridpoints, 0);
 
 
   #ifdef _OPENMP
@@ -84,26 +82,26 @@ unsigned int FastChem<double_type>::calcDensities(FastChemInput& input, FastChem
   #pragma omp parallel for schedule(dynamic, 1)
   for (unsigned int i=0; i<input.temperature.size(); i++)
   { 
-    fastchem_flags[i] = fastchems[omp_get_thread_num()].calcDensity(input.temperature[i], input.pressure[i]*1e6, false, 
-                                      output.number_densities[i],
-                                      output.total_element_density[i], 
-                                      output.mean_molecular_weight[i],
-                                      output.element_conserved[i],
-                                      output.nb_chemistry_iterations[i]);
+    output.fastchem_flag[i] = fastchems[omp_get_thread_num()].calcDensity(input.temperature[i], input.pressure[i]*1e6, false, 
+                                        output.number_densities[i],
+                                        output.total_element_density[i], 
+                                        output.mean_molecular_weight[i],
+                                        output.element_conserved[i],
+                                        output.nb_chemistry_iterations[i]);
   }
   #else
   for (unsigned int i=0; i<input.temperature.size(); i++)
   { 
-    fastchem_flags[i] = calcDensity(input.temperature[i], input.pressure[i]*1e6, false, 
-                                    output.number_densities[i],
-                                    output.total_element_density[i], 
-                                    output.mean_molecular_weight[i],
-                                    output.element_conserved[i],
-                                    output.nb_chemistry_iterations[i]);
+    output.fastchem_flag[i] = calcDensity(input.temperature[i], input.pressure[i]*1e6, false, 
+                                          output.number_densities[i],
+                                          output.total_element_density[i], 
+                                          output.mean_molecular_weight[i],
+                                          output.element_conserved[i],
+                                          output.nb_chemistry_iterations[i]);
   }
   #endif
 
-  unsigned int status = *std::max_element(std::begin(fastchem_flags), std::end(fastchem_flags));
+  unsigned int status = *std::max_element(std::begin(output.fastchem_flag), std::end(output.fastchem_flag));
   
     
   is_busy = false;
