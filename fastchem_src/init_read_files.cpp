@@ -62,6 +62,9 @@ bool FastChem<double_type>::readElementList()
   chemical_element_data.reserve(200);
 
   std::string line;
+  
+  //ignore header
+  std::getline(file, line);
 
   while (std::getline(file, line))
   {
