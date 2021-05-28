@@ -54,7 +54,8 @@ FastChem<double_type>::FastChem(const std::string& model_parameter_file, const u
 
 
 //Constructor for the FastChem class
-//Requires: parameter file path and the initial verbose level that is used while reading the input files
+//Requires: file paths for element abundance and species data files 
+//          and the initial verbose level that is used while reading the input files
 template <class double_type>
 FastChem<double_type>::FastChem(const std::string &element_abundances_file,
                                 const std::string &species_data_file,

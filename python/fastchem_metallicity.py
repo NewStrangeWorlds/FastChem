@@ -21,7 +21,7 @@ plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 
 #create a FastChem object
 #fastchem = pyfastchem.FastChem('input/parameters.dat', 1)
-fastchem = pyfastchem.FastChem('input/element_abundances_jo_orich.dat', 'input/logK_full_new.dat', 1)
+fastchem = pyfastchem.FastChem('input/element_abundances_solar.dat', 'input/logK.dat', 1)
 
 
 #allocate the matrix for the number densities

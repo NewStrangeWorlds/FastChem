@@ -238,19 +238,25 @@ void FastChem<double_type>::setMoleculeAbundances()
 }
 
 
+
+//looks through the list of all species and tries to fund duplicate entries
 template <class double_type>
 bool FastChem<double_type>::checkForDuplicates()
 {
   //make a copy of the species vector
-  std::vector< ChemicalSpecies<double_type>* > species_cp = species;
+  auto species_cp = species;
   
+  //sort with respect to the species' symbols
   std::sort(species_cp.begin(), 
             species_cp.end(),
-            [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol > b->symbol;});
-
-  auto it = std::adjacent_find( species_cp.begin(), species_cp.end(), [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol == b->symbol;} );
+            [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol > b->symbol;} );
   
-  bool duplicate_exits = (it != species_cp.end() );
+  //try to find adjacent ones
+  auto it = std::adjacent_find(species_cp.begin(), 
+                               species_cp.end(), 
+                               [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol == b->symbol;} );
+  
+  bool duplicate_exits = (it != species_cp.end());
 
   if (duplicate_exits)
     std::cout << "Species " << (*it)->symbol << " seems to appear twice in the species data file. Please check!\n";
