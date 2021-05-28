@@ -175,19 +175,7 @@ bool readConfigFile(std::string &file_path, Config &config)
     return false;
   }
 
-
-  //Newton error
-  std::getline(file, line); std::getline(file, line); std::getline(file, line);
-  
-  input.str(line); input.clear();
-  input >> config.newton_error;
-
-  if (!(config.newton_error > 0.0))
-  {
-    std::cout << "Unable to read Newton error parameter from: " << file_path.c_str() << "\n";
-
-    return false;
-  }
+  config.newton_error = config.chemistry_accuracy;
 
 
   //chemistry iteration number
@@ -206,7 +194,7 @@ bool readConfigFile(std::string &file_path, Config &config)
   config.nb_chemistry_iterations = nb_value;
 
 
-  //Newton iteration number
+  //solver iteration number
   std::getline(file, line); std::getline(file, line); std::getline(file, line);
   
   input.str(line); input.clear();
@@ -214,45 +202,14 @@ bool readConfigFile(std::string &file_path, Config &config)
 
   if (!(nb_value > 0))
   {
-    std::cout << "Unable to read max Newton iteration number from: " << file_path.c_str() << "\n";
+    std::cout << "Unable to read max solver iteration number from: " << file_path.c_str() << "\n";
 
     return false;
   }
   
   config.nb_newton_iterations = nb_value;
-
-
-  //Nelder-Mead iteration number
-  std::getline(file, line); std::getline(file, line); std::getline(file, line);
-  
-  input.str(line); input.clear();
-  input >> nb_value;
-
-  if (!(nb_value > 0))
-  {
-    std::cout << "Unable to read max Nelder-Mead iteration number from: " << file_path.c_str() << "\n";
-
-    return false;
-  }
-  
   config.nb_nelder_mead_iterations = nb_value;
-
-
-  //bisection iteration number
-  std::getline(file, line); std::getline(file, line); std::getline(file, line);
-  
-  input.str(line); input.clear();
-  input >> nb_value;
-
-  if (!(nb_value > 0))
-  {
-    std::cout << "Unable to read max bisection iteration number from: " << file_path.c_str() << "\n";
-
-    return false;
-  }
-
   config.nb_bisection_iterations = nb_value;
-
 
 
   if (config.verbose_level >= 2)
@@ -265,11 +222,8 @@ bool readConfigFile(std::string &file_path, Config &config)
             << "  Element abundance file: " << config.element_abundance_file << "\n"
             << "  Species data file: " << config.species_data_file << "\n"
             << "  Chemistry accuracy: " << config.chemistry_accuracy << "\n"
-            << "  Newton error: " << config.newton_error << "\n"
             << "  Number of chemistry iterations: " << config.nb_chemistry_iterations << "\n"
-            << "  Number of Newton iterations: " << config.nb_newton_iterations << "\n"
-            << "  Number of Nelder-Mead iterations: " << config.nb_nelder_mead_iterations << "\n"
-            << "  Number of bisection iterations: " << config.nb_bisection_iterations << "\n"
+            << "  Number of solver iterations: " << config.nb_newton_iterations << "\n"
             << "\n";
 
   return true;

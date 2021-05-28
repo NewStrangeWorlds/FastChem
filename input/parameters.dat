@@ -1,23 +1,14 @@
 #element abundance file   
-input/element_abundances_jo_orich.dat
+input/element_abundances_solar.dat
 
 #species data file    
-input/logK_full_new.dat
+input/logK.dat
 
 #accuracy of chemistry iteration
 1.0e-4
 
-#max error of Newton's method
-1.0e-5
-
 #max number of chemistry iterations 
 80000  
 
-#max number of Newton iterations
-20000
-
-#max number of Nelder-Mead iterations
-20000
-
-#max number of bisection iterations
+#max number internal solver iterations
 20000

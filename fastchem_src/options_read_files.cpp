@@ -94,20 +94,8 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     accuracy = parameter_value;
 
   std::getline(file, line);
-
-
-  //Newton error
-  std::getline(file, line); std::getline(file, line);
   
-  input.str(line); input.clear();
-  input >> parameter_value;
-
-  if (!(parameter_value > 0))
-    return initialization_status;
-  else
-    newton_err = parameter_value;
-
-  std::getline(file, line);
+  newton_err = accuracy;
 
 
   //chemistry iteration number
@@ -124,7 +112,7 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
   std::getline(file, line);
 
 
-  //Newton iteration number
+  //solver iteration number
   std::getline(file, line); std::getline(file, line);
   
   input.str(line); input.clear();
@@ -135,36 +123,10 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
   else
     nb_max_newton_iter = nb_value;
 
-  std::getline(file, line);
-
-
-  //Nelder-Mead iteration number
-  std::getline(file, line); std::getline(file, line);
-  
-  input.str(line); input.clear();
-  input >> nb_value;
-
-  if (!(nb_value > 0))
-    return initialization_status;
-  else
-    nb_max_neldermead_iter = nb_value;
+  nb_max_neldermead_iter = nb_value;
+  nb_max_bisection_iter = nb_value;
 
   std::getline(file, line);
-
-
-  //bisection iteration number
-  std::getline(file, line); std::getline(file, line);
-  
-  input.str(line); input.clear();
-  input >> nb_value;
-
-  if (!(nb_value > 0))
-    return initialization_status;
-  else
-    nb_max_bisection_iter = nb_value;
-
-  std::getline(file, line);
-
 
   //optional element data file
   std::getline(file, line); std::getline(file, line);
