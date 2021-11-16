@@ -71,7 +71,21 @@ find_package(OpenMP)
 
 
 if (USE_PYTHON MATCHES ON)
-  #compilation target for FastChem's Python library 
+
+    include(FetchContent)
+    FetchContent_Declare(
+        pybind11
+        GIT_REPOSITORY https://github.com/pybind/pybind11
+        GIT_TAG        v2.2.3
+    )
+
+    FetchContent_GetProperties(pybind11)
+    if(NOT pybind11_POPULATED)
+        FetchContent_Populate(pybind11)
+        add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
+    endif()
+
+  #compilation target for FastChem's Python library
   add_library(fastchem_for_py ${SRC_FASTCHEM})
   
   if (OpenMP_FOUND)
@@ -84,7 +98,6 @@ if (USE_PYTHON MATCHES ON)
   find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
   
   #compilation target for FastChem's Python wrapper
-  add_subdirectory("extern/pybind11")
   pybind11_add_module(pyfastchem ${SRC_PYTHON_WRAPPER})
   
   #find_package(pybind11 REQUIRED)
