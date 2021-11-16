@@ -1,6 +1,6 @@
 import os
 
-os.makedirs("output")
+os.makedirs("output", exist_ok=True)
 
 import pyfastchem
 from save_output import saveChemistryOutput, saveMonitorOutput

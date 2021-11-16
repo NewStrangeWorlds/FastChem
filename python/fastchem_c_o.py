@@ -1,4 +1,7 @@
- 
+import os
+
+os.makedirs("output", exist_ok=True)
+
 import pyfastchem
 import numpy as np
 import matplotlib.pyplot as plt

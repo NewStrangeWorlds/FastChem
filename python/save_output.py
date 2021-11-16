@@ -1,7 +1,3 @@
-import os
-
-os.makedirs("output")
-
 import pyfastchem
 import numpy as np
 from astropy import constants as const
