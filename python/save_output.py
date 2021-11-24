@@ -92,7 +92,7 @@ def saveMonitorOutput(filename, temperature, pressure, fastchem_output, fastchem
 
       all_elements_conserved = 1
 
-      if 0 in fastchem_output.element_conserved : all_elements_conserved = 0
+      if np.isin(0, element_conserved[i], assume_unique=True) : all_elements_conserved = 0
 
       file.write('{0:<16d}{1:<16d}{2:<24s}{3:<24s}{4:<24.10e}{5:<24.10e}{6:<24.10e}{7.value:<24.10e}{8:<24.10e}'.format(i, 
                                                                                                                   fastchem_output.nb_chemistry_iterations[i], 
