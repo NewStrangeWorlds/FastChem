@@ -1,6 +1,7 @@
  
 import pyfastchem
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 from astropy import constants as const
 
@@ -21,10 +22,14 @@ plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 
 
 #create a FastChem object
-fastchem = pyfastchem.FastChem('input/element_abundances_solar.dat', 'input/logK.dat', 1)
+fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../input/logK.dat', 1)
+
 
 #we could also create a FastChem object by using the parameter file
-#fastchem = pyfastchem.FastChem('input/parameters.dat', 1)
+#note, however, that the file locations in the parameter file are relative
+#to the location from where this Python script is called
+#fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
+
 
 
 #allocate the matrix for the number densities

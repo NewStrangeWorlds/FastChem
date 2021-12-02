@@ -1,16 +1,20 @@
-import os
-
-os.makedirs("output", exist_ok=True)
 
 import pyfastchem
 from save_output import saveChemistryOutput, saveMonitorOutput
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 from astropy import constants as const
+
 
 #some input values for temperature (in K) and pressure (in bar)
 temperature = np.full(1000, 500)
 pressure = np.logspace(-6, 1, num=1000)
+
+
+#define the directory for the output
+#here, we currently use the standard one from FastChem
+output_dir = '../output'
 
 
 #the chemical species we want to plot later
@@ -23,8 +27,12 @@ plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 #create a FastChem object
 fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../input/logK.dat', 1)
 
+
 #we could also create a FastChem object by using the parameter file
-#fastchem = pyfastchem.FastChem('input/parameters.dat', 1)
+#note, however, that the file locations in the parameter file are relative
+#to the location from where this Python script is called
+#fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
+
 
 
 #create the input and output structures for FastChem
@@ -48,15 +56,18 @@ number_densities = np.array(output_data.number_densities)
 gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
 
 
+#check if output directory exists
+#create it if it doesn't
+os.makedirs(output_dir, exist_ok=True)
 
 #save the monitor output to a file
-saveMonitorOutput('output/monitor.dat', temperature, pressure, output_data, fastchem)
+saveMonitorOutput(output_dir + '/monitor.dat', temperature, pressure, output_data, fastchem)
 
 #this would save the output of all species
-saveChemistryOutput('output/chemistry.dat', temperature, pressure, output_data, fastchem)
+saveChemistryOutput(output_dir + '/chemistry.dat', temperature, pressure, output_data, fastchem)
 
 #this saves only selected species (here the species we also plot)
-saveChemistryOutput('output/chemistry_select.dat', temperature, pressure, output_data, fastchem, plot_species)
+saveChemistryOutput(output_dir + '/chemistry_select.dat', temperature, pressure, output_data, fastchem, plot_species)
 
 
 
@@ -85,7 +96,7 @@ plt.gca().set_ylim(plt.gca().get_ylim()[::-1])
 plt.xlabel("Mixing ratios")
 plt.ylabel("Pressure (bar)")
 plt.legend(plot_species_symbols)
-plt.title("T=500 K")
 
-#plt.savefig('eqchem_500K.pdf')
+
+#plt.savefig(output_dir + '/fastchem_fig.pdf')
 plt.show()
