@@ -1,4 +1,3 @@
-
 import pyfastchem
 import numpy as np
 from astropy import constants as const
@@ -83,7 +82,7 @@ def saveMonitorOutput(filename, temperature, pressure, fastchem_output, fastchem
     output_flags = ['fail', 'ok']
     
     #and the debug output
-    for i in range(pressure.size):
+    for i in range(len(fastchem_output.fastchem_flag)):
 
       if fastchem_output.fastchem_flag[i] == pyfastchem.FASTCHEM_SUCCESS:
         c_conv = output_flags[1]

@@ -1,4 +1,7 @@
- 
+import os
+
+os.makedirs("output", exist_ok=True)
+
 import pyfastchem
 from save_output import saveChemistryOutput, saveMonitorOutput
 import numpy as np
@@ -18,7 +21,7 @@ plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 
 
 #create a FastChem object
-fastchem = pyfastchem.FastChem('input/element_abundances_solar.dat', 'input/logK.dat', 1)
+fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../input/logK.dat', 1)
 
 #we could also create a FastChem object by using the parameter file
 #fastchem = pyfastchem.FastChem('input/parameters.dat', 1)
