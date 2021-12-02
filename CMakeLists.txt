@@ -64,7 +64,7 @@ set(SRC_MAIN
 
   
 set(SRC_PYTHON_WRAPPER
-  python/fastchem_python_wrapper)
+  python/fastchem_python_wrapper.cpp)
 
 #check for OpenMP
 find_package(OpenMP)  
@@ -76,7 +76,7 @@ if (USE_PYTHON MATCHES ON)
     FetchContent_Declare(
         pybind11
         GIT_REPOSITORY https://github.com/pybind/pybind11
-        GIT_TAG        v2.2.3
+        GIT_TAG        97976c16fb7652f7faf02d76756666ef87adbe7d
     )
 
     FetchContent_GetProperties(pybind11)

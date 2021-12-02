@@ -1,6 +1,7 @@
 /CMakeFiles/*
 /output/*
 /build
+/_deps/*
 python/pyfastchem.cpython*
 python/__pycache__/*
 fastchem
