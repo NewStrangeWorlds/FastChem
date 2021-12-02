@@ -13,7 +13,7 @@ c_to_o = np.linspace(0.1, 10, 100)
 
 
 #the chemical species we want to plot later
-#note that FastChem uses the Hill notation
+#note that the standard FastChem input files use the Hill notation
 plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'C2H2']
 #for the plot lables, we therefore use separate strings in the usual notation
 plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'C2H2']
