@@ -60,14 +60,33 @@ gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
 #create it if it doesn't
 os.makedirs(output_dir, exist_ok=True)
 
+
 #save the monitor output to a file
-saveMonitorOutput(output_dir + '/monitor.dat', temperature, pressure, output_data, fastchem)
+saveMonitorOutput(output_dir + '/monitor.dat', 
+                  temperature, pressure, 
+                  output_data.element_conserved,
+                  output_data.fastchem_flag,
+                  output_data.nb_chemistry_iterations,
+                  output_data.total_element_density,
+                  output_data.mean_molecular_weight,
+                  fastchem)
 
 #this would save the output of all species
-saveChemistryOutput(output_dir + '/chemistry.dat', temperature, pressure, output_data, fastchem)
+saveChemistryOutput(output_dir + '/chemistry.dat', 
+                    temperature, pressure, 
+                    output_data.total_element_density, 
+                    output_data.mean_molecular_weight, 
+                    output_data.number_densities, 
+                    fastchem)
 
 #this saves only selected species (here the species we also plot)
-saveChemistryOutput(output_dir + '/chemistry_select.dat', temperature, pressure, output_data, fastchem, plot_species)
+saveChemistryOutput(output_dir + '/chemistry_select.dat', 
+                    temperature, pressure, 
+                    output_data.total_element_density, 
+                    output_data.mean_molecular_weight, 
+                    output_data.number_densities, 
+                    fastchem,
+                    plot_species)
 
 
 

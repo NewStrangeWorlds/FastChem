@@ -1,15 +1,23 @@
 import pyfastchem
 import numpy as np
+import os
+from save_output import saveChemistryOutput, saveMonitorOutput
 import matplotlib.pyplot as plt
 from astropy import constants as const
 
 #input values for temperature (in K) and pressure (in bar)
 #we only use a single values here
-temperature = np.full(1, 1000)
-pressure = np.full(1, 1)
+temperature_single = 1000
+pressure_single = 1
 
 #the range of C/O ratios we want to calculate the chemistry for
 c_to_o = np.linspace(0.1, 10, 100)
+
+
+#define the directory for the output
+#here, we currently use the standard one from FastChem
+output_dir = '../output'
+
 
 
 #the chemical species we want to plot later
@@ -30,20 +38,22 @@ fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../inpu
 
 
 
-#allocate the matrix for the number densities
-number_densities = np.zeros((c_to_o.size, fastchem.getSpeciesNumber()))
+#allocate the data for the output
+nb_points = c_to_o.size
+
+number_densities = np.zeros((nb_points, fastchem.getSpeciesNumber()))
+total_element_density = np.zeros(nb_points)
+mean_molecular_weight = np.zeros(nb_points)
+element_conserved = np.zeros((nb_points, fastchem.getElementNumber()), dtype=int)
+fastchem_flags = np.zeros(nb_points, dtype=int)
+nb_chemistry_iterations = np.zeros(nb_points, dtype=int)
+
+temperature = np.zeros(nb_points)
+pressure = np.zeros(nb_points)
 
 
 #make a copy of the solar abundances from FastChem
 solar_abundances = np.array(fastchem.getElementAbundances())
-
-
-#create the input and output structures for FastChem
-input_data = pyfastchem.FastChemInput()
-output_data = pyfastchem.FastChemOutput()
-
-input_data.temperature = temperature
-input_data.pressure = pressure
 
 
 #we need to know the indices for O and C from FastChem
@@ -59,16 +69,65 @@ for i in range(0, c_to_o.size):
 
   fastchem.setElementAbundances(element_abundances)
 
+  #create the input and output structures for FastChem
+  input_data = pyfastchem.FastChemInput()
+  output_data = pyfastchem.FastChemOutput()
+
+  input_data.temperature = [temperature_single]
+  input_data.pressure = [pressure_single]
+
   fastchem_flag = fastchem.calcDensities(input_data, output_data)
   print("FastChem reports:", pyfastchem.FASTCHEM_MSG[fastchem_flag])
   
-  #copy the FastChem output into the number density matrix
+  #copy the FastChem input and output into the pre-allocated arrays
+  temperature[i] = input_data.temperature[0]
+  pressure[i] = input_data.pressure[0]
+
+  
   number_densities[i,:] = np.array(output_data.number_densities[0])
+
+  total_element_density[i] = output_data.total_element_density[0]
+  mean_molecular_weight[i] = output_data.mean_molecular_weight[0]
+  element_conserved[i,:] = output_data.element_conserved[0]
+  fastchem_flags[i] = output_data.fastchem_flag[0]
+  nb_chemistry_iterations[i] = output_data.nb_chemistry_iterations[0]
 
 
 
 #total gas particle number density from the ideal gas law 
 gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
+
+
+
+#check if output directory exists
+#create it if it doesn't
+os.makedirs(output_dir, exist_ok=True)
+
+
+#save the monitor output to a file
+#we add an additional output column for the C/O ratio
+saveMonitorOutput(output_dir + '/monitor.dat', 
+                  temperature, pressure, 
+                  element_conserved,
+                  fastchem_flags,
+                  nb_chemistry_iterations,
+                  total_element_density,
+                  mean_molecular_weight,
+                  fastchem,
+                  c_to_o, 'C/O')
+
+
+#this saves the output of all species
+#we add an additional column for the C/O ratio
+saveChemistryOutput(output_dir + '/chemistry.dat', 
+                    temperature, pressure,
+                    total_element_density, 
+                    mean_molecular_weight, 
+                    number_densities,
+                    fastchem, 
+                    None, 
+                    c_to_o, 'C/O')
+
 
 
 #check the species we want to plot and get their indices from FastChem
