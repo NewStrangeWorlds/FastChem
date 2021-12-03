@@ -1,6 +1,7 @@
 import pyfastchem
 import numpy as np
 from astropy import constants as const
+import pandas as pd
 
 
 #Saves the FastChem output in an ASCII file
@@ -113,9 +114,9 @@ def saveChemistryOutput(file_path,                     #the path to the output f
 
 
 #Saves the FastChem monitor output in an ASCII file
-def saveMonitorOutput(filename,                      #the path to the output file
+def saveMonitorOutput(file_path,                     #the path to the output file
                       temperature, pressure,         #arrays of temperature and pressure
-                      element_conserved,             #array if int for the element conservation
+                      element_conserved,             #array of int for the element conservation
                       fastchem_flags,                #array of int for the output flags
                       nb_chemistry_iterations,       #array of int for the number of iterations
                       total_element_density,         #array with total element density
@@ -146,7 +147,7 @@ def saveMonitorOutput(filename,                      #the path to the output fil
   element_conserved = np.array(element_conserved)
 
 
-  with open(filename, 'w') as file:
+  with open(file_path, 'w') as file:
     #file header
     file.write('{0:<16}{1:<16}{2:<24}{3:<24}{4:<24}{5:<24}{6:<24}{7:<24}{8:<24}'.format('#grid point', 'c_iterations', 'c_convergence', 'elem_conserved', 'P (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (g/mol)'))
 
@@ -206,3 +207,215 @@ def saveMonitorOutput(filename,                      #the path to the output fil
 
 
   return None
+
+
+
+#Saves the FastChem output in a pickle file using Pandas
+def saveChemistryOutputPandas(file_path,                     #the path to the output file
+                              temperature, pressure,         #arrays of temperature and pressure
+                              total_element_density,         #array of total element density 
+                              mean_molecular_weight,         #array of mean molecular weights 
+                              number_densities,              #2D array of number densities
+                              fastchem,                      #the FastChem object
+                              output_species=None,           #optional array with symbols of species that should be saved
+                              additional_columns=None,       #optional, additional columns for the output file
+                              additional_columns_desc=None): #the header descriptions of the additional columns
+  
+  # total gas particle number density from the ideal gas law
+  # used to convert the number densities to mixing ratios
+  gas_number_density = pressure * 1e6 / (const.k_B.cgs * temperature)
+
+  # calculate the mixing ratios from the number densities
+  mixing_ratios = np.array(number_densities) / gas_number_density.value[:, None]
+
+
+  #find out how many additional columns and descriptions we have
+  nb_add_columns = 0
+
+  if additional_columns is not None:
+    additional_columns = np.array(additional_columns)
+
+    if additional_columns.size > additional_columns.shape[0]:
+      nb_add_columns = additional_columns.shape[0]
+    else:
+      nb_add_columns = 1
+
+  add_columns_desc = np.array(additional_columns_desc)
+
+
+  if (add_columns_desc.size != nb_add_columns and nb_add_columns > 0) or (additional_columns_desc is None and nb_add_columns > 0):
+    print('Warning: The number of descriptions for the additional columns in the output does not match the number of data columns.')
+
+
+  #general column headers
+  columns = ['P (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (g/mol)']
+
+  #add the descriptions of the additional columns to the header
+  #if their number does not equal the number of additional columns, add 'unk'
+  for i in range(nb_add_columns):
+    if add_columns_desc.size == nb_add_columns and additional_columns_desc is not None:
+      if nb_add_columns > 1:
+        columns.append(add_columns_desc[i])
+      else:
+        columns.append(add_columns_desc[()])
+    else:
+      columns.append('unk')
+
+
+  #header for species symbols
+  if output_species is None:
+    for j in range(fastchem.getSpeciesNumber()):
+      columns.append(fastchem.getSpeciesSymbol(j))
+  else:
+    select_species_id = []
+
+    for species in output_species:
+      if fastchem.getSpeciesIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
+        columns.append(species)
+        select_species_id.append(fastchem.getSpeciesIndex(species))
+      else:
+        print('Species ', species, ' not found during saving of the chemistry output!')
+
+
+  #combine all general data columns
+  if additional_columns is None:
+    rows = np.vstack([pressure,
+                      temperature,
+                      total_element_density,
+                      gas_number_density.value,
+                      mean_molecular_weight]
+                    ).T
+  else:
+    rows = np.vstack([pressure,
+                      temperature,
+                      total_element_density,
+                      gas_number_density.value,
+                      mean_molecular_weight,
+                      additional_columns]
+                    ).T
+
+
+  #and now we add the mixing ratios
+  if output_species is None:
+    data = np.hstack([rows, mixing_ratios])
+  else:
+    data = np.hstack([rows, mixing_ratios[:,select_species_id]])
+
+  
+  #combine column headers and data
+  df = pd.DataFrame(data=data,
+                    columns=[c + (16 - len(c))*" " for c in columns])
+  
+
+  df.to_pickle(file_path)
+
+  return None
+
+
+
+#Saves the FastChem monitor output in a pickle file using Pandas
+def saveMonitorOutputPandas(file_path,                     #the path to the output file
+                            temperature, pressure,         #arrays of temperature and pressure
+                            element_conserved,             #array of int for the element conservation
+                            fastchem_flags,                #array of int for the output flags
+                            nb_chemistry_iterations,       #array of int for the number of iterations
+                            total_element_density,         #array with total element density
+                            mean_molecular_weight,         #array with the mean molecular weight
+                            fastchem,                      #the FastChem object
+                            additional_columns=None,       #optional, additional columns for the output file
+                            additional_columns_desc=None): #the header descriptions of the additional columns
+  
+  # total gas particle number density from the ideal gas law
+  # used to convert the number densities to mixing ratios
+  gas_number_density = pressure * 1e6 / (const.k_B.cgs * temperature)
+
+  #convert the 2D element conservation array into a NumPy array
+  element_conserved = np.array(element_conserved)
+
+
+  #find out how many additional columns and descriptions we have
+  nb_add_columns = 0
+
+  if additional_columns is not None:
+    additional_columns = np.array(additional_columns)
+
+    if additional_columns.size > additional_columns.shape[0]:
+      nb_add_columns = additional_columns.shape[0]
+    else:
+      nb_add_columns = 1
+
+  add_columns_desc = np.array(additional_columns_desc)
+
+
+  if (add_columns_desc.size != nb_add_columns and nb_add_columns > 0) or (additional_columns_desc is None and nb_add_columns > 0):
+    print('Warning: The number of descriptions for the additional columns in the output does not match the number of data columns.')
+
+
+  #general column headers
+  columns = ['c_iterations', 'c_convergence', 'elem_conserved', 'P (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (g/mol)']
+
+
+  #add the descriptions of the additional columns to the header
+  #if their number does not equal the number of additional columns, add 'unk'
+  for i in range(nb_add_columns):
+    if add_columns_desc.size == nb_add_columns and additional_columns_desc is not None:
+      if nb_add_columns > 1:
+        columns.append(add_columns_desc[i])
+      else:
+        columns.append(add_columns_desc[()])
+    else:
+      columns.append('unk')
+
+
+  nb_elements = fastchem.getElementNumber()
+  
+  #header for element symbols
+  for j in range(nb_elements):
+    columns.append(fastchem.getSpeciesSymbol(j))
+
+
+  #and the debug output
+  all_elements_conserved = np.ones(len(fastchem_flags), dtype=int)
+
+  for i in range(len(fastchem_flags)):
+    if np.isin(0, element_conserved[i], assume_unique=True) : all_elements_conserved[i] = 0
+
+
+  #combine all general data columns
+  if additional_columns is None:
+    rows = np.vstack([nb_chemistry_iterations,
+                      fastchem_flags,
+                      all_elements_conserved,
+                      pressure,
+                      temperature,
+                      total_element_density,
+                      gas_number_density.value,
+                      mean_molecular_weight]
+                    ).T
+  else:
+    rows = np.vstack([nb_chemistry_iterations,
+                      fastchem_flags,
+                      all_elements_conserved,
+                      pressure,
+                      temperature,
+                      total_element_density,
+                      gas_number_density.value,
+                      mean_molecular_weight,
+                      additional_columns]
+                    ).T
+
+
+  #and now we add the element conservation info
+  data = np.hstack([rows, element_conserved])
+
+  #combine column headers and data
+  df = pd.DataFrame(data=data,
+                    columns=[c + (16 - len(c))*" " for c in columns])
+  
+
+  df.to_pickle(file_path)
+
+  return None
+
+
+

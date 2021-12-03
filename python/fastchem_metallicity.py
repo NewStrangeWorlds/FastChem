@@ -2,7 +2,7 @@
 import pyfastchem
 import numpy as np
 import os
-from save_output import saveChemistryOutput, saveMonitorOutput
+from save_output import saveChemistryOutput, saveMonitorOutput, saveChemistryOutputPandas, saveMonitorOutputPandas
 import matplotlib.pyplot as plt
 from astropy import constants as const
 
@@ -124,6 +124,31 @@ saveChemistryOutput(output_dir + '/chemistry.dat',
                     fastchem, 
                     None, 
                     metallicity, 'M/H')
+
+
+# #save the monitor output to a file
+# #we add an additional output column for the metallicity
+# saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
+#                   temperature, pressure, 
+#                   element_conserved,
+#                   fastchem_flags,
+#                   nb_chemistry_iterations,
+#                   total_element_density,
+#                   mean_molecular_weight,
+#                   fastchem,
+#                   metallicity, 'M/H')
+
+
+
+# #this would save the output of all species
+# saveChemistryOutputPandas(output_dir + '/chemistry.pkl', 
+#                     temperature, pressure,
+#                     total_element_density, 
+#                     mean_molecular_weight, 
+#                     number_densities,
+#                     fastchem, 
+#                     plot_species, 
+#                     metallicity, None)
 
 
 #check the species we want to plot and get their indices from FastChem

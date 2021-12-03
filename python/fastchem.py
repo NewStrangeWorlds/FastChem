@@ -1,6 +1,6 @@
 
 import pyfastchem
-from save_output import saveChemistryOutput, saveMonitorOutput
+from save_output import saveChemistryOutput, saveMonitorOutput, saveChemistryOutputPandas
 import numpy as np
 import os
 import matplotlib.pyplot as plt
@@ -88,6 +88,14 @@ saveChemistryOutput(output_dir + '/chemistry_select.dat',
                     fastchem,
                     plot_species)
 
+
+# #this would save the output of all species
+# saveChemistryOutputPandas(output_dir + '/chemistry.pkl', 
+#                     temperature, pressure, 
+#                     output_data.total_element_density, 
+#                     output_data.mean_molecular_weight, 
+#                     output_data.number_densities, 
+#                     fastchem)
 
 
 #check the species we want to plot and get their indices from FastChem
