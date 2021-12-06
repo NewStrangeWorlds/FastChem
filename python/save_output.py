@@ -233,31 +233,29 @@ def saveChemistryOutputPandas(file_path,                     #the path to the ou
   nb_add_columns = 0
 
   if additional_columns is not None:
-    additional_columns = np.array(additional_columns)
+    additional_columns = np.atleast_1d(additional_columns)
 
     if additional_columns.size > additional_columns.shape[0]:
       nb_add_columns = additional_columns.shape[0]
     else:
       nb_add_columns = 1
 
-  add_columns_desc = np.array(additional_columns_desc)
+  add_columns_desc = np.atleast_1d(additional_columns_desc)
 
 
   if (add_columns_desc.size != nb_add_columns and nb_add_columns > 0) or (additional_columns_desc is None and nb_add_columns > 0):
-    print('Warning: The number of descriptions for the additional columns in the output does not match the number of data columns.')
+    print('Warning from saveChemistryOutputPandas: The number of additional column descriptions does not match the number of data columns.')
 
 
   #general column headers
   columns = ['P (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (g/mol)']
 
+
   #add the descriptions of the additional columns to the header
   #if their number does not equal the number of additional columns, add 'unk'
   for i in range(nb_add_columns):
     if add_columns_desc.size == nb_add_columns and additional_columns_desc is not None:
-      if nb_add_columns > 1:
-        columns.append(add_columns_desc[i])
-      else:
-        columns.append(add_columns_desc[()])
+      columns.append(add_columns_desc[(i)])
     else:
       columns.append('unk')
 
@@ -301,12 +299,12 @@ def saveChemistryOutputPandas(file_path,                     #the path to the ou
   else:
     data = np.hstack([rows, mixing_ratios[:,select_species_id]])
 
-  
-  #combine column headers and data
-  df = pd.DataFrame(data=data,
-                    columns=[c + (16 - len(c))*" " for c in columns])
-  
 
+  #combine column headers and data
+  df = pd.DataFrame(data=data, columns=columns)
+
+
+  #and finally save it as a pickle file
   df.to_pickle(file_path)
 
   return None
@@ -337,18 +335,18 @@ def saveMonitorOutputPandas(file_path,                     #the path to the outp
   nb_add_columns = 0
 
   if additional_columns is not None:
-    additional_columns = np.array(additional_columns)
+    additional_columns = np.atleast_1d(additional_columns)
 
     if additional_columns.size > additional_columns.shape[0]:
       nb_add_columns = additional_columns.shape[0]
     else:
       nb_add_columns = 1
 
-  add_columns_desc = np.array(additional_columns_desc)
+  add_columns_desc = np.atleast_1d(additional_columns_desc)
 
 
   if (add_columns_desc.size != nb_add_columns and nb_add_columns > 0) or (additional_columns_desc is None and nb_add_columns > 0):
-    print('Warning: The number of descriptions for the additional columns in the output does not match the number of data columns.')
+    print('Warning from saveMonitorOutputPandas: The number of additional column descriptions does not match the number of data columns.')
 
 
   #general column headers
@@ -359,16 +357,13 @@ def saveMonitorOutputPandas(file_path,                     #the path to the outp
   #if their number does not equal the number of additional columns, add 'unk'
   for i in range(nb_add_columns):
     if add_columns_desc.size == nb_add_columns and additional_columns_desc is not None:
-      if nb_add_columns > 1:
-        columns.append(add_columns_desc[i])
-      else:
-        columns.append(add_columns_desc[()])
+      columns.append(add_columns_desc[(i)])
     else:
       columns.append('unk')
 
 
   nb_elements = fastchem.getElementNumber()
-  
+
   #header for element symbols
   for j in range(nb_elements):
     columns.append(fastchem.getSpeciesSymbol(j))
@@ -379,7 +374,6 @@ def saveMonitorOutputPandas(file_path,                     #the path to the outp
 
   for i in range(len(fastchem_flags)):
     if np.isin(0, element_conserved[i], assume_unique=True) : all_elements_conserved[i] = 0
-
 
   #combine all general data columns
   if additional_columns is None:
@@ -404,15 +398,22 @@ def saveMonitorOutputPandas(file_path,                     #the path to the outp
                       additional_columns]
                     ).T
 
-
   #and now we add the element conservation info
   data = np.hstack([rows, element_conserved])
 
-  #combine column headers and data
-  df = pd.DataFrame(data=data,
-                    columns=[c + (16 - len(c))*" " for c in columns])
-  
 
+  #combine column headers and data
+  df = pd.DataFrame(data=data, columns=columns)
+
+  #change some of the datatypes back to int
+  df = df.astype({'c_iterations':'int64'})
+  df = df.astype({'c_convergence':'int64'})
+  df = df.astype({'elem_conserved':'int64'})
+
+  for j in range(nb_elements):
+    df = df.astype({fastchem.getSpeciesSymbol(j) :'int64'})
+
+  #and finally save it as a pickle file
   df.to_pickle(file_path)
 
   return None

@@ -1,7 +1,7 @@
 import pyfastchem
 import numpy as np
 import os
-from save_output import saveChemistryOutput, saveMonitorOutput
+from save_output import saveChemistryOutput, saveMonitorOutput, saveChemistryOutputPandas, saveMonitorOutputPandas
 import matplotlib.pyplot as plt
 from astropy import constants as const
 
@@ -33,7 +33,7 @@ fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../inpu
 
 #we could also create a FastChem object by using the parameter file
 #note, however, that the file locations in the parameter file are relative
-#to the location from where this Python script is called
+#to the location from where this Python script is called from
 #fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
 
 
@@ -127,6 +127,30 @@ saveChemistryOutput(output_dir + '/chemistry.dat',
                     fastchem, 
                     None, 
                     c_to_o, 'C/O')
+
+
+#save the monitor output to a file
+#we add an additional output column for the metallicity
+# saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
+#                   temperature, pressure, 
+#                   element_conserved,
+#                   fastchem_flags,
+#                   nb_chemistry_iterations,
+#                   total_element_density,
+#                   mean_molecular_weight,
+#                   fastchem,
+#                   c_to_o, 'C/O')
+
+
+# #this would save the output of all species
+# saveChemistryOutputPandas(output_dir + '/chemistry.pkl', 
+#                     temperature, pressure,
+#                     total_element_density, 
+#                     mean_molecular_weight, 
+#                     number_densities,
+#                     fastchem, 
+#                     None, 
+#                     c_to_o, 'C/O')
 
 
 

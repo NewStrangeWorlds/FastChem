@@ -33,7 +33,7 @@ fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../inpu
 
 #we could also create a FastChem object by using the parameter file
 #note, however, that the file locations in the parameter file are relative
-#to the location from where this Python script is called
+#to the location from where this Python script is called from
 #fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
 
 
@@ -126,8 +126,8 @@ saveChemistryOutput(output_dir + '/chemistry.dat',
                     metallicity, 'M/H')
 
 
-# #save the monitor output to a file
-# #we add an additional output column for the metallicity
+#save the monitor output to a file
+#we add an additional output column for the metallicity
 # saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
 #                   temperature, pressure, 
 #                   element_conserved,
@@ -139,7 +139,6 @@ saveChemistryOutput(output_dir + '/chemistry.dat',
 #                   metallicity, 'M/H')
 
 
-
 # #this would save the output of all species
 # saveChemistryOutputPandas(output_dir + '/chemistry.pkl', 
 #                     temperature, pressure,
@@ -147,8 +146,8 @@ saveChemistryOutput(output_dir + '/chemistry.dat',
 #                     mean_molecular_weight, 
 #                     number_densities,
 #                     fastchem, 
-#                     plot_species, 
-#                     metallicity, None)
+#                     None, 
+#                     metallicity, 'M/H')
 
 
 #check the species we want to plot and get their indices from FastChem

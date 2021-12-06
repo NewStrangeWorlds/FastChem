@@ -1,6 +1,6 @@
 
 import pyfastchem
-from save_output import saveChemistryOutput, saveMonitorOutput, saveChemistryOutputPandas
+from save_output import saveChemistryOutput, saveMonitorOutput, saveChemistryOutputPandas, saveMonitorOutputPandas
 import numpy as np
 import os
 import matplotlib.pyplot as plt
@@ -30,7 +30,7 @@ fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../inpu
 
 #we could also create a FastChem object by using the parameter file
 #note, however, that the file locations in the parameter file are relative
-#to the location from where this Python script is called
+#to the location from where this Python script is called from
 #fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
 
 
@@ -89,13 +89,26 @@ saveChemistryOutput(output_dir + '/chemistry_select.dat',
                     plot_species)
 
 
+#save the monitor output to a file
+#here, the data is saved as a Pandas DataFrame inside a Pickle file
+# saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
+#                   temperature, pressure, 
+#                   output_data.element_conserved,
+#                   output_data.fastchem_flag,
+#                   output_data.nb_chemistry_iterations,
+#                   output_data.total_element_density,
+#                   output_data.mean_molecular_weight,
+#                   fastchem)
+
 # #this would save the output of all species
-# saveChemistryOutputPandas(output_dir + '/chemistry.pkl', 
-#                     temperature, pressure, 
-#                     output_data.total_element_density, 
-#                     output_data.mean_molecular_weight, 
-#                     output_data.number_densities, 
+# #here, the data is saved as a Pandas DataFrame inside a Pickle file
+# saveChemistryOutputPandas(output_dir + '/chemistry.pkl',
+#                     temperature, pressure,
+#                     output_data.total_element_density,
+#                     output_data.mean_molecular_weight,
+#                     output_data.number_densities,
 #                     fastchem)
+
 
 
 #check the species we want to plot and get their indices from FastChem
