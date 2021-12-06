@@ -20,13 +20,17 @@ def saveChemistryOutput(file_path,                     #the path to the output f
   nb_add_columns = 0
 
   if additional_columns is not None:
-    add_columns = np.array(additional_columns)
-    add_columns_desc = np.array(additional_columns_desc)
+    add_columns = np.atleast_1d(additional_columns)
+    add_columns_desc = np.atleast_1d(additional_columns_desc)
 
     if add_columns.size > add_columns.shape[0]:
       nb_add_columns = add_columns.shape[0]
     else:
       nb_add_columns = 1
+
+
+  if (add_columns_desc.size != nb_add_columns and nb_add_columns > 0) or (additional_columns_desc is None and nb_add_columns > 0):
+    print('Warning from saveChemistryOutput: The number of additional column descriptions does not match the number of data columns.')
 
 
   #total gas particle number density from the ideal gas law 
@@ -46,10 +50,7 @@ def saveChemistryOutput(file_path,                     #the path to the output f
     #use 'unk' if the their number do not correspond to the number of additonal columns
     for i in range (nb_add_columns):
       if add_columns_desc.size == nb_add_columns:
-        if (add_columns_desc.size == 1):
-          file.write('\t{0:<16}'.format(additional_columns_desc))
-        else:
-          file.write('\t{0:<16}'.format(additional_columns_desc[i]))
+        file.write('\t{0:<16}'.format(additional_columns_desc[i]))
       else:
         file.write('\t{0:<16}'.format('unk'))
 
@@ -62,7 +63,11 @@ def saveChemistryOutput(file_path,                     #the path to the output f
     
       #and the chemistry output
       for i in range(pressure.size):
-        file.write('{0:1.10e}\t{1:1.10e}\t{2:1.10e}\t{3.value:1.10e}\t{4:1.10e}'.format(pressure[i], temperature[i], total_element_density[i], gas_number_density[i], mean_molecular_weight[i]))
+        file.write('{0:1.10e}\t{1:1.10e}\t{2:1.10e}\t{3.value:1.10e}\t{4:1.10e}'.format(pressure[i], 
+                                                                                        temperature[i], 
+                                                                                        total_element_density[i], 
+                                                                                        gas_number_density[i], 
+                                                                                        mean_molecular_weight[i]))
 
 
         #print the additional columns
@@ -89,7 +94,11 @@ def saveChemistryOutput(file_path,                     #the path to the output f
     
       #and the chemistry output
       for i in range(pressure.size):
-        file.write('{0:1.10e}\t{1:1.10e}\t{2:1.10e}\t{3.value:1.10e}\t{4:1.10e}'.format(pressure[i], temperature[i], total_element_density[i], gas_number_density[i], mean_molecular_weight[i]))
+        file.write('{0:1.10e}\t{1:1.10e}\t{2:1.10e}\t{3.value:1.10e}\t{4:1.10e}'.format(pressure[i], 
+                                                                                        temperature[i], 
+                                                                                        total_element_density[i], 
+                                                                                        gas_number_density[i], 
+                                                                                        mean_molecular_weight[i]))
 
 
         #print the additional columns
@@ -130,13 +139,17 @@ def saveMonitorOutput(file_path,                     #the path to the output fil
   nb_add_columns = 0
 
   if additional_columns is not None:
-    add_columns = np.array(additional_columns)
-    add_columns_desc = np.array(additional_columns_desc)
+    add_columns = np.atleast_1d(additional_columns)
+    add_columns_desc = np.atleast_1d(additional_columns_desc)
 
     if add_columns.size > add_columns.shape[0]:
       nb_add_columns = add_columns.shape[0]
     else:
       nb_add_columns = 1
+
+
+  if (add_columns_desc.size != nb_add_columns and nb_add_columns > 0) or (additional_columns_desc is None and nb_add_columns > 0):
+    print('Warning from saveMonitorOutput: The number of additional column descriptions does not match the number of data columns.')
 
 
   #total gas particle number density from the ideal gas law 
@@ -149,16 +162,21 @@ def saveMonitorOutput(file_path,                     #the path to the output fil
 
   with open(file_path, 'w') as file:
     #file header
-    file.write('{0:<16}{1:<16}{2:<24}{3:<24}{4:<24}{5:<24}{6:<24}{7:<24}{8:<24}'.format('#grid point', 'c_iterations', 'c_convergence', 'elem_conserved', 'P (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (g/mol)'))
+    file.write('{0:<16}{1:<16}{2:<24}{3:<24}{4:<24}{5:<24}{6:<24}{7:<24}{8:<24}'.format('#grid point', 
+                                                                                        'c_iterations', 
+                                                                                        'c_convergence', 
+                                                                                        'elem_conserved', 
+                                                                                        'P (bar)', 
+                                                                                        'T (K)', 
+                                                                                        'n_<tot> (cm-3)', 
+                                                                                        'n_g (cm-3)', 
+                                                                                        'm (g/mol)'))
 
     #print the header description of the additional columns
     #use 'unk' if the their number do not correspond to the number of additonal columns
     for i in range (nb_add_columns):
       if add_columns_desc.size == nb_add_columns:
-        if (add_columns_desc.size == 1):
-          file.write('{0:<24}'.format(additional_columns_desc))
-        else:
-          file.write('{0:<24}'.format(additional_columns_desc[i]))
+        file.write('{0:<24}'.format(additional_columns_desc[i]))
       else:
         file.write('{0:<24}'.format('unk'))
 
@@ -210,7 +228,7 @@ def saveMonitorOutput(file_path,                     #the path to the output fil
 
 
 
-#Saves the FastChem output in a pickle file using Pandas
+#Saves the FastChem output in a pickle file using pandas
 def saveChemistryOutputPandas(file_path,                     #the path to the output file
                               temperature, pressure,         #arrays of temperature and pressure
                               total_element_density,         #array of total element density 
@@ -300,7 +318,7 @@ def saveChemistryOutputPandas(file_path,                     #the path to the ou
     data = np.hstack([rows, mixing_ratios[:,select_species_id]])
 
 
-  #combine column headers and data
+  #combine column headers and data into a pandas DataFrame
   df = pd.DataFrame(data=data, columns=columns)
 
 
@@ -311,7 +329,7 @@ def saveChemistryOutputPandas(file_path,                     #the path to the ou
 
 
 
-#Saves the FastChem monitor output in a pickle file using Pandas
+#Saves the FastChem monitor output in a pickle file using pandas
 def saveMonitorOutputPandas(file_path,                     #the path to the output file
                             temperature, pressure,         #arrays of temperature and pressure
                             element_conserved,             #array of int for the element conservation
@@ -402,7 +420,7 @@ def saveMonitorOutputPandas(file_path,                     #the path to the outp
   data = np.hstack([rows, element_conserved])
 
 
-  #combine column headers and data
+  #combine column headers and data into a pandas DataFrame
   df = pd.DataFrame(data=data, columns=columns)
 
   #change some of the datatypes back to int

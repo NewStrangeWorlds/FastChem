@@ -28,6 +28,8 @@ plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'C2H2']
 
 
 #create a FastChem object
+#it needs the locations of the element abundance and equilibrium constants files
+#these locations have to be relative to the one this Python script is called from
 fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../input/logK.dat', 1)
 
 
@@ -60,7 +62,9 @@ solar_abundances = np.array(fastchem.getElementAbundances())
 index_C = fastchem.getSpeciesIndex('C')
 index_O = fastchem.getSpeciesIndex('O')
 
+
 #loop over the C/O ratios
+#since we constantly change the element abundances, we have to call FastChem separately each time
 for i in range(0, c_to_o.size):
   element_abundances = np.copy(solar_abundances)
   
@@ -83,7 +87,7 @@ for i in range(0, c_to_o.size):
   temperature[i] = input_data.temperature[0]
   pressure[i] = input_data.pressure[0]
 
-  
+
   number_densities[i,:] = np.array(output_data.number_densities[0])
 
   total_element_density[i] = output_data.total_element_density[0]
@@ -179,3 +183,6 @@ plt.xlabel("C/O")
 plt.legend(plot_species_symbols)
 
 plt.show()
+
+#we could also save the figure as a pdf
+#plt.savefig(output_dir + '/fastchem_c_to_o_fig.pdf')

@@ -42,6 +42,7 @@ output_data = pyfastchem.FastChemOutput()
 input_data.temperature = temperature
 input_data.pressure = pressure
 
+
 #run FastChem on the entire p-T structure
 fastchem_flag = fastchem.calcDensities(input_data, output_data)
 print("FastChem reports:", pyfastchem.FASTCHEM_MSG[fastchem_flag])
@@ -90,7 +91,7 @@ saveChemistryOutput(output_dir + '/chemistry_select.dat',
 
 
 #save the monitor output to a file
-#here, the data is saved as a Pandas DataFrame inside a Pickle file
+#here, the data is saved as a pandas DataFrame inside a pickle file
 # saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
 #                   temperature, pressure, 
 #                   output_data.element_conserved,
@@ -101,7 +102,7 @@ saveChemistryOutput(output_dir + '/chemistry_select.dat',
 #                   fastchem)
 
 # #this would save the output of all species
-# #here, the data is saved as a Pandas DataFrame inside a Pickle file
+# #here, the data is saved as a pandas DataFrame inside a pickle file
 # saveChemistryOutputPandas(output_dir + '/chemistry.pkl',
 #                     temperature, pressure,
 #                     output_data.total_element_density,
@@ -137,6 +138,7 @@ plt.xlabel("Mixing ratios")
 plt.ylabel("Pressure (bar)")
 plt.legend(plot_species_symbols)
 
-
-#plt.savefig(output_dir + '/fastchem_fig.pdf')
 plt.show()
+
+#we could also save the figure as a pdf
+#plt.savefig(output_dir + '/fastchem_fig.pdf')
