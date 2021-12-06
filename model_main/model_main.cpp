@@ -81,8 +81,8 @@ int main(int argc, char *argv[])
     double temperature_in;
     double pressure_in;
 
-    //if (!(line_stream >> pressure_in >> temperature_in)) continue;
-    if (!(line_stream >> temperature_in >> pressure_in)) continue;
+    if (!(line_stream >> pressure_in >> temperature_in)) continue;
+    //if (!(line_stream >> temperature_in >> pressure_in)) continue;
 
     pressure.push_back(pressure_in);  
     temperature.push_back(temperature_in);

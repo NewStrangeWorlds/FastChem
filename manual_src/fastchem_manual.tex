@@ -100,7 +100,7 @@ equilibrium chemistry model that can calculate the gas phase chemical compositio
 
 This user guide is released under the Creative Commons Licence (CC BY SA). Licensees may copy and distribute the work and make derivative works based on it only if they give the authors the credits by providing a reference to the original guide and the corresponding GitHub repository. Licensees may also distribute derivative works only under a license identical to ("not more restrictive than") the license that governs the original work.
 
-The \fc repository also contains an additional open source code, the \pb library (\url{https://github.com/pybind/pybind11}) that converts \cpp code into a module callable from Python.
+The \fc repository also links to an additional open source code, the \pb library (\url{https://github.com/pybind/pybind11}) that converts \cpp code into a module callable from Python.
 This library is licensed under the BSD licence, see \url{https://github.com/pybind/pybind11/blob/master/LICENSE} for details.
 
 \newpage
@@ -362,7 +362,7 @@ Following a successful configuration and compilation via \verb|CMake|, the \fc e
 \begin{lstlisting}[language=bash]
   ./fastchem input/config.input
 \end{lstlisting}
-where the second argument is the location of the config file that is explained in the next section. \fc will read in a pre-defined temperature-pressure structures, the location of which is also specified in the config file. After a successful calculation, \fc will produce two output files with a detailed chemistry output and one with diagnostic output. The location of these files is also contained in the config file and its contents are discussed in Sect. \ref{sec:fc_cpp_output}.
+where the second argument is the location of the config file that is explained in the next section. \fc will read in a pre-defined pressure-temperature structures, the location of which is also specified in the config file. After a successful calculation, \fc will produce two output files with a detailed chemistry output and one with diagnostic output. The location of these files is also contained in the config file and its contents are discussed in Sect. \ref{sec:fc_cpp_output}.
 
 
 \section{Config file}
@@ -375,16 +375,16 @@ The config file used for the \cpp stand-alone executable has the following struc
 
 It contains the required parameters in the following order:
 \begin{itemize}
-  \item location of the file with the temperature-pressure structure the chemistry should be calculated for
-  \item desired location and file name for the chemistry output
-  \item desired location and file name for the diagnostic output
-  \item verbose level, where a level of \verb|1| is almost silent and \verb|4| produces a lot of diagnostic output on the terminal. Increase this level if you encounter issues to identify the source of the problems.
-  \item the output format for the species' abundances. By default, \fc will use number densities in units of cm$^{-3}$. If you use the keyword \verb|MR|, mixing ratios will be used instead. Any keyword other than \verb|MR| will result in the default option of using number densities.
-  \item location of the file with the element abundances, see Sect. \ref{sec:fastchem_input_files} for details
-  \item location of the file with the thermochemical and stoichiometric data for all species, see Sect. \ref{sec:fastchem_input_files} for details 
-  \item relative accuracy of the chemistry iterations, used as convergence criterion (also for Newton's method)
-  \item maximum number of chemistry iterations
-  \item maximum number of internal solver method iterations (Newton, Nelder-Mead \& bisection methods)
+  \item Location of the file with the pressure-temperature structure the chemistry should be calculated for. The file should contain two columns, where the first one is the pressure in units of bar and the second one the temperature in K. Header lines will be ignored.
+  \item Desired location and file name for the chemistry output
+  \item Desired location and file name for the diagnostic output
+  \item Verbose level, where a level of \verb|1| is almost silent and \verb|4| produces a lot of diagnostic output on the terminal. Increase this level if you encounter issues to identify the source of the problems.
+  \item The output format for the species' abundances. By default, \fc will use number densities in units of cm$^{-3}$. If you use the keyword \verb|MR|, mixing ratios will be used instead. Any keyword other than \verb|MR| will result in the default option of using number densities.
+  \item Location of the file with the element abundances, see Sect. \ref{sec:fastchem_input_files} for details
+  \item Location of the file with the thermochemical and stoichiometric data for all species, see Sect. \ref{sec:fastchem_input_files} for details 
+  \item Relative accuracy of the chemistry iterations, used as convergence criterion (also for Newton's method)
+  \item Maximum number of chemistry iterations
+  \item Maximum number of internal solver method iterations (Newton, Nelder-Mead \& bisection methods)
 \end{itemize}
 
 In the input file, the number of iterations for the Newton, Nelder-Mead, and bisection methods are assumed to be the same. This number can be adjusted individually for each of these internal solvers by using the corresponding methods of the \fc object class listed in Sect. \ref{sec:fastchem_methods}. The convergence criterion for Newton's method is also set to the accuracy of the chemistry iteration by default. This convergence criterion can also be changed by the \lstinline!FastChem.setNewtonAccuracy! method (see Sect. \ref{sec:fastchem_methods}).
@@ -649,6 +649,12 @@ The monitor output file has the same format as the one produced by the \cpp vers
 \bigbreak
 
 All arguments are identical to those of the previous ASCII output function. The saved panda \lstinline[language=Python]!DataFrame! contains the same columns and headers as the simple text output. The only difference between the outputs is that for the \lstinline[language=Python]!DataFrame! format, the element conservation and \fc flags are not converted to strings (i.e. to \texttt{fail} or \texttt{ok}) but rather have their original integer values that are returned by \fc. Their values are discussed in Sect. \ref{sec:pfc_input_ouput_struct}  \& \ref{sec:pfc_constants}.
+
+
+\section{Sample input and output files}
+
+
+
 
 
 \part{Detailed \texttt{C++} object class and Python module description}
