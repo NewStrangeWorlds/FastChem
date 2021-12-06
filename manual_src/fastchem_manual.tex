@@ -390,6 +390,11 @@ It contains the required parameters in the following order:
 In the input file, the number of iterations for the Newton, Nelder-Mead, and bisection methods are assumed to be the same. This number can be adjusted individually for each of these internal solvers by using the corresponding methods of the \fc object class listed in Sect. \ref{sec:fastchem_methods}. The convergence criterion for Newton's method is also set to the accuracy of the chemistry iteration by default. This convergence criterion can also be changed by the \lstinline!FastChem.setNewtonAccuracy! method (see Sect. \ref{sec:fastchem_methods}).
 
 
+\section{Benchmark input and output files}
+
+The input folder contains a selected sample of atmospheric structures of various objects, from AGB stars to exoplanets. These files have the same format as the one expected by the \cpp stand-alone version. The pre-computed chemistry output of these benchmark structures can be found in the folder \texttt{output\_benchmarks}. This chemistry output has been generated with the standard \fc options and the standard solar element abundance and equilibrium constants files. These benchmarks can be used to validate if the FastChem installation works correctly.
+
+
 \chapter{Running \pfc}
 
 In addition to the \cpp executable, we provide several Python scripts that can run the \fc code through its Python interface \pfc. The sample scripts can be found within the \verb|python/| folder. These sample scripts show different use cases and can be used as a basis for your own \fc Python scripts.
@@ -649,10 +654,6 @@ The monitor output file has the same format as the one produced by the \cpp vers
 \bigbreak
 
 All arguments are identical to those of the previous ASCII output function. The saved panda \lstinline[language=Python]!DataFrame! contains the same columns and headers as the simple text output. The only difference between the outputs is that for the \lstinline[language=Python]!DataFrame! format, the element conservation and \fc flags are not converted to strings (i.e. to \texttt{fail} or \texttt{ok}) but rather have their original integer values that are returned by \fc. Their values are discussed in Sect. \ref{sec:pfc_input_ouput_struct}  \& \ref{sec:pfc_constants}.
-
-
-\section{Sample input and output files}
-
 
 
 
