@@ -1,0 +1,29 @@
+#Atmospheric profile input file
+input/Late_M-dwarf.dat
+
+#Chemistry output file
+output/chemistry.dat
+
+#Monitor output file
+output/monitor.dat
+
+#FastChem console verbose level (1 - 4); 1 = almost silent, 4 = detailed console output
+1
+
+#Output mixing ratios (MR) or particle number densities (ND, default)
+MR
+
+#Element abundance file   
+input/element_abundances_solar.dat
+
+#Species data file    
+input/logK.dat
+
+#Accuracy of chemistry iteration
+1.0e-4
+
+#Max number of chemistry iterations 
+80000  
+
+#Max number internal solver iterations
+20000

@@ -4,4 +4,12 @@
 /_deps/*
 python/pyfastchem.cpython*
 python/__pycache__/*
+manual_src/fastchem_manual.aux
+manual_src/fastchem_manual.bbl
+manual_src/fastchem_manual.blg
+manual_src/fastchem_manual.log
+manual_src/fastchem_manual.out
+manual_src/fastchem_manual.pdf
+manual_src/fastchem_manual.synctex.gz
+manual_src/fastchem_manual.toc
 fastchem

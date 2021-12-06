@@ -1,0 +1,11 @@
+#logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:
+#includes elements with eps >= eps_Ge
+#fit coefficients calculated from indicated data source.
+Al1Cl1 Aluminum_Chloride : Al 1 Cl 1 # Chase, M. et al., JANAF tables, 1998.
+   6.01726e+04  -9.82181e-01  -5.80778e+00   1.65774e-04  -6.11197e-09
+
+Al1Cl1F1 Aluminum_Chloride_Fluoride : Al 1 Cl 1 F 1 # Chase, M. et al., JANAF tables, 1998.
+   1.22295e+05  -1.60844e+00  -1.43675e+01   3.72486e-04  -1.98493e-08
+
+Al1Cl1F2 Aluminum_Chloride_Fluoride : Al 1 Cl 1 F 2 # Chase, M. et al., JANAF tables, 1998.
+   1.93126e+05  -1.90100e+00  -3.00531e+01   6.68640e-04  -3.72957e-08
