@@ -74,6 +74,12 @@ int main(int argc, char *argv[])
   std::string line;
   std::fstream file(config.atmosphere_file.c_str(), std::ios::in);
 
+  if (file.fail())
+  {
+    std::cout << "Couldn't open input file: " << config.atmosphere_file << "\n";
+    return 0;
+  }
+
   while (std::getline(file, line))
   {
     std::stringstream  line_stream(line);
