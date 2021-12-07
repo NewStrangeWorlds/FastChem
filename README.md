@@ -1,4 +1,4 @@
-# FastChem 2.0#
+# FastChem 2.0 #
 #### Authors: Daniel Kitzmann, Joachim Stock ####
 
 # Overview #
@@ -21,6 +21,8 @@ FastChem comes with user guide in pdf format that can be found in the *manual* f
 
 
 # Licence #
+
+This project is Copyright (c) Daniel Kitzmann and Joachim Stock.
 
 FastChem is released under the GNU Public Licence (GPL) 3.0. That means, it can be freely copied, edited, and re-distributed. If the code is re-distributed it has to be released under at least a GPL 3.0 licence as well. The full licence of FastChem can be found in the repository *licence.md* file or under https://www.gnu.org/licenses/gpl-3.0.html.
 
