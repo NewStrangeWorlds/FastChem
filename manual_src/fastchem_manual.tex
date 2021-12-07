@@ -1,5 +1,5 @@
 
-\documentclass[numbers=noenddot]{fcmanual}
+\documentclass[numbers=noenddot]{aux/fcmanual}
 
 \usepackage{lmodern}
 \usepackage[latin1]{inputenc}
@@ -251,7 +251,7 @@ Thus, if one wants to change the oxygen element abundance in the input file (whi
 \newpage
 \paragraph{File structure}
 The element abundance file should have the following structure to be readable by \fc:
-\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{code/element_abundances_solar.dat}
+\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{aux/element_abundances_solar.dat}
 
 The first line is always a header line that provides important information for the user and is ignored by \fc. All subsequent lines contain each the symbol for an element and its element abundance. Molecules that contain elements not present in this file are ignored. The element abundance for  the electron has an arbitrary value. It is only present in the file to inform \fc that the electrons (and thus ions) should be included in the chemistry calculations. Its element abundance $\epsilon_e$ will internally be set to 0 because its number density is determined by charge balance. The elements are not required to be in any particular order. 
 
@@ -279,7 +279,7 @@ It is in principle possible to use your own parametrisation. For that, you need 
 
 \paragraph{File structure}
 For \fc, the species information file should have the following structure:
-\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{code/logK_sample.dat}
+\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{aux/logK_sample.dat}
 The first three lines of the file are treated as header lines and discarded when reading in the file. \\
 
 The data for each species consists of two lines, while different species are separated by a blank line.
@@ -305,7 +305,7 @@ Alternatively, \fc also has the option to read an external file with the require
 
 \paragraph{File structure}
 The optional file has the following, simple structure, starting with a header line that is ignored when reading in the file:
-\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{code/chemical_elements.dat}
+\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{aux/chemical_elements.dat}
 It contains three columns, where the first one lists the elements' symbols, the second their names, and the third their atomic weights. An example of this file can be found in the folder \texttt{fastchem\_src/chem\_input/}.
 
 
@@ -315,7 +315,7 @@ It contains three columns, where the first one lists the elements' symbols, the 
 
 \paragraph{File structure}
 The optional parameter file has the following structure:
-\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{code/parameters.dat}
+\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{aux/parameters.dat}
 The first two entries are the locations of the element abundance and species data files. The next parameter determines the convergence criterion of the chemistry iteration. This value is also used for the internal Newton's method. The latter one can be adjusted within in the code by the methods listed in Sects. \ref{sec:fastchem_methods} \& \ref{sec:pfc_methods}.
 
 The next parameter sets the maximum numbers of iterations for the different internal numerical methods employed within \fc. This includes the Newton, Nelder-Mead, and bisection methods. Using the corresponding functions of the \fc object class (Sects. \ref{sec:fastchem_methods} \& \ref{sec:pfc_methods}), this number can be adjusted for each of these numerical methods individually. 
@@ -371,7 +371,7 @@ The config file that \fc will read in at the beginning contains all important pa
 An example of such an input file is located in the input folder: \verb|input/config.input|. While this config file allows to set the most important \fc parameters, some more advanced ones are not contained in this file and can only be set by invoking special \fc functions during runtime. This, in particular, refers to the use of the optional scaling factors as described in the appendix of Paper II. More information on activating these scaling factors can be found in the description of the object class in Sect. \ref{sec:fastchem_methods}.\\
 
 The config file used for the \cpp stand-alone executable has the following structure:
-\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{code/config.input}
+\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{aux/config.input}
 
 It contains the required parameters in the following order:
 \begin{itemize}
@@ -1334,6 +1334,6 @@ The \pfc object returned from \lstinline[language=Python]!pyfastchem.FastChem()!
 
 
 \bibliographystyle{aasjournal}
-\bibliography{references}
+\bibliography{aux/references}
   
 \end{document} 

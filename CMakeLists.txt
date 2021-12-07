@@ -60,7 +60,7 @@ set(SRC_FASTCHEM
   
 
 set(SRC_MAIN
-  model_main/model_main.cpp)
+  model_src/model_main.cpp)
 
   
 set(SRC_PYTHON_WRAPPER
