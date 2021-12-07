@@ -19,6 +19,7 @@
 
 #include "../fastchem_src/fastchem.h"
 #include "../fastchem_src/input_output_struct.h"
+#include "../fastchem_src/fastchem_constants.h"
 
 #include <vector>
 #include <iostream>
@@ -111,6 +112,9 @@ int main(int argc, char *argv[])
   input.pressure = pressure;
 
   unsigned int fastchem_flag = fastchem.calcDensities(input, output);
+  
+  //print out the status message for the returned FastChem flag
+  std::cout << "FastChem reports: " << fastchem::FASTCHEM_MSG[fastchem_flag] << "\n\n";
 
   if (fastchem_flag == fastchem::FASTCHEM_INITIALIZATION_FAILED)
   {
