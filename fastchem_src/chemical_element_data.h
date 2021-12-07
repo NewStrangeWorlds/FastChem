@@ -1,7 +1,7 @@
 
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2020 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
