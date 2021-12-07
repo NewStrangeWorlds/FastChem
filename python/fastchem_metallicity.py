@@ -130,6 +130,7 @@ saveChemistryOutput(output_dir + '/chemistry.dat',
 
 
 #save the monitor output to a file
+#here, the data is saved as a pandas DataFrame inside a pickle file
 #we add an additional output column for the metallicity
 # saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
 #                   temperature, pressure, 
@@ -142,7 +143,8 @@ saveChemistryOutput(output_dir + '/chemistry.dat',
 #                   metallicity, 'M/H')
 
 
-# #this would save the output of all species
+#this would save the output of all species
+#here, the data is saved as a pandas DataFrame inside a pickle file
 # saveChemistryOutputPandas(output_dir + '/chemistry.pkl', 
 #                     temperature, pressure,
 #                     total_element_density, 
