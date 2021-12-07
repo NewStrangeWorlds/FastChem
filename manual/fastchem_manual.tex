@@ -353,7 +353,7 @@ All remaining columns list the status of the element conservation for each eleme
 
 The \fc object class is designed to be easily coupled to other models. In addition to the object class itself, we also provide a stand-alone executable that can call the module with some simple input scripts. This stand-alone version, however, only provides a very basic functionality, such as reading in a specific temperature-pressure profile that \fc will be run for. The stand-alone version does, for example, not provide more advanced capabilities, such as looping over different metallicity values or C/O ratios. If you intend to use \fc for such purposes, you need to adapt the code that calls \fc.
 
-The source code that is responsible for calling the actual \fc chemistry is located in the folder \verb|model_main/|. It is split across three different files: \verb|model_main/model_main.cpp|, the actual main program, \verb|model_main/read_config.h| for reading in the config file, and \verb|model_main/save_output.h| for managing the output. Thus, if you want to add another parameter to the config file, you would need to edit \verb|model_main/read_config.h|, while changes to the format of the ouptut files can be made in \verb|model_main/save_output.h|. Changing the contents of these files obviously require a re-compilation of the code.
+The source code that is responsible for calling the actual \fc chemistry is located in the folder \verb|model_src/|. It is split across three different files: \verb|model_src/model_main.cpp|, the actual main program, \verb|model_src/read_config.h| for reading in the config file, and \verb|model_src/save_output.h| for managing the output. Thus, if you want to add another parameter to the config file, you would need to edit \verb|model_src/read_config.h|, while changes to the format of the output files can be made in \verb|model_src/save_output.h|. Changing the contents of these files obviously require a re-compilation of the code.
 
 
 \section{Starting the \fc executable}
@@ -558,7 +558,7 @@ Saving the chemistry output with the panda \lstinline[language=Python]!DataFrame
 
 \bigbreak
 
-\lstinline[language=Python, breaklines, breakatwhitespace]!saveChemistryOutputPanda(file_path, temperature, pressure, total_element_density, mean_molecular_weight, number_densities, fastchem, output_species=None, additional_columns=None, additional_columns_desc=None)!
+\lstinline[language=Python, breaklines, breakatwhitespace]!saveChemistryOutputPandas(file_path, temperature, pressure, total_element_density, mean_molecular_weight, number_densities, fastchem, output_species=None, additional_columns=None, additional_columns_desc=None)!
 
 \bigbreak
 
