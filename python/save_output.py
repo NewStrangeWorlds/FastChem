@@ -21,15 +21,17 @@ def saveChemistryOutput(file_path,                     #the path to the output f
 
   if additional_columns is not None:
     add_columns = np.atleast_1d(additional_columns)
-    add_columns_desc = np.atleast_1d(additional_columns_desc)
 
     if add_columns.size > add_columns.shape[0]:
       nb_add_columns = add_columns.shape[0]
     else:
       nb_add_columns = 1
+  
+
+  add_columns_desc = np.atleast_1d(additional_columns_desc)
 
 
-  if (add_columns_desc.size != nb_add_columns and nb_add_columns > 0) or (additional_columns_desc is None and nb_add_columns > 0):
+  if (nb_add_columns > 0 and add_columns_desc.size != nb_add_columns) or (additional_columns_desc is None and nb_add_columns > 0):
     print('Warning from saveChemistryOutput: The number of additional column descriptions does not match the number of data columns.')
 
 
@@ -140,7 +142,6 @@ def saveMonitorOutput(file_path,                     #the path to the output fil
 
   if additional_columns is not None:
     add_columns = np.atleast_1d(additional_columns)
-    add_columns_desc = np.atleast_1d(additional_columns_desc)
 
     if add_columns.size > add_columns.shape[0]:
       nb_add_columns = add_columns.shape[0]
@@ -148,7 +149,10 @@ def saveMonitorOutput(file_path,                     #the path to the output fil
       nb_add_columns = 1
 
 
-  if (add_columns_desc.size != nb_add_columns and nb_add_columns > 0) or (additional_columns_desc is None and nb_add_columns > 0):
+  add_columns_desc = np.atleast_1d(additional_columns_desc)
+
+
+  if (nb_add_columns > 0 and add_columns_desc.size != nb_add_columns) or (additional_columns_desc is None and nb_add_columns > 0):
     print('Warning from saveMonitorOutput: The number of additional column descriptions does not match the number of data columns.')
 
 
