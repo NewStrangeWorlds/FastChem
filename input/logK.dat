@@ -1237,8 +1237,8 @@ C2- Carbon_Ion : C 2 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
 Ca1+ Calcium_Ion : Ca 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -7.1024198931164487e+04   2.2426084168072009e+00  -1.1861243662227025e+01   2.1170817987284374e-04  -2.3275060186835147e-08 
 
-Ca1- Calcium_Ion : Ca 1 e- 1 # Hoeijmakers et. al, Astronomy and Astrophysics, submitted.
-   2.491226e+02            -2.330029e+00             1.530053e+01            -6.796035e-05             5.088252e-09
+Ca1- Calcium_ion : Ca 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  2.4912255657019540e+02  -2.3300288293151170e+00   1.5300527600561811e+01  -6.7960352864080735e-05   5.0882520198301422e-09
 
 Ca1H1O1+ Calcium_Hydroxide_Ion : Ca 1 H 1 O 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.3334683074305307e+04   2.0271023780114206e-01  -2.3530978660598919e+01   8.4745326634219631e-04  -6.5162012562664586e-08 
