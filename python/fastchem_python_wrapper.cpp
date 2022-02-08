@@ -1,5 +1,5 @@
-#include "../_deps/pybind11-src/include/pybind11/pybind11.h"
-#include "../_deps/pybind11-src/include/pybind11/stl.h"
+#include "pybind11/pybind11.h"
+#include "pybind11/stl.h"
 #include "../fastchem_src/fastchem.h"
 #include "../fastchem_src/input_output_struct.h"
 #include "../fastchem_src/fastchem_constants.h"
