@@ -11,9 +11,10 @@ from distutils.dir_util import mkpath
 __version__ = "2.0"
 
 
+#Custom build class that provides additional checks for OpenMP
 class custom_build_ext(build_ext):
   
-  #Compile a test program to determine if C++ compiler supports OpenMP.
+  #Compile a test program to determine if C++ compiler supports OpenMP
   def _check_openmp_support(self):
     mkpath(self.build_temp)
         
@@ -30,7 +31,7 @@ class custom_build_ext(build_ext):
                     int omp_test() 
                     {
                       #pragma omp parallel for
-                      for (int i=0; i<10; ++i);
+                      for (int i=0; i<5; ++i);
                     
                       return omp_get_num_threads();
                     }
@@ -54,7 +55,7 @@ class custom_build_ext(build_ext):
     
       return use_openmp
 
-  #add OpenMP compiler and linker flags if necessary
+  #Add OpenMP compiler and linker flags if necessary
   def build_extensions(self):
     use_openmp = self._check_openmp_support()
         
@@ -63,9 +64,9 @@ class custom_build_ext(build_ext):
         if not ext.extra_compile_args:
           ext.extra_compile_args = []
         ext.extra_compile_args.append('-fopenmp')
+        
         if not ext.extra_link_args:
           ext.extra_link_args = []
-        
         ext.extra_link_args.append('-fopenmp')
       
       build_ext.build_extensions(self)
@@ -76,7 +77,8 @@ ext_modules = [
   Pybind11Extension(
     "pyfastchem",
     sorted(glob("fastchem_src/*.cpp") +
-           glob("python/*.cpp")),
+           glob("python/fastchem_python_wrapper.cpp")),
+    define_macros=[('_SETUP_PY', '1')],
     extra_compile_args = ['-pedantic', '-MMD'],
     extra_link_args    = ['-pedantic', '-MMD'],
     cxx_std = 11,
