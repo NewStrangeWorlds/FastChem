@@ -58,14 +58,14 @@ unsigned int FastChem<double_type>::determineSolverOrder(const Element<double_ty
   if (species.symbol != "e-") //first the normal elements
   {
     for (auto & i : species.molecule_list)
-      if (unsigned (molecules[i].stoichiometric_vector[species.index]) > solver_order && molecules[i].abundance == species.abundance)
+      if (static_cast<unsigned int>(molecules[i].stoichiometric_vector[species.index]) > solver_order && molecules[i].abundance == species.abundance)
         solver_order = molecules[i].stoichiometric_vector[species.index];
   }
   else //then the electrons
   {
     for (auto & i : species.molecule_list)
-      if (std::abs(molecules[i].stoichiometric_vector[species.index]) > solver_order)
-        solver_order = std::abs(molecules[i].stoichiometric_vector[species.index]); 
+      if (static_cast<unsigned int>(std::abs(molecules[i].stoichiometric_vector[species.index])) > solver_order)
+        solver_order = static_cast<unsigned int>(std::abs(molecules[i].stoichiometric_vector[species.index])); 
 
   }
 
