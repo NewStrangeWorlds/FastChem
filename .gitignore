@@ -2,6 +2,8 @@
 /output/*
 /build
 /_deps/*
+/dist/*
+/pyfastchem.egg-info/
 python/pyfastchem.cpython*
 python/__pycache__/*
 manual/fastchem_manual.aux
