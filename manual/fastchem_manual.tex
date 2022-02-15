@@ -21,7 +21,7 @@
 	    Joachim Stock
 }
 
-\title{FastChem 2.0}
+\title{FastChem 2.1}
 \subtitle{User and Reference Guide}
 \date{}
 
@@ -124,11 +124,23 @@ This guide provides basic information on the \fc code and how to use it. It is s
 
 \chapter{Installation}
 
+\fc can be installed in two different ways: either using \ttt{CMake} or by calling a Python setup function \verb|setup.py|. The former will install the \ttt{C++} stand-alone executable and optionally the Python module, while the latter one will only provide the \pfc Python module. The Python module created by \ttt{CMake} will only be available locally in the \ttt{python} directory, while the one produced by \verb|setup.py| will be integrated in your standard Python library and, thus, work as a normal Python package.
+
+
+\section{Obtaining the code}
+
+\fc is hosted on the Exoclime GitHub page: \url{https://github.com/exoclime/fastchem}. If \texttt{git} is available on a computer, the repository can be simply cloned with
+
+\begin{lstlisting}[language=bash]
+git clone https://github.com/exoclime/fastchem
+\end{lstlisting}
+
 \section{Prerequisites}
 
-\fc is written in \ttt{C++}. It uses features of the \ttt{C++11} standard and, therefore, requires a compiler that implements this standard. We also provide an optional Python interface, allowing \fc to be called directly from within a Python script. The interface is based on the Python package \pb that is included as a submodule within \fc.
+\fc is written in \ttt{C++}. It uses features of the \ttt{C++11} standard and, therefore, requires a compiler that implements this standard. We also provide an optional Python interface, allowing \fc to be called directly from within a Python script. The interface is based on the Python package \pb.
 
-The complete list of prerequisites for a basic installation is:
+\subsection{Prerequisites for installation via \ttt{CMake}}
+The complete list of prerequisites for a basic \ttt{CMake} installation is:
 \begin{itemize}
 	\item a \ttt{C++} compiler (e.g. \ttt{g++} or \ttt{Clang} on MacOS)
 	\item \ttt{CMake}, at least version 3.10
@@ -137,35 +149,45 @@ The complete list of prerequisites for a basic installation is:
 The \ttt{C++} compiler will be detected by the CMake script when it generates the makefiles. For some of its optional components \fc will need:
 \begin{itemize}
 	\item an \ttt{OpenMP} library (to run \fc in parallel)
-	\item a Python interpreter (for the Python interface)
+	\item a Python 3.x interpreter (for the Python interface)
 \end{itemize}
 
 
-\section{Obtaining the code}
+\subsection{Prerequisites for Python installation via \ttt{setup.py} }
+An installation of \pfc via the \verb|setup.py| script requires
+\begin{itemize}
+	\item a Python 3.x interpreter
+	\item a \ttt{C++} compiler (e.g. \ttt{g++} or \ttt{Clang} on MacOS)
+	\item an \ttt{OpenMP} library (optional, required to run \fc in parallel)
+\end{itemize}
+as well as the following Python modules:
+\begin{itemize}
+	\item PyBind11 
+	\item setuptools
+	\item distutils
+	\item glob
+	\item tempfile
+\end{itemize}
 
-\fc is hosted on the Exoclime GitHub page: \url{https://github.com/exoclime/fastchem}. If \texttt{git} is available on a computer, the repository can be simply cloned with
 
-\begin{lstlisting}[language=bash]
-  git clone https://github.com/exoclime/fastchem
-\end{lstlisting}
+\subsection{Supported \ttt{C++} compilers}
+
+The compilation of \fc has been tested on a variety of different compilers and platforms. In particular, it was verified that \fc can be compiled with:
+\begin{itemize}
+	\item GCC 7.5 or newer
+	\item Clang 12.0 (including Apple's Clang 12.0)
+\end{itemize}
+
+Since \fc just uses plain \cpp without any external library, any compiler that supports the \ttt{C++11} standard should be able to compile the code successfully.
 
 
 \subsection{PyBind11 Library}
 
 For its Python interface, \fc requires the \pb library that translates the Python calls into \cpp. While \pb can in theory be installed via \texttt{pip}, \texttt{conda}, or \texttt{brew} (on MacOS), \texttt{CMake} isn't always able to properly locate the installed library. 
 
-Therefore, we chose to include \pb as a submodule in the \fc repository. \texttt{CMake} will take header files and Python scripts provided by the submodule to create the \texttt{PyFastChem} module. No separate compilation or installation of \pb is required. During the setup stage, \texttt{CMake} will download the \pb library automatically. This code will be placed into a separate \texttt{\_deps} folder.
+For the installation via \texttt{CMake}, we therefore chose to include \pb as a submodule in the \fc repository. \texttt{CMake} will take header files and Python scripts provided by the submodule to create the \texttt{PyFastChem} module. No separate compilation or installation of \pb is required. During the setup stage, \texttt{CMake} will download the \pb library automatically. This code will be placed into a separate \texttt{\_deps} folder.
 
-
-\subsection{Supported compilers}
-
-The compilation of \fc has been tested on a variety of different compilers and platforms. In particular, it was verified that \fc can be compiled with:
-\begin{itemize}
-  \item GCC 7.5 or newer
-  \item Clang 12.0 (including Apple's Clang 12.0)
-\end{itemize}
-
-Since \fc just uses plain \cpp without any external library, any compiler that supports the \ttt{C++11} standard should be able to compile the code successfully.
+If you choose to install \pfc via the \verb|setup.py| function, then the \pb library has to already present in your local Python installation.
 
 
 \section{Configuration and compilation of \fc with CMake}
@@ -215,6 +237,25 @@ If the Python interface of \fc is used, a corresponding Python 3 installation is
 \subsection{Notes on Windows}
 
 While in theory \fc could be run on Windows if meeting all the prerequisites, we have never tested the compilation and execution of \fc on such a system. In principle, this should be possible under a virtual Linux environment, such as \texttt{cygwin}, or with the Windows Subsystem for Linux (WSL) shipped with the newer versions of Windows 10. However, due to the lack of a Windows system, we are unable to test this and, therefore, officially at least we cannot support \fc running on Windows.
+
+
+\section{Installation of \pfc with Python}
+\label{sec:install_python}
+
+In addition to \ttt{CMake}, the Python interface of \fc, \pfc, can also be installed via the \verb|setup.py| script located in the root directory. The setup is started by
+\begin{lstlisting}[language=bash]
+python setup.py install
+\end{lstlisting}
+assuming that \verb|python| points to your Python 3.x executable. Otherwise, replace \verb|python| with \verb|python3|. As discussed above, using \verb|setup.py| will only create the Python module of \fc, not the stand-alone executable.
+
+The module itself will be installed in your local Python package library and, thus, be available throughout your system like any other normal Python package. The module's location and additional module information can be obtained via
+\begin{lstlisting}[language=bash]
+pip show pyfastchem
+\end{lstlisting}
+Depending on your Python installation, \verb|pip| might need to be replaced by \verb|pip3|.\\
+
+The script will also try to detect the presence of compiler support for \texttt{OpenMP}. This is currently likely to fail in case of MacOS since Apple's Clang compiler officially does not support this library. We might adapt the \verb|setup.py| script in the future to allow for alternative compilers under MacOS.
+
 
 
 \part{Running \fc and \pfc}
@@ -1019,8 +1060,18 @@ The vectors of the output structure don't need to be pre-allocated. This will be
 \chapter{\pfc: The Python module of \fc}
 \label{sec:pyfc_details}
 
-By using the library \pb, \fc can be called directly within Python. This requires the compilation of \fc's Python wrapper that is located in the file \verb|python/fastchem_python_wrapper.cpp|. As described in Sect. \ref{sec:install_config} this will be done automatically when \ttt{cmake} is configured with the corresponding option. \pfc currently only links to the \lstinline!long double! \cpp version of \fc. \\
-If the configuration and compilation is successful, a module file should be present in the \verb|python/| folder that contains the Python module which acts as a wrapper between Python and the \cpp version of \fc. The file should be named \verb|pyfastchem.cpython-xxxx|, where \verb|xxxx| will be a combination of your Python version and operating system. A description of the module is given in Sect. \ref{sec:pyfc_module} Besides the \pfc module, we also provide several example Python scripts that show how to call \fc from within Python for several different scenarios. We discuss the examples in Sect. \ref{sec:pyfc_examples}.
+By using the library \pb, \fc can be called directly within Python. This requires the compilation of \fc's Python wrapper that is located in the file \verb|python/fastchem_python_wrapper.cpp|. \pfc currently only links to the \lstinline!long double! \cpp version of \fc.\\
+
+As described in Sect. \ref{sec:install_config}, when using the \ttt{CMake} approach, \pfc will be automatically compiled when \ttt{cmake} is configured with the corresponding option. If the configuration and compilation is successful, a module file should be present in the \verb|python/| folder that contains the Python module which acts as a wrapper between Python and the \cpp version of \fc. The file should be named \verb|pyfastchem.cpython-xxxx|, where \verb|xxxx| will be a combination of your Python version and operating system.\\ 
+
+If \pfc has been built using the \verb|setup.py| script, then the module will be located in your normal Python module library. It, thus, can be accessed from everywhere on your system like any other standard Python package. The location and additional module information can be obtained via
+\begin{lstlisting}[language=bash]
+pip show pyfastchem
+\end{lstlisting}
+Depending on your Python installation, \verb|pip| might need to be replaced by \verb|pip3|.\\
+
+
+A description of the module is given in Sect. \ref{sec:pyfc_module}. Besides the \pfc module, we also provide several example Python scripts that show how to call \fc from within Python for several different scenarios. We discuss the examples in Sect. \ref{sec:pyfc_examples}.
 
 
 \section{The \pfc module}
