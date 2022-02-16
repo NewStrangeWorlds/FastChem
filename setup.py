@@ -16,7 +16,7 @@ __version__ = "2.1"
 class custom_build_ext(build_ext):
   
   #Compile a test program to determine if C++ compiler supports OpenMP
-  def _check_openmp_support(self):
+  def check_openmp_support(self):
     mkpath(self.build_temp)
         
     with tempfile.NamedTemporaryFile(mode='w',
@@ -58,7 +58,7 @@ class custom_build_ext(build_ext):
 
   #Add OpenMP compiler and linker flags if necessary
   def build_extensions(self):
-    use_openmp = self._check_openmp_support()
+    use_openmp = self.check_openmp_support()
         
     if use_openmp:
       for ext in self.extensions:
@@ -69,7 +69,8 @@ class custom_build_ext(build_ext):
         if not ext.extra_link_args:
           ext.extra_link_args = []
         ext.extra_link_args.append('-fopenmp')
-      
+    
+    #Call the build function from the parent class
     build_ext.build_extensions(self)
 
 
@@ -81,7 +82,7 @@ ext_modules = [
            glob("python/fastchem_python_wrapper.cpp")),
     define_macros = [('_SETUP_PY', '1')],
     cxx_std = 11,
-    language='c++',
+    language ='c++',
   ),
 ]
 
