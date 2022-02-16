@@ -5,6 +5,7 @@ from setuptools import setup
 import tempfile
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from distutils.dir_util import mkpath
+from distutils.errors import CCompilerError
 
 
 __version__ = "2.1"
@@ -42,7 +43,7 @@ class custom_build_ext(build_ext):
         objects = self.compiler.compile([srcfile.name],
                                         extra_postargs=["-fopenmp"],
                                         output_dir="/")
-      except _CCompilerError:
+      except CCompilerError:
         print("Compiler does not support OpenMP")
         use_openmp = False
       else:
@@ -68,7 +69,7 @@ class custom_build_ext(build_ext):
           ext.extra_link_args = []
         ext.extra_link_args.append('-fopenmp')
       
-      build_ext.build_extensions(self)
+    build_ext.build_extensions(self)
 
 
 
