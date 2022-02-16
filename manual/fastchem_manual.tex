@@ -124,7 +124,7 @@ This guide provides basic information on the \fc code and how to use it. It is s
 
 \chapter{Installation}
 
-\fc can be installed in two different ways: either using \ttt{CMake} or by calling a Python setup function \verb|setup.py|. The former will install the \ttt{C++} stand-alone executable and optionally the Python module, while the latter one will only provide the \pfc Python module. The Python module created by \ttt{CMake} will only be available locally in the \ttt{python} directory, while the one produced by \verb|setup.py| will be integrated in your standard Python library and, thus, work as a normal Python package.
+\fc can be installed in two different ways: either using \ttt{CMake} or by calling a Python setup function \verb|setup.py|. The former will install the \ttt{C++} stand-alone executable and optionally the Python module, while the latter one will only provide the \pfc Python module. The Python module created by \ttt{CMake} will only be available locally in the \ttt{python} directory, while the one produced by \verb|setup.py| will be integrated in your standard Python library and, thus, work as a normal Python package. Additionally, we also support a Python installation via \verb|PyPI|, the Python Package Index.
 
 
 \section{Obtaining the code}
@@ -153,12 +153,13 @@ The \ttt{C++} compiler will be detected by the CMake script when it generates th
 \end{itemize}
 
 
-\subsection{Prerequisites for Python installation via \ttt{setup.py} }
-An installation of \pfc via the \verb|setup.py| script requires
+\subsection{Prerequisites for Python installation via \ttt{setup.py} or \ttt{PyPi} }
+An installation of \pfc with the \verb|setup.py| script or\verb|PyPI| requires
 \begin{itemize}
 	\item a Python 3.x interpreter
 	\item a \ttt{C++} compiler (e.g. \ttt{g++} or \ttt{Clang} on MacOS)
 	\item an \ttt{OpenMP} library (optional, required to run \fc in parallel)
+	\item pip (when using \verb|PyPI|)
 \end{itemize}
 as well as the following Python modules:
 \begin{itemize}
@@ -242,17 +243,25 @@ While in theory \fc could be run on Windows if meeting all the prerequisites, we
 \section{Installation of \pfc with Python}
 \label{sec:install_python}
 
-In addition to \ttt{CMake}, the Python interface of \fc, \pfc, can also be installed via the \verb|setup.py| script located in the root directory. The setup is started by
+When setting up \pfc with \verb|PyPI|, it is installed via \verb|pip|:
+\begin{lstlisting}[language=bash]
+pip install pyfastchem
+\end{lstlisting}
+Depending on the Python installation, \verb|pip| might need to be replaced by \verb|pip3| in case \verb|pip| is linked to Python 2.x.
+
+This command will download and compile the \pfc package and resolve potential dependencies. It is important to note, though, that one still has to download the input data and other Python scripts from the \fc repository in order to use the package properly.\\
+
+As an alternative of \pfc can also be directly installed from source via the \verb|setup.py| script located in the root directory. The setup is started by
 \begin{lstlisting}[language=bash]
 python setup.py install
 \end{lstlisting}
-assuming that \verb|python| points to your Python 3.x executable. Otherwise, replace \verb|python| with \verb|python3|. As discussed above, using \verb|setup.py| will only create the Python module of \fc, not the stand-alone executable.
+assuming that \verb|python| points to your Python 3.x executable. Otherwise, replace \verb|python| with \verb|python3|. As discussed above, using \verb|setup.py| will only create the Python module of \fc, not the stand-alone executable.\\
 
-The module itself will be installed in your local Python package library and, thus, be available throughout your system like any other normal Python package. The module's location and additional module information can be obtained via
+In both cases, the \pfc module itself will be installed in your local Python package library and, thus, be available throughout your system like any other normal Python package. The module's location and additional module information can be obtained via
 \begin{lstlisting}[language=bash]
 pip show pyfastchem
 \end{lstlisting}
-Depending on your Python installation, \verb|pip| might need to be replaced by \verb|pip3|.\\
+
 
 The script will also try to detect the presence of compiler support for \texttt{OpenMP}. This is currently likely to fail in case of MacOS since Apple's Clang compiler officially does not support this library. We might adapt the \verb|setup.py| script in the future to allow for alternative compilers under MacOS.
 
@@ -1064,7 +1073,7 @@ By using the library \pb, \fc can be called directly within Python. This require
 
 As described in Sect. \ref{sec:install_config}, when using the \ttt{CMake} approach, \pfc will be automatically compiled when \ttt{cmake} is configured with the corresponding option. If the configuration and compilation is successful, a module file should be present in the \verb|python/| folder that contains the Python module which acts as a wrapper between Python and the \cpp version of \fc. The file should be named \verb|pyfastchem.cpython-xxxx|, where \verb|xxxx| will be a combination of your Python version and operating system.\\ 
 
-If \pfc has been built using the \verb|setup.py| script, then the module will be located in your normal Python module library. It, thus, can be accessed from everywhere on your system like any other standard Python package. The location and additional module information can be obtained via
+If \pfc has been built using the \verb|setup.py| script or installed via \verb|PyPI|, then the module will be located in your normal Python module library. It, thus, can be accessed from everywhere on your system like any other standard Python package. The location and additional module information can be obtained via
 \begin{lstlisting}[language=bash]
 pip show pyfastchem
 \end{lstlisting}

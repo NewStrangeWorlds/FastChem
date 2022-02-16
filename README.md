@@ -1,9 +1,9 @@
-# FastChem 2.0 #
+# FastChem 2.1 #
 #### Authors: Daniel Kitzmann, Joachim Stock ####
 
 # Overview #
 
-FastChem is an equilibrium chemistry code that calculates the chemical composition of the gas phase for given temperatures and pressures. It is based on a semi-analytic approach, described in detail in Stock et al. (2018). The code is optimised for extremely fast and accurate calculations. The new version, FastChem 2.0, incorporates a revised approach that incorporates the pressure equation directly within the chemistry equations derived from the law of mass action. In contrast to FastChem 1.0, a separate iteration for the pressure is, thus, not required anymore.
+FastChem is an equilibrium chemistry code that calculates the chemical composition of the gas phase for given temperatures and pressures. It is based on a semi-analytic approach, described in detail in Stock et al. (2018). The code is optimised for extremely fast and accurate calculations. The new version, FastChem 2, incorporates a revised approach that incorporates the pressure equation directly within the chemistry equations derived from the law of mass action. In contrast to FastChem 1.0, a separate iteration for the pressure is, thus, not required anymore.
 
 The code is written in object-oriented C++, including template programming that allows the model to run with either double or long double precision. The exact computational precision of long double depends on your compiler and operating system. Long double precision usually allows the model to properly converge for very low temperatures. FastChem has been tested for temperatures as low as 100 K. For many cases, we were also able to obtain converged results for temperatures well below 100 K. As shown by Stock et al. (2018), the model has been successfully tested for temperatures from 100 K to 2500 K and pressures from 1e-13 bar to 1000 bar.
 
