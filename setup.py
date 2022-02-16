@@ -6,6 +6,7 @@ import tempfile
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from distutils.dir_util import mkpath
 from distutils.errors import CCompilerError
+from distutils import sysconfig
 
 
 __version__ = "2.1"
@@ -79,8 +80,6 @@ ext_modules = [
     sorted(glob("fastchem_src/*.cpp") +
            glob("python/fastchem_python_wrapper.cpp")),
     define_macros = [('_SETUP_PY', '1')],
-    extra_compile_args = ['-pedantic', '-MMD'],
-    extra_link_args = ['-pedantic', '-MMD'],
     cxx_std = 11,
     language='c++',
   ),
@@ -91,7 +90,7 @@ setup(
   name        = "pyfastchem",
   description = "FastChem, an ultra-fast equilibrium chemistry",
   author      = "Daniel Kitzmann, Joachim Stock, Brett Morris",
-  licence     = "GPL 3.0",
+  license     = "GPL 3.0",
   url         = "https://github.com/exoclime/FastChem",
   version     = __version__,
   ext_modules = ext_modules,
