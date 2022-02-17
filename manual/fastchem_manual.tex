@@ -245,25 +245,25 @@ While in theory \fc could be run on Windows if meeting all the prerequisites, we
 
 When setting up \pfc with \verb|PyPI|, it is installed via \verb|pip|:
 \begin{lstlisting}[language=bash]
-pip install pyfastchem
+  pip install pyfastchem
 \end{lstlisting}
 Depending on the Python installation, \verb|pip| might need to be replaced by \verb|pip3| in case \verb|pip| is linked to Python 2.x.
 
-This command will download and compile the \pfc package and resolve potential dependencies. It is important to note, though, that one still has to download the input data and other Python scripts from the \fc repository in order to use the package properly.\\
+This command will download and compile the \pfc package and resolve potential dependencies. It is important to note, though, that one still has to download the chemistry input data and other Python scripts from the \fc repository in order to use the package properly.\\
 
-As an alternative of \pfc can also be directly installed from source via the \verb|setup.py| script located in the root directory. The setup is started by
+As an alternative, \pfc can also be directly installed from source via the \verb|setup.py| script located in the root directory of \fc. The setup is started by
 \begin{lstlisting}[language=bash]
-python setup.py install
+  python setup.py install
 \end{lstlisting}
 assuming that \verb|python| points to your Python 3.x executable. Otherwise, replace \verb|python| with \verb|python3|. As discussed above, using \verb|setup.py| will only create the Python module of \fc, not the stand-alone executable.\\
 
-In both cases, the \pfc module itself will be installed in your local Python package library and, thus, be available throughout your system like any other normal Python package. The module's location and additional module information can be obtained via
+In both cases, the \pfc module itself will be installed in your local Python package library path and, thus, be available throughout your system like any other normal Python package. The module's location and additional module information can be obtained via
 \begin{lstlisting}[language=bash]
-pip show pyfastchem
+  pip show pyfastchem
 \end{lstlisting}
 
 
-The script will also try to detect the presence of compiler support for \texttt{OpenMP}. This is currently likely to fail in case of MacOS since Apple's Clang compiler officially does not support this library. We might adapt the \verb|setup.py| script in the future to allow for alternative compilers under MacOS.
+The setup script will also try to detect the presence of compiler support for \texttt{OpenMP} to run \fc calculations in parallel. This is currently likely to fail in case of MacOS since Apple's Clang compiler officially does not support this library. We might adapt the \verb|setup.py| script in the future to allow for alternative compilers under MacOS.
 
 
 
@@ -883,7 +883,7 @@ It has the following variables:
 
 \lstinline!std::vector<std::vector<double>> number_densities!
   \begin{addmargin}[25pt]{0pt}
-    The two-dimensional vector contains the number densities in \unit{cm$^{-3}$} of all species (elements, molecules, ions). The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of \lstinline!FastChem.getSpeciesNumber()! (see Sect. \ref{sec:fastchem_methods}).
+    The two-dimensional array contains the number densities in \unit{cm$^{-3}$} of all species (elements, molecules, ions). The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of \lstinline!FastChem.getSpeciesNumber()! (see Sect. \ref{sec:fastchem_methods}).
   \end{addmargin}
   
 \bigbreak
@@ -904,7 +904,7 @@ It has the following variables:
 
 \lstinline!std::vector<std::vector<unsigned int>> element_conserved!
 \begin{addmargin}[25pt]{0pt}
-  The two-dimensional vector contains information on the state of element conservation. A value of 0 indicates that element conservation is violated, whereas a value of 1 means that the element has been conserved. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of \lstinline!FastChem.getElementNumber()! (see Sect. \ref{sec:fastchem_methods}).
+  The two-dimensional array contains information on the state of element conservation. A value of 0 indicates that element conservation is violated, whereas a value of 1 means that the element has been conserved. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of \lstinline!FastChem.getElementNumber()! (see Sect. \ref{sec:fastchem_methods}).
 \end{addmargin}
 
 \bigbreak
@@ -926,7 +926,7 @@ It has the following variables:
 The vectors of the output structure don't need to be pre-allocated. This will be done internally within \fc when running the chemistry calculations. If the vectors already contain data, their contents will be overwritten.
 
 
-\section{Methods of the fastchem::FastChem object class}
+\section{Public methods of the fastchem::FastChem object class}
 \label{sec:fastchem_methods}
 
 \lstinline!unsigned int FastChem.calcDensities(FastChemInput input, FastChemOutput output)!
@@ -1073,9 +1073,9 @@ By using the library \pb, \fc can be called directly within Python. This require
 
 As described in Sect. \ref{sec:install_config}, when using the \ttt{CMake} approach, \pfc will be automatically compiled when \ttt{cmake} is configured with the corresponding option. If the configuration and compilation is successful, a module file should be present in the \verb|python/| folder that contains the Python module which acts as a wrapper between Python and the \cpp version of \fc. The file should be named \verb|pyfastchem.cpython-xxxx|, where \verb|xxxx| will be a combination of your Python version and operating system.\\ 
 
-If \pfc has been built using the \verb|setup.py| script or installed via \verb|PyPI|, then the module will be located in your normal Python module library. It, thus, can be accessed from everywhere on your system like any other standard Python package. The location and additional module information can be obtained via
+If \pfc has been built using the \verb|setup.py| script or installed via \verb|PyPI|, then the module will be located in your normal Python module library path. It, thus, can be accessed from everywhere on your system like any other standard Python package. The location and additional module information can be obtained via
 \begin{lstlisting}[language=bash]
-pip show pyfastchem
+  pip show pyfastchem
 \end{lstlisting}
 Depending on your Python installation, \verb|pip| might need to be replaced by \verb|pip3|.\\
 
@@ -1101,7 +1101,7 @@ This provides access to the \fc object class as well as the input and output str
 
 The \pfc module contains a number of pre-defined constants. This includes the constant \lstinline!pyfastchem.FASTCHEM_UNKNOWN_SPECIES! of type \lstinline!int! that is returned by some \pfc methods when a chemical species is not found. \\
 
-The chemistry calculation can also return several output flags of type \lstinline!int! defined at constants in the \pfc module:
+The chemistry calculation can also return several output flags of type \lstinline!int! defined as constants in the \pfc module:
 
 \lstinline!pyfastchem.FASTCHEM_SUCCESS!
 \begin{addmargin}[25pt]{0pt}
