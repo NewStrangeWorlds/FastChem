@@ -52,7 +52,7 @@ struct ChemicalSpecies
   std::string symbol;
   std::string name;
 
-  double_type molecular_weight = 0.0;
+  double_type weight = 0.0;
   int charge = 0;
 
   double_type abundance = 0.0;      //element abundance

@@ -144,7 +144,7 @@ void FastChem<double_type>::init()
     std::cout << "\nConsidered species in FastChem:\n";
 
     for (size_t i=0; i<nb_species; ++i)
-      std::cout << "  " << species[i]->symbol << "\t" << species[i]->name << "\t" << species[i]->abundance << "\t" << species[i]->molecular_weight << "\n";
+      std::cout << "  " << species[i]->symbol << "\t" << species[i]->name << "\t" << species[i]->abundance << "\t" << species[i]->weight << "\n";
 
     std::cout << "\n";
   }

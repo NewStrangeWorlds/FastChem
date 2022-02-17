@@ -50,7 +50,7 @@ void FastChem<double_type>::addAtom(std::string symbol)
   else
   {
     species.name = chemical_element_data[species.element_data_index].name;
-    species.molecular_weight = chemical_element_data[species.element_data_index].atomic_weight;
+    species.weight = chemical_element_data[species.element_data_index].atomic_weight;
     species.abundance = chemical_element_data[species.element_data_index].abundance;
     elements.push_back(species);
 
@@ -123,7 +123,7 @@ void FastChem<double_type>::addMolecule(const std::string name, const std::strin
     species.charge = charge;
     
     for (auto & j : species.element_indices)
-      species.molecular_weight += elements[j].molecular_weight * std::fabs(species.stoichiometric_vector[j]);
+      species.weight += elements[j].weight * std::fabs(species.stoichiometric_vector[j]);
 
     molecules.push_back(species);
 

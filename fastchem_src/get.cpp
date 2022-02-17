@@ -129,7 +129,7 @@ double FastChem<double_type>::getSpeciesMolecularWeight(const unsigned int speci
 {
 
   if (species_index < nb_species)
-    return species[species_index]->molecular_weight;
+    return species[species_index]->weight;
   else
     return 0.;
 

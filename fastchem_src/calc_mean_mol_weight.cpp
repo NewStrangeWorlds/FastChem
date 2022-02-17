@@ -35,7 +35,7 @@ double FastChem<double_type>::meanMolecularWeight(const double gas_density)
 {
   double mean_molecular_weight = 0.0;
 
-  for (auto & i : species) mean_molecular_weight += i->molecular_weight * i->number_density;
+  for (auto & i : species) mean_molecular_weight += i->weight * i->number_density;
 
   mean_molecular_weight /= gas_density;
 
