@@ -23,6 +23,7 @@
 #include "../_deps/boost_math-src/include/boost/math/special_functions/trunc.hpp"
 
 #include <cmath>
+#include <iostream>
 
 
 
@@ -61,6 +62,29 @@ double_type Molecule<double_type>::interpolateMassActionConstant(const double te
     this->lnk_spline = new boost::math::interpolators::cardinal_cubic_b_spline<double_type>(this->mass_action_const_tab.begin(), 
                                                                                             this->mass_action_const_tab.end(), 
                                                                                             this->tab_temp_start, this->tab_temp_step);
+
+  double interpol_temperature = temperature;
+  
+  if (this->tab_temp_log == true) interpol_temperature = std::log10(temperature);
+
+  //range limit check for the temperature
+  //we don't allow the spline to be extrapolated
+  if (interpol_temperature < this->tab_temp_start)
+  {
+    std::cout << "Warning: temperature outside of tabulated range for the equilibrium constants of species " << this->symbol << "\n";
+    std::cout << "Requested temperature: " << temperature << ", " << "first tabulated value: " << this->tab_temp_start << "\n\n";
+    interpol_temperature = this->tab_temp_start;
+  }
+
+
+  const double max_temperature = this->tab_temp_start + (this->mass_action_const_tab.size() - 1) * this->tab_temp_step;
+
+  if (interpol_temperature > max_temperature)
+  {
+    std::cout << "Warning: temperature outside of tabulated range for the equilibrium constants of species " << this->symbol << "\n";
+    std::cout << "Requested temperature: " << temperature << ", " << "last tabulated value: " << max_temperature << "\n\n";
+    interpol_temperature = max_temperature;
+  }
 
 
   double_type log_K = this->lnk_spline->operator()(temperature);
