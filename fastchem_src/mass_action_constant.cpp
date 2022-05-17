@@ -72,7 +72,7 @@ double_type Molecule<double_type>::interpolateMassActionConstant(const double te
   if (interpol_temperature < this->tab_temp_start)
   {
     std::cout << "Warning: temperature outside of tabulated range for the equilibrium constants of species " << this->symbol << "\n";
-    std::cout << "Requested temperature: " << temperature << ", " << "first tabulated value: " << this->tab_temp_start << "\n\n";
+    std::cout << "Requested temperature: " << interpol_temperature << ", " << "first tabulated value: " << this->tab_temp_start << "\n\n";
     interpol_temperature = this->tab_temp_start;
   }
 
@@ -82,12 +82,12 @@ double_type Molecule<double_type>::interpolateMassActionConstant(const double te
   if (interpol_temperature > max_temperature)
   {
     std::cout << "Warning: temperature outside of tabulated range for the equilibrium constants of species " << this->symbol << "\n";
-    std::cout << "Requested temperature: " << temperature << ", " << "last tabulated value: " << max_temperature << "\n\n";
+    std::cout << "Requested temperature: " << interpol_temperature << ", " << "last tabulated value: " << max_temperature << "\n\n";
     interpol_temperature = max_temperature;
   }
 
 
-  double_type log_K = this->lnk_spline->operator()(temperature);
+  double_type log_K = this->lnk_spline->operator()(interpol_temperature);
 
   return log_K;
 }

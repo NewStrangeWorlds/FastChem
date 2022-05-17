@@ -1475,7 +1475,7 @@ Ti1- Titanium_Ion : Ti 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1
    9.6174442606194054e+02  -2.4336565832806976e+00   1.4111641305437889e+01  -2.0735306746179696e-05  -1.8170616004197175e-08 
 
 V1+ Vanadium_Ion : V 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  f input/mass_action_constants/k02301_ref_old.dat 
+  f input/mass_action_constants/k02301_ref_old_log.dat 
 
 V1- Vanadium_Ion : V 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.9188021537196828e+03  -3.0307996310473833e+00   1.7938927314554263e+01   9.8101195553568742e-05  -1.4197747302651425e-08 
