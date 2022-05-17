@@ -22,6 +22,8 @@
 
 #include <cmath>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 
 namespace fastchem {
@@ -89,6 +91,50 @@ void Element<double_type>::calcSolverScalingFactor(const std::vector< Element<do
 
   //scale the factor by an additional, optional factor supplied by the user
   solver_scaling_factor -= additional_scaling_factor;
+}
+
+
+
+template <class double_type>
+bool Molecule<double_type>::readMassActionConstants(const std::string file_path)
+{
+  std::fstream file(file_path.c_str(), std::ios::in);
+
+  if (file.fail())
+  {
+    std::cout << "Unable to open species mass action constants file " << file_path << " for species " << this->symbol << "\n";
+
+    return false;
+  }
+
+  std::string line;
+  std::getline(file, line);
+
+  std::istringstream input(line);
+
+  if (!(input >> this->tab_temp_start >> this->tab_temp_step))
+  {
+    std::cout << "Information on temperature step and starting temperature in mass action constant file " << file_path << " incomplete.\n";
+    return false;
+  }
+
+  std::string temp_log = "";
+  input >> temp_log;
+
+  if (temp_log == "log") this->tab_temp_log = true;
+
+
+  this->mass_action_const_tab.reserve(10000);
+
+  double mass_action_data;
+
+  while (file >> mass_action_data)
+    this->mass_action_const_tab.push_back(mass_action_data);
+
+  this->mass_action_const_tab.shrink_to_fit();
+
+
+  return true;
 }
 
 

@@ -85,8 +85,10 @@ struct Molecule : public ChemicalSpecies<double_type>
   boost::math::interpolators::cardinal_cubic_b_spline<double_type>* lnk_spline = nullptr;
 
   void calcMassActionConstant(const double temperature);
+  double_type interpolateMassActionConstant(const double temperature);
   void checkN(const double_type& min_limit, const double_type& gas_density);
-  
+  bool readMassActionConstants(const std::string file_path);
+
   ~Molecule() {if (this->lnk_spline != nullptr) delete this->lnk_spline;}
 };
 

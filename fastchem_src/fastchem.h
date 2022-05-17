@@ -114,7 +114,8 @@ class FastChem{
     bool readSpeciesData();
     void addMolecule(const std::string name, const std::string symbol,
                      const std::vector<std::string> species_elements, const std::vector<int> stoichiometric_coeff,
-                     const std::vector<double_type> mass_action_coeff, const int charge);
+                     const std::vector<double_type> mass_action_coeff, const std::string mass_action_coeff_file,
+                     const int charge);
     void addAtom(std::string symbol);
 
     void reInitialiseFastChem();

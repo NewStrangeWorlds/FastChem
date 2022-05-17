@@ -20,6 +20,7 @@
 
 #include "fastchem_constants.h"
 #include "species_struct.h"
+#include "../_deps/boost_math-src/include/boost/math/special_functions/trunc.hpp"
 
 #include <cmath>
 
@@ -33,15 +34,38 @@ namespace fastchem {
 template <class double_type>
 void Molecule<double_type>::calcMassActionConstant(const double temperature)
 {
-  double_type log_K = mass_action_coeff[0]/temperature
+  double_type log_K = 0;
+
+  if (this->mass_action_const_tab.size() > 1)
+    log_K = this->interpolateMassActionConstant(temperature);
+  else
+    log_K = mass_action_coeff[0]/temperature
                     + mass_action_coeff[1]*std::log(temperature)
                     + mass_action_coeff[2]
                     + mass_action_coeff[3]*temperature
                     + mass_action_coeff[4]*temperature * temperature;
-  
+
+
   //adjusting log_K from its standard pressure (1 bar = 1e-6 dyn cm-2) to the actual pressure 
   double_type pressure_scaling = 1.0e-6 * CONST_K * temperature;
   mass_action_constant = log_K - sigma * std::log(pressure_scaling);
+}
+
+
+//Interpolates the mass action constant from tabulated data
+//Uses a cubic b spline from the Boost library
+template <class double_type>
+double_type Molecule<double_type>::interpolateMassActionConstant(const double temperature)
+{ 
+  if (this->lnk_spline == nullptr)
+    this->lnk_spline = new boost::math::interpolators::cardinal_cubic_b_spline<double_type>(this->mass_action_const_tab.begin(), 
+                                                                                            this->mass_action_const_tab.end(), 
+                                                                                            this->tab_temp_start, this->tab_temp_step);
+
+
+  double_type log_K = this->lnk_spline->operator()(temperature);
+
+  return log_K;
 }
 
 

@@ -142,18 +142,39 @@ bool FastChem<double_type>::readSpeciesData()
 
     std::string line;
     std::getline(file, line);
-
     std::istringstream ma_input(line);
 
-    std::vector<double_type> mass_action_coeff;
+    //position of the first non-whitespace character
+    size_t pos = line.find_first_not_of(" ");
+
+    if (pos == line.size()-1)
+    {
+      std::cout << "Expected to find a line of mass action coefficients or a file path in species data file for species " << symbol << ".\n";
+      std::cout << "However, I found only whitespace :-/ \n\n";
+
+      return false;
+    }
 
 
-    double ma_coefficient;
+    if (line[pos] == 'f' || line[pos] == 'F')
+    { 
+      std::string file_path;
 
-    while (ma_input >> ma_coefficient)
-      mass_action_coeff.push_back(ma_coefficient);
+      ma_input >> file_path >> file_path;
 
-    addMolecule(name, symbol, elements, stoichiometric_coeff, mass_action_coeff, charge);
+      addMolecule(name, symbol, elements, stoichiometric_coeff, std::vector<double_type> {}, file_path, charge);
+    }
+    else
+    {
+      std::vector<double_type> mass_action_coeff;
+
+      double ma_coefficient;
+
+      while (ma_input >> ma_coefficient)
+        mass_action_coeff.push_back(ma_coefficient);
+
+      addMolecule(name, symbol, elements, stoichiometric_coeff, mass_action_coeff, std::string(), charge);
+    }
 
     //blank separation line
     std::getline(file, line);

@@ -82,7 +82,8 @@ void FastChem<double_type>::setElementAbundance(const std::string symbol, const 
 template <class double_type>
 void FastChem<double_type>::addMolecule(const std::string name, const std::string symbol,
                                         const std::vector<std::string> species_elements, const std::vector<int> stoichiometric_coeff,
-                                        const std::vector<double_type> mass_action_coeff, const int charge)
+                                        const std::vector<double_type> mass_action_coeff, const std::string mass_action_coeff_file,
+                                        const int charge)
 {
   Molecule<double_type> species;
 
@@ -90,6 +91,11 @@ void FastChem<double_type>::addMolecule(const std::string name, const std::strin
   species.symbol = symbol;
 
   species.mass_action_coeff = mass_action_coeff;
+
+  bool read_mass_action_file = true;
+
+  if (mass_action_coeff_file.empty() == false)
+    read_mass_action_file = species.readMassActionConstants(mass_action_coeff_file);
 
 
   species.stoichiometric_vector.assign(nb_elements, 0);
@@ -114,7 +120,7 @@ void FastChem<double_type>::addMolecule(const std::string name, const std::strin
   }
 
 
-  if (is_stoichiometry_complete)
+  if (is_stoichiometry_complete && read_mass_action_file)
   {
     for (size_t j=0; j<nb_elements; ++j)
      species.sigma += species.stoichiometric_vector[j];
@@ -132,7 +138,7 @@ void FastChem<double_type>::addMolecule(const std::string name, const std::strin
       elements[j].molecule_list.push_back(molecules.size()-1);
   }
   else 
-    std::cout << "Stoichiometry of species " << symbol << " incomplete. Neglected!\n";
+    std::cout << "Stoichiometry or mass action data of species " << symbol << " incomplete. Neglected!\n";
 
 }
 
