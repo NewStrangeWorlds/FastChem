@@ -70,6 +70,24 @@ set(SRC_PYTHON_WRAPPER
 find_package(OpenMP)  
 
 
+
+
+include(FetchContent)
+  FetchContent_Declare(
+      boost_math
+      GIT_REPOSITORY https://github.com/boostorg/math
+      GIT_TAG        ed01dae24893bb69c02c6d599acc74bdb8f46bda
+  )
+
+  FetchContent_GetProperties(boost_math)
+  if(NOT boost_math_POPULATED)
+      FetchContent_Populate(boost_math)
+      add_subdirectory(${boost_math_SOURCE_DIR} ${boost_math_BINARY_DIR})
+  endif()
+
+
+
+
 if (USE_PYTHON MATCHES ON)
 
     include(FetchContent)
@@ -117,11 +135,15 @@ endif()
 #compilation target for FastChem
 add_library(fastchem_lib ${SRC_FASTCHEM})
 
+target_include_directories(fastchem_lib PUBLIC ${boost_math_SOURCE_DIR}/include/)
+
 if (OpenMP_FOUND)
   target_compile_options(fastchem_lib PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3")
 else()
   target_compile_options(fastchem_lib PRIVATE "-O3")
 endif()
+
+
 
 #compilation target for FastChem's standalone main
 add_executable(fastchem ${SRC_MAIN})

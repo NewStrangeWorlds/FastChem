@@ -1,5 +1,10 @@
-# FastChem 2.1 #
+# FastChem 2 Dev #
 #### Authors: Daniel Kitzmann, Joachim Stock ####
+
+# Note #
+
+This is an active development branch for FastChem. Things might not work as expected and updates are probably not described yet in the manual. Use at your own risk.
+
 
 # Overview #
 

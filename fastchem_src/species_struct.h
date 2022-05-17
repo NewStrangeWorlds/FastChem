@@ -22,6 +22,7 @@
 #ifndef _species_struct_h
 #define _species_struct_h
 
+#include "../_deps/boost_math-src/include/boost/math/interpolators/cardinal_cubic_b_spline.hpp"
 
 #include <vector>
 #include <string>
@@ -68,16 +69,25 @@ struct Molecule : public ChemicalSpecies<double_type>
   std::vector<unsigned int> element_indices;
   std::vector<int> stoichiometric_vector;
 
-  std::vector<double_type> mass_action_coeff;
-  double_type mass_action_constant = 0.0;
-
   double_type abundance_scaled = 0.0;
-
   double_type sigma = 0.0;
   double_type sum = 0.0;
+  
+  //data for the mass action constants fit
+  std::vector<double_type> mass_action_coeff;
+  double_type mass_action_constant = 0.0;
+  
+  //data for tabulated mass action constants
+  std::vector<double> mass_action_const_tab;
+  bool tab_temp_log = false;
+  double tab_temp_start = 0;
+  double tab_temp_step = 0;
+  boost::math::interpolators::cardinal_cubic_b_spline<double_type>* lnk_spline = nullptr;
 
   void calcMassActionConstant(const double temperature);
   void checkN(const double_type& min_limit, const double_type& gas_density);
+  
+  ~Molecule() {if (this->lnk_spline != nullptr) delete this->lnk_spline;}
 };
 
 
