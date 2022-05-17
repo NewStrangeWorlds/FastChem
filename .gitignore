@@ -1,4 +1,5 @@
 /CMakeFiles/*
+/.vscode/*
 /output/*
 /build
 /_deps/*
