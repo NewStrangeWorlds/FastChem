@@ -111,14 +111,17 @@ if (USE_PYTHON MATCHES ON)
   else()
     target_compile_options(fastchem_for_py PRIVATE "-O3" PRIVATE "-fPIC")
   endif()
+  
+  target_include_directories(fastchem_for_py PUBLIC ${boost_math_SOURCE_DIR}/include/)
 
   #find the python version
-  find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+  find_package(Python COMPONENTS Interpreter Development REQUIRED)
   
   #compilation target for FastChem's Python wrapper
   pybind11_add_module(pyfastchem ${SRC_PYTHON_WRAPPER})
   
   #find_package(pybind11 REQUIRED)
+  
   
   set_target_properties(pyfastchem PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python")
   
