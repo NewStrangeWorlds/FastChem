@@ -17,7 +17,7 @@ MR
 input/element_abundances_solar.dat
 
 #Species data file    
-input/logK_tab.dat
+input/logK.dat
 
 #Accuracy of chemistry iteration
 1.0e-4
