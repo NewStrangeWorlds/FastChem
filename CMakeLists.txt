@@ -70,38 +70,42 @@ set(SRC_PYTHON_WRAPPER
 find_package(OpenMP)  
 
 
-
-
 include(FetchContent)
-  FetchContent_Declare(
-      boost_math
-      GIT_REPOSITORY https://github.com/boostorg/math
-      GIT_TAG        ed01dae24893bb69c02c6d599acc74bdb8f46bda
-  )
 
-  FetchContent_GetProperties(boost_math)
-  if(NOT boost_math_POPULATED)
-      FetchContent_Populate(boost_math)
-      add_subdirectory(${boost_math_SOURCE_DIR} ${boost_math_BINARY_DIR})
-  endif()
+
+#download the Boost Math library if necessary
+FetchContent_Declare(
+  boost_math
+  GIT_REPOSITORY https://github.com/boostorg/math
+  GIT_TAG        ed01dae24893bb69c02c6d599acc74bdb8f46bda
+)
+
+FetchContent_GetProperties(boost_math)
+
+if (NOT boost_math_POPULATED)
+  FetchContent_Populate(boost_math)
+  add_subdirectory(${boost_math_SOURCE_DIR} ${boost_math_BINARY_DIR})
+endif()
 
 
 
 
 if (USE_PYTHON MATCHES ON)
+  
+  #download PyBind11 if necessary
+  FetchContent_Declare(
+    pybind11
+    GIT_REPOSITORY https://github.com/pybind/pybind11
+    GIT_TAG        914c06fb252b6cc3727d0eedab6736e88a3fcb01
+  )
 
-    include(FetchContent)
-    FetchContent_Declare(
-        pybind11
-        GIT_REPOSITORY https://github.com/pybind/pybind11
-        GIT_TAG        97976c16fb7652f7faf02d76756666ef87adbe7d
-    )
+  FetchContent_GetProperties(pybind11)
+  
+  if (NOT pybind11_POPULATED)
+    FetchContent_Populate(pybind11)
+    add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
+  endif()
 
-    FetchContent_GetProperties(pybind11)
-    if(NOT pybind11_POPULATED)
-        FetchContent_Populate(pybind11)
-        add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
-    endif()
 
   #compilation target for FastChem's Python library
   add_library(fastchem_for_py ${SRC_FASTCHEM})
@@ -114,13 +118,18 @@ if (USE_PYTHON MATCHES ON)
   
   target_include_directories(fastchem_for_py PUBLIC ${boost_math_SOURCE_DIR}/include/)
 
-  #find the python version
-  find_package(Python COMPONENTS Interpreter Development REQUIRED)
+  
+  #find the Python version
+  #set the detection strategy (only for CMake version > 3.20)
+  if(${CMAKE_VERSION} VERSION_GREATER "3.20.0") 
+    set(Python3_FIND_UNVERSIONED_NAMES "FIRST")
+  endif()
+  
+  find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+  
   
   #compilation target for FastChem's Python wrapper
   pybind11_add_module(pyfastchem ${SRC_PYTHON_WRAPPER})
-  
-  #find_package(pybind11 REQUIRED)
   
   
   set_target_properties(pyfastchem PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python")
@@ -158,5 +167,4 @@ if (OpenMP_FOUND)
 endif()
 
 target_link_libraries(fastchem PRIVATE fastchem_lib)
-#target_link_libraries(fastchem PRIVATE fastchem_lib OpenMP::OpenMP_CXX)
 
