@@ -3,6 +3,7 @@
 /build
 /_deps/*
 /dist/*
+.vscode/*
 /pyfastchem.egg-info/
 python/pyfastchem.cpython*
 python/__pycache__/*

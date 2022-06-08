@@ -16,6 +16,10 @@ OPTION(USE_PYTHON "Compile FastChem's Python Wrapper" OFF)
 project(fastchem CXX C)
 
 
+include(CMakeDependentOption)
+cmake_dependent_option(ONLY_LIBRARY "Compile FastChem library only" ON "FASTCHEM_ONLY_LIBRARY" OFF)
+
+
 #some C++/C flags
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -127,11 +131,13 @@ endif()
 add_executable(fastchem ${SRC_MAIN})
 
 
-#link files for the final FastChem executable code
-if (OpenMP_FOUND)
-  target_link_libraries(fastchem PRIVATE fastchem_lib OpenMP::OpenMP_CXX)
+#in case we build the executable
+if (NOT ONLY_LIBRARY)
+  
+  #link files for the final FastChem executable code
+  if (OpenMP_FOUND)
+    target_link_libraries(fastchem PRIVATE fastchem_lib OpenMP::OpenMP_CXX)
+  endif()
+
+  target_link_libraries(fastchem PRIVATE fastchem_lib)
 endif()
-
-target_link_libraries(fastchem PRIVATE fastchem_lib)
-#target_link_libraries(fastchem PRIVATE fastchem_lib OpenMP::OpenMP_CXX)
-
