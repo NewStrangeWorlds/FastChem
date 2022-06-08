@@ -127,13 +127,12 @@ else()
   target_compile_options(fastchem_lib PRIVATE "-O3")
 endif()
 
-#compilation target for FastChem's standalone main
-add_executable(fastchem ${SRC_MAIN})
-
 
 #in case we build the executable
 if (NOT ONLY_LIBRARY)
-  
+  #compilation target for FastChem's standalone main
+  add_executable(fastchem ${SRC_MAIN})
+
   #link files for the final FastChem executable code
   if (OpenMP_FOUND)
     target_link_libraries(fastchem PRIVATE fastchem_lib OpenMP::OpenMP_CXX)
