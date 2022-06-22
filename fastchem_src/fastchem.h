@@ -40,8 +40,12 @@ namespace fastchem {
 template <class double_type>
 class FastChem{
   public:
-    FastChem(const std::string& model_parameter_file, const unsigned int verbose_level_init);
-    FastChem(const std::string &element_abundances_file, const std::string &species_data_file, const unsigned int verbose_level_init);
+    FastChem(
+      const std::string& model_parameter_file, const unsigned int verbose_level_init);
+    FastChem(
+      const std::string &element_abundances_file,
+      const std::string &species_data_file,
+      const unsigned int verbose_level_init);
     FastChem(const FastChem &obj);
 
     //function calls to calculate number densities
@@ -66,18 +70,27 @@ class FastChem{
     //they will override any read-in values
     void setElementAbundances(std::vector<double> abundances);
 
-    void setVerboseLevel(const unsigned int level) { if (level > 4) options.verbose_level = 4; else options.verbose_level = level;}
-    
-    void setMaxChemistryIter(const unsigned int nb_steps) {options.nb_max_fastchem_iter = nb_steps;}
-    void setMaxNewtonIter(const unsigned int nb_steps) {options.nb_max_newton_iter = nb_steps;}
-    void setMaxBisectionIter(const unsigned int nb_steps) {options.nb_max_bisection_iter = nb_steps;}
-    void setMaxNelderMeadIter(const unsigned int nb_steps) {options.nb_max_neldermead_iter = nb_steps;}
+    void setVerboseLevel(const unsigned int level) { 
+      if (level > 4) options.verbose_level = 4; else options.verbose_level = level;}
 
-    void setChemistryAccuracy(const double chem_accuracy) {options.accuracy = chem_accuracy;}
-    void setNewtonAccuracy(const double newton_accuracy) {options.newton_err = newton_accuracy;}
+    void setMaxChemistryIter(const unsigned int nb_steps) {
+      options.nb_max_fastchem_iter = nb_steps;}
+    void setMaxNewtonIter(const unsigned int nb_steps) {
+      options.nb_max_newton_iter = nb_steps;}
+    void setMaxBisectionIter(const unsigned int nb_steps) {
+      options.nb_max_bisection_iter = nb_steps;}
+    void setMaxNelderMeadIter(const unsigned int nb_steps) {
+      options.nb_max_neldermead_iter = nb_steps;}
 
-    void useScalingFactor(const bool use_switch) {options.use_scaling_factor = use_switch;}
-    void setAdditionalScalingFactor(const double scaling_factor) {options.additional_scaling_factor = scaling_factor;}
+    void setChemistryAccuracy(const double chem_accuracy) {
+      options.accuracy = chem_accuracy;}
+    void setNewtonAccuracy(const double newton_accuracy) {
+      options.newton_err = newton_accuracy;}
+
+    void useScalingFactor(const bool use_switch) {
+      options.use_scaling_factor = use_switch;}
+    void setAdditionalScalingFactor(const double scaling_factor) {
+      options.additional_scaling_factor = scaling_factor;}
 
   private:
     FastChemOptions<double_type> options;
@@ -110,11 +123,15 @@ class FastChem{
     void setElementAbundance(const std::string symbol, const double abundance);
     void setMoleculeAbundances();
     bool checkForDuplicates();
-  
+
     bool readSpeciesData();
-    void addMolecule(const std::string name, const std::string symbol,
-                     const std::vector<std::string> species_elements, const std::vector<int> stoichiometric_coeff,
-                     const std::vector<double_type> mass_action_coeff, const int charge);
+    void addMolecule(
+      const std::string name,
+      const std::string symbol,
+      const std::vector<std::string> species_elements,
+      const std::vector<int> stoichiometric_coeff,
+      const std::vector<double_type> mass_action_coeff,
+      const int charge);
     void addAtom(std::string symbol);
 
     void reInitialiseFastChem();
@@ -131,22 +148,34 @@ class FastChem{
     unsigned int getMoleculeIndex(const std::string symbol);
 
     //Functions for the calculations of the number densities
-    unsigned int calcDensity(const double temperature, const double pressure, const bool use_previous_solution,
-                             std::vector<double>& number_densities, double& total_element_density, 
-                             double& mean_molecular_weight,
-                             std::vector<unsigned int>& element_conserved,
-                             unsigned int& nb_chemistry_iterations);
+    unsigned int calcDensity(
+      const double temperature,
+      const double pressure,
+      const bool use_previous_solution,
+      std::vector<double>& number_densities,
+      double& total_element_density, 
+      double& mean_molecular_weight,
+      std::vector<unsigned int>& element_conserved,
+      unsigned int& nb_chemistry_iterations);
 
-    bool solveFastchem(const double temperature_gas, const double gas_density, unsigned int& nb_iterations);
+    bool solveFastchem(
+      const double temperature_gas, const double gas_density, unsigned int& nb_iterations);
 
-    void calculateElementDensities(Element<double_type>& species, const double_type gas_density,
-                                   bool use_backup_solver, double_type& n_major);
-    double_type calculateMoleculeDensities(Element<double_type>& species, const double_type gas_density);
-    
-    void calculateElectronDensities(Element<double_type>& species, const double_type& old_number_density, const double_type gas_density);
-    void calculateSinglyIonElectrons(Element<double_type>& electron, const double_type& old_number_density);
-    void calculateMultIonElectrons(Element<double_type>& electron, const double_type& old_number_density, const double_type& gas_density);
-    
+    void calculateElementDensities(
+      Element<double_type>& species,
+      const double_type gas_density,
+      bool use_backup_solver,
+      double_type& n_major);
+    double_type calculateMoleculeDensities(
+      Element<double_type>& species, const double_type gas_density);
+
+    void calculateElectronDensities(
+      Element<double_type>& species, const double_type& old_number_density, const double_type gas_density);
+    void calculateSinglyIonElectrons(
+      Element<double_type>& electron, const double_type& old_number_density);
+    void calculateMultIonElectrons(
+      Element<double_type>& electron, const double_type& old_number_density, const double_type& gas_density);
+
     double totalElementDensity();
     double meanMolecularWeight(const double gas_density);
 };

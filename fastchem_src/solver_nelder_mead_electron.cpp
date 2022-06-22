@@ -35,8 +35,12 @@ namespace fastchem {
 
 //Nelder-Mead downhill simplex method in one dimension for the electron density
 template <class double_type>
-bool FastChemSolver<double_type>::nelderMeadSolveElectron(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                                          const double_type initial_solution, const double gas_density)
+bool FastChemSolver<double_type>::nelderMeadElectron(
+  Element<double_type>& species,
+  std::vector< Element<double_type> >& elements,
+  const std::vector< Molecule<double_type> >& molecules, 
+  const double_type initial_solution,
+  const double gas_density)
 {
   const unsigned int N = 1; //dimension of Nelder-Mead method
 

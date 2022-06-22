@@ -43,7 +43,8 @@ FastChemSolver<double_type>::FastChemSolver(FastChemOptions<double_type>* option
 
 
 template <class double_type>
-double_type FastChemSolver<double_type>::A0Coeff(const Element<double_type>& species, const double_type gas_density)
+double_type FastChemSolver<double_type>::A0Coeff(
+  const Element<double_type>& species, const double_type gas_density)
 {
   double_type A0 = 0.0;
 
@@ -58,7 +59,10 @@ double_type FastChemSolver<double_type>::A0Coeff(const Element<double_type>& spe
 
 
 template <class double_type>
-double_type FastChemSolver<double_type>::A1Coeff(const Element<double_type>& species, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules)
+double_type FastChemSolver<double_type>::A1Coeff(
+  const Element<double_type>& species,
+  const std::vector< Element<double_type> >& elements,
+  const std::vector< Molecule<double_type> >& molecules)
 {
   //calculation of coefficient A_1, see Eq. (2.28)
   double_type A1 = 0.0;
@@ -94,7 +98,10 @@ double_type FastChemSolver<double_type>::A1Coeff(const Element<double_type>& spe
 
 
 template <class double_type>
-double_type FastChemSolver<double_type>::A2Coeff(const Element<double_type>& species, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules)
+double_type FastChemSolver<double_type>::A2Coeff(
+  const Element<double_type>& species,
+  const std::vector< Element<double_type> >& elements,
+  const std::vector< Molecule<double_type> >& molecules)
 {
   double_type A2 = 0.0;
 
@@ -123,8 +130,11 @@ double_type FastChemSolver<double_type>::A2Coeff(const Element<double_type>& spe
 
 
 template <class double_type>
-double_type FastChemSolver<double_type>::AmCoeff(const Element<double_type>& species, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                                 const unsigned int order)
+double_type FastChemSolver<double_type>::AmCoeff(
+  const Element<double_type>& species,
+  const std::vector< Element<double_type> >& elements,
+  const std::vector< Molecule<double_type> >& molecules, 
+  const unsigned int order)
 {
   double_type Am = 0.0;
 
@@ -163,8 +173,11 @@ double_type FastChemSolver<double_type>::AmCoeff(const Element<double_type>& spe
 //Alternative description of the Am coefficients
 //Takes the full law of mass action into account, i.e. doesn't stop at minor species as the regular calculation
 template <class double_type>
-double_type FastChemSolver<double_type>::AmCoeffAlt(const Element<double_type>& species, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                                    const unsigned int order)
+double_type FastChemSolver<double_type>::AmCoeffAlt(
+  const Element<double_type>& species,
+  const std::vector< Element<double_type> >& elements,
+  const std::vector< Molecule<double_type> >& molecules, 
+  const unsigned int order)
 {
   double_type Am = 0.0;
 
@@ -203,8 +216,11 @@ double_type FastChemSolver<double_type>::AmCoeffAlt(const Element<double_type>& 
 //Alternative description of the Am coefficients
 //Takes the full law of mass action into account, i.e. doesn't stop at minor species as the regular calculation
 template <class double_type>
-double_type FastChemSolver<double_type>::AmCoeffElectron(const Element<double_type>& electron, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                                         const int order)
+double_type FastChemSolver<double_type>::AmCoeffElectron(
+  const Element<double_type>& electron,
+  const std::vector< Element<double_type> >& elements,
+  const std::vector< Molecule<double_type> >& molecules, 
+  const int order)
 {
   double_type Am = 0.0;
 
@@ -223,7 +239,7 @@ double_type FastChemSolver<double_type>::AmCoeffElectron(const Element<double_ty
       Am += std::exp(molecules[i].mass_action_constant + sum) * order;
     }
   }
-  
+
 
   return Am;
 }

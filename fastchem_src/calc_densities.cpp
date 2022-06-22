@@ -36,7 +36,8 @@ namespace fastchem {
 
 
 template <class double_type>
-unsigned int FastChem<double_type>::calcDensities(FastChemInput& input, FastChemOutput& output)
+unsigned int FastChem<double_type>::calcDensities(
+  FastChemInput& input, FastChemOutput& output)
 {
   if (!is_initialized)
     return FASTCHEM_INITIALIZATION_FAILED;
@@ -82,28 +83,35 @@ unsigned int FastChem<double_type>::calcDensities(FastChemInput& input, FastChem
   #pragma omp parallel for schedule(dynamic, 1)
   for (unsigned int i=0; i<input.temperature.size(); i++)
   { 
-    output.fastchem_flag[i] = fastchems[omp_get_thread_num()].calcDensity(input.temperature[i], input.pressure[i]*1e6, false, 
-                                        output.number_densities[i],
-                                        output.total_element_density[i], 
-                                        output.mean_molecular_weight[i],
-                                        output.element_conserved[i],
-                                        output.nb_chemistry_iterations[i]);
+    output.fastchem_flag[i] = 
+    fastchems[omp_get_thread_num()].calcDensity(
+      input.temperature[i], 
+      input.pressure[i]*1e6,
+      false, 
+      output.number_densities[i],
+      output.total_element_density[i], 
+      output.mean_molecular_weight[i],
+      output.element_conserved[i],
+      output.nb_chemistry_iterations[i]);
   }
   #else
   for (unsigned int i=0; i<input.temperature.size(); i++)
   { 
-    output.fastchem_flag[i] = calcDensity(input.temperature[i], input.pressure[i]*1e6, false, 
-                                          output.number_densities[i],
-                                          output.total_element_density[i], 
-                                          output.mean_molecular_weight[i],
-                                          output.element_conserved[i],
-                                          output.nb_chemistry_iterations[i]);
+    output.fastchem_flag[i] = calcDensity(
+      input.temperature[i],
+      input.pressure[i]*1e6,
+      false, 
+      output.number_densities[i],
+      output.total_element_density[i], 
+      output.mean_molecular_weight[i],
+      output.element_conserved[i],
+      output.nb_chemistry_iterations[i]);
   }
   #endif
 
   unsigned int status = *std::max_element(std::begin(output.fastchem_flag), std::end(output.fastchem_flag));
-  
-    
+
+
   is_busy = false;
 
   return status;
@@ -115,13 +123,16 @@ unsigned int FastChem<double_type>::calcDensities(FastChemInput& input, FastChem
 //Note: this is a private function, that can not be accessed from outside of FastChem
 //This function will be called by any public calcDensity function
 template <class double_type>
-unsigned int FastChem<double_type>::calcDensity(const double temperature, const double pressure, const bool use_previous_solution,
-                                                std::vector<double>& number_densities, double& total_element_density, 
-                                                double& mean_molecular_weight,
-                                                std::vector<unsigned int>& element_conserved,
-                                                unsigned int& nb_chemistry_iterations)
+unsigned int FastChem<double_type>::calcDensity(
+  const double temperature,
+  const double pressure,
+  const bool use_previous_solution,
+  std::vector<double>& number_densities,
+  double& total_element_density, 
+  double& mean_molecular_weight,
+  std::vector<unsigned int>& element_conserved,
+  unsigned int& nb_chemistry_iterations)
 {
-
   for (auto & i : molecules)  i.calcMassActionConstant(temperature);
 
   //this value will be fixed.
@@ -149,7 +160,8 @@ unsigned int FastChem<double_type>::calcDensity(const double temperature, const 
 
 
   //call the main FastChem solver  
-  bool fastchem_converged = solveFastchem(temperature, gas_density, nb_chemistry_iterations);
+  bool fastchem_converged = solveFastchem(
+    temperature, gas_density, nb_chemistry_iterations);
 
 
   if (!fastchem_converged && options.verbose_level >= 1) 
@@ -169,7 +181,8 @@ unsigned int FastChem<double_type>::calcDensity(const double temperature, const 
   total_element_density = totalElementDensity();
 
 
-  for (auto & i : elements) i.checkElementConservation(molecules, total_element_density, options.accuracy);
+  for (auto & i : elements) 
+    i.checkElementConservation(molecules, total_element_density, options.accuracy);
   
   element_conserved.assign(nb_elements, 0);
 

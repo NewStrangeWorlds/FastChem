@@ -36,7 +36,8 @@ constexpr unsigned int FASTCHEM_INITIALIZATION_FAILED = 2;
 constexpr unsigned int FASTCHEM_IS_BUSY = 3;
 constexpr unsigned int FASTCHEM_WRONG_INPUT_VALUES = 4;
 
-const std::vector<std::string> FASTCHEM_MSG = {"convergence ok", "convergence failed", "initialization failed", "is busy", "wrong input value"};
+const std::vector<std::string> FASTCHEM_MSG = 
+{"convergence ok", "convergence failed", "initialization failed", "is busy", "wrong input value"};
 
 
 //Physical constants

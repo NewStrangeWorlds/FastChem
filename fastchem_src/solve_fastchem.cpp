@@ -32,7 +32,8 @@ namespace fastchem {
 
 //This is the main FastChem iteration
 template <class double_type>
-bool FastChem<double_type>::solveFastchem(const double temperature_gas, const double gas_density, unsigned int& nb_iterations)
+bool FastChem<double_type>::solveFastchem(
+  const double temperature_gas, const double gas_density, unsigned int& nb_iterations)
 {
   for (auto & i : elements) i.number_density_maj = 0.0;
 
@@ -78,7 +79,9 @@ bool FastChem<double_type>::solveFastchem(const double temperature_gas, const do
         use_backup_solver = true;
        
         if (options.verbose_level >= 4)
-          std::cout << "Too large n_min and n_maj for species " << i.symbol << ". Switching to backup.  Iteration step: " << iter_step << "\n";
+          std::cout << "Too large n_min and n_maj for species " 
+            << i.symbol << ". Switching to backup.  Iteration step: " 
+            << iter_step << "\n";
 
         break;
       }

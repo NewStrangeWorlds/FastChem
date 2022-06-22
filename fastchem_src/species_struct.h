@@ -102,14 +102,23 @@ struct Element : public ChemicalSpecies<double_type>
   double_type number_density_maj = 0.0;
   double_type number_density_min = 0.0;
 
-  void calcMinorSpeciesDensities(const std::vector< Molecule<double_type> > &molecules);
-  void calcEpsilon(const std::vector< Element<double_type> > &elements);
-  void calcSolverScalingFactor(const std::vector< Element<double_type> > &elements, 
-                               const std::vector< Molecule<double_type> > &molecules, 
-                               const double additional_scaling_factor);
-  void checkN(const double_type& min_limit, const double_type& gas_density);
-  bool checkElementConservation(const std::vector< Molecule<double_type> >& molecules, const double_type total_density, const double_type& accuracy);
-  bool checkChargeConservation(const std::vector< Molecule<double_type> >& molecules, const double_type& accuracy);
+  void calcMinorSpeciesDensities(
+    const std::vector< Molecule<double_type> > &molecules);
+  void calcEpsilon(
+    const std::vector< Element<double_type> > &elements);
+  void calcSolverScalingFactor(
+    const std::vector<Element<double_type>> &elements, 
+    const std::vector<Molecule<double_type>> &molecules, 
+    const double additional_scaling_factor);
+  void checkN(
+    const double_type& min_limit, const double_type& gas_density);
+  bool checkElementConservation(
+    const std::vector<Molecule<double_type>>& molecules,
+    const double_type total_density,
+    const double_type& accuracy);
+  bool checkChargeConservation(
+    const std::vector<Molecule<double_type>>& molecules,
+    const double_type& accuracy);
 };
 
 

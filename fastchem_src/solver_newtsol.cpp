@@ -32,14 +32,17 @@
 namespace fastchem {
 
 
-
 //Newton's method so solve for element densities
 //See Sect. 2.4.2, Paper 1
 //The standard version (use_alternative = false) uses the n_min approach to account for minor species
 //For use_alternative = true, it will use all species in the law of mass action
 template <class double_type>
-void FastChemSolver<double_type>::newtonSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                            const double_type gas_density, const bool use_alternative)
+void FastChemSolver<double_type>::newtonSol(
+  Element<double_type>& species,
+  std::vector<Element<double_type>>& elements,
+  const std::vector<Molecule<double_type>>& molecules, 
+  const double_type gas_density,
+  const bool use_alternative)
 {
   unsigned int order = 0;
 
@@ -173,19 +176,22 @@ void FastChemSolver<double_type>::newtonSol(Element<double_type>& species, std::
       newtonSol(species, elements, molecules, gas_density, true);
 
       if (options->verbose_level >= 3)
-        std::cout << "FastChem: WARNING: NewtSol failed for species " << species.symbol << " switched to Backup " << x << "\t" << species.number_density << "\n";
+        std::cout << "FastChem: WARNING: NewtSol failed for species " 
+          << species.symbol << " switched to Backup " 
+          << x << "\t" 
+          << species.number_density << "\n";
     }
     else //if the alternative Newton's method also doesn't work, we use the bisection method
     {
-      bisectionSolve(species, Aj, gas_density);
-
+      bisection(species, Aj, gas_density);
 
       if (options->verbose_level >= 3)
-        std::cout << "FastChem: WARNING: NewtSol Alt failed for species " << species.symbol << " switched to Bisection as backup " << x << "\t" << species.number_density << "\n";
+        std::cout << "FastChem: WARNING: NewtSol Alt failed for species " 
+          << species.symbol << " switched to Bisection as backup " 
+          << x << "\t" 
+          << species.number_density << "\n";
     }
-      
   }
-
 }  
 
 
@@ -193,8 +199,11 @@ void FastChemSolver<double_type>::newtonSol(Element<double_type>& species, std::
 //Newton's method for the electrons
 //Instead of element conservation, solves for charge balance
 template <class double_type>
-void FastChemSolver<double_type>::newtonSolElectron(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                                    const double_type gas_density)
+void FastChemSolver<double_type>::newtonSolElectron(
+  Element<double_type>& species,
+  std::vector<Element<double_type>>& elements,
+  const std::vector<Molecule<double_type>>& molecules,
+  const double_type gas_density)
 {
   //Calculation of the polynomial coefficients
   std::vector<double_type> Aj_cation(order_cation+1, 0.0);
@@ -299,10 +308,12 @@ void FastChemSolver<double_type>::newtonSolElectron(Element<double_type>& specie
   if (x < 0 || !converged || P_j_lower*P_j_upper > 0.)
   {
     const double_type init = std::log(std::fabs(x));
-    nelderMeadSolveElectron(species, elements, molecules, init, 0.0);
+    nelderMeadElectron(species, elements, molecules, init, 0.0);
 
     if (options->verbose_level >= 3)
-      std::cout << "FastChem: WARNING: NewtSol failed for electrons, switching to Nelder-Mead Backup " << x << "\t" << species.number_density << "\n";
+      std::cout << "FastChem: WARNING: NewtSol failed for electrons, switching to Nelder-Mead Backup " 
+        << x << "\t" 
+        << species.number_density << "\n";
   }
 }
 

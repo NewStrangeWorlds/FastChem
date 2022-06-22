@@ -39,26 +39,52 @@ class FastChemSolver{
   public:
     FastChemSolver(FastChemOptions<double_type>* options_ptr);
 
-    void intertSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                   const double_type gas_density);
-    void linSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                const double_type gas_density);
-    void quadSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                 const double_type gas_density);
-    void newtonSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                   const double_type gas_density, const bool use_alternative);
+    void intertSol(
+      Element<double_type>& species,
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules, 
+      const double_type gas_density);
+    void linSol(
+      Element<double_type>& species,
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules, 
+      const double_type gas_density);
+    void quadSol(
+      Element<double_type>& species,
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules, 
+      const double_type gas_density);
+    void newtonSol(
+      Element<double_type>& species,
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules, 
+      const double_type gas_density,
+      const bool use_alternative);
 
-    void newtonSolElectron(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules,
-                           const double_type gas_density);
+    void newtonSolElectron(
+      Element<double_type>& species,
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules,
+      const double_type gas_density);
 
-    bool nelderMeadSolveElectron(Element<double_type>& electron, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                 const double_type initial_solution, const double gas_density);
-   
-   
-    bool bisectionSolve(Element<double_type>& species, std::vector<double_type>& Aj, const double gas_density);
+    bool nelderMeadElectron(
+      Element<double_type>& electron,
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules, 
+      const double_type initial_solution,
+      const double gas_density);
 
-    void backupSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                   const double_type gas_density);
+  
+    bool bisection(
+      Element<double_type>& species,
+      std::vector<double_type>& Aj,
+      const double gas_density);
+
+    void backupSol(
+      Element<double_type>& species,
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules, 
+      const double_type gas_density);
 
     int order_cation = -999;
     int order_anion = -999;
@@ -66,13 +92,32 @@ class FastChemSolver{
   private:
     FastChemOptions<double_type> *options;
     
-    double_type A0Coeff(const Element<double_type>& species, const double_type gas_density);
-    double_type A1Coeff(const Element<double_type>& species, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules);
-    double_type A2Coeff(const Element<double_type>& species, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules);
-    double_type AmCoeff(const Element<double_type>& species, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, const unsigned int order);
-    double_type AmCoeffAlt(const Element<double_type>& species, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, const unsigned int order);
+    double_type A0Coeff(
+      const Element<double_type>& species, const double_type gas_density);
+    double_type A1Coeff(
+      const Element<double_type>& species,
+      const std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules);
+    double_type A2Coeff(
+      const Element<double_type>& species,
+      const std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules);
+    double_type AmCoeff(
+      const Element<double_type>& species,
+      const std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules, 
+      const unsigned int order);
+    double_type AmCoeffAlt(
+      const Element<double_type>& species,
+      const std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules,
+      const unsigned int order);
 
-    double_type AmCoeffElectron(const Element<double_type>& electron, const std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, const int order);
+    double_type AmCoeffElectron(
+      const Element<double_type>& electron,
+      const std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules,
+      const int order);
 };
 
 

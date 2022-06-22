@@ -32,12 +32,14 @@ namespace fastchem {
 //with elements that are less abundant than j
 //See Eq. (2.23)
 template <class double_type>
-void Element<double_type>::calcMinorSpeciesDensities(const std::vector< Molecule<double_type> > &molecules)
+void Element<double_type>::calcMinorSpeciesDensities(
+  const std::vector< Molecule<double_type> > &molecules)
 {
   number_density_min = 0.0;
 
   for (auto & i : minor_molecules)
-    number_density_min += (molecules[i].stoichiometric_vector[index] + epsilon * molecules[i].sigma) * molecules[i].number_density;
+    number_density_min += (molecules[i].stoichiometric_vector[index] 
+                       + epsilon * molecules[i].sigma) * molecules[i].number_density;
 }
 
 
@@ -56,9 +58,10 @@ void Element<double_type>::calcEpsilon(const std::vector< Element<double_type> >
 
 
 template <class double_type>
-void Element<double_type>::calcSolverScalingFactor(const std::vector< Element<double_type> > &elements, 
-                                                   const std::vector< Molecule<double_type> > &molecules,
-                                                   const double additional_scaling_factor)
+void Element<double_type>::calcSolverScalingFactor(
+  const std::vector<Element<double_type>> &elements, 
+  const std::vector<Molecule<double_type>> &molecules,
+  const double additional_scaling_factor)
 {
   solver_scaling_factor = 0.0;
 

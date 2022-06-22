@@ -36,10 +36,12 @@ namespace fastchem {
 //Selects the appropriate solver for each element
 //See Sect. 2.4.2 and Eq. (2.32)
 template <class double_type>
-void FastChem<double_type>::calculateElementDensities(Element<double_type>& species, const double_type gas_density,
-                                                      bool use_backup_solver, double_type& n_major)
+void FastChem<double_type>::calculateElementDensities(
+  Element<double_type>& species,
+  const double_type gas_density,
+  bool use_backup_solver,
+  double_type& n_major)
 {
-
   if (species.symbol == "e-") return; //electrons have their own, special solver
 
   species.number_density_maj = n_major * species.epsilon;
@@ -85,7 +87,8 @@ void FastChem<double_type>::calculateElementDensities(Element<double_type>& spec
 
 //Calculates the number density of species, based on previously computed element densities
 template <class double_type>
-double_type FastChem<double_type>::calculateMoleculeDensities(Element<double_type>& species, const double_type gas_density)
+double_type FastChem<double_type>::calculateMoleculeDensities(
+  Element<double_type>& species, const double_type gas_density)
 {
   double_type n_major = 0.0;
   
@@ -108,7 +111,6 @@ double_type FastChem<double_type>::calculateMoleculeDensities(Element<double_typ
     molecules[i].checkN(options.molecule_density_minlimit, gas_density);
   }
 
-
   return n_major;
 }
 
@@ -119,7 +121,6 @@ double_type FastChem<double_type>::calculateMoleculeDensities(Element<double_typ
 template <class double_type>
 double FastChem<double_type>::totalElementDensity()
 {
-  
   double n_tot = 0.0;
 
   //first we count the elements locked in molecules and ions
@@ -133,11 +134,9 @@ double FastChem<double_type>::totalElementDensity()
     }
   }
 
-
   //then we add the free atoms
    for (auto & i : elements) n_tot += i.number_density;
 
-  
   return n_tot;
 }
 

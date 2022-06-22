@@ -54,7 +54,10 @@ unsigned int FastChem<double_type>::getChemicalElementIndex(const std::string sy
 template <class double_type>
 unsigned int FastChem<double_type>::getMoleculeIndex(const std::string symbol)
 {
-  auto it = std::find_if(molecules.begin(), molecules.end(), [&](const Molecule<double_type>& a) { return a.symbol == symbol;});
+  auto it = std::find_if(
+    molecules.begin(),
+    molecules.end(),
+    [&](const Molecule<double_type>& a) { return a.symbol == symbol;});
 
   if (it == molecules.end()) 
     return FASTCHEM_UNKNOWN_SPECIES;
@@ -69,7 +72,10 @@ unsigned int FastChem<double_type>::getMoleculeIndex(const std::string symbol)
 template <class double_type>
 unsigned int FastChem<double_type>::getElementIndex(const std::string symbol)
 {
-  auto it = std::find_if(elements.begin(), elements.end(), [&](const Element<double_type>& a) { return a.symbol == symbol;});
+  auto it = std::find_if(
+    elements.begin(),
+    elements.end(),
+    [&](const Element<double_type>& a) { return a.symbol == symbol;});
 
   if (it == elements.end()) 
     return FASTCHEM_UNKNOWN_SPECIES;
@@ -84,7 +90,9 @@ unsigned int FastChem<double_type>::getElementIndex(const std::string symbol)
 template <class double_type>
 unsigned int FastChem<double_type>::getSpeciesIndex(const std::string symbol)
 {
-  auto it = std::find_if(species.begin(), species.end(), [&](const ChemicalSpecies<double_type>* a) { return a->symbol == symbol;});
+  auto it = std::find_if(
+    species.begin(),
+    species.end(), [&](const ChemicalSpecies<double_type>* a) { return a->symbol == symbol;});
 
   if (it == species.end()) 
     return FASTCHEM_UNKNOWN_SPECIES;

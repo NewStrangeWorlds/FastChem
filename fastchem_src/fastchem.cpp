@@ -31,7 +31,9 @@ namespace fastchem {
 //Constructor for the FastChem class
 //Requires: parameter file path and the initial verbose level that is used while reading the input files
 template <class double_type>
-FastChem<double_type>::FastChem(const std::string& model_parameter_file, const unsigned int verbose_level_init) : solver(&options)
+FastChem<double_type>::FastChem(
+  const std::string& model_parameter_file, const unsigned int verbose_level_init) 
+    : solver(&options)
 {
   options.verbose_level = verbose_level_init;
 
@@ -57,9 +59,11 @@ FastChem<double_type>::FastChem(const std::string& model_parameter_file, const u
 //Requires: file paths for element abundance and species data files 
 //          and the initial verbose level that is used while reading the input files
 template <class double_type>
-FastChem<double_type>::FastChem(const std::string &element_abundances_file,
-                                const std::string &species_data_file,
-                                const unsigned int verbose_level_init) : solver(&options)
+FastChem<double_type>::FastChem(
+  const std::string &element_abundances_file,
+  const std::string &species_data_file,
+  const unsigned int verbose_level_init) 
+    : solver(&options)
 {
   options.verbose_level = verbose_level_init;
   options.element_abundances_file = element_abundances_file;
@@ -74,7 +78,8 @@ FastChem<double_type>::FastChem(const std::string &element_abundances_file,
 //Copy constructor
 //Could be made more pretty, but this one does the job as well...
 template <class double_type>
-FastChem<double_type>::FastChem(const FastChem &obj) : solver(&options)
+FastChem<double_type>::FastChem(const FastChem &obj) 
+  : solver(&options)
 {
   nb_chemical_element_data = obj.nb_chemical_element_data;
   nb_species = obj.nb_species;

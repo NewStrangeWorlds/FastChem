@@ -35,8 +35,11 @@ namespace fastchem {
 //Solver for an element that is not part of other species
 //See Paper I, Eq. (2.32)
 template <class double_type>
-void FastChemSolver<double_type>::intertSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                            const double_type gas_density)
+void FastChemSolver<double_type>::intertSol(
+  Element<double_type>& species,
+  std::vector< Element<double_type> >& elements,
+  const std::vector< Molecule<double_type> >& molecules, 
+  const double_type gas_density)
 {
 
   species.number_density = species.epsilon * gas_density - species.number_density_min - species.number_density_maj;
@@ -46,8 +49,11 @@ void FastChemSolver<double_type>::intertSol(Element<double_type>& species, std::
 
 //Analytic solution for linear equation, see Paper I, Sect. 2.4.2 and Eq. (2.32)
 template <class double_type>
-void FastChemSolver<double_type>::linSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                         const double_type gas_density)
+void FastChemSolver<double_type>::linSol(
+  Element<double_type>& species,
+  std::vector< Element<double_type> >& elements,
+  const std::vector< Molecule<double_type> >& molecules, 
+  const double_type gas_density)
 {
   if (species.solver_scaling_factor > 700.0 && options->verbose_level >= 3)
     std::cout << "FastChem: WARNING: Underflow in LinSol for element " << species.symbol << "\n";
@@ -68,8 +74,11 @@ void FastChemSolver<double_type>::linSol(Element<double_type>& species, std::vec
 
 //Analytic solution for quadratic equation, see Paper I, Sect. 2.4.2 and Eq. (2.32)
 template <class double_type>
-void FastChemSolver<double_type>::quadSol(Element<double_type>& species, std::vector< Element<double_type> >& elements, const std::vector< Molecule<double_type> >& molecules, 
-                                          const double_type gas_density)
+void FastChemSolver<double_type>::quadSol(
+  Element<double_type>& species,
+  std::vector< Element<double_type> >& elements,
+  const std::vector< Molecule<double_type> >& molecules, 
+  const double_type gas_density)
 {
   if (species.solver_scaling_factor > 700.0 && options->verbose_level >= 3)
     std::cout << "FastChem: WARNING: Underflow in QuadSol for element " << species.symbol << "\n";

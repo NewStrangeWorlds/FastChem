@@ -80,9 +80,13 @@ void FastChem<double_type>::setElementAbundance(const std::string symbol, const 
 
 //Add a molecule to the system and update all of its elements
 template <class double_type>
-void FastChem<double_type>::addMolecule(const std::string name, const std::string symbol,
-                                        const std::vector<std::string> species_elements, const std::vector<int> stoichiometric_coeff,
-                                        const std::vector<double_type> mass_action_coeff, const int charge)
+void FastChem<double_type>::addMolecule(
+  const std::string name,
+  const std::string symbol,
+  const std::vector<std::string> species_elements,
+  const std::vector<int> stoichiometric_coeff,
+  const std::vector<double_type> mass_action_coeff,
+  const int charge)
 {
   Molecule<double_type> species;
 

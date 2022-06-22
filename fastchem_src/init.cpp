@@ -212,24 +212,28 @@ void FastChem<double_type>::setMoleculeAbundances()
 {
   for (auto & i : molecules)
   {
-    auto it = std::min_element(i.element_indices.begin(), i.element_indices.end(), 
-                                   [&] (const size_t a, const size_t b) 
-                                       {if (elements[a].abundance != 0) 
-                                          return elements[a].abundance < elements[b].abundance;
-                                        else 
-                                          return false; 
-                                       });
+    auto it = std::min_element(
+      i.element_indices.begin(),
+      i.element_indices.end(), 
+      [&] (const size_t a, const size_t b) {
+        if (elements[a].abundance != 0) 
+          return elements[a].abundance < elements[b].abundance;
+        else 
+          return false; 
+        });
 
     i.abundance = elements[*it].abundance;
     
     //scaled abundances
-    it = std::min_element(i.element_indices.begin(), i.element_indices.end(), 
-                          [&] (const size_t a, const size_t b) 
-                              {if (elements[a].abundance != 0) 
-                                 return elements[a].abundance/i.stoichiometric_vector[a] < elements[b].abundance/i.stoichiometric_vector[b];
-                               else 
-                                 return false; 
-                              });
+    it = std::min_element(
+      i.element_indices.begin(),
+      i.element_indices.end(), 
+      [&] (const size_t a, const size_t b) {
+        if (elements[a].abundance != 0) 
+          return elements[a].abundance/i.stoichiometric_vector[a] < elements[b].abundance/i.stoichiometric_vector[b];
+        else 
+          return false; 
+        });
 
     i.abundance_scaled = elements[*it].abundance/i.stoichiometric_vector[*it];
   }
@@ -247,14 +251,16 @@ bool FastChem<double_type>::checkForDuplicates()
   auto species_cp = species;
   
   //sort with respect to the species' symbols
-  std::sort(species_cp.begin(), 
-            species_cp.end(),
-            [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol > b->symbol;} );
+  std::sort(
+    species_cp.begin(), 
+    species_cp.end(),
+    [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol > b->symbol;} );
   
   //try to find adjacent ones
-  auto it = std::adjacent_find(species_cp.begin(), 
-                               species_cp.end(), 
-                               [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol == b->symbol;} );
+  auto it = std::adjacent_find(
+    species_cp.begin(), 
+    species_cp.end(), 
+    [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol == b->symbol;} );
   
   bool duplicate_exits = (it != species_cp.end());
 
@@ -269,7 +275,6 @@ bool FastChem<double_type>::checkForDuplicates()
 template <class double_type>
 void FastChem<double_type>::createMoleculeLists()
 {
-  
   //reset the lists
   for (auto & i : elements)
   {
@@ -333,9 +338,7 @@ void FastChem<double_type>::createMoleculeLists()
       for (size_t i=0; i<elements[j].minor_molecules.size(); ++i)
         std::cout << "    " << molecules[elements[j].minor_molecules[i]].symbol << "\n";
     }
-
   }
-  
 }
 
 

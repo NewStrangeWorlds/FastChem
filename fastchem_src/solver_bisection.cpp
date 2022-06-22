@@ -35,7 +35,8 @@ namespace fastchem {
 
 //Bisection method in one dimension
 template <class double_type>
-bool FastChemSolver<double_type>::bisectionSolve(Element<double_type>& species, std::vector<double_type>& Aj, const double gas_density)
+bool FastChemSolver<double_type>::bisection(
+  Element<double_type>& species, std::vector<double_type>& Aj, const double gas_density)
 {
   const unsigned int order = Aj.size() - 1;
 

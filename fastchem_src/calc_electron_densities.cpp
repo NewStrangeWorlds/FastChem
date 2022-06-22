@@ -36,20 +36,19 @@ namespace fastchem {
 
 //Calculation of the electron density
 template <class double_type>
-void FastChem<double_type>::calculateElectronDensities(Element<double_type>& electron, const double_type& old_number_density, const double_type gas_density)
+void FastChem<double_type>::calculateElectronDensities(
+  Element<double_type>& electron,
+  const double_type& old_number_density,
+  const double_type gas_density)
 {
-
   //Am I the electron? 
   if (electron.symbol != "e-") return;
-
 
   //no ions present   
   if (electron.molecule_list.size() == 0)
   {
-    
     electron.number_density = 0.0;
     return; 
-
   } 
 
 
@@ -75,22 +74,20 @@ void FastChem<double_type>::calculateElectronDensities(Element<double_type>& ele
   }
 
 
-
   //for singly-ionised species we use the analytic solution
   if (electron.solver_order == 1)
     calculateSinglyIonElectrons(electron, old_number_density);
   else
     calculateMultIonElectrons(electron, old_number_density, gas_density);
-  
 }
 
 
 //Calculation of the electron density for at most singly-ionised species
 //Uses the analytical solution from Paper 1, Appendix B
 template <class double_type>
-void FastChem<double_type>::calculateSinglyIonElectrons(Element<double_type>& electron, const double_type& old_number_density)
+void FastChem<double_type>::calculateSinglyIonElectrons(
+  Element<double_type>& electron, const double_type& old_number_density)
 {
- 
   double_type alpha = 0.0;
   double_type beta = 0.0;
 
@@ -138,7 +135,8 @@ void FastChem<double_type>::calculateSinglyIonElectrons(Element<double_type>& el
 //In case that fails (electron density not sufficiently high enough), it switches to a 1D Newton's method.
 //See Sect. 2.4.3 for details.
 template <class double_type>
-void FastChem<double_type>::calculateMultIonElectrons(Element<double_type>& electron, const double_type& old_number_density, const double_type& gas_density)
+void FastChem<double_type>::calculateMultIonElectrons(
+  Element<double_type>& electron, const double_type& old_number_density, const double_type& gas_density)
 {
   electron.number_density = 0.0;
 
@@ -160,18 +158,13 @@ void FastChem<double_type>::calculateMultIonElectrons(Element<double_type>& elec
   
   if (electron_density > delta*positive_ion_density)
   {
-
     electron.number_density = std::sqrt(electron_density * old_number_density);
-
   }
   else
   {
-
     //switching to Newton's method
     solver.newtonSolElectron(electron, elements, molecules, gas_density);
-
   }
-
 }
 
 

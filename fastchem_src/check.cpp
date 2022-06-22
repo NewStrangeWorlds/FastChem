@@ -31,38 +31,35 @@ namespace fastchem {
 
 //Check for the number density of elements
 template <class double_type>
-void Element<double_type>::checkN(const double_type& min_limit, const double_type& gas_density)
+void Element<double_type>::checkN(
+  const double_type& min_limit, const double_type& gas_density)
 {
-
   if (this->number_density < min_limit) this->number_density = min_limit;
 
   if (this->number_density > gas_density) this->number_density = gas_density;
-  
 }
 
 
 
 //Check for the number density of molecules
 template <class double_type>
-void Molecule<double_type>::checkN(const double_type& min_limit, const double_type& gas_density)
+void Molecule<double_type>::checkN(
+  const double_type& min_limit, const double_type& gas_density)
 {
-
   if (this->number_density < min_limit) this->number_density = min_limit;
 
   if (this->number_density > gas_density) this->number_density = gas_density;
-
 }
 
 
 
 //Check for charge conservation
 template <class double_type>
-bool Element<double_type>::checkChargeConservation(const std::vector< Molecule<double_type> >& molecules, const double_type& accuracy)
+bool Element<double_type>::checkChargeConservation(
+  const std::vector< Molecule<double_type> >& molecules, const double_type& accuracy)
 {
-
   //Am I the electron?
   if (this->symbol != "e-") return false;
-
 
   //If no ions present, charge conservation is automatically satisfied
   if (molecule_list.size() == 0)
@@ -72,7 +69,6 @@ bool Element<double_type>::checkChargeConservation(const std::vector< Molecule<d
     return true;
   }
 
-   
   bool charge_conserved = false;
 
   //sum up all positive and negative charges in the network
@@ -104,18 +100,17 @@ bool Element<double_type>::checkChargeConservation(const std::vector< Molecule<d
 
 //Check for element conservation
 template <class double_type>
-bool Element<double_type>::checkElementConservation(const std::vector< Molecule<double_type> >& molecules, const double_type total_density, const double_type& accuracy)
+bool Element<double_type>::checkElementConservation(
+  const std::vector< Molecule<double_type> >& molecules, const double_type total_density, const double_type& accuracy)
 {
-
   //electrons are subject to charge conservation
   if (this->symbol == "e-")
     return checkChargeConservation(molecules, accuracy);
 
-
   //sum up the elements contained in each molecule and compare the result to its elemental abundance
   double_type sum = this->number_density;
 
-  
+
   for (auto & i : molecule_list)
     sum += molecules[i].stoichiometric_vector[index] * molecules[i].number_density;
 
@@ -126,7 +121,7 @@ bool Element<double_type>::checkElementConservation(const std::vector< Molecule<
     element_conserved = 1;
   else
     element_conserved = 0;
-  
+
 
   return element_conserved;
 }
