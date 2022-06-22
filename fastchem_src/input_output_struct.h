@@ -28,7 +28,6 @@
 namespace fastchem {
 
 
-
 struct FastChemInput
 {
   std::vector<double> temperature; 

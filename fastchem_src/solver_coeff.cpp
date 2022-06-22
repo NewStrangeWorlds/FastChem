@@ -34,15 +34,6 @@ namespace fastchem {
 
 
 template <class double_type>
-FastChemSolver<double_type>::FastChemSolver(FastChemOptions<double_type>* options_ptr) 
-{
-
-  options = options_ptr; 
-  
-}
-
-
-template <class double_type>
 double_type FastChemSolver<double_type>::A0Coeff(
   const Element<double_type>& species, const double_type gas_density)
 {
@@ -243,7 +234,6 @@ double_type FastChemSolver<double_type>::AmCoeffElectron(
 
   return Am;
 }
-
 
 
 template class FastChemSolver<double>;

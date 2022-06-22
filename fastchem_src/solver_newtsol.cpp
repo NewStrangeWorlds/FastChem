@@ -318,7 +318,6 @@ void FastChemSolver<double_type>::newtonSolElectron(
 }
 
 
-
 template class FastChemSolver<double>;
 template class FastChemSolver<long double>;
 }

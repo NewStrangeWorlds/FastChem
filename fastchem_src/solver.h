@@ -37,7 +37,9 @@ namespace fastchem {
 template <class double_type>
 class FastChemSolver{
   public:
-    FastChemSolver(FastChemOptions<double_type>* options_ptr);
+    FastChemSolver(FastChemOptions<double_type>* options_)
+      : options(options_)
+      {}
 
     void intertSol(
       Element<double_type>& species,

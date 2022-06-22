@@ -135,12 +135,10 @@ std::string FastChem<double_type>::getSpeciesSymbol(const unsigned int species_i
 template <class double_type>
 double FastChem<double_type>::getSpeciesMolecularWeight(const unsigned int species_index)
 {
-
   if (species_index < nb_species)
     return species[species_index]->weight;
   else
     return 0.;
-
 }
 
 
@@ -148,12 +146,10 @@ double FastChem<double_type>::getSpeciesMolecularWeight(const unsigned int speci
 template <class double_type>
 double FastChem<double_type>::getElementAbundance(const unsigned int species_index)
 {
-
   if (species_index < nb_elements)
     return elements[species_index].abundance;
   else
     return 0.;
-
 }
 
 
@@ -162,14 +158,12 @@ double FastChem<double_type>::getElementAbundance(const unsigned int species_ind
 template <class double_type>
 std::vector<double> FastChem<double_type>::getElementAbundances()
 {
-
   std::vector<double> abundances(nb_elements, 0.0);
 
   for (size_t i=0; i<nb_elements; ++i)
     abundances[i] = elements[i].abundance;
 
   return abundances;
-
 }
 
 

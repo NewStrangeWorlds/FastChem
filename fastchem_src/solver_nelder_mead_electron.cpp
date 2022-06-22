@@ -32,7 +32,6 @@
 namespace fastchem {
 
 
-
 //Nelder-Mead downhill simplex method in one dimension for the electron density
 template <class double_type>
 bool FastChemSolver<double_type>::nelderMeadElectron(
@@ -215,17 +214,13 @@ bool FastChemSolver<double_type>::nelderMeadElectron(
 
   }//optimisation is finished
 
-
   species.number_density = std::exp(x[x1]);
 
-  
   if (!converged && options->verbose_level >= 3)
     std::cout << "Nelder-Mead iteration limit reached, result may not be optimal." << "\t" << x[x1] << "\n";
 
-
   return converged;
 }
-
 
 
 template class FastChemSolver<double>;

@@ -50,7 +50,6 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     return initialization_status;
   }
 
-
   std::string file_name, line;
   double parameter_value;
   int nb_value;
@@ -162,7 +161,6 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
 
   return initialization_status;
 }
-
 
 
 template struct FastChemOptions<double>;

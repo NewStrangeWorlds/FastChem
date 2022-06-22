@@ -56,14 +56,14 @@ void FastChem<double_type>::addAtom(std::string symbol)
 
     elements.back().index = elements.size()-1;
   }
-
 }
 
 
 
 //Set an element abundance that was found in the input file
 template <class double_type>
-void FastChem<double_type>::setElementAbundance(const std::string symbol, const double abundance)
+void FastChem<double_type>::setElementAbundance(
+  const std::string symbol, const double abundance)
 {
   unsigned int index = getChemicalElementIndex(symbol);
 
@@ -71,7 +71,6 @@ void FastChem<double_type>::setElementAbundance(const std::string symbol, const 
     std::cout << "Element " << symbol << " for setting abundances not found. Neglected!\n";
   else
     chemical_element_data[index].abundance = abundance;
-
 
   if (symbol == "e-") chemical_element_data[index].abundance = 0.0;
 }
@@ -137,7 +136,6 @@ void FastChem<double_type>::addMolecule(
   }
   else 
     std::cout << "Stoichiometry of species " << symbol << " incomplete. Neglected!\n";
-
 }
 
 

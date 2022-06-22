@@ -48,13 +48,11 @@ void FastChem<double_type>::setElementAbundances(std::vector<double> abundances)
 
     chemical_element_data[elements[i].element_data_index].abundance = abundances[i];
     elements[i].abundance = abundances[i];
-
   }
 
 
   reInitialiseFastChem();
 }
-
 
 
 template class FastChem<double>;

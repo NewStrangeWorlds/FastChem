@@ -289,7 +289,6 @@ void FastChem<double_type>::createMoleculeLists()
   }
 
 
-  
   for (size_t i=0; i<nb_molecules; ++i)
   {
 
@@ -340,7 +339,6 @@ void FastChem<double_type>::createMoleculeLists()
     }
   }
 }
-
 
 
 template class FastChem<double>;

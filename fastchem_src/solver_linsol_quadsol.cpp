@@ -111,7 +111,6 @@ void FastChemSolver<double_type>::quadSol(
 }
 
 
-
 template class FastChemSolver<double>;
 template class FastChemSolver<long double>;
 }

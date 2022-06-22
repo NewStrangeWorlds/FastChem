@@ -48,7 +48,6 @@ void FastChemSolver<double_type>::backupSol(
 }
 
 
-
 template class FastChemSolver<double>;
 template class FastChemSolver<long double>;
 }

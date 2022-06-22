@@ -27,7 +27,6 @@
 namespace fastchem {
 
 
-
 //Determination of the correction factor n_j_min, that contains the number density of an element j contained in molecules
 //with elements that are less abundant than j
 //See Eq. (2.23)
@@ -93,7 +92,6 @@ void Element<double_type>::calcSolverScalingFactor(
   //scale the factor by an additional, optional factor supplied by the user
   solver_scaling_factor -= additional_scaling_factor;
 }
-
 
 
 template struct Element<double>;
