@@ -1,5 +1,10 @@
-# FastChem 2.1 #
+# FastChem 2.x #
 #### Authors: Daniel Kitzmann, Joachim Stock ####
+
+# Note #
+
+This is an *active* development branch for FastChem that is focussed on condensation. Things might not work as expected (or might even be broken) and updates are very likely not yet documented in the manual. Use at your own risk.
+
 
 # Overview #
 
