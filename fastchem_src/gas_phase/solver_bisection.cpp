@@ -34,7 +34,7 @@ namespace fastchem {
 
 //Bisection method in one dimension
 template <class double_type>
-bool FastChemSolver<double_type>::bisection(
+bool GasPhaseSolver<double_type>::bisection(
   Element<double_type>& species, std::vector<double_type>& Aj, const double gas_density)
 {
   const unsigned int order = Aj.size() - 1;
@@ -58,9 +58,9 @@ bool FastChemSolver<double_type>::bisection(
   std::vector<double_type> x(2, 0.0);
 
   x[1] = gas_density;
-  x[0] = options->element_density_minlimit;
+  x[0] = options.element_density_minlimit;
 
-  unsigned int nb_iterations = options->nb_max_bisection_iter;
+  unsigned int nb_iterations = options.nb_max_bisection_iter;
   bool converged = false;
 
 
@@ -77,7 +77,7 @@ bool FastChemSolver<double_type>::bisection(
 
     //Convergence test. We need to be a little more accurate than the required accuracy.
     //Otherwise FastChem doesn't converge to the desired accuracy.
-    if ( std::fabs(x[0] - x[1])/x[1] < options->accuracy * 1e-3 )
+    if ( std::fabs(x[0] - x[1])/x[1] < options.accuracy * 1e-3 )
     {
       converged = true;
       break;
@@ -90,15 +90,15 @@ bool FastChemSolver<double_type>::bisection(
   species.number_density = x[0];
 
 
-  if (!converged && options->verbose_level >= 3)
+  if (!converged && options.verbose_level >= 3)
     std::cout << "Bisection iteration limit reached, result may not be optimal." << "\t" << x[0] << "\t" << x[1]
-              << "\t" << std::fabs(std::exp(x[0]) - std::exp(x[1]))/std::exp(x[1]) << "\t" << options->accuracy * 1e-3  << "\n";
+              << "\t" << std::fabs(std::exp(x[0]) - std::exp(x[1]))/std::exp(x[1]) << "\t" << options.accuracy * 1e-3  << "\n";
 
 
   return converged;
 }
 
 
-template class FastChemSolver<double>;
-template class FastChemSolver<long double>;
+template class GasPhaseSolver<double>;
+template class GasPhaseSolver<long double>;
 }

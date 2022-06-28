@@ -18,39 +18,31 @@
 */
 
 
-#include "solver.h"
-#include "species_struct.h"
-
-#include <iostream>
-#include <iomanip>
-#include <string>
 #include <vector>
-#include <limits>
 #include <cmath>
-#include <algorithm>
+
+#include "gas_phase.h"
 
 
 namespace fastchem {
 
 
-//This is the backup solver for the standard analytic FastChem solvers
-//Currently configured to use a 1D Newton solver, that employs Eq. (2.34)
+//Calculate the mean molecular weight of the converged network
+//See Paper I, Eq. (2.10)
 template <class double_type>
-void FastChemSolver<double_type>::backupSol(
-  Element<double_type>& species,
-  std::vector<Element<double_type>>& elements,
-  const std::vector<Molecule<double_type>>& molecules, 
-  const double_type gas_density)
+double GasPhase<double_type>::meanMolecularWeight(const double gas_density)
 {
+  double mean_molecular_weight = 0.0;
 
-  newtonSol(species, elements, molecules, gas_density, true);
-  
+  for (auto & i : species) mean_molecular_weight += i->weight * i->number_density;
+
+  mean_molecular_weight /= gas_density;
+
+  return mean_molecular_weight;
 }
 
 
-template class FastChemSolver<double>;
-template class FastChemSolver<long double>;
+
+template class GasPhase<double>;
+template class GasPhase<long double>;
 }
-
-
-

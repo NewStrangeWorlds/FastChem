@@ -18,27 +18,39 @@
 */
 
 
-#include "fastchem.h"
+#include "solver.h"
+#include "../species_struct.h"
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
-
+#include <limits>
+#include <cmath>
+#include <algorithm>
 
 
 namespace fastchem {
 
 
-//Set the element abundances for all elements
+//This is the backup solver for the standard analytic FastChem solvers
+//Currently configured to use a 1D Newton solver, that employs Eq. (2.34)
 template <class double_type>
-void FastChem<double_type>::setElementAbundances(std::vector<double> abundances)
+void GasPhaseSolver<double_type>::backupSol(
+  Element<double_type>& species,
+  std::vector<Element<double_type>>& elements,
+  const std::vector<Molecule<double_type>>& molecules, 
+  const double_type gas_density)
 {
-  element_data.setAbundances(abundances);
 
-  gas_phase.reInitialise();
+  newtonSol(species, elements, molecules, gas_density, true);
+  
 }
 
 
-template class FastChem<double>;
-template class FastChem<long double>;
+template class GasPhaseSolver<double>;
+template class GasPhaseSolver<long double>;
 }
+
+
+

@@ -18,9 +18,6 @@
 */
 
 
-#include "fastchem.h"
-#include "solver.h"
-
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -29,6 +26,10 @@
 #include <cmath>
 #include <algorithm>
 
+#include "gas_phase.h"
+
+#include "solver.h"
+
 
 namespace fastchem {
 
@@ -36,7 +37,7 @@ namespace fastchem {
 
 //Calculation of the electron density
 template <class double_type>
-void FastChem<double_type>::calculateElectronDensities(
+void GasPhase<double_type>::calculateElectronDensities(
   Element<double_type>& electron,
   const double_type& old_number_density,
   const double_type gas_density)
@@ -85,7 +86,7 @@ void FastChem<double_type>::calculateElectronDensities(
 //Calculation of the electron density for at most singly-ionised species
 //Uses the analytical solution from Paper 1, Appendix B
 template <class double_type>
-void FastChem<double_type>::calculateSinglyIonElectrons(
+void GasPhase<double_type>::calculateSinglyIonElectrons(
   Element<double_type>& electron, const double_type& old_number_density)
 {
   double_type alpha = 0.0;
@@ -135,7 +136,7 @@ void FastChem<double_type>::calculateSinglyIonElectrons(
 //In case that fails (electron density not sufficiently high enough), it switches to a 1D Newton's method.
 //See Sect. 2.4.3 for details.
 template <class double_type>
-void FastChem<double_type>::calculateMultIonElectrons(
+void GasPhase<double_type>::calculateMultIonElectrons(
   Element<double_type>& electron, const double_type& old_number_density, const double_type& gas_density)
 {
   electron.number_density = 0.0;
@@ -169,8 +170,8 @@ void FastChem<double_type>::calculateMultIonElectrons(
 
 
 
-template class FastChem<double>;
-template class FastChem<long double>;
+template class GasPhase<double>;
+template class GasPhase<long double>;
 }
 
 

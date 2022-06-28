@@ -37,7 +37,7 @@ namespace fastchem {
 //The standard version (use_alternative = false) uses the n_min approach to account for minor species
 //For use_alternative = true, it will use all species in the law of mass action
 template <class double_type>
-void FastChemSolver<double_type>::newtonSol(
+void GasPhaseSolver<double_type>::newtonSol(
   Element<double_type>& species,
   std::vector<Element<double_type>>& elements,
   const std::vector<Molecule<double_type>>& molecules, 
@@ -79,7 +79,7 @@ void FastChemSolver<double_type>::newtonSol(
     n_exc *= species.epsilon;
     
 
-    if (options->use_scaling_factor)
+    if (options.use_scaling_factor)
       Aj[0] = std::exp(-species.solver_scaling_factor) * (n_exc - gas_density * species.epsilon);
     else
       Aj[0] = n_exc - gas_density * species.epsilon;
@@ -124,12 +124,12 @@ void FastChemSolver<double_type>::newtonSol(
 
   //Newton iteration
   unsigned int mu = 0; 
-  for (mu=0; mu<options->nb_max_newton_iter; ++mu)
+  for (mu=0; mu<options.nb_max_newton_iter; ++mu)
   {
     double_type x_new = newton_step(x);
 
 
-    if (std::fabs(x_new - x) < options->newton_err * std::fabs(x_new))  //root found?
+    if (std::fabs(x_new - x) < options.newton_err * std::fabs(x_new))  //root found?
     {
       x = x_new;
       converged = true;
@@ -150,8 +150,8 @@ void FastChemSolver<double_type>::newtonSol(
 
 
   //test if root is in (max(0,x*(1-newton_err)),x*(1+newton_err))
-  double_type x_lower = std::fmax(0., x * (1. - options->newton_err));
-  double_type x_upper = x * (1. + options->newton_err);
+  double_type x_lower = std::fmax(0., x * (1. - options.newton_err));
+  double_type x_upper = x * (1. + options.newton_err);
 
   double_type P_j_lower = Aj[order];
   double_type P_j_upper = Aj[order];
@@ -175,7 +175,7 @@ void FastChemSolver<double_type>::newtonSol(
     { 
       newtonSol(species, elements, molecules, gas_density, true);
 
-      if (options->verbose_level >= 3)
+      if (options.verbose_level >= 3)
         std::cout << "FastChem: WARNING: NewtSol failed for species " 
           << species.symbol << " switched to Backup " 
           << x << "\t" 
@@ -185,7 +185,7 @@ void FastChemSolver<double_type>::newtonSol(
     {
       bisection(species, Aj, gas_density);
 
-      if (options->verbose_level >= 3)
+      if (options.verbose_level >= 3)
         std::cout << "FastChem: WARNING: NewtSol Alt failed for species " 
           << species.symbol << " switched to Bisection as backup " 
           << x << "\t" 
@@ -199,7 +199,7 @@ void FastChemSolver<double_type>::newtonSol(
 //Newton's method for the electrons
 //Instead of element conservation, solves for charge balance
 template <class double_type>
-void FastChemSolver<double_type>::newtonSolElectron(
+void GasPhaseSolver<double_type>::newtonSolElectron(
   Element<double_type>& species,
   std::vector<Element<double_type>>& elements,
   const std::vector<Molecule<double_type>>& molecules,
@@ -252,11 +252,11 @@ void FastChemSolver<double_type>::newtonSolElectron(
 
 
   //Newton iteration
-  for (unsigned int mu=0; mu<options->nb_max_newton_iter; ++mu)
+  for (unsigned int mu=0; mu<options.nb_max_newton_iter; ++mu)
   {
     double_type x_new = newton_step(x);
 
-    if (std::fabs(x_new - x) <= options->newton_err * std::fabs(x_new))  //root found?
+    if (std::fabs(x_new - x) <= options.newton_err * std::fabs(x_new))  //root found?
     {
       x = x_new;
       converged = true;
@@ -275,8 +275,8 @@ void FastChemSolver<double_type>::newtonSolElectron(
 
 
   // Test if root is in (max(0,x*(1-newton_err)),x*(1+newton_err))
-  const double_type x_lower = std::fmax(0., x * (1. - options->newton_err));
-  const double_type x_upper = x * (1. + options->newton_err);
+  const double_type x_lower = std::fmax(0., x * (1. - options.newton_err));
+  const double_type x_upper = x * (1. + options.newton_err);
 
 
   double_type P_anion_lower = Aj_anion[order_anion];
@@ -310,7 +310,7 @@ void FastChemSolver<double_type>::newtonSolElectron(
     const double_type init = std::log(std::fabs(x));
     nelderMeadElectron(species, elements, molecules, init, 0.0);
 
-    if (options->verbose_level >= 3)
+    if (options.verbose_level >= 3)
       std::cout << "FastChem: WARNING: NewtSol failed for electrons, switching to Nelder-Mead Backup " 
         << x << "\t" 
         << species.number_density << "\n";
@@ -318,6 +318,6 @@ void FastChemSolver<double_type>::newtonSolElectron(
 }
 
 
-template class FastChemSolver<double>;
-template class FastChemSolver<long double>;
+template class GasPhaseSolver<double>;
+template class GasPhaseSolver<long double>;
 }

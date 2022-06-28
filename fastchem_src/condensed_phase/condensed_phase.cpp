@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,32 +18,34 @@
 */
 
 
-#include "fastchem.h"
-
+#include <string>
 #include <vector>
-#include <cmath>
+#include <iostream>
 
+#include "condensed_phase.h"
+
+#include "condensate_struct.h"
+#include "../fastchem_constants.h"
+#include "../species_struct.h"
 
 
 namespace fastchem {
 
-
-//Calculate the mean molecular weight of the converged network
-//See Paper I, Eq. (2.10)
 template <class double_type>
-double FastChem<double_type>::meanMolecularWeight(const double gas_density)
+bool CondensedPhase<double_type>::init(
+  const std::string& species_data_file)
 {
-  double mean_molecular_weight = 0.0;
+  readCondensateData(species_data_file);
 
-  for (auto & i : species) mean_molecular_weight += i->weight * i->number_density;
+  for (auto & i : condensates)
+    std::cout << i.symbol << "\n";
 
-  mean_molecular_weight /= gas_density;
-
-  return mean_molecular_weight;
+  exit(0);
 }
 
 
 
-template class FastChem<double>;
-template class FastChem<long double>;
+template class CondensedPhase<double>;
+template class CondensedPhase<long double>;
+
 }

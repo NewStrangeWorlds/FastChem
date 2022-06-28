@@ -22,7 +22,7 @@
 #ifndef _chemical_element_data_h
 #define _chemical_element_data_h
 
-#include "species_struct.h"
+#include "../species_struct.h"
 #include <vector>
 
 

@@ -32,25 +32,23 @@ namespace fastchem {
 //Requires: parameter file path and the initial verbose level that is used while reading the input files
 template <class double_type>
 FastChem<double_type>::FastChem(
-  const std::string& model_parameter_file, const unsigned int verbose_level_init) 
-    : solver(&options)
+  const std::string& model_parameter_file, const unsigned int verbose_level_start)
+    : options(model_parameter_file, verbose_level_start)
+    , element_data(options.element_abundances_file, options.chemical_element_file)
+    , gas_phase(options, element_data)
+    //, condensed_phase(elements)
 {
-  options.verbose_level = verbose_level_init;
-
-  bool parameter_file_loaded = false;
-
-  if (model_parameter_file != "")
-    parameter_file_loaded = options.readParameterFile(model_parameter_file);
-
-
-  if (!parameter_file_loaded)
+  if (!options.parameter_file_loaded)
   {
     std::cout << "Error reading parameters\n";
-    is_initialized = false;
+    is_initialised = false;
   }
 
 
-  if (parameter_file_loaded) init();
+  if (options.parameter_file_loaded) 
+    init();
+
+  //condensed_phase.init(std::string("input/condensate_test_small.dat"));
 }
 
 
@@ -60,83 +58,37 @@ FastChem<double_type>::FastChem(
 //          and the initial verbose level that is used while reading the input files
 template <class double_type>
 FastChem<double_type>::FastChem(
-  const std::string &element_abundances_file,
-  const std::string &species_data_file,
-  const unsigned int verbose_level_init) 
-    : solver(&options)
+  const std::string& element_abundances_file,
+  const std::string& species_data_file,
+  const unsigned int verbose_level_start) 
+    : options(element_abundances_file, species_data_file, verbose_level_start)
+    , element_data(element_abundances_file, options.chemical_element_file)
+    , gas_phase(options, element_data)
+    //, condensed_phase(elements)
 {
-  options.verbose_level = verbose_level_init;
-  options.element_abundances_file = element_abundances_file;
-  options.species_data_file = species_data_file;
+  if (element_data.is_initialised == true && gas_phase.is_initialised == true)
+    is_initialised = true;
+  else
+  {
+    std::cout << "Error initialising FastChem!\n\n";
+    is_initialised = false;
+
+    return;
+  }
 
   init();
 }
 
 
-
-
-//Copy constructor
-//Could be made more pretty, but this one does the job as well...
+//the copy constructor
 template <class double_type>
-FastChem<double_type>::FastChem(const FastChem &obj) 
-  : solver(&options)
+FastChem<double_type>::FastChem(const FastChem &obj)
+  : options(obj.options)
+  , element_data(obj.element_data)
+  , gas_phase(obj.gas_phase, options, element_data)
 {
-  nb_chemical_element_data = obj.nb_chemical_element_data;
-  nb_species = obj.nb_species;
-  nb_molecules = obj.nb_molecules;
-  nb_elements = obj.nb_elements;
 
-  e_ = obj.e_;
-
-  is_initialized = obj.is_initialized;
-  is_busy = false;
-
-  chemical_element_data = obj.chemical_element_data;
-  elements = obj.elements;
-  molecules = obj.molecules;
-  
-  element_calculation_order = obj.element_calculation_order;
-  
-  
-  species.reserve(nb_elements + nb_molecules);
-  elements_wo_e.reserve(nb_elements);
-
-  for (auto & i : elements)
-  {
-    species.push_back(&i);
-    
-    if (i.symbol != "e-") elements_wo_e.push_back(&i);
-  }
-    
-  for (auto & i : molecules)
-    species.push_back(&i);
-
-
-  //Options object
-  options.nb_max_fastchem_iter = obj.options.nb_max_fastchem_iter;
-  options.nb_max_bisection_iter = obj.options.nb_max_bisection_iter;
-  options.nb_max_neldermead_iter = obj.options.nb_max_neldermead_iter;
-  options.nb_max_newton_iter = obj.options.nb_max_newton_iter;
-
-  options.element_density_minlimit = obj.options.element_density_minlimit;
-  options.molecule_density_minlimit = obj.options.molecule_density_minlimit;
-
-  options.accuracy = obj.options.accuracy;
-  options.newton_err = obj.options.newton_err;
-
-  options.verbose_level = obj.options.verbose_level;
-  options.use_scaling_factor = obj.options.use_scaling_factor;
-  
-  options.chemical_element_file = obj.options.chemical_element_file;
-  options.species_data_file = obj.options.species_data_file;
-  options.element_abundances_file = obj.options.element_abundances_file;
-
-
-  //Solver object
-  solver.order_anion = obj.solver.order_anion;
-  solver.order_cation = obj.solver.order_cation;
 }
-
 
 
 template class FastChem<double>;

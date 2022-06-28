@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,23 @@
 */
 
 
-#include "fastchem.h"
-
-#include <iostream>
+#include <string>
 #include <vector>
-#include <iomanip>
-#include <algorithm>
+#include <iostream>
 #include <cmath>
+
+#include "gas_phase.h"
+
+#include "../fastchem_constants.h"
+#include "../species_struct.h"
 
 
 namespace fastchem {
 
 
-//This is the main FastChem iteration
+//This is the main FastChem iteration for the gas phase
 template <class double_type>
-bool FastChem<double_type>::solveFastchem(
+bool GasPhase<double_type>::calculate(
   const double temperature_gas, const double gas_density, unsigned int& nb_iterations)
 {
   for (auto & i : elements) i.number_density_maj = 0.0;
@@ -131,9 +133,11 @@ bool FastChem<double_type>::solveFastchem(
   nb_iterations = iter_step;
   
   return converged;
-}
+} 
 
 
-template class FastChem<double>;
-template class FastChem<long double>;
-}
+
+template class GasPhase<double>;
+template class GasPhase<long double>;
+
+} 

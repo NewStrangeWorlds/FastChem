@@ -34,7 +34,7 @@ namespace fastchem {
 
 //Nelder-Mead downhill simplex method in one dimension for the electron density
 template <class double_type>
-bool FastChemSolver<double_type>::nelderMeadElectron(
+bool GasPhaseSolver<double_type>::nelderMeadElectron(
   Element<double_type>& species,
   std::vector< Element<double_type> >& elements,
   const std::vector< Molecule<double_type> >& molecules, 
@@ -105,7 +105,7 @@ bool FastChemSolver<double_type>::nelderMeadElectron(
   bool converged = false;
 
   //downhill simplex method starts
-  for (unsigned int iter_step = 0; iter_step < options->nb_max_neldermead_iter; ++iter_step)
+  for (unsigned int iter_step = 0; iter_step < options.nb_max_neldermead_iter; ++iter_step)
   {
 
     for(size_t i = 0; i < N + 1; ++i)
@@ -128,7 +128,7 @@ bool FastChemSolver<double_type>::nelderMeadElectron(
 
 
     //check if the function has a root in a delta region around xg
-    const double_type delta = xg * options->accuracy*1e-4;
+    const double_type delta = xg * options.accuracy*1e-4;
 
  
     const double_type vf_epsilon_plus = charge_conservation(xg+delta);
@@ -216,13 +216,13 @@ bool FastChemSolver<double_type>::nelderMeadElectron(
 
   species.number_density = std::exp(x[x1]);
 
-  if (!converged && options->verbose_level >= 3)
+  if (!converged && options.verbose_level >= 3)
     std::cout << "Nelder-Mead iteration limit reached, result may not be optimal." << "\t" << x[x1] << "\n";
 
   return converged;
 }
 
 
-template class FastChemSolver<double>;
-template class FastChemSolver<long double>;
+template class GasPhaseSolver<double>;
+template class GasPhaseSolver<long double>;
 }

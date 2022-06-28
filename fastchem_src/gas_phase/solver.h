@@ -18,16 +18,16 @@
 */
 
 
-#ifndef _solver_h
-#define _solver_h
+#ifndef _gas_phase_solver_h
+#define _gas_phase_solver_h
 
 #include <vector>
 #include <iostream>
 #include <string>
 
-#include "fastchem_constants.h"
-#include "species_struct.h"
-#include "options.h"
+#include "../fastchem_constants.h"
+#include "../species_struct.h"
+#include "../options.h"
 
 
 namespace fastchem {
@@ -35,9 +35,9 @@ namespace fastchem {
 
 //Solver class
 template <class double_type>
-class FastChemSolver{
+class GasPhaseSolver{
   public:
-    FastChemSolver(FastChemOptions<double_type>* options_)
+    GasPhaseSolver(FastChemOptions<double_type>& options_)
       : options(options_)
       {}
 
@@ -92,7 +92,7 @@ class FastChemSolver{
     int order_anion = -999;
    
   private:
-    FastChemOptions<double_type> *options;
+    FastChemOptions<double_type>& options;
     
     double_type A0Coeff(
       const Element<double_type>& species, const double_type gas_density);

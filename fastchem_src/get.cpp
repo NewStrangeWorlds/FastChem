@@ -29,75 +29,21 @@
 namespace fastchem {
 
 
-//Query for a basic chemical element index with a chemical symbol
-//Returns FASTCHEM_UNKNOWN_SPECIES if the element does not exist
-template <class double_type>
-unsigned int FastChem<double_type>::getChemicalElementIndex(const std::string symbol)
-{
-  unsigned int index = FASTCHEM_UNKNOWN_SPECIES;
-
-  for (size_t i=0; i<nb_chemical_element_data; ++i)
-    if (symbol == chemical_element_data[i].symbol)
-    {
-      index = i;
-      break;
-    }
-
-
-  return index;
-}
-
-
-
-//Query for a molecule index with chemical symbol
-//Returns FASTCHEM_UNKNOWN_SPECIES if the molecule does not exist
-template <class double_type>
-unsigned int FastChem<double_type>::getMoleculeIndex(const std::string symbol)
-{
-  auto it = std::find_if(
-    molecules.begin(),
-    molecules.end(),
-    [&](const Molecule<double_type>& a) { return a.symbol == symbol;});
-
-  if (it == molecules.end()) 
-    return FASTCHEM_UNKNOWN_SPECIES;
-  else
-    return it - molecules.begin();
-}
-
-
-
-//Query for a element's index with a chemical symbol
-//Returns FASTCHEM_UNKNOWN_SPECIES if the element does not exist
-template <class double_type>
-unsigned int FastChem<double_type>::getElementIndex(const std::string symbol)
-{
-  auto it = std::find_if(
-    elements.begin(),
-    elements.end(),
-    [&](const Element<double_type>& a) { return a.symbol == symbol;});
-
-  if (it == elements.end()) 
-    return FASTCHEM_UNKNOWN_SPECIES;
-  else
-    return it - elements.begin();
-}
-
-
-
 //Query for a species index (both, elements and molecules) with a chemical symbol
 //Returns FASTCHEM_UNKNOWN_SPECIES if the species does not exist
 template <class double_type>
 unsigned int FastChem<double_type>::getSpeciesIndex(const std::string symbol)
 {
   auto it = std::find_if(
-    species.begin(),
-    species.end(), [&](const ChemicalSpecies<double_type>* a) { return a->symbol == symbol;});
+    gas_phase.species.begin(),
+    gas_phase.species.end(),
+    [&] (const ChemicalSpecies<double_type>* a) {
+      return a->symbol == symbol;});
 
-  if (it == species.end()) 
+  if (it == gas_phase.species.end()) 
     return FASTCHEM_UNKNOWN_SPECIES;
   else
-    return it - species.begin();
+    return it - gas_phase.species.begin();
 }
 
 
@@ -107,8 +53,8 @@ unsigned int FastChem<double_type>::getSpeciesIndex(const std::string symbol)
 template <class double_type>
 std::string FastChem<double_type>::getSpeciesName(const unsigned int species_index)
 {
-  if (species_index < nb_species)
-    return species[species_index]->name;
+  if (species_index < gas_phase.nb_species)
+    return gas_phase.species[species_index]->name;
   else
     return "";
 }
@@ -121,8 +67,8 @@ template <class double_type>
 std::string FastChem<double_type>::getSpeciesSymbol(const unsigned int species_index)
 {
 
-  if (species_index < nb_species)
-    return species[species_index]->symbol;
+  if (species_index < gas_phase.nb_species)
+    return gas_phase.species[species_index]->symbol;
   else
     return "";
 
@@ -135,8 +81,8 @@ std::string FastChem<double_type>::getSpeciesSymbol(const unsigned int species_i
 template <class double_type>
 double FastChem<double_type>::getSpeciesMolecularWeight(const unsigned int species_index)
 {
-  if (species_index < nb_species)
-    return species[species_index]->weight;
+  if (species_index < gas_phase.nb_species)
+    return gas_phase.species[species_index]->weight;
   else
     return 0.;
 }
@@ -146,8 +92,8 @@ double FastChem<double_type>::getSpeciesMolecularWeight(const unsigned int speci
 template <class double_type>
 double FastChem<double_type>::getElementAbundance(const unsigned int species_index)
 {
-  if (species_index < nb_elements)
-    return elements[species_index].abundance;
+  if (species_index < element_data.nb_elements)
+    return element_data.elements[species_index].abundance;
   else
     return 0.;
 }
@@ -158,10 +104,10 @@ double FastChem<double_type>::getElementAbundance(const unsigned int species_ind
 template <class double_type>
 std::vector<double> FastChem<double_type>::getElementAbundances()
 {
-  std::vector<double> abundances(nb_elements, 0.0);
+  std::vector<double> abundances(element_data.nb_elements, 0.0);
 
-  for (size_t i=0; i<nb_elements; ++i)
-    abundances[i] = elements[i].abundance;
+  for (size_t i=0; i<element_data.nb_elements; ++i)
+    abundances[i] = element_data.elements[i].abundance;
 
   return abundances;
 }

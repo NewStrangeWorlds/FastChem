@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,6 @@
 */
 
 
-#include "fastchem.h"
-#include "solver.h"
-
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -29,6 +26,10 @@
 #include <cmath>
 #include <algorithm>
 
+#include "gas_phase.h"
+
+#include "solver.h"
+
 
 namespace fastchem {
 
@@ -36,7 +37,7 @@ namespace fastchem {
 //Selects the appropriate solver for each element
 //See Sect. 2.4.2 and Eq. (2.32)
 template <class double_type>
-void FastChem<double_type>::calculateElementDensities(
+void GasPhase<double_type>::calculateElementDensities(
   Element<double_type>& species,
   const double_type gas_density,
   bool use_backup_solver,
@@ -87,7 +88,7 @@ void FastChem<double_type>::calculateElementDensities(
 
 //Calculates the number density of species, based on previously computed element densities
 template <class double_type>
-double_type FastChem<double_type>::calculateMoleculeDensities(
+double_type GasPhase<double_type>::calculateMoleculeDensities(
   Element<double_type>& species, const double_type gas_density)
 {
   double_type n_major = 0.0;
@@ -116,10 +117,8 @@ double_type FastChem<double_type>::calculateMoleculeDensities(
 
 
 
-
-
 template <class double_type>
-double FastChem<double_type>::totalElementDensity()
+double GasPhase<double_type>::totalElementDensity()
 {
   double n_tot = 0.0;
 
@@ -142,8 +141,8 @@ double FastChem<double_type>::totalElementDensity()
 
 
 
-template class FastChem<double>;
-template class FastChem<long double>;
+template class GasPhase<double>;
+template class GasPhase<long double>;
 }
 
 

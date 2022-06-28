@@ -19,7 +19,7 @@
 
 
 #include "solver.h"
-#include "species_struct.h"
+#include "../species_struct.h"
 
 #include <iostream>
 #include <iomanip>
@@ -34,12 +34,12 @@ namespace fastchem {
 
 
 template <class double_type>
-double_type FastChemSolver<double_type>::A0Coeff(
+double_type GasPhaseSolver<double_type>::A0Coeff(
   const Element<double_type>& species, const double_type gas_density)
 {
   double_type A0 = 0.0;
 
-  if (options->use_scaling_factor)
+  if (options.use_scaling_factor)
     A0 = std::exp(-species.solver_scaling_factor) * (species.number_density_maj + species.number_density_min - gas_density * species.epsilon);
   else
     //calculation of coefficient A_j0, see Eq. (2.27)
@@ -50,7 +50,7 @@ double_type FastChemSolver<double_type>::A0Coeff(
 
 
 template <class double_type>
-double_type FastChemSolver<double_type>::A1Coeff(
+double_type GasPhaseSolver<double_type>::A1Coeff(
   const Element<double_type>& species,
   const std::vector< Element<double_type> >& elements,
   const std::vector< Molecule<double_type> >& molecules)
@@ -77,7 +77,7 @@ double_type FastChemSolver<double_type>::A1Coeff(
   }
 
 
-  if (options->use_scaling_factor)
+  if (options.use_scaling_factor)
     A1 += std::exp(-species.solver_scaling_factor);
   else
     A1 += 1.0;
@@ -89,7 +89,7 @@ double_type FastChemSolver<double_type>::A1Coeff(
 
 
 template <class double_type>
-double_type FastChemSolver<double_type>::A2Coeff(
+double_type GasPhaseSolver<double_type>::A2Coeff(
   const Element<double_type>& species,
   const std::vector< Element<double_type> >& elements,
   const std::vector< Molecule<double_type> >& molecules)
@@ -121,7 +121,7 @@ double_type FastChemSolver<double_type>::A2Coeff(
 
 
 template <class double_type>
-double_type FastChemSolver<double_type>::AmCoeff(
+double_type GasPhaseSolver<double_type>::AmCoeff(
   const Element<double_type>& species,
   const std::vector< Element<double_type> >& elements,
   const std::vector< Molecule<double_type> >& molecules, 
@@ -150,7 +150,7 @@ double_type FastChemSolver<double_type>::AmCoeff(
 
   if (order == 1)
   {
-    if (options->use_scaling_factor)
+    if (options.use_scaling_factor)
       Am += std::exp(-species.solver_scaling_factor);
     else
       Am += 1.0;
@@ -164,7 +164,7 @@ double_type FastChemSolver<double_type>::AmCoeff(
 //Alternative description of the Am coefficients
 //Takes the full law of mass action into account, i.e. doesn't stop at minor species as the regular calculation
 template <class double_type>
-double_type FastChemSolver<double_type>::AmCoeffAlt(
+double_type GasPhaseSolver<double_type>::AmCoeffAlt(
   const Element<double_type>& species,
   const std::vector< Element<double_type> >& elements,
   const std::vector< Molecule<double_type> >& molecules, 
@@ -193,7 +193,7 @@ double_type FastChemSolver<double_type>::AmCoeffAlt(
 
   if (order == 1) 
   {
-    if (options->use_scaling_factor)
+    if (options.use_scaling_factor)
       Am += std::exp(-species.solver_scaling_factor);
     else
       Am += 1.0;
@@ -207,7 +207,7 @@ double_type FastChemSolver<double_type>::AmCoeffAlt(
 //Alternative description of the Am coefficients
 //Takes the full law of mass action into account, i.e. doesn't stop at minor species as the regular calculation
 template <class double_type>
-double_type FastChemSolver<double_type>::AmCoeffElectron(
+double_type GasPhaseSolver<double_type>::AmCoeffElectron(
   const Element<double_type>& electron,
   const std::vector< Element<double_type> >& elements,
   const std::vector< Molecule<double_type> >& molecules, 
@@ -236,8 +236,8 @@ double_type FastChemSolver<double_type>::AmCoeffElectron(
 }
 
 
-template class FastChemSolver<double>;
-template class FastChemSolver<long double>;
+template class GasPhaseSolver<double>;
+template class GasPhaseSolver<long double>;
 }
 
 

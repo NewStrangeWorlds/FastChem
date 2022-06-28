@@ -39,7 +39,7 @@ template <class double_type>
 unsigned int FastChem<double_type>::calcDensities(
   FastChemInput& input, FastChemOutput& output)
 {
-  if (!is_initialized)
+  if (!is_initialised)
     return FASTCHEM_INITIALIZATION_FAILED;
 
 
@@ -79,7 +79,7 @@ unsigned int FastChem<double_type>::calcDensities(
   omp_set_num_threads(nb_omp_threads);
 
   std::vector< FastChem<double_type>  > fastchems(nb_omp_threads, *this);
-  
+
   #pragma omp parallel for schedule(dynamic, 1)
   for (unsigned int i=0; i<input.temperature.size(); i++)
   { 
@@ -111,7 +111,6 @@ unsigned int FastChem<double_type>::calcDensities(
 
   unsigned int status = *std::max_element(std::begin(output.fastchem_flag), std::end(output.fastchem_flag));
 
-
   is_busy = false;
 
   return status;
@@ -133,34 +132,30 @@ unsigned int FastChem<double_type>::calcDensity(
   std::vector<unsigned int>& element_conserved,
   unsigned int& nb_chemistry_iterations)
 {
-  for (auto & i : molecules)  i.calcMassActionConstant(temperature);
+  for (auto & i : gas_phase.molecules)  i.calcMassActionConstant(temperature);
 
   //this value will be fixed.
   double_type gas_density = pressure/(CONST_K * temperature);
 
-  
+
   if (use_previous_solution == true)
   {
-
    //if we use the previous solution, convert the stored mixing ratios to number densities
-   for (auto & i : species)  i->number_density *= gas_density;
-  
+   for (auto & i : gas_phase.species)  i->number_density *= gas_density;
   }
   else
   {
-
     //for a fresh start set all species to the minimum value
-    for (auto & i : species) i->number_density = options.element_density_minlimit;
+    for (auto & i : gas_phase.species) i->number_density = options.element_density_minlimit;
     
     //set the initial electron density to 1 (for stability reasons)
-    if (e_ != FASTCHEM_UNKNOWN_SPECIES)
-      elements[e_].number_density = 1.0;
-
+    if (element_data.e_ != FASTCHEM_UNKNOWN_SPECIES)
+      element_data.elements[element_data.e_].number_density = 1.0;
   }
 
 
   //call the main FastChem solver  
-  bool fastchem_converged = solveFastchem(
+  bool fastchem_converged = gas_phase.calculate(
     temperature, gas_density, nb_chemistry_iterations);
 
 
@@ -169,25 +164,23 @@ unsigned int FastChem<double_type>::calcDensity(
 
 
   //return output
-  number_densities.assign(nb_species, 0.0);
+  number_densities.assign(gas_phase.nb_species, 0.0);
 
-  for (size_t i=0; i<nb_species; ++i)
-    number_densities[i] = species[i]->number_density; 
-
-
-  mean_molecular_weight = meanMolecularWeight(gas_density);
+  for (size_t i=0; i<gas_phase.nb_species; ++i)
+    number_densities[i] = gas_phase.species[i]->number_density; 
 
 
-  total_element_density = totalElementDensity();
+  mean_molecular_weight = gas_phase.meanMolecularWeight(gas_density);
+  total_element_density = gas_phase.totalElementDensity();
 
 
-  for (auto & i : elements) 
-    i.checkElementConservation(molecules, total_element_density, options.accuracy);
+  for (auto & i : element_data.elements) 
+    i.checkElementConservation(gas_phase.molecules, total_element_density, options.accuracy);
   
-  element_conserved.assign(nb_elements, 0);
+  element_conserved.assign(element_data.nb_elements, 0);
 
-  for (size_t i=0; i<nb_elements; ++i)
-    element_conserved[i] = elements[i].element_conserved;
+  for (size_t i=0; i<element_data.nb_elements; ++i)
+    element_conserved[i] = element_data.elements[i].element_conserved;
 
 
   unsigned int return_state = FASTCHEM_SUCCESS;
@@ -196,7 +189,7 @@ unsigned int FastChem<double_type>::calcDensity(
 
 
   //store the mixing ratios in case we want to use them in the future
-  for (auto & i : species) i->number_density /= gas_density;
+  for (auto & i : gas_phase.species) i->number_density /= gas_density;
 
 
   return return_state;
