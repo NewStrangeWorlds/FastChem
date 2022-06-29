@@ -23,8 +23,10 @@
 #include <string>
 #include <vector>
 
-#include "condensate_struct.h"
+#include "../elements/elements.h"
+#include "../options.h"
 #include "../species_struct.h"
+#include "solver.h"
 
 
 namespace fastchem {
@@ -33,16 +35,36 @@ namespace fastchem {
 template <class double_type>
 class CondensedPhase {
   public:
-    CondensedPhase(std::vector<Element<double_type>>& elements_)
-      : elements(elements_) {}
+    CondensedPhase(
+      FastChemOptions<double_type>& options_,
+      ElementData<double_type>& element_data_);
+    CondensedPhase(
+      const CondensedPhase &obj,
+      FastChemOptions<double_type>& options_,
+      ElementData<double_type>& element_data_);
 
-    bool init(const std::string& species_data_file);
-
-    std::vector<Element<double_type>>& elements;
     std::vector< Condensate<double_type> > condensates;
+
+    void selectActiveCondensates(
+      std::vector<Condensate<double_type>*>& condensates_act,
+      std::vector<Element<double_type>*>& elements_cond);
     
     size_t nb_condensates = 0;
+    size_t nb_elements = 0;
+
+    bool is_initialised = false;
+
+    bool calculate(
+      const double temperature, const double density, unsigned int& nb_iterations);
   private:
+    FastChemOptions<double_type>& options;
+    ElementData<double_type>& element_data;
+    std::vector<Element<double_type>>& elements;
+
+    CondPhaseSolver<double_type> solver;
+
+    void init();
+
     bool readCondensateData(const std::string& species_data_file);
     void addCondensate(
       const std::string name,

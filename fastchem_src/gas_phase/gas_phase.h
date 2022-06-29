@@ -45,7 +45,6 @@ class GasPhase {
       ElementData<double_type>& element_data_);
 
     std::vector<Molecule<double_type>> molecules;
-
     std::vector< ChemicalSpecies<double_type>* > species;
 
     size_t nb_molecules = 0;

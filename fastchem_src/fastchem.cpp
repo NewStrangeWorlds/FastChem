@@ -37,7 +37,7 @@ FastChem<double_type>::FastChem(
     : options(model_parameter_file, verbose_level_start)
     , element_data(options.element_abundances_file, options.chemical_element_file)
     , gas_phase(options, element_data)
-    //, condensed_phase(elements)
+    , condensed_phase(options, element_data)
 {
   if (!options.parameter_file_loaded)
   {
@@ -65,7 +65,7 @@ FastChem<double_type>::FastChem(
     : options(element_abundances_file, species_data_file, verbose_level_start)
     , element_data(element_abundances_file, options.chemical_element_file)
     , gas_phase(options, element_data)
-    //, condensed_phase(elements)
+    , condensed_phase(options, element_data)
 {
   if (element_data.is_initialised == true && gas_phase.is_initialised == true)
     is_initialised = true;
@@ -105,6 +105,7 @@ FastChem<double_type>::FastChem(const FastChem &obj)
   : options(obj.options)
   , element_data(obj.element_data)
   , gas_phase(obj.gas_phase, options, element_data)
+  , condensed_phase(obj.condensed_phase, options, element_data)
 {
 
 }

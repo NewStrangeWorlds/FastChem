@@ -26,8 +26,13 @@
 #include <vector>
 #include <string>
 
+#include "fastchem_constants.h"
+
 
 namespace fastchem {
+
+
+enum PhaseState {gas, liquid, solid};
 
 
 //Class for the basic chemical element data
@@ -54,9 +59,65 @@ struct ChemicalSpecies
 
   double_type weight = 0.0;
   int charge = 0;
+  PhaseState phase;
 
-  double_type abundance = 0.0;      //element abundance
+  double_type abundance = 0.0;
   double_type number_density = 0.0;
+};
+
+
+//forward declarations
+template <class double_type> struct Molecule;
+template <class double_type> struct Condensate;
+
+
+
+//Class for the elements
+template <class double_type>
+struct Element : public ChemicalSpecies<double_type>
+{
+  unsigned int element_data_index;
+  unsigned int index;
+
+  unsigned int solver_order = 0;
+
+  std::vector<unsigned int> molecule_list;         //contains the list of molecule indices the element is part of
+  std::vector<unsigned int> major_molecules_inc;   //contains the list of 'major' molecules that includes the element
+  std::vector<unsigned int> major_molecules_exc;   //contains the list of 'major' molecules that doesn't includes the element
+  std::vector<unsigned int> minor_molecules;       //contains the list of 'minor' molecules
+  
+  std::vector<unsigned int> condensate_list;       //contains the list of condensate indices the element is part of
+
+  unsigned int element_conserved = 0;              //check if element is conserved during calculation, for electrons this is charge conservation
+
+  double_type epsilon = 0.0;
+  double_type solver_scaling_factor = 0.0;
+  double_type number_density_maj = 0.0;
+  double_type number_density_min = 0.0;
+
+  double_type phi = 0.0;                           //relative abundance in the gas phase (minus condensates)
+  double_type phi_hat = 0.0;                       //normalised relative abundance in the gas phase
+
+  double_type degree_of_condensation = 0.0;
+  bool fixed_by_condensation = false;
+
+  void calcMinorSpeciesDensities(
+    const std::vector< Molecule<double_type> > &molecules);
+  void calcEpsilon(
+    const std::vector< Element<double_type> > &elements);
+  void calcSolverScalingFactor(
+    const std::vector<Element<double_type>> &elements, 
+    const std::vector<Molecule<double_type>> &molecules, 
+    const double additional_scaling_factor);
+  void checkN(
+    const double_type& min_limit, const double_type& gas_density);
+  bool checkElementConservation(
+    const std::vector<Molecule<double_type>>& molecules,
+    const double_type total_density,
+    const double_type& accuracy);
+  bool checkChargeConservation(
+    const std::vector<Molecule<double_type>>& molecules,
+    const double_type& accuracy);
 };
 
 
@@ -82,43 +143,39 @@ struct Molecule : public ChemicalSpecies<double_type>
 
 
 
-//Class for the elements
+//Parent class for condensates
 template <class double_type>
-struct Element : public ChemicalSpecies<double_type>
+struct Condensate : public ChemicalSpecies<double_type>
 {
-  unsigned int element_data_index;
-  unsigned int index;
+  std::vector<unsigned int> element_indices;
+  std::vector<int> stoichiometric_vector;
 
-  unsigned int solver_order = 0;
+  double_type mass_density = 0.0;
+  std::vector<double_type> fit_coeff;
+  std::vector<double> fit_temp_limits;
+  std::vector<double> phase_temp_limits;
 
-  std::vector<unsigned int> molecule_list;         //contains the list of molecule indices the element is part of
-  std::vector<unsigned int> major_molecules_inc;   //contains the list of 'major' molecules that includes the element
-  std::vector<unsigned int> major_molecules_exc;   //contains the list of 'major' molecules that doesn't includes the element
-  std::vector<unsigned int> minor_molecules;       //contains the list of 'minor' molecules
-  unsigned int element_conserved = 0;              //check if element is conserved during calculation, for electrons this is charge conservation
+  double_type mass_action_constant = 0.0;
 
-  double_type epsilon = 0.0;
-  double_type solver_scaling_factor = 0.0;
-  double_type number_density_maj = 0.0;
-  double_type number_density_min = 0.0;
+  double_type log_activity = 0;
+  double_type activity_correction = 0;
+  double_type tau = 0;
+  double_type max_number_density = 0;
 
-  void calcMinorSpeciesDensities(
-    const std::vector< Molecule<double_type> > &molecules);
-  void calcEpsilon(
-    const std::vector< Element<double_type> > &elements);
-  void calcSolverScalingFactor(
-    const std::vector<Element<double_type>> &elements, 
-    const std::vector<Molecule<double_type>> &molecules, 
-    const double additional_scaling_factor);
-  void checkN(
-    const double_type& min_limit, const double_type& gas_density);
-  bool checkElementConservation(
-    const std::vector<Molecule<double_type>>& molecules,
-    const double_type total_density,
-    const double_type& accuracy);
-  bool checkChargeConservation(
-    const std::vector<Molecule<double_type>>& molecules,
-    const double_type& accuracy);
+  bool linear_system_remove = false;
+
+  unsigned int reference_element = FASTCHEM_UNKNOWN_SPECIES;     //the element, the degree of condensation is defined for
+  double_type degree_of_condensation = 0;
+
+  void calcMassActionConstant(const double temperature);
+  void calcActivity(
+    const double temperature, const std::vector<Element<double_type>>& elements);
+  void findReferenceElement(
+    const std::vector<Element<double_type>>& elements);
+  void degreeOfCondensation(
+    const std::vector<Element<double_type>>& elements, const double_type total_element_density);
+  void maxDensity(
+    const std::vector< Element<double_type> >& elements, double_type total_number_density);
 };
 
 

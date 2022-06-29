@@ -65,6 +65,7 @@ struct FastChemOptions{
   std::string chemical_element_file = "";
   std::string species_data_file = "";
   std::string element_abundances_file = "";
+  std::string condensates_data_file = "";
 
   bool parameter_file_loaded = false;
   bool readParameterFile(const std::string& model_parameter_file);

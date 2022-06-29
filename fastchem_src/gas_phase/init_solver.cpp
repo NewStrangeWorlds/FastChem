@@ -64,7 +64,6 @@ unsigned int GasPhase<double_type>::determineSolverOrder(const Element<double_ty
         solver_order = static_cast<unsigned int>(std::abs(molecules[i].stoichiometric_vector[species.index])); 
   }
 
-  std::cout << species.symbol << "\t" << solver_order << "\t" << species.molecule_list.size() << "\n";
   return solver_order;
 }
 

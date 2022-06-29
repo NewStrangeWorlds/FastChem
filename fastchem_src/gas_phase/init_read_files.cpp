@@ -162,7 +162,8 @@ void GasPhase<double_type>::addMolecule(
 
     species.sigma = 1 - species.sigma;
     species.charge = charge;
-    
+    species.phase = PhaseState::gas;
+
     for (auto & j : species.element_indices)
       species.weight += elements[j].weight * std::fabs(species.stoichiometric_vector[j]);
 

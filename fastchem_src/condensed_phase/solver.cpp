@@ -18,12 +18,16 @@
 */
 
 
-#include "species_struct.h"
+#include "solver.h"
+#include "../species_struct.h"
 
-
-#include <vector>
-#include <cmath>
 #include <iostream>
+#include <iomanip>
+#include <string>
+#include <vector>
+#include <limits>
+#include <cmath>
+#include <algorithm>
 
 
 namespace fastchem {
@@ -31,14 +35,9 @@ namespace fastchem {
 
 
 
-
-
-
-
-
-
-template struct Element<double>;
-template struct Element<long double>;
-template struct Molecule<double>;
-template struct Molecule<long double>;
+template class CondPhaseSolver<double>;
+template class CondPhaseSolver<long double>;
 }
+
+
+

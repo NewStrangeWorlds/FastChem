@@ -22,14 +22,12 @@
 #include <iostream>
 #include <algorithm>
 
-#include "condensate_struct.h"
+#include "../species_struct.h"
 
 #include "../fastchem_constants.h"
-#include "../species_struct.h"
 
 
 namespace fastchem {
-
 
 
 template <class double_type>
@@ -103,7 +101,7 @@ void Condensate<double_type>::degreeOfCondensation(
     findReferenceElement(elements);
 
   degree_of_condensation = stoichiometric_vector[reference_element] 
-    * number_density /(total_element_density * elements[reference_element].epsilon);
+    * this->number_density /(total_element_density * elements[reference_element].epsilon);
 }
 
 

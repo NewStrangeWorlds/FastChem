@@ -25,12 +25,11 @@
 #include <string>
 #include <sstream>
 #include <vector>
-
 #include <cmath>
 
 #include "condensed_phase.h"
 
-#include "condensate_struct.h"
+#include "../species_struct.h"
 
 
 namespace fastchem {
@@ -118,15 +117,13 @@ bool CondensedPhase<double_type>::readCondensateData(const std::string& species_
     while (fit_input >> fit_coefficient)
       fit_coeff.push_back(fit_coefficient);
 
-    //addCondensate(name, symbol, elements, stoichometric_coeff, density, phase, phase_temp_limits, fit_temp_limits, fit_coeff);
+    addCondensate(name, symbol, elements, stoichometric_coeff, density, phase, phase_temp_limits, fit_temp_limits, fit_coeff);
 
     //blank separation line
     std::getline(file, line);
   }
 
-
   file.close();
-
 
   nb_condensates = condensates.size();
 
@@ -165,7 +162,7 @@ void CondensedPhase<double_type>::addCondensate(
 
   for (size_t i=0; i<species_elements.size(); ++i)
   {
-    unsigned int index = getElementIndex(species_elements[i]);
+    unsigned int index = element_data.elementIndex(species_elements[i]);
 
     if (index == FASTCHEM_UNKNOWN_SPECIES)
       is_stoichiometry_complete = false;
@@ -181,25 +178,24 @@ void CondensedPhase<double_type>::addCondensate(
   if (is_stoichiometry_complete)
   {
     
-    species.density = density;
+    species.mass_density = density;
 
 
-    phase_states phase_state;
+    PhaseState phase_state;
 
     if (phase == "s" || phase == "solid")
-      phase_state = solid;
+      phase_state = PhaseState::solid;
     else if (phase == "l" || phase == "liquid")
-      phase_state = liquid;
+      phase_state = PhaseState::liquid;
     else
     {
       std::cout << "Phase state " << phase << " of species " << symbol << " not recognised! Setting to solid.\n";
-      phase_state = solid;
+      phase_state = PhaseState::solid;
     }
-      
+
     species.phase = phase_state;
 
     condensates.push_back(species);
-
 
     //add the current molecule index to their respective elements
     for (size_t i=0; i<species.element_indices.size(); ++i)
@@ -208,7 +204,6 @@ void CondensedPhase<double_type>::addCondensate(
   else 
     std::cout << "Stoichometry of species " << symbol << " incomplete. Neglected!\n";
 }
-
 
 
 

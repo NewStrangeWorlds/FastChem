@@ -47,6 +47,7 @@ class ElementData {
 
     unsigned int elementIndex(const std::string& symbol);
     void setAbundances(const std::vector<double>& abundances);
+    void setRelativeAbundances();
   private:
     std::vector<ChemicalElementData> chemical_element_data;
     size_t nb_chemical_element_data = 0;

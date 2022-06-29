@@ -59,7 +59,11 @@ set(SRC_FASTCHEM
   fastchem_src/gas_phase/calc_electron_densities.cpp
   fastchem_src/gas_phase/calc_mean_mol_weight.cpp
   fastchem_src/gas_phase/init_solver.cpp
-  fastchem_src/gas_phase/solver.cpp)
+  fastchem_src/gas_phase/solver.cpp
+  fastchem_src/condensed_phase/condensed_phase.cpp
+  fastchem_src/condensed_phase/calculate.cpp
+  fastchem_src/condensed_phase/condensate_struct.cpp
+  fastchem_src/condensed_phase/read_condensate_data.cpp)
   
 
 set(SRC_MAIN

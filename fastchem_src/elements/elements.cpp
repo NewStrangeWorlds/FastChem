@@ -90,6 +90,8 @@ void ElementData<double_type>::add(const std::string& symbol)
     element.weight = chemical_element_data[element.element_data_index].atomic_weight;
     element.abundance = chemical_element_data[element.element_data_index].abundance;
 
+    element.phase = PhaseState::gas;
+
     elements.push_back(element);
     elements.back().index = elements.size()-1;
   }
@@ -115,6 +117,23 @@ void ElementData<double_type>::setAbundances(const std::vector<double>& abundanc
     chemical_element_data[elements[i].element_data_index].abundance = abundances[i];
     elements[i].abundance = abundances[i];
   }
+}
+
+
+
+template <class double_type>
+void ElementData<double_type>::setRelativeAbundances()
+{
+  double_type phi_tot = 0;
+
+  for (auto & i : elements)
+  {
+    i.phi = i.epsilon * (1.0 - i.degree_of_condensation);
+    phi_tot += i.phi;
+  }
+
+  for (auto & i : elements)
+    i.phi /= phi_tot;
 }
 
 
@@ -175,5 +194,4 @@ unsigned int ElementData<double_type>::chemicalElementIndex(const std::string& s
 
 template class ElementData<double>;
 template class ElementData<long double>;
-
 } 
