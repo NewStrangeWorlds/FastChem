@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,15 +25,13 @@
 #include <iostream>
 #include <string>
 
+#include "options.h"
 #include "fastchem_constants.h"
 #include "species_struct.h"
-//#include "condensed_phase/condensed_phase.h"
 #include "input_output_struct.h"
-
 #include "elements/elements.h"
 #include "gas_phase/gas_phase.h"
-
-#include "options.h"
+//#include "condensed_phase/condensed_phase.h"
 
 
 namespace fastchem {
@@ -99,7 +97,6 @@ class FastChem {
     
     ElementData<double_type> element_data;
     GasPhase<double_type> gas_phase;
-
     //CondensedPhase<double_type> condensed_phase;
 
     bool is_initialised = false;

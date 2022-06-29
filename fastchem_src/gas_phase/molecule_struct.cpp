@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 */
 
 
-#include "fastchem_constants.h"
-#include "species_struct.h"
+#include "../fastchem_constants.h"
+#include "../species_struct.h"
 
 #include <cmath>
 
@@ -42,6 +42,19 @@ void Molecule<double_type>::calcMassActionConstant(const double temperature)
   double_type pressure_scaling = 1.0e-6 * CONST_K * temperature;
   mass_action_constant = log_K - sigma * std::log(pressure_scaling);
 }
+
+
+
+//Check for the number density of molecules
+template <class double_type>
+void Molecule<double_type>::checkN(
+  const double_type& min_limit, const double_type& gas_density)
+{
+  if (this->number_density < min_limit) this->number_density = min_limit;
+
+  if (this->number_density > gas_density) this->number_density = gas_density;
+}
+
 
 
 template struct Molecule<double>;

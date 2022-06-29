@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 */
 
 
-#include "fastchem.h"
-
 #include <string>
 #include <vector>
 #include <cmath>
+#include <limits>
+
+#include "fastchem.h"
 
 
 namespace fastchem {
@@ -78,6 +79,24 @@ FastChem<double_type>::FastChem(
 
   init();
 }
+
+
+template <class double_type>
+void FastChem<double_type>::init()
+{
+  //init accuracy limit based on the numerical precision
+  if (std::numeric_limits<double_type>::max_exponent10 > 1000)
+  {
+    options.element_density_minlimit = 1e-512L;
+    options.molecule_density_minlimit = 1e-512L;
+  }
+  else
+  {
+    options.element_density_minlimit = 1e-155;
+    options.molecule_density_minlimit = 1e-155;
+  }
+}
+
 
 
 //the copy constructor

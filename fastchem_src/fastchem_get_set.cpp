@@ -113,6 +113,16 @@ std::vector<double> FastChem<double_type>::getElementAbundances()
 }
 
 
+//Set the element abundances for all elements
+template <class double_type>
+void FastChem<double_type>::setElementAbundances(std::vector<double> abundances)
+{
+  element_data.setAbundances(abundances);
+
+  gas_phase.reInitialise();
+}
+
+
 
 template class FastChem<double>;
 template class FastChem<long double>;

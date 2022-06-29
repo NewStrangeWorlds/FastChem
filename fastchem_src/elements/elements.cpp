@@ -32,6 +32,7 @@
 
 namespace fastchem {
 
+
 template <class double_type>
 ElementData<double_type>::ElementData(const std::string& abundance_file, const std::string& chemical_element_file)
 {

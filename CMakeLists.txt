@@ -40,16 +40,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 #define the source files   
 set(SRC_FASTCHEM
   fastchem_src/calc_densities.cpp
-  fastchem_src/check.cpp
   fastchem_src/fastchem.cpp
-  fastchem_src/get.cpp
-  fastchem_src/init.cpp
-  fastchem_src/mass_action_constant.cpp
+  fastchem_src/fastchem_get_set.cpp
   fastchem_src/options_read_files.cpp
-  fastchem_src/set.cpp
-  fastchem_src/species_struct.cpp
+  fastchem_src/elements/element_struct.cpp
   fastchem_src/elements/elements.cpp
   fastchem_src/elements/read_files.cpp
+  fastchem_src/gas_phase/molecule_struct.cpp
   fastchem_src/gas_phase/gas_phase.cpp
   fastchem_src/gas_phase/init_read_files.cpp
   fastchem_src/gas_phase/calc_species_densities.cpp
