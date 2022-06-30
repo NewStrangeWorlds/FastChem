@@ -62,6 +62,7 @@ set(SRC_FASTCHEM
   fastchem_src/gas_phase/solver.cpp
   fastchem_src/condensed_phase/condensed_phase.cpp
   fastchem_src/condensed_phase/calculate.cpp
+  fastchem_src/condensed_phase/solver.cpp
   fastchem_src/condensed_phase/condensate_struct.cpp
   fastchem_src/condensed_phase/read_condensate_data.cpp)
   

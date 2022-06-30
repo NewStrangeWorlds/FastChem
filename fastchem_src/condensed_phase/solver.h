@@ -29,6 +29,17 @@
 #include "../species_struct.h"
 #include "../options.h"
 
+#include "../../_ext/Eigen/Dense"
+
+namespace Eigen {
+
+template <class double_type>
+using MatrixXdt = Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>;
+
+template <class double_type>
+using VectorXdt = Matrix<double_type, Eigen::Dynamic, 1>;
+}
+
 
 namespace fastchem {
 
@@ -40,7 +51,19 @@ class CondPhaseSolver{
     CondPhaseSolver(FastChemOptions<double_type>& options_)
       : options(options_)
       {}
-
+    Eigen::MatrixXdt<double_type> assembleJacobian(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const size_t nb_condensates_removed,
+      const std::vector<Element<double_type>*>& elements,
+      const std::vector<Molecule<double_type>>& molecules);
+    Eigen::VectorXdt<double_type> assembleRightHandSide(
+      const double_type total_element_density, 
+      const std::vector< Condensate<double_type>* >& condensates_rem,
+      const std::vector< Condensate<double_type>* >& condensates,
+      const std::vector< Element<double_type>* >& elements,
+      const std::vector< Molecule<double_type> >& molecules,
+      const std::vector< Condensate<double_type> >& condensates_all,
+      const double_type ln_tau);
   private:
     FastChemOptions<double_type>& options;
 };

@@ -262,6 +262,9 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   for (auto & i : elements_cond)
     std::cout << i->symbol << "\n";
 
+  unsigned int nb_cond_iter = 0;
+  condensed_phase.calculate(temperature, gas_density, gas_phase.molecules, nb_cond_iter);
+
   exit(0);
 
   /*if (!fastchem_converged && options.verbose_level >= 1) 

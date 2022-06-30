@@ -27,6 +27,8 @@
 
 #include "../fastchem_constants.h"
 #include "../species_struct.h"
+#include "solver.h"
+#include "../../_ext/Eigen/Dense"
 
 
 namespace fastchem {
@@ -35,14 +37,26 @@ namespace fastchem {
 //This is the main FastChem iteration for the gas phase
 template <class double_type>
 bool CondensedPhase<double_type>::calculate(
-  const double temperature, const double density, unsigned int& nb_iterations)
+  const double temperature,
+  const double density,
+  std::vector<Molecule<double_type>>& molecules,
+  unsigned int& nb_iterations)
 {
+  std::vector<Condensate<double_type>*> condensates_act;
+  std::vector<Element<double_type>*> elements_cond;
+
+  selectActiveCondensates(condensates_act, elements_cond);
+
+  Eigen::MatrixXdt<double_type> jacobian = solver.assembleJacobian(
+    condensates_act, 0, elements_cond, molecules);
   
+  nb_iterations = 1;
+
+  return true;
 } 
 
 
 
 template class CondensedPhase<double>;
 template class CondensedPhase<long double>;
-
-} 
+}

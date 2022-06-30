@@ -55,7 +55,10 @@ class CondensedPhase {
     bool is_initialised = false;
 
     bool calculate(
-      const double temperature, const double density, unsigned int& nb_iterations);
+      const double temperature,
+      const double density,
+      std::vector<Molecule<double_type>>& molecules,
+      unsigned int& nb_iterations);
   private:
     FastChemOptions<double_type>& options;
     ElementData<double_type>& element_data;
