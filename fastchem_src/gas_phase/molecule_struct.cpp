@@ -56,6 +56,18 @@ void Molecule<double_type>::checkN(
 }
 
 
+template <class double_type>
+void Molecule<double_type>::calcNumberDensity(const std::vector< Element<double_type> >& elements)
+{
+  this->number_density = mass_action_constant;
+
+  for (auto i : element_indices)
+    this->number_density += stoichiometric_vector[i] * std::log(elements[i].number_density);
+
+  this->number_density = std::exp(this->number_density);
+}
+
+
 
 template struct Molecule<double>;
 template struct Molecule<long double>;

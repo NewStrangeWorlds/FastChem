@@ -57,6 +57,7 @@ class CondensedPhase {
     bool calculate(
       const double temperature,
       const double density,
+      const double total_element_density,
       std::vector<Molecule<double_type>>& molecules,
       unsigned int& nb_iterations);
   private:
@@ -79,6 +80,21 @@ class CondensedPhase {
       const std::vector<double>& phase_temp_limits,
       const std::vector<double>& fit_temp_limits,
       const std::vector<double_type> fit_coeff);
+
+    void correctValues(
+      const std::vector<double_type>& result,
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<unsigned int>& condensates_jac,
+      const std::vector<unsigned int>& condensates_rem,
+      const std::vector<double_type>& activity_corr_old,
+      std::vector<double_type>& activity_corr_new,
+      const std::vector<double_type>& cond_number_dens_old,
+      std::vector<double_type>& cond_number_dens_new,
+      const std::vector<Element<double_type>*>& elements,
+      const std::vector<double_type>& elem_number_dens_old,
+      std::vector<double_type>& elem_number_dens_new,
+      const double_type ln_tau,
+      const double max_change);
 };
 
 

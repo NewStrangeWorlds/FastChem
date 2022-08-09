@@ -237,6 +237,8 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   bool fastchem_converged = gas_phase.calculate(
     temperature, gas_density, nb_chemistry_iterations);
 
+  total_element_density = gas_phase.totalElementDensity();
+
   //reset all active condensate species
   for (auto & i : condensed_phase.condensates)
   {
@@ -263,7 +265,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     std::cout << i->symbol << "\n";
 
   unsigned int nb_cond_iter = 0;
-  condensed_phase.calculate(temperature, gas_density, gas_phase.molecules, nb_cond_iter);
+  condensed_phase.calculate(temperature, gas_density, total_element_density, gas_phase.molecules, nb_cond_iter);
 
   exit(0);
 

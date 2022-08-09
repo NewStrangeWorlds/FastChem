@@ -25,6 +25,7 @@
 #include <limits>
 #include <cmath>
 #include <algorithm>
+#include <functional>
 
 #include "solver.h"
 
@@ -35,9 +36,10 @@
 namespace fastchem {
 
 
-template <class double_type>
+/*template <class double_type>
 Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
   const std::vector<Condensate<double_type>*>& condensates,
+  const std::vector<double_type>& activity_corr,
   const size_t nb_cond_rem,
   const std::vector<Element<double_type>*>& elements,
   const std::vector<Molecule<double_type>>& molecules)
@@ -49,8 +51,8 @@ Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
   jacobian.setZero(nb_elements + nb_condensates_system, nb_elements + nb_condensates_system);
 
 
-  /*for (size_t i=0; i<nb_condensates_system; ++i)
-    jacobian(i, i) = - condensates[i]->activity_correction;
+  for (size_t i=0; i<nb_condensates_system; ++i)
+    jacobian(i, i) = - condensates[i]->activity_corr;
 
 
   for (size_t i=0; i<nb_elements; ++i)
@@ -95,11 +97,147 @@ Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
 
       jacobian(i, j+nb_condensates_system) = condensates[i]->stoichiometric_vector[elements[j]->index];
       jacobian(j+nb_condensates_system, i) = condensates[i]->stoichiometric_vector[elements[j]->index] * condensates[i]->number_density / element_sum;
-    }*/
+    }
+
+
+  return jacobian;
+}*/
+
+
+
+template <class double_type>
+Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
+  const std::vector<Condensate<double_type>*>& condensates,
+  const std::vector<double_type>& activity_corr,
+  const std::vector<double_type>& number_densities,
+  const std::vector<unsigned int>& condensates_jac,
+  const std::vector<unsigned int>& condensates_rem,
+  const std::vector<Element<double_type>*>& elements,
+  const std::vector<Molecule<double_type>>& molecules)
+{
+  const size_t nb_condensates = condensates_jac.size();
+  const size_t nb_elements = elements.size();
+
+  Eigen::MatrixXdt<double_type> jacobian;
+  jacobian.setZero(nb_elements + nb_condensates, nb_elements + nb_condensates);
+
+
+  for (size_t i=0; i<nb_condensates; ++i)
+    jacobian(i, i) = - activity_corr[condensates_jac[i]];
+
+
+  for (size_t i=0; i<nb_elements; ++i)
+  {
+    jacobian(i+nb_condensates,i+nb_condensates) = elements[i]->number_density;
+
+    for (size_t j=0; j<nb_elements; ++j)
+    {
+      for (auto l : elements[i]->molecule_list)
+         jacobian(i+nb_condensates,j+nb_condensates) += molecules[l].stoichiometric_vector[elements[i]->index] * molecules[l].stoichiometric_vector[elements[j]->index] * molecules[l].number_density;
+
+      for (auto l : condensates_rem)
+        if (number_densities[l] > 0)
+          jacobian(i+nb_condensates,j+nb_condensates) += condensates[l]->stoichiometric_vector[elements[i]->index] * condensates[l]->stoichiometric_vector[elements[j]->index] * number_densities[l] / activity_corr[l];
+    }
+  }
+
+
+  for (size_t i=0; i<nb_condensates; ++i)
+    for (size_t j=0; j<nb_elements; ++j)
+    {
+      jacobian(i, j+nb_condensates) = condensates[i]->stoichiometric_vector[elements[j]->index];
+      jacobian(j+nb_condensates, i) = condensates[i]->stoichiometric_vector[elements[j]->index] * number_densities[condensates_jac[i]];
+    }
 
 
   return jacobian;
 }
+
+
+
+template <class double_type>
+Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleRightHandSide(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<unsigned int>& condensates_jac,
+      const std::vector<unsigned int>& condensates_rem,
+      const std::vector<double_type>& activity_corr,
+      const std::vector<double_type>& number_densities,
+      const std::vector< Element<double_type>* >& elements,
+      const std::vector< Molecule<double_type> >& molecules,
+      const double_type total_element_density, 
+      const double_type log_tau)
+{
+  const size_t nb_elements = elements.size();
+  const size_t nb_cond_rem = condensates_rem.size();
+  const size_t nb_cond_jac = condensates_jac.size();
+
+  Eigen::VectorXdt<double_type> rhs_vector;
+  rhs_vector.setZero(nb_elements + nb_cond_jac);
+
+
+  for (size_t i=0; i<nb_cond_jac; ++i)
+  { 
+    const int index = condensates_jac[i];
+
+    rhs_vector(i) = - condensates[index]->log_activity - activity_corr[index]
+                    * (1.0 + log_tau - std::log(number_densities[index]) 
+                    - std::log(activity_corr[index]));
+  }
+
+
+  for (size_t i=0; i<nb_elements; ++i)
+  { 
+    rhs_vector(i+nb_cond_jac) = total_element_density * elements[i]->epsilon - elements[i]->number_density;
+    
+    for (auto j : elements[i]->molecule_list)
+      rhs_vector(i+nb_cond_jac) -= molecules[j].stoichiometric_vector[elements[i]->index] * molecules[j].number_density;
+    
+    for (size_t j=0; j<condensates.size(); ++j)
+      rhs_vector(i+nb_cond_jac) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j];
+
+    for (auto j : condensates_rem)
+        rhs_vector(i+nb_cond_jac) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j]
+                                  * (condensates[j]->log_activity/activity_corr[j] + log_tau - std::log(number_densities[j]) 
+                                                   - std::log(activity_corr[j]) + 1.0);
+  }
+
+  return rhs_vector;
+}
+
+
+
+template <class double_type> std::vector<double_type> CondPhaseSolver<double_type>::solveSystem(
+      Eigen::MatrixXdt<double_type>& coeff_matrix,
+      Eigen::VectorXdt<double_type>& rhs)
+{
+  Eigen::PartialPivLU<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
+  //Eigen::FullPivHouseholderQR<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> dense_solver;
+
+  //dense_solver.setThreshold(1e-100);
+  solver.compute(coeff_matrix);
+
+  //std::cout << "treshhold: " << dense_solver.threshold() << "\n";
+  Eigen::VectorXdt<double_type> result = solver.solve(rhs);
+
+  //std::cout << "Matrix is invertible: " << dense_solver.isInvertible() << "\n";
+
+  //if (!dense_solver.isInvertible())
+    //result = pseudoNewtonSolve(jacobian, rhs_vector);
+
+  bool a_solution_exists = (coeff_matrix*result).isApprox(rhs); 
+
+  auto test = coeff_matrix*result;
+
+
+  std::vector<double_type> result_vec(result.rows(), 0.0);
+  //std::vector<double_type> result_vec(result);
+
+  for (size_t i=0; i<result_vec.size(); ++i)
+    result_vec[i] = result(i);
+
+  return result_vec;
+}
+
 
 
 template class CondPhaseSolver<double>;

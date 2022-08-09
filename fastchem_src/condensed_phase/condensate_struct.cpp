@@ -52,6 +52,24 @@ void Condensate<double_type>::calcActivity(
 }
 
 
+template <class double_type>
+double_type Condensate<double_type>::calcActivity(
+  const double temperature, 
+  const std::vector<Element<double_type>>& elements,
+  const std::vector<double_type> elem_number_densities)
+{
+  if (!(temperature > phase_temp_limits[0] && temperature <= phase_temp_limits[1]))
+    return -10;
+
+  double_type log_activity = mass_action_constant;
+
+  for (auto & i : element_indices)
+    log_activity += std::log(elem_number_densities[elements[i].index]) * stoichiometric_vector[elements[i].index];
+
+  return log_activity;
+}
+
+
 
 template <class double_type>
 void Condensate<double_type>::calcMassActionConstant(const double temperature)

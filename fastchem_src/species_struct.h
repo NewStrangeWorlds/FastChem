@@ -138,6 +138,7 @@ struct Molecule : public ChemicalSpecies<double_type>
   double_type sum = 0.0;
 
   void calcMassActionConstant(const double temperature);
+  void calcNumberDensity(const std::vector< Element<double_type> >& elements);
   void checkN(const double_type& min_limit, const double_type& gas_density);
 };
 
@@ -170,6 +171,10 @@ struct Condensate : public ChemicalSpecies<double_type>
   void calcMassActionConstant(const double temperature);
   void calcActivity(
     const double temperature, const std::vector<Element<double_type>>& elements);
+  double_type calcActivity(
+    const double temperature, 
+    const std::vector<Element<double_type>>& elements,
+    const std::vector<double_type> elem_number_densities);
   void findReferenceElement(
     const std::vector<Element<double_type>>& elements);
   void degreeOfCondensation(
