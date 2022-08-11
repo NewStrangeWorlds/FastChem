@@ -72,6 +72,22 @@ ElementData<double_type>::ElementData(const ElementData &obj)
 
 
 
+template <class double_type>
+void ElementData<double_type>::init(double_type initial_density)
+{
+  for (auto & i : elements)
+  {
+    i.number_density = initial_density;
+    i.degree_of_condensation = 0;
+    i.phi = i.epsilon;
+    i.fixed_by_condensation = false;
+  }
+
+}
+
+
+
+
 //Add a new atom to the system
 template <class double_type>
 void ElementData<double_type>::add(const std::string& symbol)

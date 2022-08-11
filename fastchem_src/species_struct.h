@@ -96,7 +96,6 @@ struct Element : public ChemicalSpecies<double_type>
   double_type number_density_min = 0.0;
 
   double_type phi = 0.0;                           //relative abundance in the gas phase (minus condensates)
-  double_type phi_hat = 0.0;                       //normalised relative abundance in the gas phase
 
   double_type degree_of_condensation = 0.0;
   bool fixed_by_condensation = false;
@@ -113,11 +112,16 @@ struct Element : public ChemicalSpecies<double_type>
     const double_type& min_limit, const double_type& gas_density);
   bool checkElementConservation(
     const std::vector<Molecule<double_type>>& molecules,
+    const std::vector< Condensate<double_type> >& condensates,
     const double_type total_density,
     const double_type& accuracy);
   bool checkChargeConservation(
     const std::vector<Molecule<double_type>>& molecules,
     const double_type& accuracy);
+  void calcDegreeOfCondensation(
+    const std::vector< Condensate<double_type> > &condensates,
+    const double_type total_element_density);
+  void normalisePhi(const double_type element_phi_sum);
 };
 
 
@@ -178,7 +182,8 @@ struct Condensate : public ChemicalSpecies<double_type>
   void findReferenceElement(
     const std::vector<Element<double_type>>& elements);
   void degreeOfCondensation(
-    const std::vector<Element<double_type>>& elements, const double_type total_element_density);
+    const std::vector<Element<double_type>>& elements, 
+    const double_type total_element_density);
   void maxDensity(
     const std::vector< Element<double_type> >& elements, double_type total_number_density);
 };

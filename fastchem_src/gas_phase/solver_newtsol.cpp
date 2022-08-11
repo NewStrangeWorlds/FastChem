@@ -76,13 +76,13 @@ void GasPhaseSolver<double_type>::newtonSol(
       if (molecules[i].stoichiometric_vector[species.index] == 0)
         n_exc += molecules[i].sigma * molecules[i].number_density;
   
-    n_exc *= species.epsilon;
+    n_exc *= species.phi;
     
 
     if (options.use_scaling_factor)
-      Aj[0] = std::exp(-species.solver_scaling_factor) * (n_exc - gas_density * species.epsilon);
+      Aj[0] = std::exp(-species.solver_scaling_factor) * (n_exc - gas_density * species.phi);
     else
-      Aj[0] = n_exc - gas_density * species.epsilon;
+      Aj[0] = n_exc - gas_density * species.phi;
 
 
     Aj[1] = AmCoeffAlt(species, elements, molecules, 1);

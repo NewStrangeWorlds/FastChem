@@ -37,20 +37,16 @@ namespace fastchem {
 //This is the main FastChem iteration for the gas phase
 template <class double_type>
 bool CondensedPhase<double_type>::calculate(
+  std::vector<Condensate<double_type>*>& condensates_act,
+  std::vector<Element<double_type>*>& elements_cond,
   const double temperature,
   const double density,
   const double total_element_density,
   std::vector<Molecule<double_type>>& molecules,
   unsigned int& nb_iterations)
 {
-  std::vector<Condensate<double_type>*> condensates_act;
-  std::vector<Element<double_type>*> elements_cond;
-
   double_type tau = 1e-25;
   double_type log_tau = std::log10(tau);
-
-
-  selectActiveCondensates(condensates_act, elements_cond);
 
 
   std::vector<unsigned int> condensates_jac;
@@ -65,14 +61,20 @@ bool CondensedPhase<double_type>::calculate(
   std::vector<double_type> elem_densities_old(elements_cond.size(), 0.0);
   std::vector<double_type> elem_densities_new(elements_cond.size(), 0.0);
 
-  for (size_t i=0; i<elements_cond.size(); ++i)
-    elem_densities_old[i] = elements_cond[i]->number_density;
-
   std::vector<double_type> cond_densities_old(condensates_act.size(), tau);
   std::vector<double_type> cond_densities_new(condensates_act.size(), 0.0);
 
   std::vector<double_type> activity_corr_old(condensates_act.size(), 1.0);
   std::vector<double_type> activity_corr_new(condensates_act.size(), 0.0);
+
+  for (size_t i=0; i<elements_cond.size(); ++i)
+    elem_densities_old[i] = elements_cond[i]->number_density;
+
+  for (size_t i=0; i<condensates_act.size(); ++i)
+  {
+    cond_densities_old[i] = condensates_act[i]->number_density;
+    activity_corr_old[i] = condensates_act[i]->activity_correction;
+  }
 
 
   for (unsigned int it=0; it<1000; ++it)
@@ -101,13 +103,14 @@ bool CondensedPhase<double_type>::calculate(
     std::cout << rhs << "\n";
 
     std::vector<double_type> result = solver.solveSystem(jacobian, rhs);
+
   
     std::cout << "\n";
 
     for (auto & i : result)
       std::cout << i << "\n";
 
-    correctValues(
+    double_type max_delta = correctValues(
       result,
       condensates_act,
       condensates_jac,
@@ -128,21 +131,51 @@ bool CondensedPhase<double_type>::calculate(
     for (auto & i : condensates_act)  i->calcActivity(temperature, elements);
 
     for (auto & i : molecules)  i.calcNumberDensity(elements);
-
+    
+    std::cout << "iter: " << it << "\n";
     for (size_t i=0; i<condensates_act.size(); ++i)
       std::cout << i << "\t" << cond_densities_old[i] << "\t" << cond_densities_new[i] << "\t" << activity_corr_old[i] << "\t" << activity_corr_new[i] << "\t" << condensates_act[i]->log_activity << "\n";
 
     elem_densities_old = elem_densities_new;
     cond_densities_old = cond_densities_new;
     activity_corr_old = activity_corr_new;
+
+    bool cond_converged = max_delta < 1e-4;
+
+    if (cond_converged) break;
   }
 
 
-  
+  for (size_t i=0; i<condensates_act.size(); ++i)
+  {
+    condensates_act[i]->number_density = cond_densities_new[i];
+    condensates_act[i]->activity_correction = activity_corr_new[i];
+  }
 
-  
+  for (size_t i=0; i<elements_cond.size(); ++i)
+  {
+    elements_cond[i]->number_density = elem_densities_new[i];
+  }
 
-  exit(0);
+  for (auto & i : elements_cond)
+  {
+    i->calcDegreeOfCondensation(condensates, total_element_density);
+  }
+    
+  
+  double_type phi_sum = 0;
+
+  for (auto & i : elements)
+    phi_sum += i.phi;
+
+  for (auto & i : elements)
+    i.normalisePhi(phi_sum);
+
+  for (auto & i : elements_cond)
+    std::cout << i->symbol << "\t" << i->degree_of_condensation << "\n";
+
+
+  //exit(0);
   
   nb_iterations = 1;
 
@@ -152,7 +185,7 @@ bool CondensedPhase<double_type>::calculate(
 
 
 template <class double_type>
-void CondensedPhase<double_type>::correctValues(
+double_type CondensedPhase<double_type>::correctValues(
   const std::vector<double_type>& result,
   const std::vector<Condensate<double_type>*>& condensates,
   const std::vector<unsigned int>& condensates_jac,
@@ -188,10 +221,15 @@ void CondensedPhase<double_type>::correctValues(
   }
 
 
+  double_type max_delta = 0;
+
   for (size_t i=0; i<condensates.size(); ++i)
   {
     if (delta_n[i] > max_change) delta_n[i] = max_change;
     if (delta_n[i] < -max_change) delta_n[i] = -max_change;
+
+    if (std::fabs(delta_n[i]) > max_delta) max_delta = std::fabs(delta_n[i]);
+
 
     cond_number_dens_new[i] = cond_number_dens_old[i] * std::exp(delta_n[i]);
 
@@ -207,9 +245,13 @@ void CondensedPhase<double_type>::correctValues(
     if (delta_n > max_change) delta_n = max_change;
     if (delta_n < -max_change) delta_n = -max_change;
 
+    if (std::fabs(delta_n) > max_delta) max_delta = std::fabs(delta_n);
+
     elem_number_dens_new[i] = elem_number_dens_old[i] * std::exp(delta_n);
   }
 
+
+  return max_delta;
 }
 
 

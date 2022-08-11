@@ -40,10 +40,10 @@ double_type GasPhaseSolver<double_type>::A0Coeff(
   double_type A0 = 0.0;
 
   if (options.use_scaling_factor)
-    A0 = std::exp(-species.solver_scaling_factor) * (species.number_density_maj + species.number_density_min - gas_density * species.epsilon);
+    A0 = std::exp(-species.solver_scaling_factor) * (species.number_density_maj + species.number_density_min - gas_density * species.phi);
   else
     //calculation of coefficient A_j0, see Eq. (2.27)
-    A0 = species.number_density_maj + species.number_density_min - gas_density * species.epsilon;
+    A0 = species.number_density_maj + species.number_density_min - gas_density * species.phi;
 
   return A0;
 }
@@ -70,7 +70,7 @@ double_type GasPhaseSolver<double_type>::A1Coeff(
           sum += molecules[i].stoichiometric_vector[j] * std::log(elements[j].number_density);
       }
 
-      const double_type kappa = 1.0 + species.epsilon * molecules[i].sigma;
+      const double_type kappa = 1.0 + species.phi * molecules[i].sigma;
       
       A1 += std::exp(molecules[i].mass_action_constant + sum - species.solver_scaling_factor) * kappa;
     }
@@ -108,7 +108,7 @@ double_type GasPhaseSolver<double_type>::A2Coeff(
           sum += molecules[i].stoichiometric_vector[j] * std::log(elements[j].number_density);
       }
 
-      const double_type kappa = 2.0 + species.epsilon * molecules[i].sigma; 
+      const double_type kappa = 2.0 + species.phi * molecules[i].sigma; 
       
       A2 += std::exp(molecules[i].mass_action_constant + sum - species.solver_scaling_factor) * kappa;
     }
@@ -141,7 +141,7 @@ double_type GasPhaseSolver<double_type>::AmCoeff(
           sum += molecules[i].stoichiometric_vector[j] * std::log(elements[j].number_density);
       }
 
-      const double_type kappa = order + species.epsilon * molecules[i].sigma; 
+      const double_type kappa = order + species.phi * molecules[i].sigma; 
       
       Am += std::exp(molecules[i].mass_action_constant + sum - species.solver_scaling_factor) * kappa;
     }
@@ -184,7 +184,7 @@ double_type GasPhaseSolver<double_type>::AmCoeffAlt(
           sum += molecules[i].stoichiometric_vector[j] * std::log(elements[j].number_density);
       }
 
-      const double_type kappa = order + species.epsilon * molecules[i].sigma; 
+      const double_type kappa = order + species.phi * molecules[i].sigma; 
       
       Am += std::exp(molecules[i].mass_action_constant + sum - species.solver_scaling_factor) * kappa;
     }

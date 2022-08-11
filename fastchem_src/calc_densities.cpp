@@ -183,7 +183,11 @@ unsigned int FastChem<double_type>::calcDensity(
 
 
   for (auto & i : element_data.elements) 
-    i.checkElementConservation(gas_phase.molecules, total_element_density, options.accuracy);
+    i.checkElementConservation(
+      gas_phase.molecules,
+      condensed_phase.condensates,
+      total_element_density,
+      options.accuracy);
   
   element_conserved.assign(element_data.nb_elements, 0);
 
@@ -231,7 +235,16 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   if (element_data.e_ != FASTCHEM_UNKNOWN_SPECIES)
     element_data.elements[element_data.e_].number_density = 1.0;
 
-  for (auto & i : element_data.elements) {i.degree_of_condensation = 0; i.fixed_by_condensation = false;}
+  //for (auto & i : element_data.elements) {i.degree_of_condensation = 0; i.fixed_by_condensation = false;}
+
+  element_data.init(options.element_density_minlimit);
+
+  for (auto & i : condensed_phase.condensates)
+    {
+      i.number_density = 0;
+      i.degree_of_condensation = 0;
+      i.activity_correction = 0;
+    }
 
   //call the main FastChem solver  
   bool fastchem_converged = gas_phase.calculate(
@@ -239,37 +252,52 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
   total_element_density = gas_phase.totalElementDensity();
 
-  //reset all active condensate species
   for (auto & i : condensed_phase.condensates)
-  {
-    i.number_density = 0;
-    i.degree_of_condensation = 0;
-    i.activity_correction = 0;
-
     i.calcActivity(temperature, element_data.elements);
-  }
-
-  for (auto & i : condensed_phase.condensates)
-    std::cout << i.symbol << "\t" << i.log_activity << "\t" << element_data.elements[i.reference_element].symbol << "\n";
-
-
+  
   std::vector<Condensate<double_type>*> condensates_act;
   std::vector<Element<double_type>*> elements_cond;
 
   condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
 
   for (auto & i : condensates_act)
-    std::cout << i->symbol << "\n";
+  {
+    i->number_density = 1e-25;
+    i->activity_correction = 1.0;
+  }
 
-  for (auto & i : elements_cond)
-    std::cout << i->symbol << "\n";
 
-  unsigned int nb_cond_iter = 0;
-  condensed_phase.calculate(temperature, gas_density, total_element_density, gas_phase.molecules, nb_cond_iter);
+  for (int it=0; it<100; ++it)
+  {
+    for (auto & i : condensed_phase.condensates)
+      i.calcActivity(temperature, element_data.elements);
 
-  exit(0);
+    for (auto & i : condensed_phase.condensates)
+      std::cout << i.symbol << "\t" << i.log_activity << "\t" << element_data.elements[i.reference_element].symbol << "\n";
 
-  /*if (!fastchem_converged && options.verbose_level >= 1) 
+    for (auto & i : condensates_act)
+      std::cout << i->symbol << "\n";
+
+    for (auto & i : elements_cond)
+      std::cout << i->symbol << "\n";
+
+    unsigned int nb_cond_iter = 0;
+    condensed_phase.calculate(
+      condensates_act, elements_cond,
+      temperature, gas_density, total_element_density, gas_phase.molecules, nb_cond_iter);
+
+    fastchem_converged = gas_phase.calculate(
+    temperature, gas_density, nb_chemistry_iterations);
+
+    total_element_density = gas_phase.totalElementDensity();
+
+    for (auto & i : condensed_phase.condensates)
+      i.calcActivity(temperature, element_data.elements);
+  }
+
+  
+
+  if (!fastchem_converged && options.verbose_level >= 1) 
     std::cout << "Convergence problem in FastChem: Reached maximum number of chemistry iterations :(\n";
 
 
@@ -285,12 +313,16 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
 
   for (auto & i : element_data.elements) 
-    i.checkElementConservation(gas_phase.molecules, total_element_density, options.accuracy);
+    i.checkElementConservation(
+      gas_phase.molecules,
+      condensed_phase.condensates,
+      total_element_density,
+      options.accuracy);
   
   element_conserved.assign(element_data.nb_elements, 0);
 
   for (size_t i=0; i<element_data.nb_elements; ++i)
-    element_conserved[i] = element_data.elements[i].element_conserved;*/
+    element_conserved[i] = element_data.elements[i].element_conserved;
 
 
   unsigned int return_state = FASTCHEM_SUCCESS;

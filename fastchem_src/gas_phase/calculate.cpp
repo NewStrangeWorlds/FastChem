@@ -76,7 +76,7 @@ bool GasPhase<double_type>::calculate(
 
     //check if n_j_min are small enough, if not use backup solver
     for (auto & i : elements)
-      if ( (i.number_density_min + i.number_density_maj > i.epsilon * gas_density) && use_backup_solver == false)
+      if ( (i.number_density_min + i.number_density_maj > i.phi * gas_density) && use_backup_solver == false)
       {
         use_backup_solver = true;
        

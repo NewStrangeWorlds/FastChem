@@ -55,6 +55,8 @@ class CondensedPhase {
     bool is_initialised = false;
 
     bool calculate(
+      std::vector<Condensate<double_type>*>& condensates_act,
+      std::vector<Element<double_type>*>& elements_cond,
       const double temperature,
       const double density,
       const double total_element_density,
@@ -81,7 +83,7 @@ class CondensedPhase {
       const std::vector<double>& fit_temp_limits,
       const std::vector<double_type> fit_coeff);
 
-    void correctValues(
+    double_type correctValues(
       const std::vector<double_type>& result,
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<unsigned int>& condensates_jac,

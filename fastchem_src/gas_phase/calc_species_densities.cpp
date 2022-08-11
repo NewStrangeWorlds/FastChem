@@ -45,9 +45,10 @@ void GasPhase<double_type>::calculateElementDensities(
 {
   if (species.symbol == "e-") return; //electrons have their own, special solver
 
-  species.number_density_maj = n_major * species.epsilon;
+  species.number_density_maj = n_major * species.phi;
 
-  
+  if (species.degree_of_condensation == 0.0)
+  {
   //calculate the scaling factor if required
   if (options.use_scaling_factor)
     species.calcSolverScalingFactor(elements, molecules, options.additional_scaling_factor);
@@ -75,7 +76,7 @@ void GasPhase<double_type>::calculateElementDensities(
     }
 
   }
-  
+  }
   species.checkN(options.element_density_minlimit, gas_density);
 
   double_type n = calculateMoleculeDensities(species, gas_density);

@@ -42,7 +42,7 @@ void GasPhaseSolver<double_type>::intertSol(
   const double_type gas_density)
 {
 
-  species.number_density = species.epsilon * gas_density - species.number_density_min - species.number_density_maj;
+  species.number_density = species.phi * gas_density - species.number_density_min - species.number_density_maj;
 
 }
 

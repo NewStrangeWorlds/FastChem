@@ -153,23 +153,33 @@ bool Element<double_type>::checkChargeConservation(
 //Check for element conservation
 template <class double_type>
 bool Element<double_type>::checkElementConservation(
-  const std::vector< Molecule<double_type> >& molecules, const double_type total_density, const double_type& accuracy)
+  const std::vector< Molecule<double_type> >& molecules, 
+  const std::vector< Condensate<double_type> >& condensates,
+  const double_type total_density,
+  const double_type& accuracy)
 {
   //electrons are subject to charge conservation
   if (this->symbol == "e-")
     return checkChargeConservation(molecules, accuracy);
 
   //sum up the elements contained in each molecule and compare the result to its elemental abundance
-  double_type sum = this->number_density;
+  double_type sum_gas = this->number_density;
 
 
   for (auto & i : molecule_list)
-    sum += molecules[i].stoichiometric_vector[index] * molecules[i].number_density;
+    sum_gas += molecules[i].stoichiometric_vector[index] * molecules[i].number_density;
 
-  sum /= total_density*epsilon;
+  double_type sum_cond = 0;
+
+  for (auto & i : condensate_list)
+    sum_cond += condensates[i].stoichiometric_vector[index] * condensates[i].number_density;
+  
+  double_type sum_total = sum_gas + sum_cond;
+
+  sum_total /= total_density*epsilon;
 
 
-  if (std::fabs(sum - 1.0L) < accuracy || molecule_list.size() == 0)
+  if (std::fabs(sum_total - 1.0L) < accuracy || molecule_list.size() == 0)
     element_conserved = 1;
   else
     element_conserved = 0;
@@ -177,6 +187,36 @@ bool Element<double_type>::checkElementConservation(
 
   return element_conserved;
 }
+
+
+
+template <class double_type>
+void Element<double_type>::calcDegreeOfCondensation(
+  const std::vector< Condensate<double_type> > &condensates,
+  const double_type total_element_density)
+{
+  double_type density_cond = 0;
+
+  for (auto & i : condensate_list)
+    density_cond += condensates[i].stoichiometric_vector[this->index] * condensates[i].number_density;
+
+  degree_of_condensation = density_cond/(epsilon*total_element_density);
+
+  if (degree_of_condensation > 1) 
+    degree_of_condensation = 1.0;
+
+  phi = this->epsilon * (1.0 - degree_of_condensation);
+}
+
+
+template <class double_type>
+void Element<double_type>::normalisePhi(const double_type element_phi_sum)
+{
+
+  phi /= element_phi_sum;
+
+}
+
 
 
 template struct Element<double>;
