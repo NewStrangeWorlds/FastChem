@@ -145,8 +145,8 @@ Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
   for (size_t i=0; i<nb_condensates; ++i)
     for (size_t j=0; j<nb_elements; ++j)
     {
-      jacobian(i, j+nb_condensates) = condensates[i]->stoichiometric_vector[elements[j]->index];
-      jacobian(j+nb_condensates, i) = condensates[i]->stoichiometric_vector[elements[j]->index] * number_densities[condensates_jac[i]];
+      jacobian(i, j+nb_condensates) = condensates[condensates_jac[i]]->stoichiometric_vector[elements[j]->index];
+      jacobian(j+nb_condensates, i) = condensates[condensates_jac[i]]->stoichiometric_vector[elements[j]->index] * number_densities[condensates_jac[i]];
     }
 
 

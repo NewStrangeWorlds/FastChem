@@ -83,6 +83,13 @@ class CondensedPhase {
       const std::vector<double>& fit_temp_limits,
       const std::vector<double_type> fit_coeff);
 
+    void selectJacobianCondensates(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<double_type>& number_density_cond,
+      const std::vector<double_type>& activity_corr,
+      std::vector<unsigned int>& condensates_jac,
+      std::vector<unsigned int>& condensates_rem);
+
     double_type correctValues(
       const std::vector<double_type>& result,
       const std::vector<Condensate<double_type>*>& condensates,

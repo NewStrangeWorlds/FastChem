@@ -50,12 +50,10 @@ bool CondensedPhase<double_type>::calculate(
 
 
   std::vector<unsigned int> condensates_jac;
-
-  for (size_t i=0; i<condensates_act.size(); ++i)
-    condensates_jac.push_back(i);
-
+  condensates_jac.reserve(condensates_act.size());
 
   std::vector<unsigned int> condensates_rem;
+  condensates_rem.reserve(condensates_act.size());
 
 
   std::vector<double_type> elem_densities_old(elements_cond.size(), 0.0);
@@ -70,15 +68,33 @@ bool CondensedPhase<double_type>::calculate(
   for (size_t i=0; i<elements_cond.size(); ++i)
     elem_densities_old[i] = elements_cond[i]->number_density;
 
+
   for (size_t i=0; i<condensates_act.size(); ++i)
   {
-    cond_densities_old[i] = condensates_act[i]->number_density;
-    activity_corr_old[i] = condensates_act[i]->activity_correction;
+    cond_densities_old[i] = tau; //condensates_act[i]->max_number_density; //condensates_act[i]->number_density;
+    activity_corr_old[i] = 1.0; //tau; //condensates_act[i]->activity_correction;
   }
 
 
   for (unsigned int it=0; it<1000; ++it)
   {
+    selectJacobianCondensates(
+      condensates_act,
+      cond_densities_old,
+      activity_corr_old,
+      condensates_jac,
+      condensates_rem);
+    
+    std::cout << "Cond in system: ";
+    for (auto & i : condensates_jac)
+      std::cout << condensates_act[i]->symbol << ", ";
+    std::cout << "\n";
+
+    std::cout << "Cond out system: ";
+    for (auto & i : condensates_rem)
+      std::cout << condensates_act[i]->symbol << ", ";
+    std::cout << "\n";
+
     Eigen::MatrixXdt<double_type> jacobian = solver.assembleJacobian(
       condensates_act,
       activity_corr_old,
@@ -217,7 +233,10 @@ double_type CondensedPhase<double_type>::correctValues(
 
     delta_n[index] /= activity_corr_old[index];
 
-    delta_n[index] += condensates[index]->log_activity / activity_corr_old[index] + ln_tau - std::log(activity_corr_old[index]) - std::log(cond_number_dens_old[index]) + 1;
+    delta_n[index] += condensates[index]->log_activity / activity_corr_old[index] 
+                    + ln_tau - std::log(activity_corr_old[index]) 
+                    - std::log(cond_number_dens_old[index]) 
+                    + 1;
   }
 
 

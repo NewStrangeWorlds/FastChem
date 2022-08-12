@@ -117,6 +117,28 @@ void CondensedPhase<double_type>::selectActiveCondensates(
 
 
 
+template <class double_type>
+void CondensedPhase<double_type>::selectJacobianCondensates(
+  const std::vector<Condensate<double_type>*>& condensates,
+  const std::vector<double_type>& number_density_cond,
+  const std::vector<double_type>& activity_corr,
+  std::vector<unsigned int>& condensates_jac,
+  std::vector<unsigned int>& condensates_rem)
+{
+  condensates_jac.resize(0);
+  condensates_rem.resize(0);
+
+  for (size_t i=0; i<condensates.size(); ++i)
+  {
+    if (activity_corr[i] < 1)
+      condensates_jac.push_back(i);
+    else
+      condensates_rem.push_back(i);
+  }
+}
+
+
+
 template class CondensedPhase<double>;
 template class CondensedPhase<long double>;
 

@@ -269,8 +269,12 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
   for (int it=0; it<100; ++it)
   {
-    for (auto & i : condensed_phase.condensates)
-      i.calcActivity(temperature, element_data.elements);
+    for (auto & i : condensates_act)
+    {
+      i->calcActivity(temperature, element_data.elements);
+      i->maxDensity(element_data.elements, total_element_density);
+    }
+
 
     for (auto & i : condensed_phase.condensates)
       std::cout << i.symbol << "\t" << i.log_activity << "\t" << element_data.elements[i.reference_element].symbol << "\n";
