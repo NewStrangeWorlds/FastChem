@@ -33,6 +33,7 @@
 struct Config{
   std::string atmosphere_file;
   std::string chem_output_file;
+  std::string cond_output_file;
   std::string monitor_output_file;
   unsigned int verbose_level; 
   bool output_mixing_ratios;
@@ -90,6 +91,11 @@ bool readConfigFile(std::string &file_path, Config &config)
 
     return false;
   }
+
+  std::getline(file, line);
+  
+  input.str(line); input.clear();
+  input >> config.cond_output_file;
 
 
   //monitor output file

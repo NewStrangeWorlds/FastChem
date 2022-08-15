@@ -57,9 +57,14 @@ class FastChem {
     std::string getSpeciesSymbol(const unsigned int species_index);
     unsigned int getSpeciesIndex(const std::string symbol);
 
+    std::string getCondSpeciesName(const unsigned int species_index);
+    unsigned int getCondSpeciesIndex(const std::string symbol);
+    std::string getCondSpeciesSymbol(const unsigned int species_index);
+
     unsigned int getSpeciesNumber() {return gas_phase.nb_species;}
     unsigned int getElementNumber() {return element_data.nb_elements;}
     unsigned int getMoleculeNumber() {return gas_phase.nb_molecules;}
+    unsigned int getCondensateNumber() {return condensed_phase.nb_condensates;}
 
     double getElementAbundance(const unsigned int species_index);
     std::vector<double> getElementAbundances();
@@ -120,10 +125,13 @@ class FastChem {
       const double temperature,
       const double pressure,
       std::vector<double>& number_densities,
+      std::vector<double>& number_densities_cond,
+      std::vector<double>& element_cond_degree,
       double& total_element_density, 
       double& mean_molecular_weight,
       std::vector<unsigned int>& element_conserved,
-      unsigned int& nb_chemistry_iterations);
+      unsigned int& nb_chemistry_iterations,
+      unsigned int& nb_cond_iterations);
 };
 
 

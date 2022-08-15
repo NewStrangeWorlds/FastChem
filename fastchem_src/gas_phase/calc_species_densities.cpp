@@ -49,39 +49,37 @@ void GasPhase<double_type>::calculateElementDensities(
 
   if (species.degree_of_condensation == 0.0)
   {
-  //calculate the scaling factor if required
-  if (options.use_scaling_factor)
-    species.calcSolverScalingFactor(elements, molecules, options.additional_scaling_factor);
-  else
-    species.solver_scaling_factor = 0.0;
-
-
-  //in case the usual FastChem iterations failed to converge, we switch to a backup
-  if (use_backup_solver)
-  {
-    if (species.solver_order == 0)
-      solver.intertSol(species, elements, molecules, gas_density);
+    //calculate the scaling factor if required
+    if (options.use_scaling_factor)
+      species.calcSolverScalingFactor(elements, molecules, options.additional_scaling_factor);
     else
-      solver.backupSol(species, elements, molecules, gas_density);
-  }
-  else
-  {
-    //selection of the solver for each element, see Eq. (2.32)
-    switch (species.solver_order)
-    {
-      case 0 : solver.intertSol(species, elements, molecules, gas_density); break;
-      case 1 : solver.linSol(species, elements, molecules, gas_density); break;
-      case 2 : solver.quadSol(species, elements, molecules, gas_density); break;
-      default : solver.newtonSol(species, elements, molecules, gas_density, false);
-    }
+      species.solver_scaling_factor = 0.0;
 
+
+    //in case the usual FastChem iterations failed to converge, we switch to a backup
+    if (use_backup_solver)
+    {
+      if (species.solver_order == 0)
+        solver.intertSol(species, elements, molecules, gas_density);
+      else
+        solver.backupSol(species, elements, molecules, gas_density);
+    }
+    else
+    {
+      //selection of the solver for each element, see Eq. (2.32)
+      switch (species.solver_order)
+      {
+        case 0 : solver.intertSol(species, elements, molecules, gas_density); break;
+        case 1 : solver.linSol(species, elements, molecules, gas_density); break;
+        case 2 : solver.quadSol(species, elements, molecules, gas_density); break;
+        default : solver.newtonSol(species, elements, molecules, gas_density, false);
+      }
+    }
   }
-  }
+
   species.checkN(options.element_density_minlimit, gas_density);
 
-  double_type n = calculateMoleculeDensities(species, gas_density);
-
-  n_major += n;
+  n_major += calculateMoleculeDensities(species, gas_density);;
 }
 
 

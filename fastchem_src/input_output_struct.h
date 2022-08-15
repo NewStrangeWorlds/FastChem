@@ -42,9 +42,13 @@ struct FastChemOutput
   std::vector<double> total_element_density;
   std::vector<double> mean_molecular_weight;
 
+  std::vector<std::vector<double>> number_densities_cond;
+  std::vector<std::vector<double>> element_cond_degree;
+
   //diagnostic output
   std::vector<std::vector<unsigned int>> element_conserved;
   std::vector<unsigned int> nb_chemistry_iterations;
+  std::vector<unsigned int> nb_cond_iterations;
   std::vector<unsigned int> fastchem_flag;
 };
 

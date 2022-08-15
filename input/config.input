@@ -3,6 +3,7 @@ input/Late_M-dwarf1.dat
 
 #Chemistry output file
 output/chemistry.dat
+output/condensates.dat
 
 #Monitor output file
 output/monitor.dat

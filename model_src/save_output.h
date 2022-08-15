@@ -34,9 +34,13 @@
 
 
 
-bool saveChemistryOutput(std::string &file_path, bool output_mixing_ratios,
-                         fastchem::FastChemInput &input, fastchem::FastChemOutput &output,
-                         std::vector<std::string> species_symbols, std::vector<double> gas_number_density)
+bool saveChemistryOutput(
+  std::string &file_path,
+  bool output_mixing_ratios,
+  fastchem::FastChemInput &input,
+  fastchem::FastChemOutput &output,
+  std::vector<std::string> species_symbols,
+  std::vector<double> gas_number_density)
 {
   size_t nb_species = species_symbols.size();
   
@@ -88,10 +92,68 @@ bool saveChemistryOutput(std::string &file_path, bool output_mixing_ratios,
 
 
 
+bool saveCondOutput(
+  const std::string &file_path,
+  const fastchem::FastChemInput &input,
+  const fastchem::FastChemOutput &output,
+  const std::vector<std::string> element_symbols,
+  const std::vector<std::string> species_symbols)
+{
+  size_t nb_species = species_symbols.size();
+  size_t nb_elements = element_symbols.size();
+  
 
-bool saveMonitorOutput(std::string &file_path,
-                       fastchem::FastChemInput &input, fastchem::FastChemOutput &output,
-                       std::vector<std::string> element_symbols, std::vector<double> gas_number_density)
+  std::fstream file(file_path.c_str(), std::ios::out);
+  
+
+  if (!file.fail())
+  {
+    file << std::setw(16) << std::left << "#P (bar)" << "\t"
+         << std::setw(16) << std::left << "T(k)";
+
+    for (size_t i=0; i<nb_elements; i++)
+      file << "\t" << std::setw(16) << std::left << element_symbols[i];
+    
+    for (size_t i=0; i<nb_species; i++)
+      file << "\t" << std::setw(16) << std::left << species_symbols[i];
+
+    file << "\n";
+
+    for (size_t i=0; i<input.pressure.size(); i++)
+    {
+      file << std::setprecision(10) << std::scientific
+           << input.pressure[i] << "\t"
+           << input.temperature[i];
+
+      for (size_t j=0; j<nb_elements; ++j)
+        file << "\t" << output.element_cond_degree[i][j];
+
+      for (size_t j=0; j<nb_species; j++)
+        file << "\t" << output.number_densities_cond[i][j];
+
+      file << "\n";
+    }
+
+    file.close();
+  }
+  else
+  {
+    std::cout << "Unable to open condensation outout file " << file_path << "\n";
+    return false;
+  }
+    
+  return true;
+}
+
+
+
+
+bool saveMonitorOutput(
+  std::string &file_path,
+  fastchem::FastChemInput &input,
+  fastchem::FastChemOutput &output,
+  std::vector<std::string> element_symbols,
+  std::vector<double> gas_number_density)
 {
   size_t nb_elements = element_symbols.size();
 
@@ -102,8 +164,9 @@ bool saveMonitorOutput(std::string &file_path,
   if (!file.fail())
   {
     file << std::setw(16) << std::left << "#grid point" << "\t"
-         << std::setw(16) << std::left << "c_iterations" << "\t"
-         << std::setw(16) << std::left << "c_convergence" << "\t"
+         << std::setw(16) << std::left << "chem_iter" << "\t"
+         << std::setw(16) << std::left << "cond_iter" << "\t"
+         << std::setw(16) << std::left << "converged" << "\t"
          << std::setw(16) << std::left << "elem_conserved" << "\t"
          << std::setw(16) << std::left << "P (bar)" << "\t"
          << std::setw(16) << std::left << "T (K)" << "\t"
@@ -138,6 +201,7 @@ bool saveMonitorOutput(std::string &file_path,
 
       file << std::setw(16) << std::left << i << "\t"
            << std::setw(16) << std::left << output.nb_chemistry_iterations[i] << "\t"
+           << std::setw(16) << std::left << output.nb_cond_iterations[i] << "\t"
            << std::setw(16) << std::left << c_conv << "\t"
            << std::setw(16) << std::left << output_flags[all_elements_conserved[i]] << "\t";
 
