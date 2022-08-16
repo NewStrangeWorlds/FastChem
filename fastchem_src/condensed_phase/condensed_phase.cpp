@@ -138,6 +138,26 @@ void CondensedPhase<double_type>::selectJacobianCondensates(
 }
 
 
+template <class double_type>
+double CondensedPhase<double_type>::totalElementDensity()
+{
+  double n_tot = 0.0;
+
+  //then we take into account the condensates
+  for (size_t i=0; i<nb_condensates; ++i)
+  {
+    for (size_t j=0; j<condensates[i].element_indices.size(); ++j)
+    {
+      const unsigned int element_index = condensates[i].element_indices[j];
+
+      n_tot += condensates[i].number_density * condensates[i].stoichiometric_vector[element_index];
+    }
+  }
+
+  return n_tot;
+}
+
+
 
 template class CondensedPhase<double>;
 template class CondensedPhase<long double>;

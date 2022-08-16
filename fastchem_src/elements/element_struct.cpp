@@ -177,7 +177,8 @@ bool Element<double_type>::checkElementConservation(
   double_type sum_total = sum_gas + sum_cond;
 
   sum_total /= total_density*epsilon;
-
+  
+  std::cout << this->symbol << "\t" << sum_gas << "\t" << sum_cond << "\t" << sum_total << "\t" << total_density*epsilon << "\t" << phi << "\t" << epsilon << "\n";
 
   if (std::fabs(sum_total - 1.0L) < accuracy || molecule_list.size() == 0)
     element_conserved = 1;

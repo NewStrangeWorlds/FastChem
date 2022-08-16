@@ -314,17 +314,26 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       std::cout << i->symbol << "\n";
 
     condensed_phase.calculate(
-      condensates_act, elements_cond,
-      temperature, gas_density, total_element_density, gas_phase.molecules, nb_iter);
+      condensates_act,
+      elements_cond,
+      temperature,
+      gas_density,
+      total_element_density,
+      gas_phase.molecules,
+      nb_iter);
+
+    //gas_phase.reInitialise();
 
     nb_cond_iter += nb_iter;
 
     fastchem_converged = gas_phase.calculate(
-    temperature, gas_density, nb_iter);
+      temperature,
+      gas_density,
+      nb_iter);
 
     nb_chem_iter += nb_iter;
 
-    total_element_density = gas_phase.totalElementDensity();
+    total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
 
     for (auto & i : condensed_phase.condensates)
       i.calcActivity(temperature, element_data.elements);
@@ -366,7 +375,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     element_cond_degree[i] = element_data.elements[i].degree_of_condensation;
 
   mean_molecular_weight = gas_phase.meanMolecularWeight(gas_density);
-  total_element_density = gas_phase.totalElementDensity();
+  total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
 
 
   for (auto & i : element_data.elements) 

@@ -132,8 +132,9 @@ double GasPhase<double_type>::totalElementDensity()
     }
   }
 
+
   //then we add the free atoms
-   for (auto & i : elements) n_tot += i.number_density;
+  for (auto & i : elements) n_tot += i.number_density;
 
   return n_tot;
 }

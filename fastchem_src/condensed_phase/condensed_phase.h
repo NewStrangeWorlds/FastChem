@@ -62,6 +62,8 @@ class CondensedPhase {
       const double total_element_density,
       std::vector<Molecule<double_type>>& molecules,
       unsigned int& nb_iterations);
+
+    double totalElementDensity();
   private:
     FastChemOptions<double_type>& options;
     ElementData<double_type>& element_data;
