@@ -41,7 +41,7 @@ CondensedPhase<double_type>::CondensedPhase(
 {
   nb_elements = elements.size();
 
-  std::string file_path = "input/condensate_test_small.dat";
+  std::string file_path = "input/condensate_test_large.dat";
 
   //is_initialised = readCondensateData(options.condensates_data_file);
   is_initialised = readCondensateData(file_path);

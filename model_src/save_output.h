@@ -164,6 +164,7 @@ bool saveMonitorOutput(
   if (!file.fail())
   {
     file << std::setw(16) << std::left << "#grid point" << "\t"
+         << std::setw(16) << std::left << "iterations" << "\t"
          << std::setw(16) << std::left << "chem_iter" << "\t"
          << std::setw(16) << std::left << "cond_iter" << "\t"
          << std::setw(16) << std::left << "converged" << "\t"
@@ -200,6 +201,7 @@ bool saveMonitorOutput(
 
 
       file << std::setw(16) << std::left << i << "\t"
+           << std::setw(16) << std::left << output.nb_iterations[i] << "\t"
            << std::setw(16) << std::left << output.nb_chemistry_iterations[i] << "\t"
            << std::setw(16) << std::left << output.nb_cond_iterations[i] << "\t"
            << std::setw(16) << std::left << c_conv << "\t"

@@ -71,12 +71,12 @@ bool CondensedPhase<double_type>::calculate(
 
   for (size_t i=0; i<condensates_act.size(); ++i)
   {
-    cond_densities_old[i] = tau; //condensates_act[i]->max_number_density; //condensates_act[i]->number_density;
-    activity_corr_old[i] = 1.0; //tau; //condensates_act[i]->activity_correction;
+    cond_densities_old[i] = condensates_act[i]->number_density;
+    activity_corr_old[i] = condensates_act[i]->activity_correction;
   }
 
 
-  for (unsigned int it=0; it<1000; ++it)
+  for (nb_iterations=0; nb_iterations<1000; ++nb_iterations)
   {
     selectJacobianCondensates(
       condensates_act,
@@ -148,7 +148,7 @@ bool CondensedPhase<double_type>::calculate(
 
     for (auto & i : molecules)  i.calcNumberDensity(elements);
     
-    std::cout << "iter: " << it << "\n";
+    std::cout << "iter: " << nb_iterations << "\n";
     for (size_t i=0; i<condensates_act.size(); ++i)
       std::cout << i << "\t" << cond_densities_old[i] << "\t" << cond_densities_new[i] << "\t" << activity_corr_old[i] << "\t" << activity_corr_new[i] << "\t" << condensates_act[i]->log_activity << "\n";
 
@@ -156,7 +156,7 @@ bool CondensedPhase<double_type>::calculate(
     cond_densities_old = cond_densities_new;
     activity_corr_old = activity_corr_new;
 
-    bool cond_converged = max_delta < 1e-4;
+    bool cond_converged = max_delta < 1e-6;
 
     if (cond_converged) break;
   }
@@ -190,10 +190,6 @@ bool CondensedPhase<double_type>::calculate(
   for (auto & i : elements_cond)
     std::cout << i->symbol << "\t" << i->degree_of_condensation << "\n";
 
-
-  //exit(0);
-  
-  nb_iterations = 1;
 
   return true;
 }

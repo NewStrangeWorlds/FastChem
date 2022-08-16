@@ -49,6 +49,7 @@ struct FastChemOutput
   std::vector<std::vector<unsigned int>> element_conserved;
   std::vector<unsigned int> nb_chemistry_iterations;
   std::vector<unsigned int> nb_cond_iterations;
+  std::vector<unsigned int> nb_iterations;
   std::vector<unsigned int> fastchem_flag;
 };
 

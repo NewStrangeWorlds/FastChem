@@ -68,21 +68,26 @@ unsigned int FastChem<double_type>::calcDensities(
   output.total_element_density.resize(nb_gridpoints);
   output.nb_chemistry_iterations.resize(nb_gridpoints);
   output.nb_cond_iterations.resize(nb_gridpoints);
+  output.nb_iterations.resize(nb_gridpoints);
   output.mean_molecular_weight.resize(nb_gridpoints);
   output.fastchem_flag.assign(nb_gridpoints, 0);
-
-  equilibriumCondensation(
-      input.temperature[0],
-      input.pressure[0]*1e6,
-      output.number_densities[0],
-      output.number_densities_cond[0],
-      output.element_cond_degree[0],
-      output.total_element_density[0], 
-      output.mean_molecular_weight[0],
-      output.element_conserved[0],
-      output.nb_chemistry_iterations[0],
-      output.nb_cond_iterations[0]);
   
+  for (unsigned int i=0; i<input.temperature.size(); i++)
+  { 
+    output.fastchem_flag[i] = equilibriumCondensation(
+      input.temperature[i],
+      input.pressure[i]*1e6,
+      output.number_densities[i],
+      output.number_densities_cond[i],
+      output.element_cond_degree[i],
+      output.total_element_density[i], 
+      output.mean_molecular_weight[i],
+      output.element_conserved[i],
+      output.nb_chemistry_iterations[i],
+      output.nb_cond_iterations[i],
+      output.nb_iterations[i]);
+  }
+
   /*#ifdef _OPENMP
   unsigned int nb_omp_threads = omp_get_max_threads();
 
@@ -229,7 +234,8 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   double& mean_molecular_weight,
   std::vector<unsigned int>& element_conserved,
   unsigned int& nb_chem_iter,
-  unsigned int& nb_cond_iter)
+  unsigned int& nb_cond_iter,
+  unsigned int& nb_combined_iter)
 {
   for (auto & i : gas_phase.molecules) i.calcMassActionConstant(temperature);
   for (auto & i : condensed_phase.condensates) i.calcMassActionConstant(temperature);
@@ -288,8 +294,8 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   for (size_t i=0; i<element_data.nb_elements; ++i)
     number_density_old[i] = element_data.elements[i].number_density;
 
-
-  for (int it=0; it<100; ++it)
+  
+  for (nb_combined_iter=0; nb_combined_iter<400; ++nb_combined_iter)
   {
     for (auto & i : condensates_act)
     {
@@ -326,13 +332,17 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     bool cond_converged = true;
 
     for (auto & i : element_data.elements)
+    {
       if (std::fabs((i.number_density - number_density_old[i.index])) > options.accuracy*number_density_old[i.index])
         cond_converged = false;
+      
+      number_density_old[i.index] = i.number_density;
+    }
 
     if (cond_converged) break;
   }
 
-  std::cout << "chem iter: " << nb_chem_iter << "\t" << nb_cond_iter << "\n";
+  std::cout << "chem iter: " << nb_chem_iter << "\t" << nb_cond_iter << "\t" << nb_combined_iter << "\n";
 
 
   if (!fastchem_converged && options.verbose_level >= 1) 

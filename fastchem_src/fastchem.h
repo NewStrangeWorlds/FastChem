@@ -131,7 +131,8 @@ class FastChem {
       double& mean_molecular_weight,
       std::vector<unsigned int>& element_conserved,
       unsigned int& nb_chemistry_iterations,
-      unsigned int& nb_cond_iterations);
+      unsigned int& nb_cond_iterations,
+      unsigned int& nb_combined_iter);
 };
 
 
