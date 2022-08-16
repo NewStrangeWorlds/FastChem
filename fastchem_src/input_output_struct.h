@@ -32,6 +32,9 @@ struct FastChemInput
 {
   std::vector<double> temperature; 
   std::vector<double> pressure;
+
+  bool equilibrium_condensation = false;
+  bool rainout_condensation = false;
 };
 
 

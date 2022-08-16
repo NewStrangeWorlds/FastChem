@@ -59,7 +59,7 @@ bool CondensedPhase<double_type>::calculate(
   std::vector<double_type> elem_densities_old(elements_cond.size(), 0.0);
   std::vector<double_type> elem_densities_new(elements_cond.size(), 0.0);
 
-  std::vector<double_type> cond_densities_old(condensates_act.size(), tau);
+  std::vector<double_type> cond_densities_old(condensates_act.size(), 0.0);
   std::vector<double_type> cond_densities_new(condensates_act.size(), 0.0);
 
   std::vector<double_type> activity_corr_old(condensates_act.size(), 1.0);
@@ -74,7 +74,9 @@ bool CondensedPhase<double_type>::calculate(
     cond_densities_old[i] = condensates_act[i]->number_density;
     activity_corr_old[i] = condensates_act[i]->activity_correction;
   }
+  
 
+  bool cond_converged = false;
 
   for (nb_iterations=0; nb_iterations<1000; ++nb_iterations)
   {
@@ -84,16 +86,6 @@ bool CondensedPhase<double_type>::calculate(
       activity_corr_old,
       condensates_jac,
       condensates_rem);
-    
-    std::cout << "Cond in system: ";
-    for (auto & i : condensates_jac)
-      std::cout << condensates_act[i]->symbol << ", ";
-    std::cout << "\n";
-
-    std::cout << "Cond out system: ";
-    for (auto & i : condensates_rem)
-      std::cout << condensates_act[i]->symbol << ", ";
-    std::cout << "\n";
 
     Eigen::MatrixXdt<double_type> jacobian = solver.assembleJacobian(
       condensates_act,
@@ -115,16 +107,9 @@ bool CondensedPhase<double_type>::calculate(
       total_element_density,
       log_tau);
 
-    std::cout << jacobian << "\n";
-    std::cout << rhs << "\n";
 
     std::vector<double_type> result = solver.solveSystem(jacobian, rhs);
 
-  
-    std::cout << "\n";
-
-    for (auto & i : result)
-      std::cout << i << "\n";
 
     double_type max_delta = correctValues(
       result,
@@ -139,7 +124,7 @@ bool CondensedPhase<double_type>::calculate(
       elem_densities_old,
       elem_densities_new,
       log_tau,
-      10.0);
+      2.0);
 
     for (size_t i=0; i<elements_cond.size(); ++i)
       elements_cond[i]->number_density = elem_densities_new[i];
@@ -148,15 +133,15 @@ bool CondensedPhase<double_type>::calculate(
 
     for (auto & i : molecules)  i.calcNumberDensity(elements);
     
-    std::cout << "iter: " << nb_iterations << "\n";
-    for (size_t i=0; i<condensates_act.size(); ++i)
-      std::cout << i << "\t" << cond_densities_old[i] << "\t" << cond_densities_new[i] << "\t" << activity_corr_old[i] << "\t" << activity_corr_new[i] << "\t" << condensates_act[i]->log_activity << "\n";
+    //std::cout << "iter: " << nb_iterations << "\n";
+    //for (size_t i=0; i<condensates_act.size(); ++i)
+      //std::cout << i << "\t" << cond_densities_old[i] << "\t" << cond_densities_new[i] << "\t" << activity_corr_old[i] << "\t" << activity_corr_new[i] << "\t" << condensates_act[i]->log_activity << "\n";
 
     elem_densities_old = elem_densities_new;
     cond_densities_old = cond_densities_new;
     activity_corr_old = activity_corr_new;
 
-    bool cond_converged = max_delta < 1e-6;
+    cond_converged = max_delta < 1e-6;
 
     if (cond_converged) break;
   }
@@ -177,8 +162,8 @@ bool CondensedPhase<double_type>::calculate(
   {
     i->calcDegreeOfCondensation(condensates, total_element_density);
   }
-    
-  
+
+
   double_type phi_sum = 0;
 
   for (auto & i : elements)
@@ -187,11 +172,7 @@ bool CondensedPhase<double_type>::calculate(
   for (auto & i : elements)
     i.normalisePhi(phi_sum);
 
-  for (auto & i : elements_cond)
-    std::cout << i->symbol << "\t" << i->degree_of_condensation << "\n";
-
-
-  return true;
+  return cond_converged;
 }
 
 

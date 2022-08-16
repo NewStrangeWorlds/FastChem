@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
 
   input.temperature = temperature;
   input.pressure = pressure;
+  input.equilibrium_condensation = true;
 
   unsigned int fastchem_flag = fastchem.calcDensities(input, output);
   

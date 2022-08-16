@@ -1,5 +1,5 @@
 #Atmospheric profile input file
-input/Late_M-dwarf1.dat
+input/Gliese_229b.dat
 
 #Chemistry output file
 output/chemistry.dat

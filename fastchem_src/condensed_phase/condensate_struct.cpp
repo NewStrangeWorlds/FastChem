@@ -45,9 +45,9 @@ void Condensate<double_type>::calcActivity(
   for (auto & i : element_indices)
     log_activity += std::log(elements[i].number_density) * stoichiometric_vector[elements[i].index];
 
-  //if (ln_activity < -9) ln_activity = -9;
+  if (log_activity < -9) log_activity = -9;
   
-  //if (std::abs(ln_activity) < 1e-10) ln_activity = 0;
+  //if (std::abs(log_activity) < 1e-10) log_activity = 0;
   //if (ln_activity < -11) ln_activity = -11;
 }
 
