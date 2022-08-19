@@ -92,7 +92,7 @@ void GasPhase<double_type>::determineElementCalculationOrder()
       return a->abundance > b->abundance;});
   
   element_calculation_order.assign(element_data.elements_wo_e.size(), 0);
-  //for (auto & i : elements_wo_e) std::cout << i->symbol << "\t" << std::setprecision(20) << i->abundance << "\n"; exit(0);
+  for (auto & i : element_data.elements_wo_e) std::cout << i->symbol << "\t" << std::setprecision(20) << i->abundance << "\n"; 
   for (size_t i=0; i<element_calculation_order.size(); ++i)
     element_calculation_order[i] = element_data.elements_wo_e[i]->index;
 }

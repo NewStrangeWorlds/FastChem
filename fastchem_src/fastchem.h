@@ -133,6 +133,8 @@ class FastChem {
       unsigned int& nb_chemistry_iterations,
       unsigned int& nb_cond_iterations,
       unsigned int& nb_combined_iter);
+
+    void rainoutCondensation(FastChemInput& input, FastChemOutput& output);
 };
 
 

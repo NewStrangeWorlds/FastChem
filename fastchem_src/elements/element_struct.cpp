@@ -178,14 +178,14 @@ bool Element<double_type>::checkElementConservation(
 
   sum_total /= total_density*epsilon;
   
-  //std::cout << this->symbol << "\t" << sum_gas << "\t" << sum_cond << "\t" << sum_total << "\t" << total_density*epsilon << "\t" << phi << "\t" << epsilon << "\n";
+  std::cout << this->symbol << "\t" << sum_gas << "\t" << sum_cond << "\t" << sum_total << "\t" << total_density*epsilon << "\t" << phi << "\t" << epsilon << "\n";
 
   if (std::fabs(sum_total - 1.0L) < accuracy || molecule_list.size() == 0)
     element_conserved = 1;
   else
     element_conserved = 0;
 
-
+  if (!element_conserved) exit(0);
   return element_conserved;
 }
 
@@ -196,10 +196,15 @@ void Element<double_type>::calcDegreeOfCondensation(
   const std::vector< Condensate<double_type> > &condensates,
   const double_type total_element_density)
 {
+  if (this->symbol == "e-") return;
+
   double_type density_cond = 0;
 
   for (auto & i : condensate_list)
+  {
     density_cond += condensates[i].stoichiometric_vector[this->index] * condensates[i].number_density;
+  }
+    
 
   degree_of_condensation = density_cond/(epsilon*total_element_density);
 

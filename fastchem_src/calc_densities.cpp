@@ -71,105 +71,97 @@ unsigned int FastChem<double_type>::calcDensities(
   output.nb_iterations.resize(nb_gridpoints);
   output.mean_molecular_weight.resize(nb_gridpoints);
   output.fastchem_flag.assign(nb_gridpoints, 0);
-  
-  /*for (unsigned int i=0; i<input.temperature.size(); i++)
-  { 
-    output.fastchem_flag[i] = equilibriumCondensation(
-      input.temperature[i],
-      input.pressure[i]*1e6,
-      output.number_densities[i],
-      output.number_densities_cond[i],
-      output.element_cond_degree[i],
-      output.total_element_density[i], 
-      output.mean_molecular_weight[i],
-      output.element_conserved[i],
-      output.nb_chemistry_iterations[i],
-      output.nb_cond_iterations[i],
-      output.nb_iterations[i]);
-  }*/
-
-  #ifdef _OPENMP
-  unsigned int nb_omp_threads = omp_get_max_threads();
-
-  if (input.temperature.size() < nb_omp_threads)
-    nb_omp_threads = input.temperature.size();
 
 
-  omp_set_num_threads(nb_omp_threads);
-
-  std::vector< FastChem<double_type>  > fastchems(nb_omp_threads, *this);
-
-  #pragma omp parallel for schedule(dynamic, 1)
-  for (unsigned int i=0; i<input.temperature.size(); i++)
-  { 
-    if (!input.equilibrium_condensation)
-    {
-      output.fastchem_flag[i] = 
-      fastchems[omp_get_thread_num()].calcDensity(
-        input.temperature[i], 
-        input.pressure[i]*1e6,
-        false, 
-        output.number_densities[i],
-        output.total_element_density[i], 
-        output.mean_molecular_weight[i],
-        output.element_conserved[i],
-        output.nb_chemistry_iterations[i]);
-
-      output.nb_iterations[i] = output.nb_chemistry_iterations[i];
-      output.nb_cond_iterations[i] = 0;
-    }
-    else
-    {
-      output.fastchem_flag[i] = 
-      fastchems[omp_get_thread_num()].equilibriumCondensation(
-        input.temperature[i],
-        input.pressure[i]*1e6,
-        output.number_densities[i],
-        output.number_densities_cond[i],
-        output.element_cond_degree[i],
-        output.total_element_density[i], 
-        output.mean_molecular_weight[i],
-        output.element_conserved[i],
-        output.nb_chemistry_iterations[i],
-        output.nb_cond_iterations[i],
-        output.nb_iterations[i]);
-    }
+  if (input.rainout_condensation)
+  {
+    rainoutCondensation(input, output);
   }
-  #else
-  for (unsigned int i=0; i<input.temperature.size(); i++)
-  { 
-    if (!input.equilibrium_condensation)
-    {
-      output.fastchem_flag[i] = calcDensity(
-        input.temperature[i],
-        input.pressure[i]*1e6,
-        false, 
-        output.number_densities[i],
-        output.total_element_density[i], 
-        output.mean_molecular_weight[i],
-        output.element_conserved[i],
-        output.nb_chemistry_iterations[i]);
+  else
+  {
+    #ifdef _OPENMP
+    unsigned int nb_omp_threads = omp_get_max_threads();
 
-      output.nb_iterations[i] = output.nb_chemistry_iterations[i];
-      output.nb_cond_iterations[i] = 0;
+    if (input.temperature.size() < nb_omp_threads)
+      nb_omp_threads = input.temperature.size();
+
+
+    omp_set_num_threads(nb_omp_threads);
+
+    std::vector<FastChem<double_type>> fastchems(nb_omp_threads, *this);
+
+    #pragma omp parallel for schedule(dynamic, 1)
+    for (unsigned int i=0; i<input.temperature.size(); i++)
+    { 
+      if (!input.equilibrium_condensation)
+      {
+        output.fastchem_flag[i] = 
+        fastchems[omp_get_thread_num()].calcDensity(
+          input.temperature[i], 
+          input.pressure[i]*1e6,
+          false, 
+          output.number_densities[i],
+          output.total_element_density[i], 
+          output.mean_molecular_weight[i],
+          output.element_conserved[i],
+          output.nb_chemistry_iterations[i]);
+
+        output.nb_iterations[i] = output.nb_chemistry_iterations[i];
+        output.nb_cond_iterations[i] = 0;
+      }
+      else
+      {
+        output.fastchem_flag[i] = 
+        fastchems[omp_get_thread_num()].equilibriumCondensation(
+          input.temperature[i],
+          input.pressure[i]*1e6,
+          output.number_densities[i],
+          output.number_densities_cond[i],
+          output.element_cond_degree[i],
+          output.total_element_density[i], 
+          output.mean_molecular_weight[i],
+          output.element_conserved[i],
+          output.nb_chemistry_iterations[i],
+          output.nb_cond_iterations[i],
+          output.nb_iterations[i]);
+      }
     }
-    else
-    {
-      output.fastchem_flag[i] = equilibriumCondensation(
-        input.temperature[i],
-        input.pressure[i]*1e6,
-        output.number_densities[i],
-        output.number_densities_cond[i],
-        output.element_cond_degree[i],
-        output.total_element_density[i], 
-        output.mean_molecular_weight[i],
-        output.element_conserved[i],
-        output.nb_chemistry_iterations[i],
-        output.nb_cond_iterations[i],
-        output.nb_iterations[i]);
+    #else
+    for (unsigned int i=0; i<input.temperature.size(); i++)
+    { 
+      if (!input.equilibrium_condensation)
+      {
+        output.fastchem_flag[i] = calcDensity(
+          input.temperature[i],
+          input.pressure[i]*1e6,
+          false, 
+          output.number_densities[i],
+          output.total_element_density[i], 
+          output.mean_molecular_weight[i],
+          output.element_conserved[i],
+          output.nb_chemistry_iterations[i]);
+
+        output.nb_iterations[i] = output.nb_chemistry_iterations[i];
+        output.nb_cond_iterations[i] = 0;
+      }
+      else
+      {
+        output.fastchem_flag[i] = equilibriumCondensation(
+          input.temperature[i],
+          input.pressure[i]*1e6,
+          output.number_densities[i],
+          output.number_densities_cond[i],
+          output.element_cond_degree[i],
+          output.total_element_density[i], 
+          output.mean_molecular_weight[i],
+          output.element_conserved[i],
+          output.nb_chemistry_iterations[i],
+          output.nb_cond_iterations[i],
+          output.nb_iterations[i]);
+      }
     }
+    #endif
   }
-  #endif
 
   unsigned int status = *std::max_element(std::begin(output.fastchem_flag), std::end(output.fastchem_flag));
 
@@ -206,7 +198,9 @@ unsigned int FastChem<double_type>::calcDensity(
    for (auto & i : gas_phase.species)  i->number_density *= gas_density;
   }
   else
-  {
+  { 
+    element_data.init(options.element_density_minlimit);
+
     //for a fresh start set all species to the minimum value
     for (auto & i : gas_phase.species) i->number_density = options.element_density_minlimit;
     
@@ -259,6 +253,66 @@ unsigned int FastChem<double_type>::calcDensity(
 
 
   return return_state;
+}
+
+
+
+
+template <class double_type>
+void FastChem<double_type>::rainoutCondensation(
+  FastChemInput& input, FastChemOutput& output)
+{
+  std::vector<double> original_element_abundance = getElementAbundances();
+  std::vector<double> original_element_epsilon(element_data.nb_elements, 0.0);
+
+  for (size_t i=0; i<element_data.nb_elements; ++i)
+    original_element_epsilon[i] = element_data.elements[i].epsilon;
+
+
+  for (unsigned int i=0; i<input.temperature.size(); i++)
+  {
+    output.fastchem_flag[i] = equilibriumCondensation(
+      input.temperature[i],
+      input.pressure[i]*1e6,
+      output.number_densities[i],
+      output.number_densities_cond[i],
+      output.element_cond_degree[i],
+      output.total_element_density[i], 
+      output.mean_molecular_weight[i],
+      output.element_conserved[i],
+      output.nb_chemistry_iterations[i],
+      output.nb_cond_iterations[i],
+      output.nb_iterations[i]);
+
+    if (output.fastchem_flag[i] == FASTCHEM_NO_CONVERGENCE)
+    {
+      for (size_t j=0; j<element_data.nb_elements; ++j)
+        std::cout << element_data.elements[j].symbol << "\t" << element_data.elements[j].abundance << "\t" << original_element_abundance[j] 
+                                                     << "\t" << element_data.elements[j].epsilon << "\t" << element_data.elements[i].number_density << "\n";
+      
+      exit(0);
+    }
+
+    std::vector<double> element_abundance_cond(element_data.nb_elements, 0.0);
+
+    for (size_t j=0; j<element_data.nb_elements; ++j)
+    {
+      element_abundance_cond[j] = element_data.elements[j].phi;
+      element_data.elements[j].degree_of_condensation = 0.0;
+    }
+
+    setElementAbundances(element_abundance_cond);
+    element_data.setRelativeAbundances();
+    gas_phase.reInitialise();
+    
+    for (auto & j : condensed_phase.condensates)
+      j.findReferenceElement(element_data.elements);
+  }
+
+
+  setElementAbundances(original_element_abundance);
+  element_data.setRelativeAbundances();
+  gas_phase.reInitialise();
 }
 
 
@@ -327,10 +381,9 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
   for (auto & i : condensates_act)
   {
-    i->number_density = 1e-25;
+    i->number_density = 1.0;
     i->activity_correction = 1.0;
   }
-
 
   std::vector<double_type> number_density_old(element_data.nb_elements, 0.0);
 
@@ -365,7 +418,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       temperature,
       gas_density,
       nb_iter);
-
+   
     nb_chem_iter += nb_iter;
 
     total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
@@ -375,22 +428,49 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     
     combined_converged = true;
 
+    for (auto & i : condensates_act) 
+      std::cout << i->symbol << "\t" << i->number_density << "\t" << i->max_number_density << "\n";
+
     for (auto & i : element_data.elements)
     {
       if (std::fabs((i.number_density - number_density_old[i.index])) > options.accuracy*number_density_old[i.index])
         combined_converged = false;
       
       number_density_old[i.index] = i.number_density;
+      std::cout << nb_combined_iter << "\t" << i.symbol << "\t" << i.number_density << "\t" << i.degree_of_condensation << "\n";
     }
 
-    if (combined_converged) break;
+    std::cout << "chem " << fastchem_converged << "\t" << "cond " << cond_converged << "  " << nb_cond_iter << "\t" << "comb " << combined_converged << "\n";
+
+    if (combined_converged && cond_converged) break;
   }
 
 
   for (auto & i : condensed_phase.condensates)
-    std::cout << i.symbol << "\t" << i.log_activity << "\t" << element_data.elements[i.reference_element].symbol << "\n";
+    if (i.number_density <= 1e-29) i.number_density = 0.0;
+ 
+  for (auto & i : element_data.elements)
+    i.calcDegreeOfCondensation(condensed_phase.condensates, total_element_density);
 
-  std::cout << "chem iter: " << nb_chem_iter << "\t" << nb_cond_iter << "\t" << nb_combined_iter << "\n";
+  double_type phi_sum = 0;
+
+  for (auto & i : element_data.elements)
+    phi_sum += i.phi;
+
+  for (auto & i : element_data.elements)
+    i.normalisePhi(phi_sum);
+
+  fastchem_converged = gas_phase.calculate(
+      temperature,
+      gas_density,
+      nb_iter);
+
+  for (auto & i : condensed_phase.condensates)
+    if (i.log_activity > 0.001)
+    {
+      std::cout << i.symbol << "\t" << i.log_activity << "\n";
+      exit(0);
+    } 
 
 
   if (!fastchem_converged && options.verbose_level >= 1) 
@@ -434,10 +514,6 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
   if (!fastchem_converged || !cond_converged || !combined_converged) 
     return_state = FASTCHEM_NO_CONVERGENCE;
-
-
-  //store the mixing ratios in case we want to use them in the future
-  //for (auto & i : gas_phase.species) i->number_density /= gas_density;
 
 
   return return_state;

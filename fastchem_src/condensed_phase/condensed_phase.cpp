@@ -91,7 +91,7 @@ void CondensedPhase<double_type>::selectActiveCondensates(
   condensates_act.reserve(nb_condensates);
 
   for (auto & i : condensates)
-    if (i.log_activity != -10 && i.log_activity > 0) 
+    if (i.log_activity != -10 && i.log_activity > 1e-10) 
       condensates_act.push_back(&i);
     //if (i.ln_activity != -10) active_condensates.push_back(&i);
 

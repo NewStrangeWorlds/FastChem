@@ -51,12 +51,7 @@ class CondPhaseSolver{
     CondPhaseSolver(FastChemOptions<double_type>& options_)
       : options(options_)
       {}
-    /*Eigen::MatrixXdt<double_type> assembleJacobian(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const size_t nb_condensates_removed,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<Molecule<double_type>>& molecules);*/
+
     Eigen::MatrixXdt<double_type> assembleJacobian(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<double_type>& activity_corr,
@@ -65,6 +60,7 @@ class CondPhaseSolver{
       const std::vector<unsigned int>& condensates_rem,
       const std::vector<Element<double_type>*>& elements,
       const std::vector<Molecule<double_type>>& molecules);
+
     Eigen::VectorXdt<double_type> assembleRightHandSide(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
@@ -75,6 +71,17 @@ class CondPhaseSolver{
       const std::vector< Molecule<double_type> >& molecules,
       const double_type total_element_density, 
       const double_type log_tau);
+
+    Eigen::VectorXdt<double_type> assembleRightHandSide(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<unsigned int>& condensates_jac,
+      const std::vector<unsigned int>& condensates_rem,
+      const std::vector<double_type>& activity_corr,
+      const std::vector<double_type>& number_denities,
+      const std::vector< Element<double_type>* >& elements,
+      const std::vector< Molecule<double_type> >& molecules,
+      const double_type total_element_density);
+
     std::vector<double_type> solveSystem(
       Eigen::MatrixXdt<double_type>& jacobian,
       Eigen::VectorXdt<double_type>& rhs);
