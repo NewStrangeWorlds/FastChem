@@ -80,7 +80,7 @@ unsigned int FastChem<double_type>::calcDensities(
   else
   {
     #ifdef _OPENMP
-    unsigned int nb_omp_threads = omp_get_max_threads();
+    unsigned int nb_omp_threads = 1; //omp_get_max_threads();
 
     if (input.temperature.size() < nb_omp_threads)
       nb_omp_threads = input.temperature.size();
@@ -381,7 +381,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
   for (auto & i : condensates_act)
   {
-    i->number_density = 1.0;
+    i->number_density = i->max_number_density; //1e-10;
     i->activity_correction = 1.0;
   }
 

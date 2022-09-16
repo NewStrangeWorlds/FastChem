@@ -155,7 +155,7 @@ Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
 
 
 
-/*template <class double_type>
+template <class double_type>
 Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleRightHandSide(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
@@ -179,8 +179,12 @@ Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleRightHandSid
   { 
     const int index = condensates_jac[i];
 
-    rhs_vector(i) = - condensates[index]->log_activity - activity_corr[index]
+    /*rhs_vector(i) = - condensates[index]->log_activity - activity_corr[index]
                     * (1.0 + log_tau - std::log(number_densities[index]) 
+                    - std::log(activity_corr[index]));*/
+
+    rhs_vector(i) = - condensates[index]->log_activity - activity_corr[index]
+                    * (1.0 + condensates[index]->log_tau - std::log(number_densities[index]) 
                     - std::log(activity_corr[index]));
   }
 
@@ -195,18 +199,22 @@ Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleRightHandSid
     for (size_t j=0; j<condensates.size(); ++j)
       rhs_vector(i+nb_cond_jac) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j];
 
-    for (auto j : condensates_rem)
+    /*for (auto j : condensates_rem)
         rhs_vector(i+nb_cond_jac) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j]
                                   * (condensates[j]->log_activity/activity_corr[j] + log_tau - std::log(number_densities[j]) 
+                                                   - std::log(activity_corr[j]) + 1.0);*/
+    for (auto j : condensates_rem)
+        rhs_vector(i+nb_cond_jac) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j]
+                                  * (condensates[j]->log_activity/activity_corr[j] + condensates[j]->log_tau - std::log(number_densities[j]) 
                                                    - std::log(activity_corr[j]) + 1.0);
   }
 
   return rhs_vector;
-}*/
+}
 
 
 
-template <class double_type>
+/*template <class double_type>
 Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleRightHandSide(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
@@ -251,57 +259,8 @@ Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleRightHandSid
   }
 
   return rhs_vector;
-}
+}*/
 
-
-
-
-
-
-template <class double_type>
-Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleRightHandSide(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<unsigned int>& condensates_jac,
-      const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_densities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density)
-{
-  const size_t nb_elements = elements.size();
-  const size_t nb_cond_rem = condensates_rem.size();
-  const size_t nb_cond_jac = condensates_jac.size();
-
-  Eigen::VectorXdt<double_type> rhs_vector;
-  rhs_vector.setZero(nb_elements + nb_cond_jac);
-
-
-  for (size_t i=0; i<nb_cond_jac; ++i)
-  { 
-    const int index = condensates_jac[i];
-
-    rhs_vector(i) = - condensates[index]->log_activity;
-  }
-
-
-  for (size_t i=0; i<nb_elements; ++i)
-  { 
-    rhs_vector(i+nb_cond_jac) = total_element_density * elements[i]->epsilon - elements[i]->number_density;
-    
-    for (auto j : elements[i]->molecule_list)
-      rhs_vector(i+nb_cond_jac) -= molecules[j].stoichiometric_vector[elements[i]->index] * molecules[j].number_density;
-    
-    for (size_t j=0; j<condensates.size(); ++j)
-      rhs_vector(i+nb_cond_jac) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j];
-
-    for (auto j : condensates_rem)
-        rhs_vector(i+nb_cond_jac) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j]
-                                  * condensates[j]->log_activity/activity_corr[j];
-  }
-
-  return rhs_vector;
-}
 
 
 

@@ -165,6 +165,7 @@ struct Condensate : public ChemicalSpecies<double_type>
   double_type log_activity = 0;
   double_type activity_correction = 0;
   double_type tau = 0;
+  double_type log_tau = 0;
   double_type max_number_density = 0;
 
   bool linear_system_remove = false;
