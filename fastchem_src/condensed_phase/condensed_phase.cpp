@@ -41,10 +41,38 @@ CondensedPhase<double_type>::CondensedPhase(
 {
   nb_elements = elements.size();
 
+  //std::string file_path = "input/condensate_all.dat";
+  //std::string file_path = "input/condensate_test_small.dat";
   std::string file_path = "input/condensate_test_large.dat";
 
   //is_initialised = readCondensateData(options.condensates_data_file);
   is_initialised = readCondensateData(file_path);
+
+  if (options.verbose_level >= 4)
+  {
+    std::cout << "\nCondensate species list: \n";
+    for (size_t i=0; i<condensates.size(); ++i)
+    {
+      std::cout << "  " << condensates[i].name << "\t" << condensates[i].symbol << "\n";
+      
+      std::cout << "    lnK coeff: ";
+      for (size_t j=0; j<condensates[i].fit_coeff.size(); ++j)
+        std::cout << condensates[i].fit_coeff[j] << "\t";
+      std::cout << "\n";
+      
+      std::cout << "    stoichiometry: ";
+      for (size_t j=0; j<condensates[i].stoichiometric_vector.size(); ++j)
+        std::cout << condensates[i].stoichiometric_vector[j] << " ";
+      std::cout << "\n";
+
+      std::cout << "    elements: ";
+      for (size_t j=0; j<condensates[i].element_indices.size(); ++j)
+        std::cout << elements[condensates[i].element_indices[j]].symbol << ", index: " << condensates[i].element_indices[j] << "; ";
+      std::cout << "\n";
+
+      std::cout << "    phase: " << phase_state_string[condensates[i].phase] << "\n";
+    }
+  }
 
   if (is_initialised) init();
 }
@@ -91,7 +119,8 @@ void CondensedPhase<double_type>::selectActiveCondensates(
   condensates_act.reserve(nb_condensates);
 
   for (auto & i : condensates)
-    if (i.log_activity != -10 && i.log_activity > 1e-10) 
+    //if (i.log_activity != -10 && i.log_activity >= 0) 
+    if (i.log_activity > -1) 
       condensates_act.push_back(&i);
     //if (i.ln_activity != -10) active_condensates.push_back(&i);
 

@@ -77,6 +77,14 @@ FastChem<double_type>::FastChem(
     return;
   }
 
+  if (options.verbose_level >= 1)
+    std::cout << "\nFastChem initialisation summary:\n"
+              << "  number of species: " << gas_phase.nb_species + condensed_phase.nb_condensates
+              << "    elements: " << element_data.nb_elements
+              << "    molecules: " << gas_phase.nb_molecules
+              << "    condensates: " << condensed_phase.nb_condensates
+              << "\n\n";
+
   init();
 }
 

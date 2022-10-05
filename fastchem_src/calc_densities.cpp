@@ -80,7 +80,7 @@ unsigned int FastChem<double_type>::calcDensities(
   else
   {
     #ifdef _OPENMP
-    unsigned int nb_omp_threads = 1; //omp_get_max_threads();
+    unsigned int nb_omp_threads = omp_get_max_threads();
 
     if (input.temperature.size() < nb_omp_threads)
       nb_omp_threads = input.temperature.size();
@@ -92,7 +92,7 @@ unsigned int FastChem<double_type>::calcDensities(
 
     #pragma omp parallel for schedule(dynamic, 1)
     for (unsigned int i=0; i<input.temperature.size(); i++)
-    { 
+    { std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
       if (!input.equilibrium_condensation)
       {
         output.fastchem_flag[i] = 
@@ -372,7 +372,12 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   total_element_density = gas_phase.totalElementDensity();
 
   for (auto & i : condensed_phase.condensates)
+  {
     i.calcActivity(temperature, element_data.elements);
+    i.maxDensity(element_data.elements, total_element_density);
+  }
+    
+
   
   std::vector<Condensate<double_type>*> condensates_act;
   std::vector<Element<double_type>*> elements_cond;
@@ -381,8 +386,8 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
   for (auto & i : condensates_act)
   {
-    i->number_density = i->max_number_density; //1e-10;
-    i->activity_correction = 1.0;
+    i->number_density = 0; //i->max_number_density; //1e-10;
+    i->activity_correction = 0; //1; //1.0;
   }
 
   std::vector<double_type> number_density_old(element_data.nb_elements, 0.0);
@@ -395,7 +400,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   bool combined_converged = false;
 
 
-  for (nb_combined_iter=0; nb_combined_iter<400; ++nb_combined_iter)
+  for (nb_combined_iter=0; nb_combined_iter<1400; ++nb_combined_iter)
   {
     for (auto & i : condensates_act)
     {
@@ -428,19 +433,19 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     
     combined_converged = true;
 
-    for (auto & i : condensates_act) 
-      std::cout << i->symbol << "\t" << i->number_density << "\t" << i->max_number_density << "\n";
+    //for (auto & i : condensates_act) 
+      //std::cout << i->symbol << "\t" << i->number_density << "\t" << i->max_number_density << "\n";
 
     for (auto & i : element_data.elements)
     {
-      if (std::fabs((i.number_density - number_density_old[i.index])) > options.accuracy*number_density_old[i.index])
+      if (std::fabs((i.number_density - number_density_old[i.index])) > options.accuracy*number_density_old[i.index]*0.1)
         combined_converged = false;
       
       number_density_old[i.index] = i.number_density;
-      std::cout << nb_combined_iter << "\t" << i.symbol << "\t" << i.number_density << "\t" << i.degree_of_condensation << "\n";
+      //std::cout << nb_combined_iter << "\t" << i.symbol << "\t" << i.number_density << "\t" << i.degree_of_condensation << "\n";
     }
 
-    std::cout << "chem " << fastchem_converged << "\t" << "cond " << cond_converged << "  " << nb_cond_iter << "\t" << "comb " << combined_converged << "\n";
+    //std::cout << "chem " << fastchem_converged << "  " << nb_iter << "\t" << "cond " << cond_converged << "  " << nb_cond_iter << "\t" << "comb " << combined_converged << "\n";
 
     if (combined_converged && cond_converged) break;
   }
@@ -469,7 +474,8 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     if (i.log_activity > 0.001)
     {
       std::cout << i.symbol << "\t" << i.log_activity << "\n";
-      exit(0);
+      fastchem_converged = false;
+      //exit(0);
     } 
 
 

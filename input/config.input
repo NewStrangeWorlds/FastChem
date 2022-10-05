@@ -1,5 +1,5 @@
 #Atmospheric profile input file
-input/Gliese_229b.dat
+input/p_t_grid.dat
 
 #Chemistry output file
 output/chemistry.dat

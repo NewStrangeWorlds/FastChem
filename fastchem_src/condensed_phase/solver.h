@@ -59,7 +59,8 @@ class CondPhaseSolver{
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
       const std::vector<Element<double_type>*>& elements,
-      const std::vector<Molecule<double_type>>& molecules);
+      const std::vector<Molecule<double_type>>& molecules,
+      const double_type total_element_density);
 
     Eigen::VectorXdt<double_type> assembleRightHandSide(
       const std::vector<Condensate<double_type>*>& condensates,
@@ -70,9 +71,11 @@ class CondPhaseSolver{
       const std::vector< Element<double_type>* >& elements,
       const std::vector< Molecule<double_type> >& molecules,
       const double_type total_element_density, 
-      const double_type log_tau);
+      const double_type log_tau,
+      const Eigen::VectorXdt<double_type>& scaling_factors,
+      double_type& objective_function);
 
-    Eigen::VectorXdt<double_type> assembleRightHandSide(
+    double_type objectiveFunction(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
@@ -80,11 +83,26 @@ class CondPhaseSolver{
       const std::vector<double_type>& number_denities,
       const std::vector< Element<double_type>* >& elements,
       const std::vector< Molecule<double_type> >& molecules,
+      const Eigen::VectorXdt<double_type>& scaling_factors,
       const double_type total_element_density);
 
     std::vector<double_type> solveSystem(
       Eigen::MatrixXdt<double_type>& jacobian,
       Eigen::VectorXdt<double_type>& rhs);
+
+    std::vector<double_type> newtonStep(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<unsigned int>& condensates_jac,
+      const std::vector<unsigned int>& condensates_rem,
+      const std::vector<Element<double_type>*>& elements,
+      const std::vector<Molecule<double_type>>& molecules,
+      const double_type total_element_density,
+      const std::vector<double_type>& cond_densities,
+      const std::vector<double_type>& element_densities,
+      const std::vector<double_type>& activity_corr,
+      Eigen::VectorXdt<double_type>& scaling_factors,
+      double_type& objective_function
+    );
   private:
     FastChemOptions<double_type>& options;
 };

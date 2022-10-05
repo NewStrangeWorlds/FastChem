@@ -59,13 +59,24 @@ bool CondensedPhase<double_type>::readCondensateData(const std::string& species_
 
     std::string symbol, name, element_string, stoichometric_coeff_string;
 
-    input >> symbol >> name;
+    input >> symbol;
 
+    std::string name_part;
 
-    if (name == ":")
+    while (input >> name_part)
+    {
+      if (name_part == ":") break;
+
+      if (name == "") 
+        name = name_part;
+      else
+        name = name + " " + name_part; 
+    }
+
+    /*if (name == ":")
       name = "";
     else
-      input >> element_string;
+      input >> element_string;*/
 
 
     std::vector<std::string> elements;
@@ -187,6 +198,8 @@ void CondensedPhase<double_type>::addCondensate(
       phase_state = PhaseState::solid;
     else if (phase == "l" || phase == "liquid")
       phase_state = PhaseState::liquid;
+    else if (phase == "sl" || phase == "solid_liquid")
+      phase_state = PhaseState::solid_liquid;
     else
     {
       std::cout << "Phase state " << phase << " of species " << symbol << " not recognised! Setting to solid.\n";

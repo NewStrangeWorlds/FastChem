@@ -32,7 +32,8 @@
 namespace fastchem {
 
 
-enum PhaseState {gas, liquid, solid};
+enum PhaseState {gas, liquid, solid, solid_liquid};
+const std::vector<std::string> phase_state_string{"gas", "liquid", "solid", "solid/liquid"};
 
 
 //Class for the basic chemical element data

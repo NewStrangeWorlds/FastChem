@@ -149,7 +149,7 @@ void GasPhase<double_type>::init()
 
   if (options.verbose_level >= 2)
   {
-    std::cout << "\nConsidered species in FastChem:\n";
+    std::cout << "\nConsidered gas phase species in FastChem:\n";
 
     for (size_t i=0; i<nb_species; ++i)
       std::cout << "  " << species[i]->symbol << "\t" << species[i]->name << "\t" << species[i]->abundance << "\t" << species[i]->weight << "\n";
@@ -180,13 +180,6 @@ void GasPhase<double_type>::init()
 
   e_ = element_data.elementIndex("e-");
 
-
-  if (options.verbose_level >= 1)
-    std::cout << "\nFastChem initialisation summary:\n"
-              << "  number of species: " << nb_species
-              << "    elements: " << nb_elements
-              << "    molecules: " << nb_molecules
-              << "\n\n";
 
   is_initialised = true;
 }

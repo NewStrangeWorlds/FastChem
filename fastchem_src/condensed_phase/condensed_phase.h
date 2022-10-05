@@ -106,20 +106,6 @@ class CondensedPhase {
       std::vector<double_type>& elem_number_dens_new,
       const double_type ln_tau,
       const double max_change);
-
-    double_type correctValues(
-      const std::vector<double_type>& result,
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<unsigned int>& condensates_jac,
-      const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double_type>& activity_corr_old,
-      std::vector<double_type>& activity_corr_new,
-      const std::vector<double_type>& cond_number_dens_old,
-      std::vector<double_type>& cond_number_dens_new,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<double_type>& elem_number_dens_old,
-      std::vector<double_type>& elem_number_dens_new,
-      const double max_change);
 };
 
 
