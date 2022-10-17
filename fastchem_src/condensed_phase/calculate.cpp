@@ -34,7 +34,7 @@
 namespace fastchem {
 
 
-//This is the main FastChem iteration for the gas phase
+//This is the main FastChem iteration for the condensed phase
 template <class double_type>
 bool CondensedPhase<double_type>::calculate(
   std::vector<Condensate<double_type>*>& condensates_act,
@@ -63,12 +63,10 @@ bool CondensedPhase<double_type>::calculate(
     {
        i->number_density = i->max_number_density; //1e-10;
        i->activity_correction = 1.0; //i->log_activity; //1; //1.0;
-       //i->activity_correction = i->tau/i->number_density; //1; //1.0;
-
-       //std::cout << i->symbol << "\t" << i->number_density << "\t" << i->activity_correction << "\n"; 
     }
   }
-
+  
+  options.cond_solve_full_matrix = true;
 
   std::vector<unsigned int> condensates_jac;
   condensates_jac.reserve(condensates_act.size());
@@ -105,77 +103,91 @@ bool CondensedPhase<double_type>::calculate(
 
   for (nb_iterations=0; nb_iterations<10000; ++nb_iterations)
   { 
-    selectJacobianCondensates(
-      condensates_act,
-      cond_densities_old,
-      activity_corr_old,
-      condensates_jac,
-      condensates_rem);
-
     double_type objective_function_0 = 0;
     Eigen::VectorXdt<double_type> scaling_factors;
     Eigen::VectorXdt<double_type> result;
 
-    const bool system_invertible = solver.newtonStep(
-      condensates_act,
-      condensates_jac,
-      condensates_rem,
-      elements_cond,
-      molecules,
-      total_element_density,
-      cond_densities_old,
-      elem_densities_old,
-      activity_corr_old,
-      result,
-      scaling_factors,
-      objective_function_0);
-
-    // std::vector<double_type> result = solver.newtonStepFull(
-    //   condensates_act,
-    //   elements_cond,
-    //   molecules,
-    //   total_element_density,
-    //   cond_densities_old,
-    //   elem_densities_old,
-    //   activity_corr_old,
-    //   scaling_factors,
-    //   objective_function_0);
-
-    Eigen::VectorXdt<double_type> result_scaled = result;
-
-    double_type max_value = result.cwiseAbs().maxCoeff();
-
-    if (max_value > limit)
-      result *= limit/max_value;
 
     double_type max_delta = 0;
+    bool system_invertible = true;
 
+    if (options.cond_solve_full_matrix)
+    {
+      system_invertible = solver.newtonStepFull(
+        condensates_act,
+        elements_cond,
+        molecules,
+        total_element_density,
+        cond_densities_old,
+        elem_densities_old,
+        activity_corr_old,
+        result,
+        scaling_factors,
+        objective_function_0);
 
-    max_delta = correctValues(
-      result,
-      condensates_act,
-      condensates_jac,
-      condensates_rem,
-      activity_corr_old,
-      activity_corr_new,
-      cond_densities_old,
-      cond_densities_new,
-      elements_cond,
-      elem_densities_old,
-      elem_densities_new,
-      limit);
+      Eigen::VectorXdt<double_type> result_scaled = result;
 
-    // max_delta = correctValuesFull(
-    //   result,
-    //   condensates_act,
-    //   activity_corr_old,
-    //   activity_corr_new,
-    //   cond_densities_old,
-    //   cond_densities_new,
-    //   elements_cond,
-    //   elem_densities_old,
-    //   elem_densities_new,
-    //   limit);
+      double_type max_value = result_scaled.cwiseAbs().maxCoeff();
+
+      if (max_value > limit)
+        result_scaled *= limit/max_value;
+
+      max_delta = correctValuesFull(
+        result_scaled,
+        condensates_act,
+        activity_corr_old,
+        activity_corr_new,
+        cond_densities_old,
+        cond_densities_new,
+        elements_cond,
+        elem_densities_old,
+        elem_densities_new);
+    }
+    else
+    {
+      selectJacobianCondensates(
+        condensates_act,
+        cond_densities_old,
+        activity_corr_old,
+        condensates_jac,
+        condensates_rem);
+
+      system_invertible = solver.newtonStep(
+        condensates_act,
+        condensates_jac,
+        condensates_rem,
+        elements_cond,
+        molecules,
+        total_element_density,
+        cond_densities_old,
+        elem_densities_old,
+        activity_corr_old,
+        result,
+        scaling_factors,
+        objective_function_0);
+
+      Eigen::VectorXdt<double_type> result_scaled = result;
+
+      double_type max_value = result_scaled.cwiseAbs().maxCoeff();
+
+      if (max_value > limit)
+        result_scaled *= limit/max_value;
+
+      max_delta = correctValues(
+        result_scaled,
+        condensates_act,
+        condensates_jac,
+        condensates_rem,
+        activity_corr_old,
+        activity_corr_new,
+        cond_densities_old,
+        cond_densities_new,
+        elements_cond,
+        elem_densities_old,
+        elem_densities_new,
+        limit);
+    }
+
 
     for (size_t i=0; i<elements_cond.size(); ++i)
       elements_cond[i]->number_density = elem_densities_new[i];
@@ -409,53 +421,45 @@ bool CondensedPhase<double_type>::calculate(
       }
 
     }*/
-    //if (nb_iterations == 181) exit(0);
-    //if (nb_iterations > 900)
+    
     /*{
     std::cout << "iter: " << nb_iterations << "\n";
     for (size_t i=0; i<condensates_act.size(); ++i)
       std::cout <<i << "  " << condensates_act[i]->symbol << "\t" << cond_densities_old[i] << "\t" << cond_densities_new[i] << "\t" << activity_corr_old[i] << "\t" << activity_corr_new[i] << "\t" << condensates_act[i]->log_activity << "\t" << condensates_act[i]->tau << "\n";
     }*/
-    //exit(0);
+
+
     elem_densities_old = elem_densities_new;
     cond_densities_old = cond_densities_new;
     activity_corr_old = activity_corr_new;
     
     //std::cout << "cond delta " << max_delta << "\t" << objective_function_0 << "\n";
-    cond_converged = max_delta < 1e-9;
-    //cond_converged = objective_function_0 < 1e-6;
-    
-    //if (nb_iterations == 2858) exit(0);
+    cond_converged = max_delta < options.accuracy && system_invertible;
+  
     if (cond_converged) break;
   }
 
-  //if (nb_iterations > 9998) exit(0);
 
-  
   for (size_t i=0; i<condensates_act.size(); ++i)
   {
     condensates_act[i]->number_density = cond_densities_new[i];
     condensates_act[i]->activity_correction = activity_corr_new[i];
-
-    //if (condensates_act[i]->number_density <= 1e-15) condensates_act[i]->number_density = 0.0;
-    //if (condensates_act[i]->log_activity < -e-1) condensates_act[i]->number_density = 0.0;
   }
 
-  for (size_t i=0; i<elements_cond.size(); ++i)
-  {
-    elements_cond[i]->number_density = elem_densities_new[i];
-  }
 
-  for (auto & i : elements)
-  {
-    i.calcDegreeOfCondensation(condensates, total_element_density);
-  }
-
+  // for (size_t i=0; i<elements_cond.size(); ++i)
+  // {
+  //   elements_cond[i]->number_density = elem_densities_new[i];
+  // }
+  
 
   double_type phi_sum = 0;
 
   for (auto & i : elements)
+  {
+    i.calcDegreeOfCondensation(condensates, total_element_density);
     phi_sum += i.phi;
+  }
 
   for (auto & i : elements)
     i.normalisePhi(phi_sum);
@@ -512,9 +516,6 @@ double_type CondensedPhase<double_type>::correctValues(
     if (delta_n_cond[i] < -max_change) 
       delta_n_cond[i] = -max_change;
 
-    if (std::fabs(delta_n_cond[i]) > max_delta) 
-      max_delta = std::fabs(delta_n_cond[i]);
-
     cond_number_dens_new[i] = cond_number_dens_old[i] * std::exp(delta_n_cond[i]);
 
     if (cond_number_dens_new[i] > condensates[i]->max_number_density) 
@@ -533,16 +534,12 @@ double_type CondensedPhase<double_type>::correctValues(
       delta_lambda = -max_change;
 
     activity_corr_new[i] = activity_corr_old[i] * std::exp(delta_lambda);
-    // if (activity_corr_old[i] + delta_lambda > 0)
-    //   activity_corr_new[i] = activity_corr_old[i] + delta_lambda;
-    // else
-    //   activity_corr_new[i] = activity_corr_old[i] * (1.0 - 0.9999);
-    //activity_corr_new[i] = condensates[i]->tau / cond_number_dens_new[i];
 
-    //if (cond_number_dens_new[i] < 1e-5 && activity_corr_new[i] < 1e-5)
-      //activity_corr_new[i] = std::fabs(condensates[i]->log_activity);
+    double_type delta = std::fabs(cond_number_dens_new[i] - cond_number_dens_old[i])/cond_number_dens_old[i]; 
+    if (delta > max_delta) max_delta = delta;
 
-    //if (activity_corr_new[i] < condensates[i]->tau / cond_number_dens_new[i]) activity_corr_new[i] = condensates[i]->tau / cond_number_dens_new[i];
+    delta = std::fabs(activity_corr_new[i] - activity_corr_old[i])/activity_corr_old[i];
+    if (delta > max_delta) max_delta = delta;
   }
 
 
@@ -556,12 +553,11 @@ double_type CondensedPhase<double_type>::correctValues(
     if (delta_n_elem < -max_change) 
       delta_n_elem = -max_change;
 
-    if (std::fabs(delta_n_elem) > max_delta) 
-      max_delta = std::fabs(delta_n_elem);
-
     elem_number_dens_new[i] = elem_number_dens_old[i] * std::exp(delta_n_elem);
-  }
 
+    const double_type delta = std::fabs(elem_number_dens_new[i] - elem_number_dens_old[i])/elem_number_dens_old[i]; 
+    if (delta > max_delta) max_delta = delta;
+  }
 
   return max_delta;
 }
@@ -570,7 +566,7 @@ double_type CondensedPhase<double_type>::correctValues(
 
 template <class double_type>
 double_type CondensedPhase<double_type>::correctValuesFull(
-  const std::vector<double_type>& result2,
+  const Eigen::VectorXdt<double_type>& result,
   const std::vector<Condensate<double_type>*>& condensates,
   const std::vector<double_type>& activity_corr_old,
   std::vector<double_type>& activity_corr_new,
@@ -578,76 +574,37 @@ double_type CondensedPhase<double_type>::correctValuesFull(
   std::vector<double_type>& cond_number_dens_new,
   const std::vector<Element<double_type>*>& elements,
   const std::vector<double_type>& elem_number_dens_old,
-  std::vector<double_type>& elem_number_dens_new,
-  const double max_change)
+  std::vector<double_type>& elem_number_dens_new)
 { 
-  std::vector<double_type> result = result2;
-
-  double_type max_value = 0;
-  
-  for (auto & i : result)
-    if (std::abs(i) > max_value) max_value = std::abs(i);
-
-  //std::cout << "max value " <<  max_value << "\n";
-  
-  if (max_value > max_change)
-    for (auto & i : result)
-      i = i / max_value * max_change;
-
-  std::vector<double_type> delta_n(condensates.size(), 0);
-  std::vector<double_type> delta_lambda(condensates.size(), 0);
-
-  for (size_t i=0; i<condensates.size(); ++i)
-  {
-    delta_n[i] = result[i];
-    delta_lambda[i] = result[i+condensates.size()];
-  }
-
-
   double_type max_delta = 0;
 
   for (size_t i=0; i<condensates.size(); ++i)
-  {
-    if (delta_n[i] > max_change) delta_n[i] = max_change;
-    if (delta_n[i] < -max_change) delta_n[i] = -max_change;
+  {  
+    const double_type delta_n = result(i);
+    const double_type delta_lambda = result(i+condensates.size());
 
-    if (std::fabs(delta_n[i]) > max_delta) max_delta = std::fabs(delta_n[i]);
-
-
-    cond_number_dens_new[i] = cond_number_dens_old[i] * std::exp(delta_n[i]);
+    cond_number_dens_new[i] = cond_number_dens_old[i] * std::exp(delta_n);
     if (cond_number_dens_new[i] > condensates[i]->max_number_density) cond_number_dens_new[i] = condensates[i]->max_number_density;
 
-    if (delta_lambda[i] > max_change) delta_lambda[i] = max_change;
-    if (delta_lambda[i] < -max_change) delta_lambda[i] = -max_change;
+    activity_corr_new[i] = activity_corr_old[i] * std::exp(delta_lambda);
 
-    activity_corr_new[i] = activity_corr_old[i] * std::exp(delta_lambda[i]);
-    //activity_corr_new[i] = activity_corr_old[i] + delta_lambda[i];
+    double_type delta = std::fabs(cond_number_dens_new[i] - cond_number_dens_old[i])/cond_number_dens_old[i]; 
+    if (delta > max_delta) max_delta = delta;
 
-    // if ( (activity_corr_old[i] + delta_lambda[i]) > 0)
-    //   activity_corr_new[i] = activity_corr_old[i] + delta_lambda[i];
-    // else
-    //   activity_corr_new[i] = activity_corr_old[i] * (1.0 - 0.9999);
-
-    //std::cout << condensates[i]->symbol << "\t" << delta_lambda << "\t" << delta_n[i] << "\t" << condensates[i]->tau << "\n";
+    delta = std::fabs(activity_corr_new[i] - activity_corr_old[i])/activity_corr_old[i];
+    if (delta > max_delta) max_delta = delta;
   }
 
 
   for (size_t i=0; i<elements.size(); ++i)
   { 
-    double_type delta_n = result[i + 2*condensates.size()];
-
-    if (delta_n > max_change) delta_n = max_change;
-    if (delta_n < -max_change) delta_n = -max_change;
-
-    if (std::fabs(delta_n) > max_delta) max_delta = std::fabs(delta_n);
+    const double_type delta_n = result(i + 2*condensates.size());
 
     elem_number_dens_new[i] = elem_number_dens_old[i] * std::exp(delta_n);
 
-    //std::cout << i << "\t" << i + 2*condensates.size() << "\t" << elements[i]->symbol << "\n";
-
-    //if (elem_number_dens_new[i] < options.element_density_minlimit) elem_number_dens_new[i] = options.element_density_minlimit;
+    const double_type delta = std::fabs(elem_number_dens_new[i] - elem_number_dens_old[i])/elem_number_dens_old[i]; 
+    if (delta > max_delta) max_delta = delta;
   }
-
 
   return max_delta;
 }

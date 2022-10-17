@@ -64,6 +64,7 @@ struct FastChemOptions{
 
   bool cond_use_svd = false;
   bool cond_use_full_pivot = false;
+  bool cond_solve_full_matrix = false;
 
   std::string chemical_element_file = "";
   std::string species_data_file = "";

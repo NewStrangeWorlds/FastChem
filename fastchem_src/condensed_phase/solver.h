@@ -63,21 +63,14 @@ class CondPhaseSolver{
       const double_type total_element_density,
       Eigen::MatrixXdt<double_type>& jacobian);
 
-    Eigen::MatrixXdt<double_type> assembleJacobianFull(
+    Eigen::VectorXdt<double_type> assembleJacobianFull(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<double_type>& activity_corr,
       const std::vector<double_type>& number_denities,
       const std::vector<Element<double_type>*>& elements,
       const std::vector<Molecule<double_type>>& molecules,
-      const double_type total_element_density);
-
-    Eigen::MatrixXdt<double_type> assembleJacobianFullLog(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const double_type total_element_density);
+      const double_type total_element_density,
+      Eigen::MatrixXdt<double_type>& jacobian);
 
     Eigen::MatrixXdt<double_type> computePerturbedHessian(
       const Eigen::MatrixXdt<double_type>& jacobian,
@@ -95,7 +88,7 @@ class CondPhaseSolver{
       const Eigen::VectorXdt<double_type>& scaling_factors,
       Eigen::VectorXdt<double_type>& rhs);
 
-    Eigen::VectorXdt<double_type> assembleRightHandSideFull(
+    double_type assembleRightHandSideFull(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<double_type>& activity_corr,
       const std::vector<double_type>& number_denities,
@@ -103,26 +96,7 @@ class CondPhaseSolver{
       const std::vector< Molecule<double_type> >& molecules,
       const double_type total_element_density,
       const Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function);
-
-    Eigen::VectorXdt<double_type> assembleRightHandSideFullLog(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function);
-
-    double_type objectiveFunctionFull(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      const double_type total_element_density);
+      Eigen::VectorXdt<double_type>& rhs);
 
     bool solveSystem(
       const Eigen::MatrixXdt<double_type>& jacobian,
@@ -141,10 +115,9 @@ class CondPhaseSolver{
       const std::vector<double_type>& activity_corr,
       Eigen::VectorXdt<double_type>& result,
       Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function
-    );
+      double_type& objective_function);
 
-    std::vector<double_type> newtonStepFull(
+    bool newtonStepFull(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<Element<double_type>*>& elements,
       const std::vector<Molecule<double_type>>& molecules,
@@ -152,9 +125,9 @@ class CondPhaseSolver{
       const std::vector<double_type>& cond_densities,
       const std::vector<double_type>& element_densities,
       const std::vector<double_type>& activity_corr,
+      Eigen::VectorXdt<double_type>& result,
       Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function
-    );
+      double_type& objective_function);
   private:
     FastChemOptions<double_type>& options;
 };

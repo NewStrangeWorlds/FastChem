@@ -115,7 +115,7 @@ class CondensedPhase {
       const double max_change);
 
     double_type correctValuesFull(
-      const std::vector<double_type>& result,
+      const Eigen::VectorXdt<double_type>& result,
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<double_type>& activity_corr_old,
       std::vector<double_type>& activity_corr_new,
@@ -123,8 +123,7 @@ class CondensedPhase {
       std::vector<double_type>& cond_number_dens_new,
       const std::vector<Element<double_type>*>& elements,
       const std::vector<double_type>& elem_number_dens_old,
-      std::vector<double_type>& elem_number_dens_new,
-      const double max_change);
+      std::vector<double_type>& elem_number_dens_new);
 };
 
 

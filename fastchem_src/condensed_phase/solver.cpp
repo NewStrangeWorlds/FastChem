@@ -85,7 +85,7 @@ bool CondPhaseSolver<double_type>::newtonStep(
 
 
 template <class double_type>
-std::vector<double_type> CondPhaseSolver<double_type>::newtonStepFull(
+bool CondPhaseSolver<double_type>::newtonStepFull(
   const std::vector<Condensate<double_type>*>& condensates,
   const std::vector<Element<double_type>*>& elements,
   const std::vector<Molecule<double_type>>& molecules,
@@ -93,21 +93,22 @@ std::vector<double_type> CondPhaseSolver<double_type>::newtonStepFull(
   const std::vector<double_type>& cond_densities,
   const std::vector<double_type>& element_densities,
   const std::vector<double_type>& activity_corr,
+  Eigen::VectorXdt<double_type>& result,
   Eigen::VectorXdt<double_type>& scaling_factors,
   double_type& objective_function)
 {
-
-  Eigen::MatrixXdt<double_type> jacobian = assembleJacobianFullLog(
+  Eigen::MatrixXdt<double_type> jacobian;
+  scaling_factors = assembleJacobianFull(
     condensates,
     activity_corr,
     cond_densities,
     elements,
     molecules,
-    total_element_density);
-
-  scaling_factors = jacobian.rowwise().maxCoeff();
-
-  Eigen::VectorXdt<double_type> rhs = assembleRightHandSideFullLog(
+    total_element_density,
+    jacobian);
+  
+  Eigen::VectorXdt<double_type> rhs;
+  objective_function= assembleRightHandSideFull(
     condensates,
     activity_corr,
     cond_densities,
@@ -115,25 +116,12 @@ std::vector<double_type> CondPhaseSolver<double_type>::newtonStepFull(
     molecules,
     total_element_density,
     scaling_factors,
-    objective_function);
+    rhs);
 
 
-  //for (auto i=condensates_jac.size(); i<rhs.rows(); ++i)
-  for (auto i=0; i<rhs.rows(); ++i)
-  {
-    for (auto j=0; j<rhs.rows(); ++j)
-      jacobian(i,j) /= scaling_factors(i);
-  }
-
-  //std::cout << jacobian << "\n";
-  //std::cout << rhs << "\n";
-
-  Eigen::VectorXdt<double_type> result;
   const bool jacobian_is_invertible = solveSystem(jacobian, rhs, result);
-
-  std::vector<double_type> res;
-  return res;
-  //return jacobian_is_invertible; 
+ 
+  return jacobian_is_invertible; 
 }
 
 
@@ -207,71 +195,18 @@ Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
 
 
 template <class double_type>
-Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobianFull(
+Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleJacobianFull(
   const std::vector<Condensate<double_type>*>& condensates,
   const std::vector<double_type>& activity_corr,
   const std::vector<double_type>& number_densities,
   const std::vector<Element<double_type>*>& elements,
   const std::vector<Molecule<double_type>>& molecules,
-  const double_type total_element_density)
+  const double_type total_element_density,
+  Eigen::MatrixXdt<double_type>& jacobian)
 {
   const size_t nb_condensates = condensates.size();
   const size_t nb_elements = elements.size();
 
-  Eigen::MatrixXdt<double_type> jacobian;
-  jacobian.setZero(nb_elements + 2*nb_condensates, nb_elements + 2*nb_condensates);
-
-  for (size_t i=0; i<nb_condensates; ++i)
-  {
-    jacobian(i, i) = activity_corr[i]*number_densities[i];
-    jacobian(i, i+nb_condensates) = number_densities[i];
-    jacobian(i+nb_condensates, i+nb_condensates) = 1.0;
-  }
-
-
-  for (size_t i=0; i<nb_elements; ++i)
-  {
-    jacobian(i+2*nb_condensates,i+2*nb_condensates) = elements[i]->number_density;
-
-    for (size_t j=0; j<nb_elements; ++j)
-    {
-      for (auto l : elements[i]->molecule_list)
-         jacobian(i+2*nb_condensates,j+2*nb_condensates) += 
-           molecules[l].stoichiometric_vector[elements[i]->index] 
-           * molecules[l].stoichiometric_vector[elements[j]->index] 
-           * molecules[l].number_density;
-    }
-  }
-
-  for (size_t i=0; i<nb_condensates; ++i)
-    for (size_t j=0; j<nb_elements; ++j)
-    {
-      jacobian(i+nb_condensates, j+2*nb_condensates) = 
-        condensates[i]->stoichiometric_vector[elements[j]->index];
-      
-      jacobian(j+2*nb_condensates, i) = 
-        condensates[i]->stoichiometric_vector[elements[j]->index] 
-        * number_densities[i];
-    }
-
-  return jacobian;
-}
-
-
-
-template <class double_type>
-Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobianFullLog(
-  const std::vector<Condensate<double_type>*>& condensates,
-  const std::vector<double_type>& activity_corr,
-  const std::vector<double_type>& number_densities,
-  const std::vector<Element<double_type>*>& elements,
-  const std::vector<Molecule<double_type>>& molecules,
-  const double_type total_element_density)
-{
-  const size_t nb_condensates = condensates.size();
-  const size_t nb_elements = elements.size();
-
-  Eigen::MatrixXdt<double_type> jacobian;
   jacobian.setZero(nb_elements + 2*nb_condensates, nb_elements + 2*nb_condensates);
 
   for (size_t i=0; i<nb_condensates; ++i)
@@ -279,6 +214,16 @@ Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobianFull
     jacobian(i, i) = 1.0;
     jacobian(i, i+nb_condensates) = 1.0;
     jacobian(i+nb_condensates, i+nb_condensates) = activity_corr[i];
+
+    for (size_t j=0; j<nb_elements; ++j)
+    {
+      jacobian(i+nb_condensates, j+2*nb_condensates) = 
+        condensates[i]->stoichiometric_vector[elements[j]->index];
+      
+      jacobian(j+2*nb_condensates, i) = 
+        condensates[i]->stoichiometric_vector[elements[j]->index] 
+        * number_densities[i];
+    }
   }
 
 
@@ -296,18 +241,16 @@ Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assembleJacobianFull
     }
   }
 
-  for (size_t i=0; i<nb_condensates; ++i)
-    for (size_t j=0; j<nb_elements; ++j)
-    {
-      jacobian(i+nb_condensates, j+2*nb_condensates) = 
-        condensates[i]->stoichiometric_vector[elements[j]->index];
-      
-      jacobian(j+2*nb_condensates, i) = 
-        condensates[i]->stoichiometric_vector[elements[j]->index] 
-        * number_densities[i];
-    }
 
-  return jacobian;
+  Eigen::VectorXdt<double_type> scaling_factors = jacobian.rowwise().maxCoeff();
+
+  for (auto i=0; i<jacobian.rows(); ++i)
+  {
+    for (auto j=0; j<jacobian.rows(); ++j)
+      jacobian(i,j) /= scaling_factors(i);
+  }
+
+  return scaling_factors;
 }
 
 
@@ -366,122 +309,51 @@ double_type CondPhaseSolver<double_type>::assembleRightHandSide(
 }
 
 
+
 template <class double_type>
-Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleRightHandSideFull(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_densities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function)
+ double_type CondPhaseSolver<double_type>::assembleRightHandSideFull(
+  const std::vector<Condensate<double_type>*>& condensates,
+  const std::vector<double_type>& activity_corr,
+  const std::vector<double_type>& number_densities,
+  const std::vector< Element<double_type>* >& elements,
+  const std::vector< Molecule<double_type> >& molecules,
+  const double_type total_element_density,
+  const Eigen::VectorXdt<double_type>& scaling_factors,
+  Eigen::VectorXdt<double_type>& rhs)
 {
   const size_t nb_elements = elements.size();
   const size_t nb_cond = condensates.size();
 
-  Eigen::VectorXdt<double_type> rhs_vector;
-  rhs_vector.setZero(nb_elements + 2*nb_cond);
-
+  rhs.setZero(nb_elements + 2*nb_cond);
 
   for (size_t i=0; i<nb_cond; ++i)
   { 
-    rhs_vector(i) = condensates[i]->tau - activity_corr[i]*number_densities[i]; 
-    rhs_vector(i+nb_cond) = - condensates[i]->log_activity - activity_corr[i];
+    rhs(i) = condensates[i]->log_tau - std::log(activity_corr[i]) - std::log(number_densities[i]); 
+    rhs(i+nb_cond) = - condensates[i]->log_activity - activity_corr[i];
   }
 
 
   for (size_t i=0; i<nb_elements; ++i)
   { 
-    rhs_vector(i+2*nb_cond) = total_element_density * elements[i]->epsilon - elements[i]->number_density;
+    rhs(i+2*nb_cond) = total_element_density * elements[i]->epsilon - elements[i]->number_density;
     
     for (auto j : elements[i]->molecule_list)
-      rhs_vector(i+2*nb_cond) -= molecules[j].stoichiometric_vector[elements[i]->index] * molecules[j].number_density;
+      rhs(i+2*nb_cond) -= molecules[j].stoichiometric_vector[elements[i]->index] * molecules[j].number_density;
     
     for (size_t j=0; j<condensates.size(); ++j)
-      rhs_vector(i+2*nb_cond) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j];
+      rhs(i+2*nb_cond) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j];
   }
 
 
-  for (auto i=0; i<rhs_vector.rows(); ++i)
-    rhs_vector(i) /= scaling_factors(i);
-
-  objective_function = 0.5*rhs_vector.transpose()*rhs_vector;
-
-  return rhs_vector;
-}
+  for (auto i=0; i<rhs.rows(); ++i)
+    rhs(i) /= scaling_factors(i);
 
 
-template <class double_type>
-Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleRightHandSideFullLog(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_densities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function)
-{
-  const size_t nb_elements = elements.size();
-  const size_t nb_cond = condensates.size();
-
-  Eigen::VectorXdt<double_type> rhs_vector;
-  rhs_vector.setZero(nb_elements + 2*nb_cond);
-
-
-  for (size_t i=0; i<nb_cond; ++i)
-  { 
-    rhs_vector(i) = condensates[i]->log_tau - std::log(activity_corr[i]) - std::log(number_densities[i]); 
-    rhs_vector(i+nb_cond) = - condensates[i]->log_activity - activity_corr[i];
-  }
-
-
-  for (size_t i=0; i<nb_elements; ++i)
-  { 
-    rhs_vector(i+2*nb_cond) = total_element_density * elements[i]->epsilon - elements[i]->number_density;
-    
-    for (auto j : elements[i]->molecule_list)
-      rhs_vector(i+2*nb_cond) -= molecules[j].stoichiometric_vector[elements[i]->index] * molecules[j].number_density;
-    
-    for (size_t j=0; j<condensates.size(); ++j)
-      rhs_vector(i+2*nb_cond) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j];
-  }
-
-
-  for (auto i=0; i<rhs_vector.rows(); ++i)
-    rhs_vector(i) /= scaling_factors(i);
-
-  objective_function = 0.5*rhs_vector.transpose()*rhs_vector;
-
-  return rhs_vector;
-}
-
-
-template <class double_type>
-double_type CondPhaseSolver<double_type>::objectiveFunctionFull(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_densities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      const double_type total_element_density)
-{
-  double_type objective_function = 0;
-
-  Eigen::VectorXdt<double_type> rhs = assembleRightHandSideFullLog(
-    condensates,
-    activity_corr,
-    number_densities,
-    elements,
-    molecules,
-    total_element_density,
-    scaling_factors,
-    objective_function);
+  const double_type objective_function = 0.5*rhs.transpose()*rhs;
 
   return objective_function;
 }
+
 
 
 template <class double_type>
