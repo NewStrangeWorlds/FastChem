@@ -1,5 +1,5 @@
 #Atmospheric profile input file
-input/p_t_grid.dat
+input/p_t_grid2.dat
 
 #Chemistry output file
 output/chemistry.dat

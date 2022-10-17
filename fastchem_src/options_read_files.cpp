@@ -68,7 +68,7 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
 
   std::getline(file, line);
 
-  //species data file
+  //gas phase species data file
   std::getline(file, line); std::getline(file, line);
   
   input.str(line); input.clear();
@@ -78,6 +78,15 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     return initialization_status;
   else
     species_data_file = file_name;
+  
+   //condensate species data file
+  input >> file_name;
+
+  if (file_name == "")
+    return false;
+  else
+    condensates_data_file = file_name;
+
 
   std::getline(file, line);
 

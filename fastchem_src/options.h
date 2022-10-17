@@ -62,6 +62,9 @@ struct FastChemOptions{
   bool use_scaling_factor = false;
   double additional_scaling_factor = 0.0;
 
+  bool cond_use_svd = false;
+  bool cond_use_full_pivot = false;
+
   std::string chemical_element_file = "";
   std::string species_data_file = "";
   std::string element_abundances_file = "";

@@ -170,6 +170,7 @@ struct Condensate : public ChemicalSpecies<double_type>
   double_type max_number_density = 0;
 
   bool linear_system_remove = false;
+  bool is_calculated = false;
 
   unsigned int reference_element = FASTCHEM_UNKNOWN_SPECIES;     //the element, the degree of condensation is defined for
   double_type degree_of_condensation = 0;

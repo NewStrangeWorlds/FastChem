@@ -354,6 +354,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       i.number_density = 0;
       i.degree_of_condensation = 0;
       i.activity_correction = 0;
+      i.is_calculated = false;
     }
 
 
@@ -400,8 +401,10 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   bool combined_converged = false;
 
 
-  for (nb_combined_iter=0; nb_combined_iter<1400; ++nb_combined_iter)
+  for (nb_combined_iter=0; nb_combined_iter<300; ++nb_combined_iter)
   {
+    condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
+  
     for (auto & i : condensates_act)
     {
       i->calcActivity(temperature, element_data.elements);

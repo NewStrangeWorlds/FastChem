@@ -92,8 +92,16 @@ class CondensedPhase {
       std::vector<unsigned int>& condensates_jac,
       std::vector<unsigned int>& condensates_rem);
 
+    void selectJacobianCondensates2(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<double_type>& number_density_cond,
+      const std::vector<double_type>& activity_corr,
+      std::vector<unsigned int>& condensates_jac,
+      std::vector<unsigned int>& condensates_rem,
+      Eigen::MatrixXdt<double_type>& jacobian);
+
     double_type correctValues(
-      const std::vector<double_type>& result,
+      const Eigen::VectorXdt<double_type>& result,
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
@@ -104,7 +112,18 @@ class CondensedPhase {
       const std::vector<Element<double_type>*>& elements,
       const std::vector<double_type>& elem_number_dens_old,
       std::vector<double_type>& elem_number_dens_new,
-      const double_type ln_tau,
+      const double max_change);
+
+    double_type correctValuesFull(
+      const std::vector<double_type>& result,
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<double_type>& activity_corr_old,
+      std::vector<double_type>& activity_corr_new,
+      const std::vector<double_type>& cond_number_dens_old,
+      std::vector<double_type>& cond_number_dens_new,
+      const std::vector<Element<double_type>*>& elements,
+      const std::vector<double_type>& elem_number_dens_old,
+      std::vector<double_type>& elem_number_dens_new,
       const double max_change);
 };
 

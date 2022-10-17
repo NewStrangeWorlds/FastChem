@@ -40,13 +40,8 @@ CondensedPhase<double_type>::CondensedPhase(
     , solver(options)
 {
   nb_elements = elements.size();
-
-  //std::string file_path = "input/condensate_all.dat";
-  //std::string file_path = "input/condensate_test_small.dat";
-  std::string file_path = "input/condensate_test_large.dat";
-
-  //is_initialised = readCondensateData(options.condensates_data_file);
-  is_initialised = readCondensateData(file_path);
+  options.condensates_data_file = "input/condensate_all.dat";
+  is_initialised = readCondensateData(options.condensates_data_file);
 
   if (options.verbose_level >= 4)
   {
@@ -115,33 +110,38 @@ void CondensedPhase<double_type>::selectActiveCondensates(
   std::vector< Condensate<double_type>* >& condensates_act,
   std::vector< Element<double_type>* >& elements_cond)
 {
-  condensates_act.resize(0);
-  condensates_act.reserve(nb_condensates);
+  if (condensates_act.capacity() == 0)
+    condensates_act.reserve(nb_condensates);
 
   for (auto & i : condensates)
-    //if (i.log_activity != -10 && i.log_activity >= 0) 
-    if (i.log_activity > -1) 
+  {
+    if (i.log_activity >= 0 && i.is_calculated == false) 
+    {
       condensates_act.push_back(&i);
-    //if (i.ln_activity != -10) active_condensates.push_back(&i);
+      i.is_calculated = true;
 
-  //for (auto & i : condensates)
-    //active_condensates.push_back(&i);
-  
-  condensates_act.shrink_to_fit();
+      i.number_density = 0.0;
+      i.activity_correction = 0.0;
+    }
+  }
 
 
-  elements_cond.resize(0);
-  elements_cond.reserve(nb_elements);
+  if (elements_cond.capacity() == 0)
+    elements_cond.reserve(nb_elements);
 
   for (auto & i : element_data.elements)
+  {
+    if (std::find(elements_cond.begin(), elements_cond.end(), &i) != elements_cond.end())
+      continue;
+
     for (auto & j : condensates_act)
       if (j->stoichiometric_vector[i.index] != 0)
       {
         elements_cond.push_back(&i);
         break;
       }
+  }
 
-  elements_cond.shrink_to_fit();
 }
 
 
@@ -159,7 +159,60 @@ void CondensedPhase<double_type>::selectJacobianCondensates(
 
   for (size_t i=0; i<condensates.size(); ++i)
   {
-    if (activity_corr[i] < 1)
+    //if (activity_corr[i] > 1e-5)
+    //if (number_density_cond[i] > 1e-5)
+    if (condensates[i]->log_activity > -0.1)
+      condensates_jac.push_back(i);
+    else
+      condensates_rem.push_back(i);
+
+    // if (activity_corr[i] < 1  && number_density_cond[i] < 1e-1)
+    //   condensates_rem.push_back(i);
+    // else
+    //   condensates_jac.push_back(i);
+  }
+}
+
+
+template <class double_type>
+void CondensedPhase<double_type>::selectJacobianCondensates2(
+  const std::vector<Condensate<double_type>*>& condensates,
+  const std::vector<double_type>& number_density_cond,
+  const std::vector<double_type>& activity_corr,
+  std::vector<unsigned int>& condensates_jac,
+  std::vector<unsigned int>& condensates_rem,
+  Eigen::MatrixXdt<double_type>& jacobian)
+{
+  condensates_jac.resize(0);
+  condensates_rem.resize(0);
+
+  const size_t nb_condensates = condensates.size();
+  const size_t nb_elements = jacobian.rows() - nb_condensates;
+
+  for (size_t i=0; i<condensates.size(); ++i)
+  { 
+    double element_min = 0;
+    double element_max = 0;
+
+    for (size_t j=0; j<nb_elements; ++j)
+    {
+      if (jacobian(j+nb_condensates, i) == 0) continue;
+
+      for (size_t n=0; n<nb_elements; ++n)
+      {
+        if (jacobian(j+nb_condensates, n+nb_condensates) == 0) continue;
+
+        if (jacobian(j+nb_condensates, n+nb_condensates) > element_max)
+          element_max = jacobian(j+nb_condensates, n+nb_condensates);
+        
+        if (element_min == 0) element_min = element_max;
+        else
+          if (jacobian(j+nb_condensates, n+nb_condensates) < element_min)
+            element_min = jacobian(j+nb_condensates, n+nb_condensates);
+      }
+    }
+
+    if (activity_corr[i] < 1 && element_min < number_density_cond[i]*100)
       condensates_jac.push_back(i);
     else
       condensates_rem.push_back(i);
