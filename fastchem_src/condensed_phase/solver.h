@@ -52,7 +52,7 @@ class CondPhaseSolver{
       : options(options_)
       {}
 
-    Eigen::MatrixXdt<double_type> assembleJacobian(
+    Eigen::VectorXdt<double_type> assembleJacobian(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<double_type>& activity_corr,
       const std::vector<double_type>& number_denities,
@@ -60,7 +60,8 @@ class CondPhaseSolver{
       const std::vector<unsigned int>& condensates_rem,
       const std::vector<Element<double_type>*>& elements,
       const std::vector<Molecule<double_type>>& molecules,
-      const double_type total_element_density);
+      const double_type total_element_density,
+      Eigen::MatrixXdt<double_type>& jacobian);
 
     Eigen::MatrixXdt<double_type> assembleJacobianFull(
       const std::vector<Condensate<double_type>*>& condensates,
@@ -82,7 +83,7 @@ class CondPhaseSolver{
       const Eigen::MatrixXdt<double_type>& jacobian,
       const double_type perturbation);
 
-    Eigen::VectorXdt<double_type> assembleRightHandSide(
+    double_type assembleRightHandSide(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
@@ -91,22 +92,8 @@ class CondPhaseSolver{
       const std::vector< Element<double_type>* >& elements,
       const std::vector< Molecule<double_type> >& molecules,
       const double_type total_element_density, 
-      const double_type log_tau,
       const Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function);
-
-    Eigen::VectorXdt<double_type> assembleRightHandSideLog(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<unsigned int>& condensates_jac,
-      const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density, 
-      const double_type log_tau,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function);
+      Eigen::VectorXdt<double_type>& rhs);
 
     Eigen::VectorXdt<double_type> assembleRightHandSideFull(
       const std::vector<Condensate<double_type>*>& condensates,
@@ -127,17 +114,6 @@ class CondPhaseSolver{
       const double_type total_element_density,
       const Eigen::VectorXdt<double_type>& scaling_factors,
       double_type& objective_function);
-
-    double_type objectiveFunction(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<unsigned int>& condensates_jac,
-      const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      const double_type total_element_density);
 
     double_type objectiveFunctionFull(
       const std::vector<Condensate<double_type>*>& condensates,

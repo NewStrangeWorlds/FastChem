@@ -184,16 +184,16 @@ bool CondensedPhase<double_type>::calculate(
 
     for (auto & i : molecules)  i.calcNumberDensity(elements);
 
-    double_type objective_function_1 = solver.objectiveFunction(
-      condensates_act,
-      condensates_jac,
-      condensates_rem,
-      activity_corr_new,
-      cond_densities_new,
-      elements_cond,
-      molecules,
-      scaling_factors,
-      total_element_density);
+    // double_type objective_function_1 = solver.objectiveFunction(
+    //   condensates_act,
+    //   condensates_jac,
+    //   condensates_rem,
+    //   activity_corr_new,
+    //   cond_densities_new,
+    //   elements_cond,
+    //   molecules,
+    //   scaling_factors,
+    //   total_element_density);
 
     // double_type objective_function_1 = solver.objectiveFunctionFull(
     //       condensates_act,
