@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -311,7 +311,7 @@ double_type CondPhaseSolver<double_type>::assembleRightHandSide(
 
 
 template <class double_type>
- double_type CondPhaseSolver<double_type>::assembleRightHandSideFull(
+double_type CondPhaseSolver<double_type>::assembleRightHandSideFull(
   const std::vector<Condensate<double_type>*>& condensates,
   const std::vector<double_type>& activity_corr,
   const std::vector<double_type>& number_densities,
@@ -357,7 +357,7 @@ template <class double_type>
 
 
 template <class double_type>
-Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::computePerturbedHessian(
+Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assemblePerturbedHessian(
   const Eigen::MatrixXdt<double_type>& jacobian,
   const double_type perturbation)
 {
@@ -374,7 +374,8 @@ Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::computePerturbedHess
 
 
 
-template <class double_type> bool CondPhaseSolver<double_type>::solveSystem(
+template <class double_type> 
+bool CondPhaseSolver<double_type>::solveSystem(
   const Eigen::MatrixXdt<double_type>& jacobian,
   const Eigen::VectorXdt<double_type>& rhs,
   Eigen::VectorXdt<double_type>& result)
@@ -389,46 +390,133 @@ template <class double_type> bool CondPhaseSolver<double_type>::solveSystem(
     return true;
   }
 
+  Eigen::FullPivLU<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
+  solver.compute(jacobian);
+  result = solver.solve(rhs);
 
-  if (options.cond_use_full_pivot)
+  if (!solver.isInvertible())
   {
-    Eigen::FullPivLU<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
-    solver.compute(jacobian);
-    result = solver.solve(rhs);
-
-    if (!solver.isInvertible())
-    {
-      std::cout << "FastChem warning: Jacobian is (almost) singular! ";
+    std::cout << "FastChem warning: Jacobian is (almost) singular! ";
       
-      if (options.cond_use_svd)
-      {
-        std::cout << "Switching to Single Value Decomposition.\n";
-        Eigen::BDCSVD<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
-        Eigen::VectorXdt<double_type> result = jacobian.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(rhs);
-      }
-      else
-      {
-        std::cout << "Switching to perturbed Hessian approximation.\n";
-        const double_type perturbation = std::numeric_limits<double_type>::epsilon() * 10;
+    if (options.cond_use_svd)
+    {
+      std::cout << "Switching to Single Value Decomposition.\n";
+      Eigen::BDCSVD<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
+      Eigen::VectorXdt<double_type> result = jacobian.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(rhs);
+    }
+    else
+    {
+      std::cout << "Switching to perturbed Hessian approximation.\n";
+      const double_type perturbation = std::numeric_limits<double_type>::epsilon() * 10;
 
-        Eigen::MatrixXdt<double_type> hessian = computePerturbedHessian(
-          jacobian,
-          perturbation);
+      Eigen::MatrixXdt<double_type> hessian = assemblePerturbedHessian(
+        jacobian,
+        perturbation);
 
-        solver.compute(hessian);
-        Eigen::VectorXdt<double_type> rhs_pertubed = jacobian.transpose()*rhs;
+      solver.compute(hessian);
+      Eigen::VectorXdt<double_type> rhs_pertubed = jacobian.transpose()*rhs;
 
-        result = solver.solve(rhs_pertubed);
-      }
-
-      return false;
+      result = solver.solve(rhs_pertubed);
     }
 
-    return true;
+    return false;
   }
 
+  return true;
 }
 
+
+
+template <class double_type> 
+double_type CondPhaseSolver<double_type>::backtrackStep(
+  const double_type objective_function_0,
+  const double_type objective_function_prev,
+  const double_type objective_function_2prev,
+  const double_type lambda_prev,
+  const double_type lambda_2prev)
+{
+  const double_type object_function_deriv = -2.0*objective_function_0;
+
+  double_type lambda = 0;
+
+  if (lambda_2prev == 0)
+  {
+    lambda = -object_function_deriv /(2.0 * (objective_function_prev - objective_function_0 - object_function_deriv));
+  }
+  else
+  {
+    Eigen::Matrix<double_type, 2, 2> cubic_fit_matrix;
+    Eigen::Matrix<double_type, 2,1> cubic_fit_vector;
+
+    cubic_fit_matrix(0,0) = 1.0/(lambda_prev*lambda_prev);
+    cubic_fit_matrix(1,0) = -lambda_2prev/(lambda_prev*lambda_prev);
+    cubic_fit_matrix(0,1) = -1.0/(lambda_2prev*lambda_2prev);
+    cubic_fit_matrix(1,1) = lambda_prev/(lambda_2prev*lambda_2prev);
+
+    cubic_fit_vector(0) = objective_function_prev - objective_function_0 - object_function_deriv*lambda_prev;
+    cubic_fit_vector(1) = objective_function_2prev - objective_function_0 - object_function_deriv*lambda_2prev;
+
+    cubic_fit_vector /= lambda_prev-lambda_2prev;
+
+    Eigen::Matrix<double_type, 2,1> cubic_fit = cubic_fit_matrix*cubic_fit_vector;
+    const double_type a = cubic_fit(0);
+    const double_type b = cubic_fit(1);
+
+    lambda = (-b + std::sqrt(b*b - 3*a*object_function_deriv))/(3*a);
+  }
+
+  if (lambda < 0.1*lambda_prev) lambda = 0.1*lambda_prev;
+  if (lambda > 0.5*lambda_prev) lambda = 0.5*lambda_prev;
+  
+  return lambda;
+}
+
+
+template <class double_type> 
+double_type CondPhaseSolver<double_type>::objectiveFunction(
+  const std::vector<Condensate<double_type>*>& condensates,
+  const std::vector<unsigned int>& condensates_jac,
+  const std::vector<unsigned int>& condensates_rem,
+  const std::vector<double_type>& activity_corr,
+  const std::vector<double_type>& number_denities,
+  const std::vector< Element<double_type>* >& elements,
+  const std::vector< Molecule<double_type> >& molecules,
+  const double_type total_element_density, 
+  const Eigen::VectorXdt<double_type>& scaling_factors)
+{
+  double_type objective_function = 0;
+
+  if (options.cond_solve_full_matrix)
+  {
+    Eigen::VectorXdt<double_type> rhs;
+    objective_function = assembleRightHandSideFull(
+      condensates,
+      activity_corr,
+      number_denities,
+      elements,
+      molecules,
+      total_element_density,
+      scaling_factors,
+      rhs);
+  }
+  else
+  {
+    Eigen::VectorXdt<double_type> rhs;
+    objective_function = assembleRightHandSide(
+      condensates,
+      condensates_jac,
+      condensates_rem,
+      activity_corr,
+      number_denities,
+      elements,
+      molecules,
+      total_element_density,
+      scaling_factors,
+      rhs);
+  }
+
+  return objective_function;
+}
 
 
 template class CondPhaseSolver<double>;

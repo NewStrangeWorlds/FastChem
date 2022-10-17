@@ -65,8 +65,7 @@ bool CondensedPhase<double_type>::calculate(
        i->activity_correction = 1.0; //i->log_activity; //1; //1.0;
     }
   }
-  
-  options.cond_solve_full_matrix = true;
+
 
   std::vector<unsigned int> condensates_jac;
   condensates_jac.reserve(condensates_act.size());
@@ -196,232 +195,25 @@ bool CondensedPhase<double_type>::calculate(
 
     for (auto & i : molecules)  i.calcNumberDensity(elements);
 
-    // double_type objective_function_1 = solver.objectiveFunction(
-    //   condensates_act,
-    //   condensates_jac,
-    //   condensates_rem,
-    //   activity_corr_new,
-    //   cond_densities_new,
-    //   elements_cond,
-    //   molecules,
-    //   scaling_factors,
-    //   total_element_density);
+    /*double_type max_delta1 = newtonBacktrack(
+      objective_function_0,
+      result,
+      scaling_factors,
+      condensates_act,
+      condensates_jac,
+      condensates_rem,
+      activity_corr_old,
+      activity_corr_new,
+      cond_densities_old,
+      cond_densities_new,
+      elements_cond,
+      elem_densities_old,
+      elem_densities_new,
+      molecules,
+      total_element_density,
+      temperature,
+      limit);*/
 
-    // double_type objective_function_1 = solver.objectiveFunctionFull(
-    //       condensates_act,
-    //       activity_corr_new,
-    //       cond_densities_new,
-    //       elements_cond,
-    //       molecules,
-    //       scaling_factors,
-    //       total_element_density);
-
-
-    double_type lambda_prev = 1.0;
-    double_type lambda_2prev = 0.0;
-
-    double_type lamdba_min = 1e-5;
-
-    //std::cout << "of_0: " <<  objective_function_0 << "\t" << max_delta << "\n";
-
-    /*if (objective_function_1 > objective_function_0)
-    {
-      const double_type object_function_deriv = -2.0*objective_function_0;
-
-      double_type objective_function_prev = objective_function_1;
-      double_type objective_function_2prev = 0.0;
-
-      double_type lambda = 1;
-
-      double_type limit1 = limit;
-
-      // for (unsigned int i=0; i<4; ++i)
-      // {
-      //   limit1 *= 0.5;
-
-      //   max_delta = correctValues(
-      //     result,
-      //     condensates_act,
-      //     condensates_jac,
-      //     condensates_rem,
-      //     activity_corr_old,
-      //     activity_corr_new,
-      //     cond_densities_old,
-      //     cond_densities_new,
-      //     elements_cond,
-      //     elem_densities_old,
-      //     elem_densities_new,
-      //     log_tau,
-      //     limit1);
-
-      //   for (size_t i=0; i<elements_cond.size(); ++i)
-      //     elements_cond[i]->number_density = elem_densities_new[i];
-
-      //   for (auto & i : condensates_act)  i->calcActivity(temperature, elements);
-
-      //   for (auto & i : molecules)  i.calcNumberDensity(elements);
-
-      //   objective_function_2prev = objective_function_prev;
-      //   lambda_2prev = lambda_prev;
-      //   lambda_prev = lambda;
-
-      //   objective_function_prev = solver.objectiveFunction(
-      //     condensates_act,
-      //     condensates_jac,
-      //     condensates_rem,
-      //     activity_corr_new,
-      //     cond_densities_new,
-      //     elements_cond,
-      //     molecules,
-      //     scaling_factors,
-      //     total_element_density);
-
-      //   std::cout << "l " << i << "\t" << objective_function_prev << "\t" << objective_function_0 << "\t" << "\t" << limit1 << "\n";
-
-      //   if (objective_function_prev < objective_function_0) break;
-      // }
-      
-      while(objective_function_prev > objective_function_0 + 1e-4*lambda*object_function_deriv && lambda_prev > lamdba_min)
-      { 
-
-        if (lambda_2prev == 0)
-        {
-          lambda = -object_function_deriv /(2.0 * (objective_function_prev - objective_function_0 - object_function_deriv));
-        }
-        else
-        {
-          Eigen::Matrix<double_type, 2, 2> cubic_fit_matrix;
-          Eigen::Matrix<double_type, 2,1> cubic_fit_vector;
-
-          cubic_fit_matrix(0,0) = 1.0/(lambda_prev*lambda_prev);
-          cubic_fit_matrix(1,0) = -lambda_2prev/(lambda_prev*lambda_prev);
-          cubic_fit_matrix(0,1) = -1.0/(lambda_2prev*lambda_2prev);
-          cubic_fit_matrix(1,1) = lambda_prev/(lambda_2prev*lambda_2prev);
-
-          cubic_fit_vector(0) = objective_function_prev - objective_function_0 - object_function_deriv*lambda_prev;
-          cubic_fit_vector(1) = objective_function_2prev - objective_function_0 - object_function_deriv*lambda_2prev;
-
-          cubic_fit_vector /= lambda_prev-lambda_2prev;
-
-          Eigen::Matrix<double_type, 2,1> cubic_fit = cubic_fit_matrix*cubic_fit_vector;
-          const double_type a = cubic_fit(0);
-          const double_type b = cubic_fit(1);
-
-          lambda = (-b + std::sqrt(b*b - 3*a*object_function_deriv))/(3*a);
-
-          //std::cout << "cf " << a << "\t" << b << "\t" << lambda << "\n";
-        }
-
-        if (lambda < 0.1*lambda_prev) lambda = 0.1*lambda_prev;
-        if (lambda > 0.5*lambda_prev) lambda = 0.5*lambda_prev;
-
-        std::vector<double_type> result1 = result;
-
-        //for (auto & i : result1) 
-          //i *= lambda;
-
-        limit1 = limit * lambda;
-
-        // max_delta = correctValues(
-        //   result1,
-        //   condensates_act,
-        //   condensates_jac,
-        //   condensates_rem,
-        //   activity_corr_old,
-        //   activity_corr_new,
-        //   cond_densities_old,
-        //   cond_densities_new,
-        //   elements_cond,
-        //   elem_densities_old,
-        //   elem_densities_new,
-        //   log_tau,
-        //   limit);
-
-        max_delta = correctValuesFull(
-          result1,
-          condensates_act,
-          activity_corr_old,
-          activity_corr_new,
-          cond_densities_old,
-          cond_densities_new,
-          elements_cond,
-          elem_densities_old,
-          elem_densities_new,
-          limit1);
-
-        for (size_t i=0; i<elements_cond.size(); ++i)
-          elements_cond[i]->number_density = elem_densities_new[i];
-
-        for (auto & i : condensates_act)  i->calcActivity(temperature, elements);
-
-        for (auto & i : molecules)  i.calcNumberDensity(elements);
-
-        objective_function_2prev = objective_function_prev;
-        lambda_2prev = lambda_prev;
-        lambda_prev = lambda;
-
-        // objective_function_prev = solver.objectiveFunction(
-        //   condensates_act,
-        //   condensates_jac,
-        //   condensates_rem,
-        //   activity_corr_new,
-        //   cond_densities_new,
-        //   elements_cond,
-        //   molecules,
-        //   scaling_factors,
-        //   total_element_density);
-
-        objective_function_prev = solver.objectiveFunctionFull(
-          condensates_act,
-          activity_corr_new,
-          cond_densities_new,
-          elements_cond,
-          molecules,
-          scaling_factors,
-          total_element_density);
-
-        //std::cout << objective_function_prev << "\t" << objective_function_0 << "\t" << objective_function_0 + 1e-4*lambda*object_function_deriv << "\t" << lambda << "\t" << object_function_deriv << "\t" << limit1 << "\n";
-      }
-
-      if (lambda_prev <= lamdba_min)
-      {
-        // max_delta = correctValues(
-        //   result,
-        //   condensates_act,
-        //   condensates_jac,
-        //   condensates_rem,
-        //   activity_corr_old,
-        //   activity_corr_new,
-        //   cond_densities_old,
-        //   cond_densities_new,
-        //   elements_cond,
-        //   elem_densities_old,
-        //   elem_densities_new,
-        //   log_tau,
-        //   1.0);
-        //std::cout << lambda_prev << "\t" << lamdba_min << "\n";
-        max_delta = correctValuesFull(
-          result,
-          condensates_act,
-          activity_corr_old,
-          activity_corr_new,
-          cond_densities_old,
-          cond_densities_new,
-          elements_cond,
-          elem_densities_old,
-          elem_densities_new,
-          1.0);
-
-        for (size_t i=0; i<elements_cond.size(); ++i)
-          elements_cond[i]->number_density = elem_densities_new[i];
-
-        for (auto & i : condensates_act)  i->calcActivity(temperature, elements);
-
-        for (auto & i : molecules)  i.calcNumberDensity(elements);
-      }
-
-    }*/
-    
     /*{
     std::cout << "iter: " << nb_iterations << "\n";
     for (size_t i=0; i<condensates_act.size(); ++i)
@@ -446,12 +238,6 @@ bool CondensedPhase<double_type>::calculate(
     condensates_act[i]->activity_correction = activity_corr_new[i];
   }
 
-
-  // for (size_t i=0; i<elements_cond.size(); ++i)
-  // {
-  //   elements_cond[i]->number_density = elem_densities_new[i];
-  // }
-  
 
   double_type phi_sum = 0;
 
@@ -609,6 +395,182 @@ double_type CondensedPhase<double_type>::correctValuesFull(
   return max_delta;
 }
 
+
+
+template <class double_type>
+double_type CondensedPhase<double_type>::newtonBacktrack(
+  const double_type objective_function_0,
+  const Eigen::VectorXdt<double_type>& result,
+  const Eigen::VectorXdt<double_type>& scaling_factors,
+  const std::vector<Condensate<double_type>*>& condensates,
+  const std::vector<unsigned int>& condensates_jac,
+  const std::vector<unsigned int>& condensates_rem,
+  const std::vector<double_type>& activity_corr_old,
+  std::vector<double_type>& activity_corr_new,
+  const std::vector<double_type>& cond_number_dens_old,
+  std::vector<double_type>& cond_number_dens_new,
+  const std::vector<Element<double_type>*>& elements_cond,
+  const std::vector<double_type>& elem_number_dens_old,
+  std::vector<double_type>& elem_number_dens_new,
+  std::vector<Molecule<double_type>>& molecules,
+  const double total_element_density,
+  const double temperature,
+  const double max_change)
+{ 
+  double_type objective_function_1 = solver.objectiveFunction(
+    condensates,
+    condensates_jac,
+    condensates_rem,
+    activity_corr_new,
+    cond_number_dens_new,
+    elements_cond,
+    molecules,
+    total_element_density,
+    scaling_factors);
+
+  double_type max_delta = 0;
+
+  double_type lambda_prev = 1.0;
+  double_type lambda_2prev = 0.0;
+
+  double_type lamdba_min = 1e-5;
+
+  //std::cout << "of_0: " <<  objective_function_0 << "\t" << objective_function_1 << "\n";
+
+  if (objective_function_1 > objective_function_0)
+  {
+      const double_type object_function_deriv = -2.0*objective_function_0;
+
+      double_type objective_function_prev = objective_function_1;
+      double_type objective_function_2prev = 0.0;
+
+      double_type lambda = 1;
+      double_type limit1 = max_change;
+
+      while(objective_function_prev > objective_function_0 + 1e-4*lambda*object_function_deriv && lambda_prev > lamdba_min)
+      { 
+        lambda = solver.backtrackStep(
+          objective_function_0,
+          objective_function_prev,
+          objective_function_2prev,
+          lambda_prev,
+          lambda_2prev);
+
+        limit1 = max_change * lambda;
+
+        Eigen::VectorXdt<double_type> result_scaled = result;
+
+        double_type max_value = result_scaled.cwiseAbs().maxCoeff();
+
+        if (max_value > max_change)
+          result_scaled *= limit1/max_value;
+
+        if (options.cond_solve_full_matrix)
+        { 
+          max_delta = correctValuesFull(
+            result_scaled,
+            condensates,
+            activity_corr_old,
+            activity_corr_new,
+            cond_number_dens_old,
+            cond_number_dens_new,
+            elements_cond,
+            elem_number_dens_old,
+            elem_number_dens_new);
+        }
+        else
+        {
+          max_delta = correctValues(
+            result_scaled,
+            condensates,
+            condensates_jac,
+            condensates_rem,
+            activity_corr_old,
+            activity_corr_new,
+            cond_number_dens_old,
+            cond_number_dens_new,
+            elements_cond,
+            elem_number_dens_old,
+            elem_number_dens_new,
+            limit1);
+        }
+
+        for (size_t i=0; i<elements_cond.size(); ++i)
+          elements_cond[i]->number_density = elem_number_dens_new[i];
+
+        for (auto & i : condensates)  i->calcActivity(temperature, elements);
+
+        for (auto & i : molecules)  i.calcNumberDensity(elements);
+
+        objective_function_2prev = objective_function_prev;
+        lambda_2prev = lambda_prev;
+        lambda_prev = lambda;
+
+        objective_function_prev = solver.objectiveFunction(
+          condensates,
+          condensates_jac,
+          condensates_rem,
+          activity_corr_new,
+          cond_number_dens_new,
+          elements_cond,
+          molecules,
+          total_element_density,
+          scaling_factors);
+
+        //std::cout << objective_function_prev << "\t" << objective_function_0 << "\t" << objective_function_0 + 1e-4*lambda*object_function_deriv << "\t" << lambda << "\t" << object_function_deriv << "\t" << limit1 << "\n";
+      }
+
+      if (lambda_prev <= lamdba_min)
+      { 
+        Eigen::VectorXdt<double_type> result_scaled = result;
+
+        double_type max_value = result_scaled.cwiseAbs().maxCoeff();
+
+        if (max_value > 1.0)
+          result_scaled *= 1.0/max_value;
+        
+        if (options.cond_solve_full_matrix)
+        {
+          max_delta = correctValuesFull(
+            result_scaled,
+            condensates,
+            activity_corr_old,
+            activity_corr_new,
+            cond_number_dens_old,
+            cond_number_dens_new,
+            elements_cond,
+            elem_number_dens_old,
+            elem_number_dens_new);
+        }
+        else
+        {
+          max_delta = correctValues(
+            result_scaled,
+            condensates,
+            condensates_jac,
+            condensates_rem,
+            activity_corr_old,
+            activity_corr_new,
+            cond_number_dens_old,
+            cond_number_dens_new,
+            elements_cond,
+            elem_number_dens_old,
+            elem_number_dens_new,
+            1.0);
+        }
+
+        for (size_t i=0; i<elements_cond.size(); ++i)
+          elements_cond[i]->number_density = elem_number_dens_new[i];
+
+        for (auto & i : condensates)  i->calcActivity(temperature, elements);
+
+        for (auto & i : molecules)  i.calcNumberDensity(elements);
+      }
+
+    }
+
+  return max_delta;
+}
 
 
 template class CondensedPhase<double>;

@@ -52,57 +52,6 @@ class CondPhaseSolver{
       : options(options_)
       {}
 
-    Eigen::VectorXdt<double_type> assembleJacobian(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector<unsigned int>& condensates_jac,
-      const std::vector<unsigned int>& condensates_rem,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const double_type total_element_density,
-      Eigen::MatrixXdt<double_type>& jacobian);
-
-    Eigen::VectorXdt<double_type> assembleJacobianFull(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const double_type total_element_density,
-      Eigen::MatrixXdt<double_type>& jacobian);
-
-    Eigen::MatrixXdt<double_type> computePerturbedHessian(
-      const Eigen::MatrixXdt<double_type>& jacobian,
-      const double_type perturbation);
-
-    double_type assembleRightHandSide(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<unsigned int>& condensates_jac,
-      const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density, 
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      Eigen::VectorXdt<double_type>& rhs);
-
-    double_type assembleRightHandSideFull(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      Eigen::VectorXdt<double_type>& rhs);
-
-    bool solveSystem(
-      const Eigen::MatrixXdt<double_type>& jacobian,
-      const Eigen::VectorXdt<double_type>& rhs,
-      Eigen::VectorXdt<double_type>& result);
-
     bool newtonStep(
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
@@ -128,8 +77,77 @@ class CondPhaseSolver{
       Eigen::VectorXdt<double_type>& result,
       Eigen::VectorXdt<double_type>& scaling_factors,
       double_type& objective_function);
+
+    double_type assembleRightHandSide(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<unsigned int>& condensates_jac,
+      const std::vector<unsigned int>& condensates_rem,
+      const std::vector<double_type>& activity_corr,
+      const std::vector<double_type>& number_denities,
+      const std::vector< Element<double_type>* >& elements,
+      const std::vector< Molecule<double_type> >& molecules,
+      const double_type total_element_density, 
+      const Eigen::VectorXdt<double_type>& scaling_factors,
+      Eigen::VectorXdt<double_type>& rhs);
+
+    double_type assembleRightHandSideFull(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<double_type>& activity_corr,
+      const std::vector<double_type>& number_denities,
+      const std::vector< Element<double_type>* >& elements,
+      const std::vector< Molecule<double_type> >& molecules,
+      const double_type total_element_density,
+      const Eigen::VectorXdt<double_type>& scaling_factors,
+      Eigen::VectorXdt<double_type>& rhs);
+
+    double_type backtrackStep(
+      const double_type objective_function_0,
+      const double_type objective_function_prev,
+      const double_type objective_function_2prev,
+      const double_type lambda_prev,
+      const double_type lambda_2prev);
+
+    double_type objectiveFunction(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<unsigned int>& condensates_jac,
+      const std::vector<unsigned int>& condensates_rem,
+      const std::vector<double_type>& activity_corr,
+      const std::vector<double_type>& number_denities,
+      const std::vector< Element<double_type>* >& elements,
+      const std::vector< Molecule<double_type> >& molecules,
+      const double_type total_element_density, 
+      const Eigen::VectorXdt<double_type>& scaling_factors);
   private:
     FastChemOptions<double_type>& options;
+
+     Eigen::MatrixXdt<double_type> assemblePerturbedHessian(
+      const Eigen::MatrixXdt<double_type>& jacobian,
+      const double_type perturbation);
+
+    bool solveSystem(
+      const Eigen::MatrixXdt<double_type>& jacobian,
+      const Eigen::VectorXdt<double_type>& rhs,
+      Eigen::VectorXdt<double_type>& result);
+
+    Eigen::VectorXdt<double_type> assembleJacobian(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<double_type>& activity_corr,
+      const std::vector<double_type>& number_denities,
+      const std::vector<unsigned int>& condensates_jac,
+      const std::vector<unsigned int>& condensates_rem,
+      const std::vector<Element<double_type>*>& elements,
+      const std::vector<Molecule<double_type>>& molecules,
+      const double_type total_element_density,
+      Eigen::MatrixXdt<double_type>& jacobian);
+
+    Eigen::VectorXdt<double_type> assembleJacobianFull(
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<double_type>& activity_corr,
+      const std::vector<double_type>& number_denities,
+      const std::vector<Element<double_type>*>& elements,
+      const std::vector<Molecule<double_type>>& molecules,
+      const double_type total_element_density,
+      Eigen::MatrixXdt<double_type>& jacobian);
 };
 
 

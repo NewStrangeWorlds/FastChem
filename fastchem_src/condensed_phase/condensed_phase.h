@@ -124,6 +124,25 @@ class CondensedPhase {
       const std::vector<Element<double_type>*>& elements,
       const std::vector<double_type>& elem_number_dens_old,
       std::vector<double_type>& elem_number_dens_new);
+
+    double_type newtonBacktrack(
+      const double_type objective_function_0,
+      const Eigen::VectorXdt<double_type>& result,
+      const Eigen::VectorXdt<double_type>& scaling_factors,
+      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<unsigned int>& condensates_jac,
+      const std::vector<unsigned int>& condensates_rem,
+      const std::vector<double_type>& activity_corr_old,
+      std::vector<double_type>& activity_corr_new,
+      const std::vector<double_type>& cond_number_dens_old,
+      std::vector<double_type>& cond_number_dens_new,
+      const std::vector<Element<double_type>*>& elements,
+      const std::vector<double_type>& elem_number_dens_old,
+      std::vector<double_type>& elem_number_dens_new,
+      std::vector<Molecule<double_type>>& molecules,
+      const double total_element_density,
+      const double temperature,
+      const double max_change);
 };
 
 
