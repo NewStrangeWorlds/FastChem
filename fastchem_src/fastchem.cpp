@@ -48,8 +48,6 @@ FastChem<double_type>::FastChem(
 
   if (options.parameter_file_loaded) 
     init();
-
-  //condensed_phase.init(std::string("input/condensate_test_small.dat"));
 }
 
 
@@ -61,13 +59,14 @@ template <class double_type>
 FastChem<double_type>::FastChem(
   const std::string& element_abundances_file,
   const std::string& species_data_file,
+  const std::string &cond_species_data_file,
   const unsigned int verbose_level_start) 
-    : options(element_abundances_file, species_data_file, verbose_level_start)
+    : options(element_abundances_file, species_data_file, cond_species_data_file, verbose_level_start)
     , element_data(element_abundances_file, options.chemical_element_file)
     , gas_phase(options, element_data)
     , condensed_phase(options, element_data)
 {
-  if (element_data.is_initialised == true && gas_phase.is_initialised == true)
+  if (element_data.is_initialised == true && gas_phase.is_initialised == true && condensed_phase.is_initialised == true)
     is_initialised = true;
   else
   {

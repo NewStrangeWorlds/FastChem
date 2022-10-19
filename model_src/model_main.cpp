@@ -55,7 +55,11 @@ int main(int argc, char *argv[])
 
 
   //create a FastChem object and set the read-in values from the config file
-  fastchem::FastChem<long double> fastchem(config.element_abundance_file, config.species_data_file, config.verbose_level);
+  fastchem::FastChem<long double> fastchem(
+    config.element_abundance_file, 
+    config.species_data_file, 
+    config.cond_species_data_file,
+    config.verbose_level);
   //fastchem::FastChem<long double> fastchem("input/parameters.dat", config.verbose_level); 
 
 
@@ -110,8 +114,8 @@ int main(int argc, char *argv[])
 
   input.temperature = temperature;
   input.pressure = pressure;
-  input.equilibrium_condensation = true;
-  input.rainout_condensation = false;
+  input.equilibrium_condensation = config.calc_condensation;
+  input.rainout_condensation = config.rainout_condensation;
 
   unsigned int fastchem_flag = fastchem.calcDensities(input, output);
   
@@ -143,15 +147,19 @@ int main(int argc, char *argv[])
 
   std::vector<std::string> element_symbols(species_symbols.begin(), species_symbols.begin()+nb_elements);
 
-  std::vector<std::string> cond_species_symbols(nb_condensates);
 
-  for (size_t i=0; i<nb_condensates; ++i)
-    cond_species_symbols[i] = fastchem.getCondSpeciesSymbol(i);
-
-
-  saveChemistryOutput(config.chem_output_file, config.output_mixing_ratios, input, output, species_symbols, gas_number_density);
-  saveCondOutput(config.cond_output_file, input, output, element_symbols, cond_species_symbols);
   saveMonitorOutput(config.monitor_output_file, input, output, element_symbols, gas_number_density);
+  saveChemistryOutput(config.chem_output_file, config.output_mixing_ratios, input, output, species_symbols, gas_number_density);
+
+  if (config.calc_condensation)
+  {
+    std::vector<std::string> cond_species_symbols(nb_condensates);
+
+    for (size_t i=0; i<nb_condensates; ++i)
+      cond_species_symbols[i] = fastchem.getCondSpeciesSymbol(i);
+
+    saveCondOutput(config.cond_output_file, input, output, element_symbols, cond_species_symbols);
+  }
 
 
   std::cout << "FastChem finished!" << std::endl;

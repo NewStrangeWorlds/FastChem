@@ -395,18 +395,23 @@ bool CondPhaseSolver<double_type>::solveSystem(
   result = solver.solve(rhs);
 
   if (!solver.isInvertible())
-  {
-    std::cout << "FastChem warning: Jacobian is (almost) singular! ";
-      
+  { 
+    if (options.verbose_level >= 3)
+      std::cout << "FastChem warning: Jacobian is (almost) singular! ";
+
     if (options.cond_use_svd)
-    {
-      std::cout << "Switching to Single Value Decomposition.\n";
+    { 
+      if (options.verbose_level >= 3)
+        std::cout << "Switching to Single Value Decomposition.\n";
+
       Eigen::BDCSVD<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
       Eigen::VectorXdt<double_type> result = jacobian.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(rhs);
     }
     else
     {
-      std::cout << "Switching to perturbed Hessian approximation.\n";
+      if (options.verbose_level >= 3)
+        std::cout << "Switching to perturbed Hessian approximation.\n";
+
       const double_type perturbation = std::numeric_limits<double_type>::epsilon() * 10;
 
       Eigen::MatrixXdt<double_type> hessian = assemblePerturbedHessian(

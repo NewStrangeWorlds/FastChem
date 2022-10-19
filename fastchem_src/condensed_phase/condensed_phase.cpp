@@ -40,7 +40,7 @@ CondensedPhase<double_type>::CondensedPhase(
     , solver(options)
 {
   nb_elements = elements.size();
-  options.condensates_data_file = "input/condensate_all.dat";
+
   is_initialised = readCondensateData(options.condensates_data_file);
 
   if (options.verbose_level >= 4)
@@ -96,9 +96,6 @@ CondensedPhase<double_type>::CondensedPhase(
 template <class double_type>
 void CondensedPhase<double_type>::init()
 {
-  for (auto & i : condensates)
-    std::cout << i.symbol << "\n";
-
   for (auto & i : condensates) 
     i.findReferenceElement(elements);
 }

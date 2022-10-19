@@ -40,11 +40,13 @@ struct FastChemOptions{
   FastChemOptions(
     const std::string& element_abundances_file_,
     const std::string& species_data_file_,
+    const std::string& cond_species_data_file_,
     const unsigned int verbose_level_start)
-      : verbose_level(verbose_level_start) {
-          element_abundances_file = element_abundances_file_;
-          species_data_file = species_data_file_;
-      };
+      : verbose_level(verbose_level_start)
+      , element_abundances_file(element_abundances_file_)
+      , species_data_file(species_data_file_)
+      , condensates_data_file(cond_species_data_file_)
+      { };
 
   unsigned int nb_max_fastchem_iter   = 1000;
   unsigned int nb_max_bisection_iter  = 3000;
@@ -68,8 +70,8 @@ struct FastChemOptions{
   bool cond_reduce_system_size = true;
 
   std::string chemical_element_file = "";
-  std::string species_data_file = "";
   std::string element_abundances_file = "";
+  std::string species_data_file = "";
   std::string condensates_data_file = "";
 
   bool parameter_file_loaded = false;

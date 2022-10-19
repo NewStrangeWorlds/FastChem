@@ -31,15 +31,20 @@
 
 
 struct Config{
-  std::string atmosphere_file;
-  std::string chem_output_file;
-  std::string cond_output_file;
-  std::string monitor_output_file;
-  unsigned int verbose_level; 
-  bool output_mixing_ratios;
+  std::string atmosphere_file = "";
+  std::string chem_output_file = "";
+  std::string cond_output_file = "";
+  std::string monitor_output_file = "";
+  
+  bool calc_condensation = false;
+  bool rainout_condensation = false;
 
-  std::string element_abundance_file;
-  std::string species_data_file;
+  unsigned int verbose_level = 1; 
+  bool output_mixing_ratios = true;
+
+  std::string element_abundance_file = "";
+  std::string species_data_file = "";
+  std::string cond_species_data_file = "";
   double chemistry_accuracy;
   double newton_error;
 
@@ -78,7 +83,32 @@ bool readConfigFile(std::string &file_path, Config &config)
 
     return false;
   }
-  
+
+  std::getline(file, line); std::getline(file, line); std::getline(file, line);
+  std::string calc_type;
+
+  input.str(line); input.clear();
+  input >> calc_type;
+
+  if (calc_type != "g" && calc_type != "ce" && calc_type !="cr")
+  {
+    std::cout << "Unknown calculation type \"" << calc_type << "\" found in: " << file_path << "\n";
+
+    return false;
+  }
+
+  if (calc_type == "ce")
+  {
+    config.calc_condensation = true;
+    config.rainout_condensation = false;
+  }
+
+  if (calc_type == "cr")
+  {
+    config.calc_condensation = true;
+    config.rainout_condensation = true;
+  }
+
   //chemistry output file
   std::getline(file, line); std::getline(file, line); std::getline(file, line);
   
@@ -92,10 +122,14 @@ bool readConfigFile(std::string &file_path, Config &config)
     return false;
   }
 
-  std::getline(file, line);
-  
-  input.str(line); input.clear();
   input >> config.cond_output_file;
+  
+  if (config.calc_condensation && config.cond_output_file == "")
+  {
+    std::cout << "Unable to read condensate output file location from: " << file_path << "\n";
+
+    return false;
+  }
 
 
   //monitor output file
@@ -163,6 +197,15 @@ bool readConfigFile(std::string &file_path, Config &config)
   if (config.species_data_file == "")
   {
     std::cout << "Unable to read species data file from: " << file_path.c_str() << "\n";
+
+    return false;
+  }
+
+  input >> config.cond_species_data_file;
+
+  if (config.calc_condensation && config.cond_species_data_file == "")
+  {
+    std::cout << "Unable to read condensate species data file from: " << file_path.c_str() << "\n";
 
     return false;
   }
