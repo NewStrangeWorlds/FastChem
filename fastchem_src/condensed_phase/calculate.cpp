@@ -61,8 +61,8 @@ bool CondensedPhase<double_type>::calculate(
   {
     if (i->number_density == 0 && i->activity_correction == 0)
     {
-       i->number_density = i->max_number_density; //1e-10;
-       i->activity_correction = 1.0; //i->log_activity; //1; //1.0;
+       i->number_density = i->max_number_density;
+       i->activity_correction = 1.0;
     }
   }
 
@@ -94,7 +94,6 @@ bool CondensedPhase<double_type>::calculate(
     cond_densities_old[i] = condensates_act[i]->number_density;
     activity_corr_old[i] = condensates_act[i]->activity_correction;
   }
-
 
   bool cond_converged = false;
 
@@ -224,8 +223,7 @@ bool CondensedPhase<double_type>::calculate(
     elem_densities_old = elem_densities_new;
     cond_densities_old = cond_densities_new;
     activity_corr_old = activity_corr_new;
-    
-    //std::cout << "cond delta " << max_delta << "\t" << objective_function_0 << "\n";
+
     cond_converged = max_delta < options.accuracy && system_invertible;
   
     if (cond_converged) break;

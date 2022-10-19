@@ -159,17 +159,10 @@ void CondensedPhase<double_type>::selectJacobianCondensates(
 
   for (size_t i=0; i<condensates.size(); ++i)
   {
-    //if (activity_corr[i] > 1e-5)
-    //if (number_density_cond[i] > 1e-5)
-    if (condensates[i]->log_activity > -0.1)
+    if (condensates[i]->log_activity > -0.1 || options.cond_reduce_system_size == false)
       condensates_jac.push_back(i);
     else
       condensates_rem.push_back(i);
-
-    // if (activity_corr[i] < 1  && number_density_cond[i] < 1e-1)
-    //   condensates_rem.push_back(i);
-    // else
-    //   condensates_jac.push_back(i);
   }
 }
 
@@ -225,7 +218,6 @@ double CondensedPhase<double_type>::totalElementDensity()
 {
   double n_tot = 0.0;
 
-  //then we take into account the condensates
   for (size_t i=0; i<nb_condensates; ++i)
   {
     for (size_t j=0; j<condensates[i].element_indices.size(); ++j)

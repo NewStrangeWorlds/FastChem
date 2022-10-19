@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -377,19 +377,12 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     i.calcActivity(temperature, element_data.elements);
     i.maxDensity(element_data.elements, total_element_density);
   }
-    
 
-  
   std::vector<Condensate<double_type>*> condensates_act;
   std::vector<Element<double_type>*> elements_cond;
 
   condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
 
-  for (auto & i : condensates_act)
-  {
-    i->number_density = 0; //i->max_number_density; //1e-10;
-    i->activity_correction = 0; //1; //1.0;
-  }
 
   std::vector<double_type> number_density_old(element_data.nb_elements, 0.0);
 
@@ -400,86 +393,84 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   bool cond_converged = false;
   bool combined_converged = false;
 
-
-  for (nb_combined_iter=0; nb_combined_iter<300; ++nb_combined_iter)
+  if (condensates_act.size() > 0)
   {
-    condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
-  
-    for (auto & i : condensates_act)
+    for (nb_combined_iter=0; nb_combined_iter<300; ++nb_combined_iter)
     {
-      i->calcActivity(temperature, element_data.elements);
-      i->maxDensity(element_data.elements, total_element_density);
+      condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
+
+      for (auto & i : condensates_act)
+      {
+        i->calcActivity(temperature, element_data.elements);
+        i->maxDensity(element_data.elements, total_element_density);
+      }
+
+      cond_converged = condensed_phase.calculate(
+        condensates_act,
+        elements_cond,
+        temperature,
+        gas_density,
+        total_element_density,
+        gas_phase.molecules,
+        nb_iter);
+
+      nb_cond_iter += nb_iter;
+
+      fastchem_converged = gas_phase.calculate(
+        temperature,
+        gas_density,
+        nb_iter);
+   
+      nb_chem_iter += nb_iter;
+
+      total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
+
+      for (auto & i : condensed_phase.condensates)
+        i.calcActivity(temperature, element_data.elements);
+
+      combined_converged = true;
+
+      for (auto & i : element_data.elements)
+      {
+        if (std::fabs((i.number_density - number_density_old[i.index])) > options.accuracy*number_density_old[i.index]*0.1)
+          combined_converged = false;
+
+        number_density_old[i.index] = i.number_density;
+      }
+
+      if (combined_converged && cond_converged) break;
     }
 
-    cond_converged = condensed_phase.calculate(
-      condensates_act,
-      elements_cond,
-      temperature,
-      gas_density,
-      total_element_density,
-      gas_phase.molecules,
-      nb_iter);
+    for (auto & i : condensed_phase.condensates)
+      if (i.number_density <= 1e-29) i.number_density = 0.0;
+ 
+    for (auto & i : element_data.elements)
+      i.calcDegreeOfCondensation(condensed_phase.condensates, total_element_density);
 
-    nb_cond_iter += nb_iter;
+    double_type phi_sum = 0;
+
+    for (auto & i : element_data.elements)
+      phi_sum += i.phi;
+
+    for (auto & i : element_data.elements)
+      i.normalisePhi(phi_sum);
 
     fastchem_converged = gas_phase.calculate(
       temperature,
       gas_density,
       nb_iter);
-   
-    nb_chem_iter += nb_iter;
-
-    total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
 
     for (auto & i : condensed_phase.condensates)
-      i.calcActivity(temperature, element_data.elements);
-    
-    combined_converged = true;
-
-    //for (auto & i : condensates_act) 
-      //std::cout << i->symbol << "\t" << i->number_density << "\t" << i->max_number_density << "\n";
-
-    for (auto & i : element_data.elements)
-    {
-      if (std::fabs((i.number_density - number_density_old[i.index])) > options.accuracy*number_density_old[i.index]*0.1)
-        combined_converged = false;
-      
-      number_density_old[i.index] = i.number_density;
-      //std::cout << nb_combined_iter << "\t" << i.symbol << "\t" << i.number_density << "\t" << i.degree_of_condensation << "\n";
-    }
-
-    //std::cout << "chem " << fastchem_converged << "  " << nb_iter << "\t" << "cond " << cond_converged << "  " << nb_cond_iter << "\t" << "comb " << combined_converged << "\n";
-
-    if (combined_converged && cond_converged) break;
+      if (i.log_activity > 0.001)
+      {
+        cond_converged = false;
+      }
   }
-
-
-  for (auto & i : condensed_phase.condensates)
-    if (i.number_density <= 1e-29) i.number_density = 0.0;
- 
-  for (auto & i : element_data.elements)
-    i.calcDegreeOfCondensation(condensed_phase.condensates, total_element_density);
-
-  double_type phi_sum = 0;
-
-  for (auto & i : element_data.elements)
-    phi_sum += i.phi;
-
-  for (auto & i : element_data.elements)
-    i.normalisePhi(phi_sum);
-
-  fastchem_converged = gas_phase.calculate(
-      temperature,
-      gas_density,
-      nb_iter);
-
-  for (auto & i : condensed_phase.condensates)
-    if (i.log_activity > 0.001)
-    {
-      std::cout << i.symbol << "\t" << i.log_activity << "\n";
-      fastchem_converged = false;
-      //exit(0);
-    } 
+  else
+  {
+    cond_converged = true;
+    combined_converged = true;
+  }
 
 
   if (!fastchem_converged && options.verbose_level >= 1) 
