@@ -24,9 +24,42 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <map>
 
 
 namespace fastchem {
+
+
+enum class ParameterFloat {
+    invalid_parameter,
+    cond_tau,
+    cond_limit_change,
+    accuracy,
+    newton_err,
+    cond_accuracy,
+    additional_scaling_factor
+};
+
+
+enum class ParameterInt {
+    invalid_parameter,
+    nb_max_cond_iter,
+    nb_max_comb_iter,
+    nb_max_fastchem_iter,
+    nb_max_bisection_iter,
+    nb_max_newton_iter,
+    nb_max_neldermead_iter
+};
+
+
+enum class ParameterBool {
+    invalid_parameter,
+    cond_solve_full_system,
+    cond_reduce_system_size,
+    cond_use_full_pivot,
+    cond_use_svd,
+    use_scaling_factor
+};
 
 
 template <class double_type>
@@ -52,9 +85,12 @@ struct FastChemOptions{
   unsigned int nb_max_bisection_iter  = 3000;
   unsigned int nb_max_newton_iter     = 3000;
   unsigned int nb_max_neldermead_iter = 3000;
+  unsigned int nb_max_cond_iter = 3000;
+  unsigned int nb_chem_cond_iter = 3000;
 
-  double_type accuracy = 1e-4;
-  double_type newton_err = 1e-4;
+  double accuracy = 1e-4;
+  double newton_err = 1e-4;
+  double cond_accuracy = 1e-4;
 
   double_type element_density_minlimit = 1e-300; //smallest allowed particle number densities
   double_type molecule_density_minlimit = 1e-300;
@@ -68,6 +104,8 @@ struct FastChemOptions{
   bool cond_use_full_pivot = false;
   bool cond_solve_full_matrix = false;
   bool cond_reduce_system_size = true;
+  double cond_iter_change_limit = 5;
+  double cond_tau = 1e-15;
 
   std::string chemical_element_file = "";
   std::string element_abundances_file = "";
@@ -76,8 +114,11 @@ struct FastChemOptions{
 
   bool parameter_file_loaded = false;
   bool readParameterFile(const std::string& model_parameter_file);
-};
 
+  ParameterFloat resolveParameter(const std::string& parameter);
+  ParameterBool resolveParameterBool(const std::string& parameter);
+  ParameterInt resolveParameterInt(const std::string& parameter);
+};
 
 
 }

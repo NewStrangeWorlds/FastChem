@@ -48,7 +48,7 @@ bool CondensedPhase<double_type>::calculate(
   if (condensates_act.size() == 0) return true;
 
 
-  double_type tau = 1e-15;
+  double_type tau = options.cond_tau;
 
   for (auto & i : condensates_act)
   {
@@ -65,7 +65,6 @@ bool CondensedPhase<double_type>::calculate(
        i->activity_correction = 1.0;
     }
   }
-
 
   std::vector<unsigned int> condensates_jac;
   condensates_jac.reserve(condensates_act.size());
@@ -97,9 +96,10 @@ bool CondensedPhase<double_type>::calculate(
 
   bool cond_converged = false;
 
-  double_type limit = 5.0;
+  double_type limit = options.cond_iter_change_limit;
 
-  for (nb_iterations=0; nb_iterations<10000; ++nb_iterations)
+
+  for (nb_iterations=0; nb_iterations<options.nb_max_cond_iter; ++nb_iterations)
   { 
     double_type objective_function_0 = 0;
     Eigen::VectorXdt<double_type> scaling_factors;
@@ -194,37 +194,37 @@ bool CondensedPhase<double_type>::calculate(
 
     for (auto & i : molecules)  i.calcNumberDensity(elements);
 
-    /*double_type max_delta1 = newtonBacktrack(
-      objective_function_0,
-      result,
-      scaling_factors,
-      condensates_act,
-      condensates_jac,
-      condensates_rem,
-      activity_corr_old,
-      activity_corr_new,
-      cond_densities_old,
-      cond_densities_new,
-      elements_cond,
-      elem_densities_old,
-      elem_densities_new,
-      molecules,
-      total_element_density,
-      temperature,
-      limit);*/
+    // double_type max_delta1 = newtonBacktrack(
+    //   objective_function_0,
+    //   result,
+    //   scaling_factors,
+    //   condensates_act,
+    //   condensates_jac,
+    //   condensates_rem,
+    //   activity_corr_old,
+    //   activity_corr_new,
+    //   cond_densities_old,
+    //   cond_densities_new,
+    //   elements_cond,
+    //   elem_densities_old,
+    //   elem_densities_new,
+    //   molecules,
+    //   total_element_density,
+    //   temperature,
+    //   limit);
 
-    /*{
-    std::cout << "iter: " << nb_iterations << "\n";
-    for (size_t i=0; i<condensates_act.size(); ++i)
-      std::cout <<i << "  " << condensates_act[i]->symbol << "\t" << cond_densities_old[i] << "\t" << cond_densities_new[i] << "\t" << activity_corr_old[i] << "\t" << activity_corr_new[i] << "\t" << condensates_act[i]->log_activity << "\t" << condensates_act[i]->tau << "\n";
-    }*/
+    {
+    //std::cout << "iter: " << nb_iterations << "  " << objective_function_0 << "\n";
+    //for (size_t i=0; i<condensates_act.size(); ++i)
+      //std::cout <<i << "  " << condensates_act[i]->symbol << "\t" << cond_densities_old[i] << "\t" << cond_densities_new[i] << "\t" << activity_corr_old[i] << "\t" << activity_corr_new[i] << "\t" << condensates_act[i]->log_activity << "\t" << condensates_act[i]->tau << "\n";
+    }
 
 
     elem_densities_old = elem_densities_new;
     cond_densities_old = cond_densities_new;
     activity_corr_old = activity_corr_new;
 
-    cond_converged = max_delta < options.accuracy && system_invertible;
+    cond_converged = max_delta < options.cond_accuracy && system_invertible && objective_function_0 < 0.001;
   
     if (cond_converged) break;
   }
@@ -433,8 +433,6 @@ double_type CondensedPhase<double_type>::newtonBacktrack(
 
   double_type lamdba_min = 1e-5;
 
-  //std::cout << "of_0: " <<  objective_function_0 << "\t" << objective_function_1 << "\n";
-
   if (objective_function_1 > objective_function_0)
   {
       const double_type object_function_deriv = -2.0*objective_function_0;
@@ -514,8 +512,6 @@ double_type CondensedPhase<double_type>::newtonBacktrack(
           molecules,
           total_element_density,
           scaling_factors);
-
-        //std::cout << objective_function_prev << "\t" << objective_function_0 << "\t" << objective_function_0 + 1e-4*lambda*object_function_deriv << "\t" << lambda << "\t" << object_function_deriv << "\t" << limit1 << "\n";
       }
 
       if (lambda_prev <= lamdba_min)

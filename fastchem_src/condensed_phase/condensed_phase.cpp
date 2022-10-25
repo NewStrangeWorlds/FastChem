@@ -135,6 +135,7 @@ void CondensedPhase<double_type>::selectActiveCondensates(
       if (j->stoichiometric_vector[i.index] != 0)
       {
         elements_cond.push_back(&i);
+        elements_cond.back()->fixed_by_condensation = true;
         break;
       }
   }

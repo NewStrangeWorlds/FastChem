@@ -98,6 +98,10 @@ class FastChem {
     void setAdditionalScalingFactor(const double scaling_factor) {
       options.additional_scaling_factor = scaling_factor;}
 
+    void setParameter(const std::string& parameter, const double param_value);
+    void setParameter(const std::string& parameter, const bool param_value);
+    void setParameter(const std::string& parameter, const int param_value);
+
   private:
     FastChemOptions<double_type> options;
     

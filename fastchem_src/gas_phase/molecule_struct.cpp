@@ -21,6 +21,7 @@
 #include "../fastchem_constants.h"
 #include "../species_struct.h"
 
+#include <iostream>
 #include <cmath>
 
 

@@ -39,6 +39,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 
 #define the source files   
 set(SRC_FASTCHEM
+  fastchem_src/options.cpp
   fastchem_src/calc_densities.cpp
   fastchem_src/fastchem.cpp
   fastchem_src/fastchem_get_set.cpp

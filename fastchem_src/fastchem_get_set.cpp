@@ -19,6 +19,7 @@
 
 
 #include "fastchem.h"
+#include "options.h"
 
 #include <string>
 #include <vector>
@@ -164,6 +165,120 @@ void FastChem<double_type>::setElementAbundances(std::vector<double> abundances)
   element_data.setAbundances(abundances);
 
   gas_phase.reInitialise();
+}
+
+
+//Set an internal FastChem parameter (for double values)
+template <class double_type>
+void FastChem<double_type>::setParameter(const std::string& parameter, const double value)
+{
+  auto param = options.resolveParameter(parameter);
+
+  switch (param)
+  {
+    case ParameterFloat::cond_tau:
+      options.cond_tau = value;
+      break;
+    
+    case ParameterFloat::cond_limit_change:
+      options.cond_iter_change_limit = value;
+      break;
+
+    case ParameterFloat::accuracy:
+      options.accuracy = value;
+      break;
+
+    case ParameterFloat::cond_accuracy:
+      options.cond_accuracy = value;
+      break;
+
+    case ParameterFloat::newton_err:
+      options.newton_err = value;
+      break;
+
+    case ParameterFloat::additional_scaling_factor:
+      options.additional_scaling_factor = value;
+      break;
+  
+    default:
+      std::cout << "Unknown parameter \"" << parameter << "\"  with a floatint-point value!\n";
+      break;
+  }
+}
+
+
+//Set an internal FastChem parameter (for boolean values)
+template <class double_type>
+void FastChem<double_type>::setParameter(const std::string& parameter, const bool value)
+{
+  auto param = options.resolveParameterBool(parameter);
+
+  switch (param)
+  {
+    case ParameterBool::cond_solve_full_system:
+      options.cond_solve_full_matrix = value;
+      break;
+
+    case ParameterBool::cond_reduce_system_size:
+      options.cond_reduce_system_size = value;
+      break;
+
+    case ParameterBool::cond_use_full_pivot:
+      options.cond_use_full_pivot = value;
+      break;
+
+    case ParameterBool::cond_use_svd:
+      options.cond_use_svd = value;
+      break;
+
+    case ParameterBool::use_scaling_factor:
+      options.use_scaling_factor = value;
+      break;
+  
+    default:
+      std::cout << "Unknown parameter \"" << parameter << "\"  with a boolean value!\n";
+      break;
+  }
+}
+
+
+
+//Set an internal FastChem parameter (for integer values)
+template <class double_type>
+void FastChem<double_type>::setParameter(const std::string& parameter, const int value)
+{
+  auto param = options.resolveParameterInt(parameter);
+
+  switch (param)
+  {
+    case ParameterInt::nb_max_bisection_iter:
+      options.nb_max_bisection_iter = value;
+      break;
+
+    case ParameterInt::nb_max_comb_iter:
+      options.nb_chem_cond_iter = value;
+      break;
+
+    case ParameterInt::nb_max_cond_iter:
+      options.nb_max_cond_iter = value;
+      break;
+
+    case ParameterInt::nb_max_fastchem_iter:
+      options.nb_max_fastchem_iter = value;
+      break;
+
+    case ParameterInt::nb_max_neldermead_iter:
+      options.nb_max_neldermead_iter = value;
+      break;
+
+    case ParameterInt::nb_max_newton_iter:
+      options.nb_max_newton_iter = value;
+      break;
+  
+    default:
+      std::cout << "Unknown parameter \"" << parameter << "\"  with an integer value!\n";
+      break;
+  }
 }
 
 

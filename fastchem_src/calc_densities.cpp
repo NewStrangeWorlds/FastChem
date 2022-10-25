@@ -333,7 +333,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   unsigned int& nb_chem_iter,
   unsigned int& nb_cond_iter,
   unsigned int& nb_combined_iter)
-{
+{ options.additional_scaling_factor = 0;
   for (auto & i : gas_phase.molecules) i.calcMassActionConstant(temperature);
   for (auto & i : condensed_phase.condensates) i.calcMassActionConstant(temperature);
 
@@ -398,7 +398,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       number_density_old[i] = element_data.elements[i].number_density;
 
     //run the equilibrium condensation and gas phase iteration
-    for (nb_combined_iter=0; nb_combined_iter<300; ++nb_combined_iter)
+    for (nb_combined_iter=0; nb_combined_iter<options.nb_chem_cond_iter; ++nb_combined_iter)
     {
       condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
 
@@ -419,6 +419,8 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
       nb_cond_iter += nb_iter;
 
+      //gas_phase.reInitialise();
+      
       fastchem_converged = gas_phase.calculate(
         temperature,
         gas_density,
@@ -441,13 +443,15 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
         number_density_old[i.index] = i.number_density;
       }
 
+      condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
+
       if (combined_converged && cond_converged) break;
     }
     
     //sanity check
     for (auto & i : condensed_phase.condensates)
       if (i.log_activity > 0.001)
-      {
+      { 
         cond_converged = false;
       }
 

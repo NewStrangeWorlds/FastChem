@@ -1,5 +1,5 @@
 #Atmospheric profile input file
-input/p_t_sel.dat
+input/p_t_grid.dat
 
 #Chemistry calculation type (gas phase only = g, equilibrium condensation = ce, rainout condensation = cr)
 ce
