@@ -59,7 +59,9 @@ ParameterFloat FastChemOptions<double_type>::resolveParameter(
     { std::string("accuracyChem"), ParameterFloat::accuracy },
     { std::string("accuracyCond"), ParameterFloat::cond_accuracy },
     { std::string("accuracyNewton"), ParameterFloat::newton_err },
-    { std::string("additionalScaling"), ParameterFloat::additional_scaling_factor }
+    { std::string("additionalScaling"), ParameterFloat::additional_scaling_factor },
+    { std::string("minDensityElement"), ParameterFloat::element_minlimit },
+    { std::string("minDensityMolecules"), ParameterFloat::molecule_minlimit }
   };
 
   auto itr = parameter_strings.find(parameter);

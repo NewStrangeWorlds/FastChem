@@ -170,7 +170,7 @@ void FastChem<double_type>::setElementAbundances(std::vector<double> abundances)
 
 //Set an internal FastChem parameter (for double values)
 template <class double_type>
-void FastChem<double_type>::setParameter(const std::string& parameter, const double value)
+void FastChem<double_type>::setParameter(const std::string& parameter, const double_type value)
 {
   auto param = options.resolveParameter(parameter);
 
@@ -194,6 +194,14 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const dou
 
     case ParameterFloat::newton_err:
       options.newton_err = value;
+      break;
+
+    case ParameterFloat::element_minlimit:
+      options.element_density_minlimit = value;
+      break;
+
+    case ParameterFloat::molecule_minlimit:
+      options.molecule_density_minlimit = value;
       break;
 
     case ParameterFloat::additional_scaling_factor:

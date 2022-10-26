@@ -37,7 +37,9 @@ enum class ParameterFloat {
     accuracy,
     newton_err,
     cond_accuracy,
-    additional_scaling_factor
+    additional_scaling_factor,
+    element_minlimit,
+    molecule_minlimit
 };
 
 
