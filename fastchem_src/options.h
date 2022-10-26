@@ -69,6 +69,7 @@ struct FastChemOptions{
     const unsigned int verbose_level_start)
       : verbose_level(verbose_level_start) {
           parameter_file_loaded = readParameterFile(parameter_file);
+          init();
       };
   FastChemOptions(
     const std::string& element_abundances_file_,
@@ -78,12 +79,15 @@ struct FastChemOptions{
       : verbose_level(verbose_level_start)
       , element_abundances_file(element_abundances_file_)
       , species_data_file(species_data_file_)
-      , condensates_data_file(cond_species_data_file_)
-      { };
+      , condensates_data_file(cond_species_data_file_) {
+          init();
+      };
 
-  unsigned int nb_max_fastchem_iter   = 1000;
-  unsigned int nb_max_bisection_iter  = 3000;
-  unsigned int nb_max_newton_iter     = 3000;
+  void init();
+
+  unsigned int nb_max_fastchem_iter = 1000;
+  unsigned int nb_max_bisection_iter = 3000;
+  unsigned int nb_max_newton_iter = 3000;
   unsigned int nb_max_neldermead_iter = 3000;
   unsigned int nb_max_cond_iter = 3000;
   unsigned int nb_chem_cond_iter = 3000;
@@ -92,8 +96,8 @@ struct FastChemOptions{
   double newton_err = 1e-4;
   double cond_accuracy = 1e-4;
 
-  double_type element_density_minlimit = 1e-300; //smallest allowed particle number densities
-  double_type molecule_density_minlimit = 1e-300;
+  double_type element_density_minlimit = 1e-155; //smallest allowed particle number densities
+  double_type molecule_density_minlimit = 1e-155;
 
   unsigned int verbose_level = 1;
 

@@ -91,17 +91,7 @@ FastChem<double_type>::FastChem(
 template <class double_type>
 void FastChem<double_type>::init()
 {
-  //init accuracy limit based on the numerical precision
-  if (std::numeric_limits<double_type>::max_exponent10 > 1000)
-  {
-    options.element_density_minlimit = 1e-512L;
-    options.molecule_density_minlimit = 1e-512L;
-  }
-  else
-  {
-    options.element_density_minlimit = 1e-155;
-    options.molecule_density_minlimit = 1e-155;
-  }
+
 }
 
 

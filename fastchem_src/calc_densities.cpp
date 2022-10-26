@@ -443,8 +443,6 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
         number_density_old[i.index] = i.number_density;
       }
 
-      condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
-
       if (combined_converged && cond_converged) break;
     }
     

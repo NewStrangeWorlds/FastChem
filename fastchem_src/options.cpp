@@ -22,11 +22,30 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <limits>
 
 #include "options.h"
 
 
 namespace fastchem {
+
+
+template <class double_type>
+void FastChemOptions<double_type>::init()
+{
+  //init accuracy limit based on the numerical precision
+  if (std::numeric_limits<double_type>::max_exponent10 > 1000)
+  {
+    element_density_minlimit = 1e-512L;
+    molecule_density_minlimit = 1e-512L;
+  }
+  else
+  {
+    element_density_minlimit = 1e-155;
+    molecule_density_minlimit = 1e-155;
+  }
+}
+
 
 
 template <class double_type>
@@ -73,6 +92,7 @@ ParameterBool FastChemOptions<double_type>::resolveParameterBool(
 
   return ParameterBool::invalid_parameter; 
 }
+
 
 
 template <class double_type>
