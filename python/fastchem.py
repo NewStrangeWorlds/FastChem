@@ -46,12 +46,17 @@ output_data = pyfastchem.FastChemOutput()
 input_data.temperature = temperature
 input_data.pressure = pressure
 
-input_data.equilibrium_condensation = False
-
 
 #run FastChem on the entire p-T structure
 fastchem_flag = fastchem.calcDensities(input_data, output_data)
-print("FastChem reports:", pyfastchem.FASTCHEM_MSG[fastchem_flag])
+
+print("FastChem reports:")
+print("  -", pyfastchem.FASTCHEM_MSG[fastchem_flag])
+
+if np.amin(output_data.element_conserved[:]) == 1:
+  print("  - element conservation: ok")
+else:
+  print("  - element conservation: fail")
 
 
 #convert the output into a numpy array

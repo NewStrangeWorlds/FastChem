@@ -70,7 +70,8 @@ class FastChem {
     double getElementAbundance(const unsigned int species_index);
     std::vector<double> getElementAbundances();
 
-    double getSpeciesMolecularWeight(const unsigned int species_index);
+    double getSpeciesWeight(const unsigned int species_index);
+    double getCondSpeciesWeight(const unsigned int species_index);
 
     //functions to set internal variables during runtime
     //they will override any read-in values

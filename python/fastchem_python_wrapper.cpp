@@ -44,12 +44,19 @@ PYBIND11_MODULE(pyfastchem, m) {
         .def("getSpeciesNumber", &fastchem::FastChem<long double>::getSpeciesNumber)
         .def("getElementNumber", &fastchem::FastChem<long double>::getElementNumber)
         .def("getMoleculeNumber", &fastchem::FastChem<long double>::getMoleculeNumber)
+        .def("getCondensateNumber", &fastchem::FastChem<long double>::getCondensateNumber)
+        
         .def("getSpeciesIndex", &fastchem::FastChem<long double>::getSpeciesIndex)
         .def("getSpeciesName", &fastchem::FastChem<long double>::getSpeciesName)
         .def("getSpeciesSymbol", &fastchem::FastChem<long double>::getSpeciesSymbol)
-
-        .def("getSpeciesMolecularWeight", &fastchem::FastChem<long double>::getSpeciesMolecularWeight)
         
+        .def("getCondSpeciesIndex", &fastchem::FastChem<long double>::getCondSpeciesIndex)
+        .def("getCondSpeciesName", &fastchem::FastChem<long double>::getCondSpeciesName)
+        .def("getCondSpeciesSymbol", &fastchem::FastChem<long double>::getCondSpeciesSymbol)
+
+        .def("getSpeciesWeight", &fastchem::FastChem<long double>::getSpeciesWeight)
+        .def("getCondSpeciesWeight", &fastchem::FastChem<long double>::getCondSpeciesWeight)
+
         .def("setVerboseLevel", &fastchem::FastChem<long double>::setVerboseLevel)
         
         .def("getElementAbundance", &fastchem::FastChem<long double>::getElementAbundance)

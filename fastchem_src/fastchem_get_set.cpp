@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -124,10 +124,22 @@ std::string FastChem<double_type>::getCondSpeciesSymbol(const unsigned int speci
 //Query for a the molecular weight of a species with its index
 //Returns 0 in case the species does not exist
 template <class double_type>
-double FastChem<double_type>::getSpeciesMolecularWeight(const unsigned int species_index)
+double FastChem<double_type>::getSpeciesWeight(const unsigned int species_index)
 {
   if (species_index < gas_phase.nb_species)
     return gas_phase.species[species_index]->weight;
+  else
+    return 0.;
+}
+
+
+//Query for a the weight of a species with its index
+//Returns 0 in case the species does not exist
+template <class double_type>
+double FastChem<double_type>::getCondSpeciesWeight(const unsigned int species_index)
+{
+  if (species_index < condensed_phase.nb_condensates)
+    return condensed_phase.condensates[species_index].weight;
   else
     return 0.;
 }
