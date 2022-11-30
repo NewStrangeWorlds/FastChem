@@ -253,7 +253,7 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const boo
 
 //Set an internal FastChem parameter (for integer values)
 template <class double_type>
-void FastChem<double_type>::setParameter(const std::string& parameter, const int value)
+void FastChem<double_type>::setParameter(const std::string& parameter, const unsigned int value)
 {
   auto param = options.resolveParameterInt(parameter);
 

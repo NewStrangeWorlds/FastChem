@@ -47,7 +47,7 @@ void GasPhase<double_type>::calculateElementDensities(
 
   species.number_density_maj = n_major * species.phi;
 
-  if (species.degree_of_condensation == 0.0)
+  if (species.fixed_by_condensation == false)
   {
     //calculate the scaling factor if required
     if (options.use_scaling_factor)

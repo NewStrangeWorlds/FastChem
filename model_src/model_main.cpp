@@ -64,12 +64,12 @@ int main(int argc, char *argv[])
 
 
   //set the FastChem parameters from the config file
-  fastchem.setChemistryAccuracy(config.chemistry_accuracy);
-  fastchem.setNewtonAccuracy(config.newton_error);
-  fastchem.setMaxChemistryIter(config.nb_chemistry_iterations);
-  fastchem.setMaxNewtonIter(config.nb_newton_iterations);
-  fastchem.setMaxNelderMeadIter(config.nb_nelder_mead_iterations);
-  fastchem.setMaxBisectionIter(config.nb_bisection_iterations);
+  fastchem.setParameter(std::string("accuracyChem"), (long double) config.chemistry_accuracy);
+  fastchem.setParameter(std::string("accuracyNewton"), (long double) config.newton_error);
+  fastchem.setParameter(std::string("nbIterationsChem"), config.nb_chemistry_iterations);
+  fastchem.setParameter(std::string("nbIterationsNewton"), config.nb_newton_iterations);
+  fastchem.setParameter(std::string("nbIterationsNelderMead"), config.nb_nelder_mead_iterations);
+  fastchem.setParameter(std::string("nbIterationsBisection"), config.nb_bisection_iterations);
 
 
   //read in the temperature-pressure structure

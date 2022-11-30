@@ -79,28 +79,9 @@ class FastChem {
     void setVerboseLevel(const unsigned int level) { 
       if (level > 4) options.verbose_level = 4; else options.verbose_level = level;}
 
-    void setMaxChemistryIter(const unsigned int nb_steps) {
-      options.nb_max_fastchem_iter = nb_steps;}
-    void setMaxNewtonIter(const unsigned int nb_steps) {
-      options.nb_max_newton_iter = nb_steps;}
-    void setMaxBisectionIter(const unsigned int nb_steps) {
-      options.nb_max_bisection_iter = nb_steps;}
-    void setMaxNelderMeadIter(const unsigned int nb_steps) {
-      options.nb_max_neldermead_iter = nb_steps;}
-
-    void setChemistryAccuracy(const double chem_accuracy) {
-      options.accuracy = chem_accuracy;}
-    void setNewtonAccuracy(const double newton_accuracy) {
-      options.newton_err = newton_accuracy;}
-
-    void useScalingFactor(const bool use_switch) {
-      options.use_scaling_factor = use_switch;}
-    void setAdditionalScalingFactor(const double scaling_factor) {
-      options.additional_scaling_factor = scaling_factor;}
-
     void setParameter(const std::string& parameter, const double_type param_value);
     void setParameter(const std::string& parameter, const bool param_value);
-    void setParameter(const std::string& parameter, const int param_value);
+    void setParameter(const std::string& parameter, const unsigned int param_value);
 
   private:
     FastChemOptions<double_type> options;

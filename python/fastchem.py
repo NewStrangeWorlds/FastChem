@@ -25,7 +25,11 @@ plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 
 
 #create a FastChem object
-fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../input/logK.dat', 1)
+fastchem = pyfastchem.FastChem(
+  '../input/element_abundances_solar.dat', 
+  '../input/logK.dat', 
+  '../input/condensate_all.dat',
+  1)
 
 
 #we could also create a FastChem object by using the parameter file
@@ -41,6 +45,8 @@ output_data = pyfastchem.FastChemOutput()
 
 input_data.temperature = temperature
 input_data.pressure = pressure
+
+input_data.equilibrium_condensation = False
 
 
 #run FastChem on the entire p-T structure
