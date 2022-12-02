@@ -55,7 +55,9 @@ total_element_density = np.zeros(nb_points)
 mean_molecular_weight = np.zeros(nb_points)
 element_conserved = np.zeros((nb_points, fastchem.getElementNumber()), dtype=int)
 fastchem_flags = np.zeros(nb_points, dtype=int)
+nb_iterations = np.zeros(nb_points, dtype=int)
 nb_chemistry_iterations = np.zeros(nb_points, dtype=int)
+nb_cond_iterations = np.zeros(nb_points, dtype=int)
 
 temperature = np.zeros(nb_points)
 pressure = np.zeros(nb_points)
@@ -92,7 +94,9 @@ for i in range(0, nb_points):
   mean_molecular_weight[i] = output_data.mean_molecular_weight[0]
   element_conserved[i,:] = output_data.element_conserved[0]
   fastchem_flags[i] = output_data.fastchem_flag[0]
+  nb_iterations[i] = output_data.nb_iterations[0]
   nb_chemistry_iterations[i] = output_data.nb_chemistry_iterations[0]
+  nb_cond_iterations[i] = output_data.nb_cond_iterations[0]
 
 
 #convergence summary report
@@ -120,7 +124,9 @@ saveMonitorOutput(output_dir + '/monitor.dat',
                   temperature, pressure, 
                   element_conserved,
                   fastchem_flags,
+                  nb_iterations,
                   nb_chemistry_iterations,
+                  nb_cond_iterations,
                   total_element_density,
                   mean_molecular_weight,
                   fastchem,

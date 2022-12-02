@@ -78,7 +78,9 @@ saveMonitorOutput(output_dir + '/monitor.dat',
                   temperature, pressure, 
                   output_data.element_conserved,
                   output_data.fastchem_flag,
+                  output_data.nb_iterations,
                   output_data.nb_chemistry_iterations,
+                  output_data.nb_cond_iterations,
                   output_data.total_element_density,
                   output_data.mean_molecular_weight,
                   fastchem)
@@ -103,17 +105,19 @@ saveChemistryOutput(output_dir + '/chemistry_select.dat',
 
 #save the monitor output to a file
 #here, the data is saved as a pandas DataFrame inside a pickle file
-# saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
-#                   temperature, pressure, 
-#                   output_data.element_conserved,
-#                   output_data.fastchem_flag,
-#                   output_data.nb_chemistry_iterations,
-#                   output_data.total_element_density,
-#                   output_data.mean_molecular_weight,
-#                   fastchem)
+saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
+                  temperature, pressure, 
+                  output_data.element_conserved,
+                  output_data.fastchem_flag,
+                  output_data.nb_iterations,
+                  output_data.nb_chemistry_iterations,
+                  output_data.nb_cond_iterations,
+                  output_data.total_element_density,
+                  output_data.mean_molecular_weight,
+                  fastchem)
 
-# #this would save the output of all species
-# #here, the data is saved as a pandas DataFrame inside a pickle file
+#this would save the output of all species
+#here, the data is saved as a pandas DataFrame inside a pickle file
 # saveChemistryOutputPandas(output_dir + '/chemistry.pkl',
 #                     temperature, pressure,
 #                     output_data.total_element_density,

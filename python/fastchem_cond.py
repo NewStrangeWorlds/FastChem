@@ -1,15 +1,18 @@
 
 import pyfastchem
-from save_output import saveChemistryOutput, saveMonitorOutput, saveChemistryOutputPandas, saveMonitorOutputPandas
+from save_output import saveChemistryOutput, saveCondOutput, saveMonitorOutput, saveChemistryOutputPandas, saveMonitorOutputPandas, saveCondOutputPandas
 import numpy as np
 import os
 import matplotlib.pyplot as plt
 from astropy import constants as const
 
 
-#some input values for temperature (in K) and pressure (in bar)
-temperature = np.full(1000, 500)
-pressure = np.logspace(-6, 1, num=1000)
+#we read in a p-T structure for a brown dwarf
+data = np.loadtxt("../input/Gliese_229b.dat")
+
+#and extract temperature and pressure values
+temperature = data[:,1]
+pressure = data[:,0]
 
 
 #define the directory for the output
@@ -19,9 +22,12 @@ output_dir = '../output'
 
 #the chemical species we want to plot later
 #note that the standard FastChem input files use the Hill notation
-plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1']
+plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'Fe1H1']
 #for the plot lables, we therefore use separate strings in the usual notation
-plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
+plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
+
+plot_species_cond = ['Fe[s]', 'MgSiO3[s]']
+
 
 
 #create a FastChem object
@@ -52,6 +58,8 @@ input_data.equilibrium_condensation = True
 #run FastChem on the entire p-T structure
 fastchem_flag = fastchem.calcDensities(input_data, output_data)
 
+
+#convergence summary report
 print("FastChem reports:")
 print("  -", pyfastchem.FASTCHEM_MSG[fastchem_flag])
 
@@ -63,6 +71,7 @@ else:
 
 #convert the output into a numpy array
 number_densities = np.array(output_data.number_densities)
+number_densities_cond = np.array(output_data.number_densities_cond)
 
 
 #total gas particle number density from the ideal gas law 
@@ -80,7 +89,9 @@ saveMonitorOutput(output_dir + '/monitor.dat',
                   temperature, pressure, 
                   output_data.element_conserved,
                   output_data.fastchem_flag,
+                  output_data.nb_iterations,
                   output_data.nb_chemistry_iterations,
+                  output_data.nb_cond_iterations,
                   output_data.total_element_density,
                   output_data.mean_molecular_weight,
                   fastchem)
@@ -93,14 +104,12 @@ saveChemistryOutput(output_dir + '/chemistry.dat',
                     output_data.number_densities, 
                     fastchem)
 
-#this saves only selected species (here the species we also plot)
-saveChemistryOutput(output_dir + '/chemistry_select.dat', 
-                    temperature, pressure, 
-                    output_data.total_element_density, 
-                    output_data.mean_molecular_weight, 
-                    output_data.number_densities, 
-                    fastchem,
-                    plot_species)
+#this would save the output of all species
+saveCondOutput(output_dir + '/condensates.dat', 
+               temperature, pressure, 
+               output_data.element_cond_degree, 
+               output_data.number_densities_cond, 
+               fastchem)
 
 
 #save the monitor output to a file
@@ -124,8 +133,17 @@ saveChemistryOutput(output_dir + '/chemistry_select.dat',
 #                     fastchem)
 
 
+#this would save the condensate output
+#the data is saved as a pandas DataFrame inside a pickle file
+# saveCondOutputPandas(output_dir + '/condensates.pkl',
+#                     temperature, pressure,
+#                     output_data.element_cond_degree,
+#                     output_data.number_densities_cond,
+#                     fastchem)
 
-#check the species we want to plot and get their indices from FastChem
+
+
+#check the gas-phase species we want to plot and get their indices from FastChem
 plot_species_indices = []
 plot_species_symbols = []
 
@@ -139,17 +157,42 @@ for i, species in enumerate(plot_species):
     print("Species", species, "to plot not found in FastChem")
 
 
-#and plot...
+#check the condensates we want to plot and get their indices from FastChem
+plot_species_indices_cond = []
+plot_species_symbols_cond = []
+
+for i, species in enumerate(plot_species_cond):
+  index = fastchem.getCondSpeciesIndex(species)
+
+  if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
+    plot_species_indices_cond.append(index)
+    plot_species_symbols_cond.append(plot_species_cond[i])
+  else:
+    print("Species", species, "to plot not found in FastChem")
+
+
+#and plot everything...
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 6))
+
 for i in range(0, len(plot_species_symbols)):
-  fig = plt.plot(number_densities[:, plot_species_indices[i]]/gas_number_density, pressure)
+  ax1.plot(number_densities[:, plot_species_indices[i]]/gas_number_density, pressure)
 
-plt.xscale('log')
-plt.yscale('log')
-plt.gca().set_ylim(plt.gca().get_ylim()[::-1])
+ax1.set(xscale='log', yscale = 'log')
+ax1.set_ylim(ax1.get_ylim()[::-1])
 
-plt.xlabel("Mixing ratios")
-plt.ylabel("Pressure (bar)")
-plt.legend(plot_species_symbols)
+ax1.set(xlabel = 'Mixing ratios', ylabel = 'Pressure (bar)')
+ax1.legend(plot_species_symbols)
+
+
+for i in range(0, len(plot_species_symbols_cond)):
+  ax2.plot(number_densities_cond[:, plot_species_indices_cond[i]], pressure)
+
+ax2.set(xscale='log', yscale = 'log')
+ax2.set_ylim(ax2.get_ylim()[::-1])
+
+ax2.set(xlabel = 'Number density (cm$^{-3}$)', ylabel = 'Pressure (bar)')
+ax2.legend(plot_species_symbols_cond)
+
 
 plt.show()
 
