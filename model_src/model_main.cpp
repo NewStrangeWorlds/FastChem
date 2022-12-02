@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     std::vector<std::string> cond_species_symbols(nb_condensates);
 
     for (size_t i=0; i<nb_condensates; ++i)
-      cond_species_symbols[i] = fastchem.getCondSpeciesSymbol(i);
+      cond_species_symbols[i] = fastchem.getCondensateSymbol(i);
 
     saveCondOutput(config.cond_output_file, input, output, element_symbols, cond_species_symbols);
   }

@@ -58,9 +58,13 @@ class FastChem {
     std::string getSpeciesSymbol(const unsigned int species_index);
     unsigned int getSpeciesIndex(const std::string symbol);
 
-    std::string getCondSpeciesName(const unsigned int species_index);
-    unsigned int getCondSpeciesIndex(const std::string symbol);
-    std::string getCondSpeciesSymbol(const unsigned int species_index);
+    std::string getElementName(const unsigned int species_index);
+    std::string getElementSymbol(const unsigned int species_index);
+    unsigned int getElementIndex(const std::string symbol);
+
+    std::string getCondensateName(const unsigned int species_index);
+    unsigned int getCondensateIndex(const std::string symbol);
+    std::string getCondensateSymbol(const unsigned int species_index);
 
     unsigned int getSpeciesNumber() {return gas_phase.nb_species;}
     unsigned int getElementNumber() {return element_data.nb_elements;}
@@ -71,7 +75,8 @@ class FastChem {
     std::vector<double> getElementAbundances();
 
     double getSpeciesWeight(const unsigned int species_index);
-    double getCondSpeciesWeight(const unsigned int species_index);
+    double getElementWeight(const unsigned int species_index);
+    double getCondensateWeight(const unsigned int species_index);
 
     //functions to set internal variables during runtime
     //they will override any read-in values

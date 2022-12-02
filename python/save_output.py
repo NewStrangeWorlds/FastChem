@@ -170,12 +170,12 @@ def saveCondOutput(file_path,                     #the path to the output file
       
     #for the degree of condensation
     for j in range(fastchem.getElementNumber()):
-      file.write('\t{0:<16}'.format(fastchem.getSpeciesSymbol(j)))
+      file.write('\t{0:<16}'.format(fastchem.getElementSymbol(j)))
 
 
     if output_species is None: #save all species
       for j in range(fastchem.getCondensateNumber()):
-        file.write('\t{0:<16}'.format(fastchem.getCondSpeciesSymbol(j)))
+        file.write('\t{0:<16}'.format(fastchem.getCondensateSymbol(j)))
 
       file.write('\n')
 
@@ -203,7 +203,7 @@ def saveCondOutput(file_path,                     #the path to the output file
    
     else:  #save only selected species
       for species in output_species:
-        if fastchem.getCondSpeciesIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
+        if fastchem.getCondensateIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
           file.write('\t{0:<16}'.format(species))
         else:
           print('Species ', species, ' not found during saving of the chemistry output!')
@@ -228,7 +228,7 @@ def saveCondOutput(file_path,                     #the path to the output file
 
         #the selected condensates
         for species in output_species:
-          species_index = fastchem.getCondSpeciesIndex(species)
+          species_index = fastchem.getCondensateIndex(species)
           if species_index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
             file.write('\t{0:1.10e}'.format(number_densities[i, species_index]))
 
@@ -307,7 +307,7 @@ def saveMonitorOutput(file_path,                     #the path to the output fil
 
     #header with element symbols
     for j in range(fastchem.getElementNumber()):
-      file.write('{0:<8}'.format(fastchem.getSpeciesSymbol(j)))
+      file.write('{0:<8}'.format(fastchem.getElementSymbol(j)))
     
     file.write('\n')
 
@@ -499,20 +499,20 @@ def saveCondOutputPandas(file_path,                     #the path to the output 
 
   #header for the degree of condensation
   for j in range(fastchem.getElementNumber()):
-    columns.append(fastchem.getSpeciesSymbol(j))
+    columns.append(fastchem.getElementSymbol(j))
 
 
   #header for species symbols
   if output_species is None:
     for j in range(fastchem.getCondensateNumber()):
-      columns.append(fastchem.getCondSpeciesSymbol(j))
+      columns.append(fastchem.getCondensateSymbol(j))
   else:
     select_species_id = []
 
     for species in output_species:
-      if fastchem.getCondSpeciesIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
+      if fastchem.getCondensateIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
         columns.append(species)
-        select_species_id.append(fastchem.getCondSpeciesIndex(species))
+        select_species_id.append(fastchem.getCondensateIndex(species))
       else:
         print('Species ', species, ' not found during saving of the chemistry output!')
 
@@ -604,7 +604,7 @@ def saveMonitorOutputPandas(file_path,                     #the path to the outp
 
   #header for element symbols
   for j in range(nb_elements):
-    columns.append(fastchem.getSpeciesSymbol(j))
+    columns.append(fastchem.getElementSymbol(j))
 
 
   #and the debug output
@@ -655,7 +655,7 @@ def saveMonitorOutputPandas(file_path,                     #the path to the outp
   df = df.astype({'elem_conserved':'int64'})
 
   for j in range(nb_elements):
-    df = df.astype({fastchem.getSpeciesSymbol(j) :'int64'})
+    df = df.astype({fastchem.getElementSymbol(j) :'int64'})
 
   #and finally save it as a pickle file
   df.to_pickle(file_path)

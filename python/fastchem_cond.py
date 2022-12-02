@@ -162,7 +162,7 @@ plot_species_indices_cond = []
 plot_species_symbols_cond = []
 
 for i, species in enumerate(plot_species_cond):
-  index = fastchem.getCondSpeciesIndex(species)
+  index = fastchem.getCondensateIndex(species)
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices_cond.append(index)

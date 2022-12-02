@@ -48,11 +48,28 @@ unsigned int FastChem<double_type>::getSpeciesIndex(const std::string symbol)
 }
 
 
+//Query for a condensate species index with a chemical symbol
+//Returns FASTCHEM_UNKNOWN_SPECIES if the species does not exist
+template <class double_type>
+unsigned int FastChem<double_type>::getElementIndex(const std::string symbol)
+{
+  auto it = std::find_if(
+    element_data.elements.begin(),
+    element_data.elements.end(),
+    [&] (const Element<double_type> a) {
+      return a.symbol == symbol;});
+
+  if (it == element_data.elements.end()) 
+    return FASTCHEM_UNKNOWN_SPECIES;
+  else
+    return it - element_data.elements.begin();
+}
+
 
 //Query for a condensate species index with a chemical symbol
 //Returns FASTCHEM_UNKNOWN_SPECIES if the species does not exist
 template <class double_type>
-unsigned int FastChem<double_type>::getCondSpeciesIndex(const std::string symbol)
+unsigned int FastChem<double_type>::getCondensateIndex(const std::string symbol)
 {
   auto it = std::find_if(
     condensed_phase.condensates.begin(),
@@ -83,13 +100,26 @@ std::string FastChem<double_type>::getSpeciesName(const unsigned int species_ind
 //Query for a species name with its index
 //Returns empty string in case the species does not exist
 template <class double_type>
-std::string FastChem<double_type>::getCondSpeciesName(const unsigned int species_index)
+std::string FastChem<double_type>::getElementName(const unsigned int species_index)
+{
+  if (species_index < element_data.nb_elements)
+    return element_data.elements[species_index].name;
+  else
+    return "";
+}
+
+
+//Query for a species name with its index
+//Returns empty string in case the species does not exist
+template <class double_type>
+std::string FastChem<double_type>::getCondensateName(const unsigned int species_index)
 {
   if (species_index < condensed_phase.nb_condensates)
     return condensed_phase.condensates[species_index].name;
   else
     return "";
 }
+
 
 
 
@@ -110,7 +140,21 @@ std::string FastChem<double_type>::getSpeciesSymbol(const unsigned int species_i
 //Query for a species symbol with its index
 //Returns empty string in case the species does not exist
 template <class double_type>
-std::string FastChem<double_type>::getCondSpeciesSymbol(const unsigned int species_index)
+std::string FastChem<double_type>::getElementSymbol(const unsigned int species_index)
+{
+
+  if (species_index < element_data.nb_elements)
+    return element_data.elements[species_index].symbol;
+  else
+    return "";
+}
+
+
+
+//Query for a species symbol with its index
+//Returns empty string in case the species does not exist
+template <class double_type>
+std::string FastChem<double_type>::getCondensateSymbol(const unsigned int species_index)
 {
 
   if (species_index < condensed_phase.nb_condensates)
@@ -136,7 +180,19 @@ double FastChem<double_type>::getSpeciesWeight(const unsigned int species_index)
 //Query for a the weight of a species with its index
 //Returns 0 in case the species does not exist
 template <class double_type>
-double FastChem<double_type>::getCondSpeciesWeight(const unsigned int species_index)
+double FastChem<double_type>::getElementWeight(const unsigned int species_index)
+{
+  if (species_index < element_data.nb_elements)
+    return element_data.elements[species_index].weight;
+  else
+    return 0.;
+}
+
+
+//Query for a the weight of a species with its index
+//Returns 0 in case the species does not exist
+template <class double_type>
+double FastChem<double_type>::getCondensateWeight(const unsigned int species_index)
 {
   if (species_index < condensed_phase.nb_condensates)
     return condensed_phase.condensates[species_index].weight;
