@@ -84,7 +84,7 @@ struct Element : public ChemicalSpecies<double_type>
 
   std::vector<unsigned int> molecule_list;         //contains the list of molecule indices the element is part of
   std::vector<unsigned int> major_molecules_inc;   //contains the list of 'major' molecules that includes the element
-  std::vector<unsigned int> major_molecules_exc;   //contains the list of 'major' molecules that doesn't includes the element
+  std::vector<unsigned int> major_molecules_exc;   //contains the list of 'major' molecules that doesn't include the element
   std::vector<unsigned int> minor_molecules;       //contains the list of 'minor' molecules
   
   std::vector<unsigned int> condensate_list;       //contains the list of condensate indices the element is part of
@@ -142,7 +142,7 @@ struct Molecule : public ChemicalSpecies<double_type>
   double_type sigma = 0.0;
   double_type sum = 0.0;
 
-  void calcMassActionConstant(const double temperature);
+  void calcMassActionConstant(const double temperature, const double_type limit_logK);
   void calcNumberDensity(const std::vector< Element<double_type> >& elements);
   void checkN(const double_type& min_limit, const double_type& gas_density);
 };

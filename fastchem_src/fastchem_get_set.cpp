@@ -265,11 +265,15 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const dou
       break;
 
     case ParameterFloat::element_minlimit:
-      options.element_density_minlimit = value;
+      options.element_density_minlimit = std::pow(10.0, value);
       break;
 
     case ParameterFloat::molecule_minlimit:
-      options.molecule_density_minlimit = value;
+      options.molecule_density_minlimit = std::pow(10.0, value);
+      break;
+
+    case ParameterFloat::logK_limit:
+      options.logK_limit = value;
       break;
 
     case ParameterFloat::additional_scaling_factor:
@@ -280,6 +284,7 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const dou
       std::cout << "Unknown parameter \"" << parameter << "\"  with a floatint-point value!\n";
       break;
   }
+
 }
 
 
@@ -309,6 +314,10 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const boo
 
     case ParameterBool::use_scaling_factor:
       options.use_scaling_factor = value;
+      break;
+
+     case ParameterBool::cond_use_data_validity_limits:
+      options.cond_use_data_validity_limits = value;
       break;
   
     default:

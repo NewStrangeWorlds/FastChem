@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <limits>
 
 
 namespace fastchem {
@@ -31,7 +32,7 @@ namespace fastchem {
 //Calculates the mass action constant, see Paper I, Eq. (2.9)
 //Change this function if you want to implement your own parametrisation
 template <class double_type>
-void Molecule<double_type>::calcMassActionConstant(const double temperature)
+void Molecule<double_type>::calcMassActionConstant(const double temperature, const double_type logK_limit)
 {
   double_type log_K = mass_action_coeff[0]/temperature
                     + mass_action_coeff[1]*std::log(temperature)
@@ -42,6 +43,8 @@ void Molecule<double_type>::calcMassActionConstant(const double temperature)
   //adjusting log_K from its standard pressure (1 bar = 1e-6 dyn cm-2) to the actual pressure 
   double_type pressure_scaling = 1.0e-6 * CONST_K * temperature;
   mass_action_constant = log_K - sigma * std::log(pressure_scaling);
+
+  if (mass_action_constant > logK_limit) mass_action_constant = logK_limit;
 }
 
 

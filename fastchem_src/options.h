@@ -39,7 +39,8 @@ enum class ParameterFloat {
     cond_accuracy,
     additional_scaling_factor,
     element_minlimit,
-    molecule_minlimit
+    molecule_minlimit,
+    logK_limit
 };
 
 
@@ -60,7 +61,8 @@ enum class ParameterBool {
     cond_reduce_system_size,
     cond_use_full_pivot,
     cond_use_svd,
-    use_scaling_factor
+    use_scaling_factor,
+    cond_use_data_validity_limits
 };
 
 
@@ -105,6 +107,9 @@ struct FastChemOptions{
 
   bool use_scaling_factor = false;
   double additional_scaling_factor = 0.0;
+
+  double_type logK_limit = 100000;
+  bool cond_use_data_validity_limits = false;
 
   bool cond_use_svd = false;
   bool cond_use_full_pivot = false;

@@ -244,7 +244,7 @@ void GasPhase<double_type>::setMoleculeAbundances()
 
 
 
-//looks through the list of all species and tries to fund duplicate entries
+//looks through the list of all species and tries to find duplicate entries
 template <class double_type>
 bool GasPhase<double_type>::checkForDuplicates()
 {

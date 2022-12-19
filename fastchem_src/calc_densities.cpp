@@ -186,7 +186,7 @@ unsigned int FastChem<double_type>::calcDensity(
   std::vector<unsigned int>& element_conserved,
   unsigned int& nb_chemistry_iterations)
 {
-  for (auto & i : gas_phase.molecules)  i.calcMassActionConstant(temperature);
+  for (auto & i : gas_phase.molecules)  i.calcMassActionConstant(temperature, options.logK_limit);
 
   //this value will be fixed.
   double_type gas_density = pressure/(CONST_K * temperature);
@@ -289,8 +289,6 @@ void FastChem<double_type>::rainoutCondensation(
       for (size_t j=0; j<element_data.nb_elements; ++j)
         std::cout << element_data.elements[j].symbol << "\t" << element_data.elements[j].abundance << "\t" << original_element_abundance[j] 
                                                      << "\t" << element_data.elements[j].epsilon << "\t" << element_data.elements[i].number_density << "\n";
-      
-      exit(0);
     }
 
     std::vector<double> element_abundance_cond(element_data.nb_elements, 0.0);
@@ -333,8 +331,9 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   unsigned int& nb_chem_iter,
   unsigned int& nb_cond_iter,
   unsigned int& nb_combined_iter)
-{ options.additional_scaling_factor = 0;
-  for (auto & i : gas_phase.molecules) i.calcMassActionConstant(temperature);
+{ 
+
+  for (auto & i : gas_phase.molecules) i.calcMassActionConstant(temperature, options.logK_limit);
   for (auto & i : condensed_phase.condensates) i.calcMassActionConstant(temperature);
 
   //this value will be fixed.

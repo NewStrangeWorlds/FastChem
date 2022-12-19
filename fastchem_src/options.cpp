@@ -44,6 +44,7 @@ void FastChemOptions<double_type>::init()
     element_density_minlimit = 1e-155;
     molecule_density_minlimit = 1e-155;
   }
+
 }
 
 
@@ -60,8 +61,9 @@ ParameterFloat FastChemOptions<double_type>::resolveParameter(
     { std::string("accuracyCond"), ParameterFloat::cond_accuracy },
     { std::string("accuracyNewton"), ParameterFloat::newton_err },
     { std::string("additionalScaling"), ParameterFloat::additional_scaling_factor },
-    { std::string("minDensityElement"), ParameterFloat::element_minlimit },
-    { std::string("minDensityMolecules"), ParameterFloat::molecule_minlimit }
+    { std::string("minDensityExponentElement"), ParameterFloat::element_minlimit },
+    { std::string("minDensityExponentMolecules"), ParameterFloat::molecule_minlimit },
+    { std::string("maxLogK"), ParameterFloat::logK_limit }
   };
 
   auto itr = parameter_strings.find(parameter);
@@ -84,7 +86,8 @@ ParameterBool FastChemOptions<double_type>::resolveParameterBool(
     { std::string("condReduceSystemSize"), ParameterBool::cond_reduce_system_size },
     { std::string("condUseFullPivot"), ParameterBool::cond_use_full_pivot },
     { std::string("condUseSVD"), ParameterBool::cond_use_svd },
-    { std::string("useScalingFactor"), ParameterBool::use_scaling_factor }
+    { std::string("useScalingFactor"), ParameterBool::use_scaling_factor },
+    { std::string("useCondDataValidityLimit"), ParameterBool::cond_use_data_validity_limits }
   };
 
   auto itr = parameter_strings.find(parameter);
