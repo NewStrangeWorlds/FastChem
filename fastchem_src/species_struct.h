@@ -177,11 +177,14 @@ struct Condensate : public ChemicalSpecies<double_type>
 
   void calcMassActionConstant(const double temperature);
   void calcActivity(
-    const double temperature, const std::vector<Element<double_type>>& elements);
+    const double temperature, 
+    const std::vector<Element<double_type>>& elements,
+    const bool use_data_validity_limits);
   double_type calcActivity(
     const double temperature, 
     const std::vector<Element<double_type>>& elements,
-    const std::vector<double_type> elem_number_densities);
+    const std::vector<double_type> elem_number_densities,
+    const bool use_data_validity_limits);
   void findReferenceElement(
     const std::vector<Element<double_type>>& elements);
   void degreeOfCondensation(

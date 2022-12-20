@@ -190,9 +190,11 @@ bool CondensedPhase<double_type>::calculate(
     for (size_t i=0; i<elements_cond.size(); ++i)
       elements_cond[i]->number_density = elem_densities_new[i];
 
-    for (auto & i : condensates_act)  i->calcActivity(temperature, elements);
+    for (auto & i : condensates_act)
+      i->calcActivity(temperature, elements, options.cond_use_data_validity_limits);
 
-    for (auto & i : molecules)  i.calcNumberDensity(elements);
+    for (auto & i : molecules)
+      i.calcNumberDensity(elements);
 
     // double_type max_delta1 = newtonBacktrack(
     //   objective_function_0,
@@ -494,9 +496,11 @@ double_type CondensedPhase<double_type>::newtonBacktrack(
         for (size_t i=0; i<elements_cond.size(); ++i)
           elements_cond[i]->number_density = elem_number_dens_new[i];
 
-        for (auto & i : condensates)  i->calcActivity(temperature, elements);
+        for (auto & i : condensates)
+          i->calcActivity(temperature, elements, options.cond_use_data_validity_limits);
 
-        for (auto & i : molecules)  i.calcNumberDensity(elements);
+        for (auto & i : molecules)
+          i.calcNumberDensity(elements);
 
         objective_function_2prev = objective_function_prev;
         lambda_2prev = lambda_prev;
@@ -556,9 +560,11 @@ double_type CondensedPhase<double_type>::newtonBacktrack(
         for (size_t i=0; i<elements_cond.size(); ++i)
           elements_cond[i]->number_density = elem_number_dens_new[i];
 
-        for (auto & i : condensates)  i->calcActivity(temperature, elements);
+        for (auto & i : condensates)
+          i->calcActivity(temperature, elements, options.cond_use_data_validity_limits);
 
-        for (auto & i : molecules)  i.calcNumberDensity(elements);
+        for (auto & i : molecules)
+          i.calcNumberDensity(elements);
       }
 
     }

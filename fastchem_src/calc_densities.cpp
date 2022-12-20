@@ -375,7 +375,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   //search for potential condensates
   for (auto & i : condensed_phase.condensates)
   {
-    i.calcActivity(temperature, element_data.elements);
+    i.calcActivity(temperature, element_data.elements, options.cond_use_data_validity_limits);
     i.maxDensity(element_data.elements, total_element_density);
   }
 
@@ -403,7 +403,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
       for (auto & i : condensates_act)
       {
-        i->calcActivity(temperature, element_data.elements);
+        i->calcActivity(temperature, element_data.elements, options.cond_use_data_validity_limits);
         i->maxDensity(element_data.elements, total_element_density);
       }
 
@@ -430,7 +430,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
 
       for (auto & i : condensed_phase.condensates)
-        i.calcActivity(temperature, element_data.elements);
+        i.calcActivity(temperature, element_data.elements, options.cond_use_data_validity_limits);
 
       combined_converged = true;
 
@@ -453,9 +453,10 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       }
 
 
-    //remove condensates with low number densities
+    //remove condensates that are not present 
+    //i.e. those with an activity smaller than 1
     for (auto & i : condensed_phase.condensates)
-      if (i.number_density <= 1e-29) i.number_density = 0.0;
+      if (i.log_activity < -0.1) i.number_density = 0.0;
     
     //and run the gas phase calculation one last time
     double_type phi_sum = 0;

@@ -32,11 +32,18 @@ namespace fastchem {
 
 template <class double_type>
 void Condensate<double_type>::calcActivity(
-  const double temperature, const std::vector<Element<double_type>>& elements)
+  const double temperature, const std::vector<Element<double_type>>& elements,
+  const bool use_data_validity_limits)
 {
   if (!(temperature > phase_temp_limits[0] && temperature <= phase_temp_limits[1]))
   {
-    log_activity = -10;
+    log_activity = -9;
+    return;
+  }
+
+  if (!(temperature > fit_temp_limits[0] && temperature <= fit_temp_limits[1]))
+  {
+    log_activity = -9;
     return;
   }
 
@@ -46,9 +53,6 @@ void Condensate<double_type>::calcActivity(
     log_activity += std::log(elements[i].number_density) * stoichiometric_vector[elements[i].index];
 
   if (log_activity < -9) log_activity = -9;
-  
-  //if (std::abs(log_activity) < 1e-10) log_activity = 0;
-  //if (ln_activity < -11) ln_activity = -11;
 }
 
 
@@ -56,15 +60,21 @@ template <class double_type>
 double_type Condensate<double_type>::calcActivity(
   const double temperature, 
   const std::vector<Element<double_type>>& elements,
-  const std::vector<double_type> elem_number_densities)
+  const std::vector<double_type> elem_number_densities,
+  const bool use_data_validity_limits)
 {
   if (!(temperature > phase_temp_limits[0] && temperature <= phase_temp_limits[1]))
-    return -10;
+    return -9;
+
+  if (!(temperature > fit_temp_limits[0] && temperature <= fit_temp_limits[1]))
+    return -9;
 
   double_type log_activity = mass_action_constant;
 
   for (auto & i : element_indices)
     log_activity += std::log(elem_number_densities[elements[i].index]) * stoichiometric_vector[elements[i].index];
+
+  if (log_activity < -9) log_activity = -9;
 
   return log_activity;
 }
