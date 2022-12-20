@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
   file.close();
 
-
+  std::cout << "temperature-pressure profile read in from file:\n";
   for (size_t i=0; i<pressure.size(); i++)
     std::cout << "  " << i << "\t" << pressure[i] << "\t" << temperature[i] << "\n";
   std::cout << "\n";

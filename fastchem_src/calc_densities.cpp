@@ -92,7 +92,7 @@ unsigned int FastChem<double_type>::calcDensities(
 
     #pragma omp parallel for schedule(dynamic, 1)
     for (unsigned int i=0; i<input.temperature.size(); i++)
-    { std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
+    { //std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
       if (!input.equilibrium_condensation)
       {
         output.fastchem_flag[i] = 
@@ -284,12 +284,15 @@ void FastChem<double_type>::rainoutCondensation(
       output.nb_cond_iterations[i],
       output.nb_iterations[i]);
 
-    if (output.fastchem_flag[i] == FASTCHEM_NO_CONVERGENCE)
-    {
-      for (size_t j=0; j<element_data.nb_elements; ++j)
-        std::cout << element_data.elements[j].symbol << "\t" << element_data.elements[j].abundance << "\t" << original_element_abundance[j] 
-                                                     << "\t" << element_data.elements[j].epsilon << "\t" << element_data.elements[i].number_density << "\n";
-    }
+    // if (output.fastchem_flag[i] == FASTCHEM_NO_CONVERGENCE)
+    // {
+    //   for (size_t j=0; j<element_data.nb_elements; ++j)
+    //     std::cout << element_data.elements[j].symbol 
+    //       << "\t" << element_data.elements[j].abundance 
+    //       << "\t" << original_element_abundance[j] 
+    //       << "\t" << element_data.elements[j].epsilon 
+    //       << "\t" << element_data.elements[i].number_density << "\n";
+    // }
 
     std::vector<double> element_abundance_cond(element_data.nb_elements, 0.0);
 
@@ -353,12 +356,12 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   element_data.init(options.element_density_minlimit);
 
   for (auto & i : condensed_phase.condensates)
-    {
-      i.number_density = 0;
-      i.degree_of_condensation = 0;
-      i.activity_correction = 0;
-      i.is_calculated = false;
-    }
+  {
+    i.number_density = 0;
+    i.degree_of_condensation = 0;
+    i.activity_correction = 0;
+    i.is_calculated = false;
+  }
 
 
   nb_chem_iter = 0;
