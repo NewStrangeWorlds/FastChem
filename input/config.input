@@ -1,8 +1,8 @@
 #Atmospheric profile input file
-input/p_t_sel.dat
+input/Gliese_229b.dat
 
 #Chemistry calculation type (gas phase only = g, equilibrium condensation = ce, rainout condensation = cr)
-ce
+cr
 
 #Chemistry output file
 output/chemistry.dat output/condensates.dat

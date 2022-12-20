@@ -297,6 +297,10 @@ void FastChem<double_type>::rainoutCondensation(
     {
       element_abundance_cond[j] = element_data.elements[j].phi;
       element_data.elements[j].degree_of_condensation = 0.0;
+
+      output.element_cond_degree[i][j] = (original_element_epsilon[j] - element_abundance_cond[j])/original_element_epsilon[j];
+
+      if (original_element_epsilon[j] == 0 || output.element_cond_degree[i][j] < 0) output.element_cond_degree[i][j] = 0;
     }
 
     setElementAbundances(element_abundance_cond);
