@@ -37,13 +37,13 @@ void Condensate<double_type>::calcActivity(
 {
   if (!(temperature > phase_temp_limits[0] && temperature <= phase_temp_limits[1]))
   {
-    log_activity = -9;
+    log_activity = -10;
     return;
   }
 
   if (!(temperature > fit_temp_limits[0] && temperature <= fit_temp_limits[1]))
   {
-    log_activity = -9;
+    log_activity = -10;
     return;
   }
 
@@ -52,7 +52,7 @@ void Condensate<double_type>::calcActivity(
   for (auto & i : element_indices)
     log_activity += std::log(elements[i].number_density) * stoichiometric_vector[elements[i].index];
 
-  if (log_activity < -9) log_activity = -9;
+  if (log_activity < -10) log_activity = -10;
 }
 
 
@@ -64,17 +64,17 @@ double_type Condensate<double_type>::calcActivity(
   const bool use_data_validity_limits)
 {
   if (!(temperature > phase_temp_limits[0] && temperature <= phase_temp_limits[1]))
-    return -9;
+    return -10;
 
   if (!(temperature > fit_temp_limits[0] && temperature <= fit_temp_limits[1]))
-    return -9;
+    return -10;
 
   double_type log_activity = mass_action_constant;
 
   for (auto & i : element_indices)
     log_activity += std::log(elem_number_densities[elements[i].index]) * stoichiometric_vector[elements[i].index];
 
-  if (log_activity < -9) log_activity = -9;
+  if (log_activity < -10) log_activity = -10;
 
   return log_activity;
 }

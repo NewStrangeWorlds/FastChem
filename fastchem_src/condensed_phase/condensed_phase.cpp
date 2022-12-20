@@ -146,7 +146,7 @@ void CondensedPhase<double_type>::selectActiveCondensates(
 
 template <class double_type>
 void CondensedPhase<double_type>::selectJacobianCondensates(
-  const std::vector<Condensate<double_type>*>& condensates,
+  const std::vector<Condensate<double_type>*>& condensates_act,
   const std::vector<double_type>& number_density_cond,
   const std::vector<double_type>& activity_corr,
   std::vector<unsigned int>& condensates_jac,
@@ -155,60 +155,15 @@ void CondensedPhase<double_type>::selectJacobianCondensates(
   condensates_jac.resize(0);
   condensates_rem.resize(0);
 
-  for (size_t i=0; i<condensates.size(); ++i)
+  for (size_t i=0; i<condensates_act.size(); ++i)
   {
-    if (condensates[i]->log_activity > -0.1 || options.cond_reduce_system_size == false)
+    if (condensates_act[i]->log_activity > -0.1 || options.cond_reduce_system_size == false)
       condensates_jac.push_back(i);
     else
       condensates_rem.push_back(i);
   }
 }
 
-
-template <class double_type>
-void CondensedPhase<double_type>::selectJacobianCondensates2(
-  const std::vector<Condensate<double_type>*>& condensates,
-  const std::vector<double_type>& number_density_cond,
-  const std::vector<double_type>& activity_corr,
-  std::vector<unsigned int>& condensates_jac,
-  std::vector<unsigned int>& condensates_rem,
-  Eigen::MatrixXdt<double_type>& jacobian)
-{
-  condensates_jac.resize(0);
-  condensates_rem.resize(0);
-
-  const size_t nb_condensates = condensates.size();
-  const size_t nb_elements = jacobian.rows() - nb_condensates;
-
-  for (size_t i=0; i<condensates.size(); ++i)
-  { 
-    double element_min = 0;
-    double element_max = 0;
-
-    for (size_t j=0; j<nb_elements; ++j)
-    {
-      if (jacobian(j+nb_condensates, i) == 0) continue;
-
-      for (size_t n=0; n<nb_elements; ++n)
-      {
-        if (jacobian(j+nb_condensates, n+nb_condensates) == 0) continue;
-
-        if (jacobian(j+nb_condensates, n+nb_condensates) > element_max)
-          element_max = jacobian(j+nb_condensates, n+nb_condensates);
-        
-        if (element_min == 0) element_min = element_max;
-        else
-          if (jacobian(j+nb_condensates, n+nb_condensates) < element_min)
-            element_min = jacobian(j+nb_condensates, n+nb_condensates);
-      }
-    }
-
-    if (activity_corr[i] < 1 && element_min < number_density_cond[i]*100)
-      condensates_jac.push_back(i);
-    else
-      condensates_rem.push_back(i);
-  }
-}
 
 
 template <class double_type>

@@ -1,5 +1,5 @@
 #Atmospheric profile input file
-input/sharp_huebner_ext.dat
+input/p_t_sel.dat
 
 #Chemistry calculation type (gas phase only = g, equilibrium condensation = ce, rainout condensation = cr)
 ce

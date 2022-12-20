@@ -102,11 +102,9 @@ int main(int argc, char *argv[])
   file.close();
 
 
-  std::cout << "\nPressure-temperature structure:\n";
   for (size_t i=0; i<pressure.size(); i++)
     std::cout << "  " << i << "\t" << pressure[i] << "\t" << temperature[i] << "\n";
   std::cout << "\n";
-
 
   //set up the input & output structures and run the chemistry
   fastchem::FastChemInput input;
@@ -118,14 +116,34 @@ int main(int argc, char *argv[])
   input.rainout_condensation = config.rainout_condensation;
 
   unsigned int fastchem_flag = fastchem.calcDensities(input, output);
-  
-  //print out the status message for the returned FastChem flag
-  std::cout << "FastChem reports: " << fastchem::FASTCHEM_MSG[fastchem_flag] << "\n\n";
 
+  
   if (fastchem_flag == fastchem::FASTCHEM_INITIALIZATION_FAILED)
   {
     std::cout << "FastChem initialisation failed!\n"; return 0;
   }
+
+
+  //look if all elements have been conserved
+  bool elements_conserved = true;
+  
+  for (auto & i : output.element_conserved)
+  {
+    if (std::any_of(i.begin(), i.end(), [](unsigned int v){return v==0;}))
+      elements_conserved = false;
+    
+    if (elements_conserved == false) break;
+  }
+
+  std::string conserved = "yes";
+  if (elements_conserved == false) conserved = "no";
+
+
+
+  //print out the status message for the returned FastChem flag
+  std::cout << "\nFastChem reports:\n";
+  std::cout << "  - " << fastchem::FASTCHEM_MSG[fastchem_flag] << "\n";
+  std::cout << "  - elements conserved: " << conserved << "\n\n";
 
 
   unsigned int nb_grid_points = pressure.size();
