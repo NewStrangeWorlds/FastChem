@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
   }
 
 
-  //look if all elements have been conserved
+  //check if all elements have been conserved
   bool elements_conserved = true;
   
   for (auto & i : output.element_conserved)

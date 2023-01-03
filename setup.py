@@ -9,7 +9,7 @@ from distutils.errors import CCompilerError
 from distutils import sysconfig
 
 
-__version__ = "2.1"
+__version__ = "3.0"
 
 
 #Custom build class that provides additional checks for OpenMP
@@ -79,6 +79,9 @@ ext_modules = [
   Pybind11Extension(
     "pyfastchem",
     sorted(glob("fastchem_src/*.cpp") +
+           glob("fastchem_src/elements/*.cpp") +
+           glob("fastchem_src/gas_phase/*.cpp") +
+           glob("fastchem_src/condensed_phase/*.cpp") +
            glob("python/fastchem_python_wrapper.cpp")),
     define_macros = [('_SETUP_PY', '1')],
     cxx_std = 11,
