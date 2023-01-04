@@ -8,7 +8,7 @@ from astropy import constants as const
 
 
 #we read in a p-T structure for a brown dwarf
-data = np.loadtxt("../input/protoplanetary_disk.dat")
+data = np.atleast_2d(np.loadtxt("../input/protoplanetary_disk1.dat"))
 
 #and extract temperature and pressure values
 temperature = data[:,1]
@@ -152,7 +152,7 @@ plot_species_indices = []
 plot_species_symbols = []
 
 for i, species in enumerate(plot_species):
-  index = fastchem.getSpeciesIndex(species)
+  index = fastchem.getGasSpeciesIndex(species)
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices.append(index)
@@ -166,7 +166,7 @@ plot_species_indices_cond = []
 plot_species_symbols_cond = []
 
 for i, species in enumerate(plot_species_cond):
-  index = fastchem.getCondensateIndex(species)
+  index = fastchem.getCondSpeciesIndex(species)
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices_cond.append(index)

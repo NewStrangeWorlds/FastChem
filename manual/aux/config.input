@@ -1,8 +1,11 @@
 #Atmospheric profile input file
 input/Late_M-dwarf.dat
 
+#Chemistry calculation type (gas phase only = g, equilibrium condensation = ce, rainout condensation = cr)
+ce
+
 #Chemistry output file
-output/chemistry.dat
+output/chemistry.dat output/condensates.dat
 
 #Monitor output file
 output/monitor.dat
@@ -16,8 +19,8 @@ MR
 #Element abundance file   
 input/element_abundances_solar.dat
 
-#Species data file    
-input/logK.dat
+#Species data files    
+input/logK.dat input/logK_condensate.dat
 
 #Accuracy of chemistry iteration
 1.0e-4

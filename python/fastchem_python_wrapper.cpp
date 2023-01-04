@@ -41,26 +41,26 @@ PYBIND11_MODULE(pyfastchem, m) {
 
         .def("calcDensities", &fastchem::FastChem<long double>::calcDensities)
         
-        .def("getSpeciesNumber", &fastchem::FastChem<long double>::getSpeciesNumber)
+        .def("getGasSpeciesNumber", &fastchem::FastChem<long double>::getGasSpeciesNumber)
         .def("getElementNumber", &fastchem::FastChem<long double>::getElementNumber)
         .def("getMoleculeNumber", &fastchem::FastChem<long double>::getMoleculeNumber)
-        .def("getCondensateNumber", &fastchem::FastChem<long double>::getCondensateNumber)
+        .def("getCondSpeciesNumber", &fastchem::FastChem<long double>::getCondSpeciesNumber)
         
-        .def("getSpeciesIndex", &fastchem::FastChem<long double>::getSpeciesIndex)
-        .def("getSpeciesName", &fastchem::FastChem<long double>::getSpeciesName)
-        .def("getSpeciesSymbol", &fastchem::FastChem<long double>::getSpeciesSymbol)
+        .def("getGasSpeciesIndex", &fastchem::FastChem<long double>::getGasSpeciesIndex)
+        .def("getGasSpeciesName", &fastchem::FastChem<long double>::getGasSpeciesName)
+        .def("getGasSpeciesSymbol", &fastchem::FastChem<long double>::getGasSpeciesSymbol)
 
         .def("getElementIndex", &fastchem::FastChem<long double>::getElementIndex)
         .def("getElementName", &fastchem::FastChem<long double>::getElementName)
         .def("getElementSymbol", &fastchem::FastChem<long double>::getElementSymbol)
         
-        .def("getCondensateIndex", &fastchem::FastChem<long double>::getCondensateIndex)
-        .def("getCondensatesName", &fastchem::FastChem<long double>::getCondensateName)
-        .def("getCondensateSymbol", &fastchem::FastChem<long double>::getCondensateSymbol)
+        .def("getCondSpeciesIndex", &fastchem::FastChem<long double>::getCondSpeciesIndex)
+        .def("getCondSpeciesName", &fastchem::FastChem<long double>::getCondSpeciesName)
+        .def("getCondSpeciesSymbol", &fastchem::FastChem<long double>::getCondSpeciesSymbol)
 
-        .def("getSpeciesWeight", &fastchem::FastChem<long double>::getSpeciesWeight)
+        .def("getGasSpeciesWeight", &fastchem::FastChem<long double>::getGasSpeciesWeight)
         .def("getElementWeight", &fastchem::FastChem<long double>::getElementWeight)
-        .def("getCondensateWeight", &fastchem::FastChem<long double>::getCondensateWeight)
+        .def("getCondSpeciesWeight", &fastchem::FastChem<long double>::getCondSpeciesWeight)
 
         .def("setVerboseLevel", &fastchem::FastChem<long double>::setVerboseLevel)
         

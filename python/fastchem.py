@@ -132,7 +132,7 @@ plot_species_indices = []
 plot_species_symbols = []
 
 for i, species in enumerate(plot_species):
-  index = fastchem.getSpeciesIndex(species)
+  index = fastchem.getGasSpeciesIndex(species)
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices.append(index)

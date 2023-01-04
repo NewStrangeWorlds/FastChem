@@ -45,7 +45,7 @@ fastchem = pyfastchem.FastChem(
 #allocate the data for the output
 nb_points = c_to_o.size
 
-number_densities = np.zeros((nb_points, fastchem.getSpeciesNumber()))
+number_densities = np.zeros((nb_points, fastchem.getGasSpeciesNumber()))
 total_element_density = np.zeros(nb_points)
 mean_molecular_weight = np.zeros(nb_points)
 element_conserved = np.zeros((nb_points, fastchem.getElementNumber()), dtype=int)
@@ -63,8 +63,8 @@ solar_abundances = np.array(fastchem.getElementAbundances())
 
 
 #we need to know the indices for O and C from FastChem
-index_C = fastchem.getSpeciesIndex('C')
-index_O = fastchem.getSpeciesIndex('O')
+index_C = fastchem.getElementIndex('C')
+index_O = fastchem.getElementIndex('O')
 
 
 #loop over the C/O ratios
@@ -180,7 +180,7 @@ plot_species_indices = []
 plot_species_symbols = []
 
 for i, species in enumerate(plot_species):
-  index = fastchem.getSpeciesIndex(species)
+  index = fastchem.getGasSpeciesIndex(species)
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices.append(index)

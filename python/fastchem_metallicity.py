@@ -50,7 +50,7 @@ solar_abundances = np.array(fastchem.getElementAbundances())
 #allocate the data for the output
 nb_points = metallicity.size
 
-number_densities = np.zeros((nb_points, fastchem.getSpeciesNumber()))
+number_densities = np.zeros((nb_points, fastchem.getGasSpeciesNumber()))
 total_element_density = np.zeros(nb_points)
 mean_molecular_weight = np.zeros(nb_points)
 element_conserved = np.zeros((nb_points, fastchem.getElementNumber()), dtype=int)
@@ -70,7 +70,7 @@ for i in range(0, nb_points):
   
   #scale the element abundances, except those of H and He
   for j in range(0, fastchem.getElementNumber()):
-    if fastchem.getSpeciesSymbol(j) != 'H' and fastchem.getSpeciesSymbol(j) != 'He':
+    if fastchem.getElementSymbol(j) != 'H' and fastchem.getElementSymbol(j) != 'He':
       element_abundances[j] *= metallicity[i]
 
   fastchem.setElementAbundances(element_abundances)
@@ -176,7 +176,7 @@ plot_species_indices = []
 plot_species_symbols = []
 
 for i, species in enumerate(plot_species):
-  index = fastchem.getSpeciesIndex(species)
+  index = fastchem.getGasSpeciesIndex(species)
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices.append(index)

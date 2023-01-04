@@ -54,29 +54,29 @@ class FastChem {
     unsigned int calcDensities(FastChemInput& input, FastChemOutput& output);
 
     //public query functions
-    std::string getSpeciesName(const unsigned int species_index);
-    std::string getSpeciesSymbol(const unsigned int species_index);
-    unsigned int getSpeciesIndex(const std::string symbol);
+    std::string getGasSpeciesName(const unsigned int species_index);
+    std::string getGasSpeciesSymbol(const unsigned int species_index);
+    unsigned int getGasSpeciesIndex(const std::string symbol);
 
     std::string getElementName(const unsigned int species_index);
     std::string getElementSymbol(const unsigned int species_index);
     unsigned int getElementIndex(const std::string symbol);
 
-    std::string getCondensateName(const unsigned int species_index);
-    unsigned int getCondensateIndex(const std::string symbol);
-    std::string getCondensateSymbol(const unsigned int species_index);
+    std::string getCondSpeciesName(const unsigned int species_index);
+    unsigned int getCondSpeciesIndex(const std::string symbol);
+    std::string getCondSpeciesSymbol(const unsigned int species_index);
 
-    unsigned int getSpeciesNumber() {return gas_phase.nb_species;}
+    unsigned int getGasSpeciesNumber() {return gas_phase.nb_species;}
     unsigned int getElementNumber() {return element_data.nb_elements;}
     unsigned int getMoleculeNumber() {return gas_phase.nb_molecules;}
-    unsigned int getCondensateNumber() {return condensed_phase.nb_condensates;}
+    unsigned int getCondSpeciesNumber() {return condensed_phase.nb_condensates;}
 
     double getElementAbundance(const unsigned int species_index);
     std::vector<double> getElementAbundances();
 
-    double getSpeciesWeight(const unsigned int species_index);
+    double getGasSpeciesWeight(const unsigned int species_index);
     double getElementWeight(const unsigned int species_index);
-    double getCondensateWeight(const unsigned int species_index);
+    double getCondSpeciesWeight(const unsigned int species_index);
 
     //functions to set internal variables during runtime
     //they will override any read-in values

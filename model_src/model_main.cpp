@@ -146,9 +146,9 @@ int main(int argc, char *argv[])
 
 
   unsigned int nb_grid_points = pressure.size();
-  unsigned int nb_species = fastchem.getSpeciesNumber();
+  unsigned int nb_species = fastchem.getGasSpeciesNumber();
   unsigned int nb_elements = fastchem.getElementNumber();
-  unsigned int nb_condensates = fastchem.getCondensateNumber();
+  unsigned int nb_condensates = fastchem.getCondSpeciesNumber();
 
   //calculate the gas number density via the ideal gas law for the output
   std::vector<double> gas_number_density(pressure);
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
   std::vector<std::string> species_symbols(nb_species);
 
   for (size_t i=0; i<nb_species; ++i)
-    species_symbols[i] = fastchem.getSpeciesSymbol(i);
+    species_symbols[i] = fastchem.getGasSpeciesSymbol(i);
 
   std::vector<std::string> element_symbols(species_symbols.begin(), species_symbols.begin()+nb_elements);
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
     std::vector<std::string> cond_species_symbols(nb_condensates);
 
     for (size_t i=0; i<nb_condensates; ++i)
-      cond_species_symbols[i] = fastchem.getCondensateSymbol(i);
+      cond_species_symbols[i] = fastchem.getCondSpeciesSymbol(i);
 
     saveCondOutput(config.cond_output_file, input, output, element_symbols, cond_species_symbols);
   }

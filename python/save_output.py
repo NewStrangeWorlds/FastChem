@@ -58,8 +58,8 @@ def saveChemistryOutput(file_path,                     #the path to the output f
 
 
     if output_species is None: #save all species
-      for j in range(fastchem.getSpeciesNumber()):
-        file.write('\t{0:<16}'.format(fastchem.getSpeciesSymbol(j)))
+      for j in range(fastchem.getGasSpeciesNumber()):
+        file.write('\t{0:<16}'.format(fastchem.getGasSpeciesSymbol(j)))
     
       file.write('\n')
     
@@ -80,14 +80,14 @@ def saveChemistryOutput(file_path,                     #the path to the output f
             file.write('\t{0:1.10e}'.format(additional_columns[j, i]))
 
       
-        for j in range(fastchem.getSpeciesNumber()):
+        for j in range(fastchem.getGasSpeciesNumber()):
           file.write('\t{0:1.10e}'.format(mixing_ratios[i, j]))
       
         file.write('\n')
    
     else:  #save only selected species
       for species in output_species:
-        if fastchem.getSpeciesIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
+        if fastchem.getGasSpeciesIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
           file.write('\t{0:<16}'.format(species))
         else:
           print('Species ', species, ' not found during saving of the chemistry output!')
@@ -112,7 +112,7 @@ def saveChemistryOutput(file_path,                     #the path to the output f
 
 
         for species in output_species:
-          species_index = fastchem.getSpeciesIndex(species)
+          species_index = fastchem.getGasSpeciesIndex(species)
           if species_index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
             file.write('\t{0:1.10e}'.format(mixing_ratios[i, species_index]))
       
@@ -174,8 +174,8 @@ def saveCondOutput(file_path,                     #the path to the output file
 
 
     if output_species is None: #save all species
-      for j in range(fastchem.getCondensateNumber()):
-        file.write('\t{0:<16}'.format(fastchem.getCondensateSymbol(j)))
+      for j in range(fastchem.getCondSpeciesNumber()):
+        file.write('\t{0:<16}'.format(fastchem.getCondSpeciesSymbol(j)))
 
       file.write('\n')
 
@@ -196,14 +196,14 @@ def saveCondOutput(file_path,                     #the path to the output file
           file.write('\t{0:1.10e}'.format(element_cond_degree[i, j]))
         
         #the condensates
-        for j in range(fastchem.getCondensateNumber()):
+        for j in range(fastchem.getCondSpeciesNumber()):
           file.write('\t{0:1.10e}'.format(number_densities[i, j]))
       
         file.write('\n')
    
     else:  #save only selected species
       for species in output_species:
-        if fastchem.getCondensateIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
+        if fastchem.getCondSpeciesIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
           file.write('\t{0:<16}'.format(species))
         else:
           print('Species ', species, ' not found during saving of the chemistry output!')
@@ -228,7 +228,7 @@ def saveCondOutput(file_path,                     #the path to the output file
 
         #the selected condensates
         for species in output_species:
-          species_index = fastchem.getCondensateIndex(species)
+          species_index = fastchem.getCondSpeciesIndex(species)
           if species_index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
             file.write('\t{0:1.10e}'.format(number_densities[i, species_index]))
 
@@ -408,15 +408,15 @@ def saveChemistryOutputPandas(file_path,                     #the path to the ou
 
   #header for species symbols
   if output_species is None:
-    for j in range(fastchem.getSpeciesNumber()):
-      columns.append(fastchem.getSpeciesSymbol(j))
+    for j in range(fastchem.getGasSpeciesNumber()):
+      columns.append(fastchem.getGasSpeciesSymbol(j))
   else:
     select_species_id = []
 
     for species in output_species:
-      if fastchem.getSpeciesIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
+      if fastchem.getGasSpeciesIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
         columns.append(species)
-        select_species_id.append(fastchem.getSpeciesIndex(species))
+        select_species_id.append(fastchem.getGasSpeciesIndex(species))
       else:
         print('Species ', species, ' not found during saving of the chemistry output!')
 
@@ -504,15 +504,15 @@ def saveCondOutputPandas(file_path,                     #the path to the output 
 
   #header for species symbols
   if output_species is None:
-    for j in range(fastchem.getCondensateNumber()):
-      columns.append(fastchem.getCondensateSymbol(j))
+    for j in range(fastchem.getCondSpeciesNumber()):
+      columns.append(fastchem.getCondSpeciesSymbol(j))
   else:
     select_species_id = []
 
     for species in output_species:
-      if fastchem.getCondensateIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
+      if fastchem.getCondSpeciesIndex(species) != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
         columns.append(species)
-        select_species_id.append(fastchem.getCondensateIndex(species))
+        select_species_id.append(fastchem.getCondSpeciesIndex(species))
       else:
         print('Species ', species, ' not found during saving of the chemistry output!')
 

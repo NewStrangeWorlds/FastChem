@@ -21,7 +21,7 @@
 	    Joachim Stock
 }
 
-\title{FastChem 2.1}
+\title{FastChem 2.2 Cond}
 \subtitle{User and Reference Guide}
 \date{}
 
@@ -311,9 +311,9 @@ Together with \fc, we provide two different element abundance files, located in 
 As an alternative version, we also also include an additional file \verb|element_abundances_solar_ext.dat| that includes more elements, up to uranium. This file can be used for the extended set of ion species described in the next section. These element abundances are also based on the \citet{Asplund2009ARA&A..47..481A} compilation.
 
 
-\section{Species file}
+\section{Species data files}
 
-Another important input is the thermochemical data for all molecules and ions. This includes in particular their stoichiometric information as well as a parametrisation for their mass action constants. As described in the first \fc publication \citep{Stock2018MNRAS.479..865S}, we use the natural logarithm of the dimensionless mass action constant of species $i$
+Another important input is the thermochemical data for all gas phase species (molecules and ions) as well as condensates. This includes in particular their stoichiometric information as well as a parametrisation for their mass action constants. As described in the first \fc publication \citep{Stock2018MNRAS.479..865S}, we use the natural logarithm of the dimensionless mass action constant of species $i$
 \begin{equation}
 \ln\bar{K}_i(T) = - \frac{\Delta_\mathrm{r} G_i^\minuso(T)}{R\,T} \ ,
 \label{eq:lnK}
@@ -325,9 +325,9 @@ For \fc, these mass action constants are fitted with the expression
 \label{eq:fit}
 \end{equation}
 where $a_0$, $a_1$, $b_0$, $b_1$, and $b_2$ are the fit coefficients.\\
-It is in principle possible to use your own parametrisation. For that, you need to edit the source code that performs the calculation of the mass action constants, located in the source file \verb|mass_action_constant.cpp|.
+It is in principle possible to use your own parametrisation. For that, you need to edit the source code that performs the calculation of the mass action constants. For the gas phase species, the corresponding code can be found in the source file \verb|gas_phase/molecule_struct.cpp|, while the one for condensates is located in \verb|condensed_phase/condensate_struct.cpp|.
 
-\paragraph{File structure}
+\paragraph{File structure for gas phase species}
 For \fc, the species information file should have the following structure:
 \lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{aux/logK_sample.dat}
 The first three lines of the file are treated as header lines and discarded when reading in the file. \\
@@ -343,10 +343,32 @@ The stoichiometric information is followed by an optional reference for the data
 
 The second line contains the fit coefficients for the mass action constants. \fc will read in as many coefficients as it can find in that line but for its own parametrisation in Eq. \eqref{eq:fit} it will only use the first five.
 
+
+\paragraph{File structure for condensate species}
+For \fc, the species information file should have the following structure:
+\lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{aux/logK_condensates_sample.dat}
+The first three lines of the file are again header lines and discarded when reading in the file. \\
+
+For condensates, the data set for each species consists of five lines. The first one is identical to the one for gas phase species described above. One difference with respect to the species' formulas compared to those for molecules and ions is that we don't use the Hill notation here. To be consistent with general mineralogy, we rather use the normal sum formulas here, together with the phase state. 
+
+The second line contains the phase state information. \fc currently recognises three different states:  \verb|s| (solid),  \verb|l| (liquid), and  \verb|sl| (solid and liquid).
+
+The third line lists the temperature limits of the phase state. For solids this usually extends from low temperatures to the melting point, whereas liquids typically are stable from the melting point to the critical point. If data for the latter one is not given in the thermochemical databases, we typically use a value of 6000 K, which is the upper validity limit of the thermochemical data used in \fc. We note that the melting point listed in our standard input files is given for the standard of pressure of 1 bar. In principle, the melting point is often a function of pressure, which, however, is currently not treated in \fc.
+
+\fc will use the temperature limits of the phase states when it calculates the activities of the condensates. If outside the tabulated limit, the corresponding activities are set to values much smaller than unity, which automatically discards such a species from the list of potentially stable condensates. 
+
+The fourth line lists the temperature limits of the tabulated data the fit is based on. Condensate data is often only tabulated over a very limited temperature range. Applying the fit formula \eqref{eq:fit} far outside the temperature range of the data is has been fitted with can result in unphysical behaviour of the extrapolated data. Thus, \fc has the option to only use the data inside the temperature limits listed in the input file. More information on this can be found in...
+
+Finally, the last line contains the fit coefficients. This line is identical to the corresponding one for the gas phase species discussed above.
+
+
 \paragraph{Standard files}
-Together with \fc, we provide two different species files, located in the \verb|input/| folder. The file \verb|logK.dat| provides the standard set, discussed in \citet{Stock2018MNRAS.479..865S}. This includes species for all elements at least as abundant as germanium.
+Together with \fc, we provide two different files for gas phase species, located in the \verb|input/| folder. The file \verb|logK.dat| provides the standard set, discussed in \citet{Stock2018MNRAS.479..865S}. This includes species for all elements at least as abundant as germanium.
 
 As an alternative version, we also provide an additional file \verb|logK_ext.dat| that includes more ions for elements up to uranium. The data for this file is discussed in \citet{Hoeijmakers2019A&A...627A.165H}.
+
+For condensate species we provide the file \verb|logK_condensates.dat| in the \verb|input/| folder that contains all species discussed in \textbf{Kitzmann et al}. We note that these condensates should only be used in combination with the standard \verb|logK.dat| file for the gas phase since it lacks condensate species for the additional elements contained in the species listed in \verb|logK_ext.dat|.
+
 
 \newpage
 \section{Basic element data file (optional)}
@@ -377,7 +399,7 @@ The last parameter is optional and does not need to be present in the file. It c
 
 The \cpp stand-alone version will produce two output files: a detailed chemistry output and a monitor file with diagnostic information. The file names of both files can be chosen in the config file discussed in the previous section.
 
-\paragraph{Chemistry output} 
+\paragraph{Gas phase chemistry output} 
 The chemistry output is organised in columns. The first line of the file is a header that describes the content of each column.
 
 The first and second column contain the pressure in bar and the temperature in K, respectively. The third column lists the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} \right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$. This is usually only a diagnostic quantity and rarely used in other applications. 
@@ -386,9 +408,18 @@ The fourth column is the number density of the gas in units of cm$^{-3}$, derive
 
 All subsequent columns contain the number densities (in cm$^{-3}$) or the mixing ratios of all species, depending on the choice of output made in the config file. By default, elements will be placed in the beginning, followed by molecules and ions. Note that in its species data files, \fc employs the modified Hill notation as used in the JANAF thermochemical tables \citep{Chase1986jtt..book.....C} for the formulas of all non-element species. If, for example, you are looking for the abundance of carbon dioxide, you need to locate the \verb|C1O2| column rather than \verb|CO2|, whereas \verb|NH3| would be listed as \verb|H3N1|.
 
+
+\paragraph{Condensate species output} 
+The output for the condensate species has a similar structure than the one for the gas phase discussed above. The first two columns again refer to the pressures and temperatures. The subsequent columns for the various elements contain the corresponding degrees of condensation. 
+
+The remaining columns for the condensate species are the fictitious number densities in units of \unit{cm$^{-3}$}. As discussed in \textbf{Kitzmann et al}, for a given temperature and pressure the total number of stable condensates that can be present is limited by the number of elements. Thus, most condensates will usually have a fictitious number density of 0 \unit{cm$^{-3}$}, which indicates that they are not present.
+
+
 \paragraph{Monitor file} The monitor output file is a \textbf{very} important diagnostic output that provides crucial details on the outcome of the chemistry calculations. You should further investigate any chemistry calculations that shows problems in this file. It is, therefore, advisable to check this file after each calculation to verify that everything went fine. The first line of the file is a header that describes the content of each column.
 
-The monitor output is organised in columns, where the first column contains a simple integer that refers to index of the input temperature-pressure structure. The second column lists the number of chemistry iterations that were required to solve the system. If the number corresponds to the maximum number of allowed iteration steps, then this points to potential convergence issues. 
+The monitor output is organised in columns, where the first column contains a simple integer that refers to index of the input temperature-pressure structure. The second column lists the number of coupled gas-phase chemistry and condensed phase iterations that were required to solve the system. If the number is zero, then no condensates were stable and only a pure gas-phase chemistry calculation was required.
+
+The third columns contains the total number of gas-phase chemistry iterations, while the fourth column lists the total number of iterations for the condensed phase.
 
 The next columns contain information on the convergence of the chemistry and on the status of overall element conservation. If the chemistry did converge properly \verb|ok| will be listed as output, whereas \verb|fail| is used when the chemistry failed to converge in the maximum allowed number of steps. The same keywords are used for the element conservation status: \verb|ok| if all elements were conserved, \verb|fail| if any element was not conserved. 
 
@@ -426,12 +457,18 @@ The config file used for the \cpp stand-alone executable has the following struc
 It contains the required parameters in the following order:
 \begin{itemize}
   \item Location of the file with the pressure-temperature structure the chemistry should be calculated for. The file should contain two columns, where the first one is the pressure in units of bar and the second one the temperature in K. Header lines will be ignored.
-  \item Desired location and file name for the chemistry output
+  \item the type of chemistry calculation:
+    \begin{itemize}
+    	\item \verb|g| calculate only the gas phase without condensation
+    	\item \verb|ce| calculate the gas phase with equilibrium condensation
+        \item \verb|cr| calculate the gas phase with rainout condensation approximation
+    \end{itemize}
+  \item Desired location and file name for the output of the gas phase species and condensates
   \item Desired location and file name for the diagnostic output
   \item Verbose level, where a level of \verb|1| is almost silent and \verb|4| produces a lot of diagnostic output on the terminal. Increase this level if you encounter issues to identify the source of the problems.
-  \item The output format for the species' abundances. By default, \fc will use number densities in units of cm$^{-3}$. If you use the keyword \verb|MR|, mixing ratios will be used instead. Any keyword other than \verb|MR| will result in the default option of using number densities.
+  \item The output format for the gas-phase species' abundances. By default, \fc will use number densities in units of cm$^{-3}$. If you use the keyword \verb|MR|, mixing ratios will be used instead. Any keyword other than \verb|MR| will result in the default option of using number densities.
   \item Location of the file with the element abundances, see Sect. \ref{sec:fastchem_input_files} for details
-  \item Location of the file with the thermochemical and stoichiometric data for all species, see Sect. \ref{sec:fastchem_input_files} for details 
+  \item Location of the file with the thermochemical and stoichiometric data for all species, see Sect. \ref{sec:fastchem_input_files} for details. The first entry refers to the gas-phase species, while the second one is for the condensate data. 
   \item Relative accuracy of the chemistry iterations, used as convergence criterion (also for Newton's method)
   \item Maximum number of chemistry iterations
   \item Maximum number of internal solver method iterations (Newton, Nelder-Mead \& bisection methods)

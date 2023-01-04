@@ -1,0 +1,22 @@
+#logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:
+#includes elements with eps >= eps_Ge
+#fit coefficients calculated from indicated data source.
+Al2O3[s] Corundum (alpha) : Al 2 O 3 # Chase et al., JANAF thermochemical tables, 1998.
+  s
+  0.00 2327.90
+  100.00 3000.00
+  3.68663e+05 -8.92151e+00 -3.63391e+01 9.10662e-03 -1.01298e-06
+
+Al2O3[l] Aluminum Oxide : Al 2 O 3 # Chase et al., JANAF thermochemical tables, 1998.
+  l
+  2327.90 6000.00
+  300.00 4000.00
+  3.62425e+05 -7.21877e+00 -4.48095e+01 6.77251e-03 -4.03004e-07
+
+H2SO4[s,l] Sulfuric Acid : H 2 S 1 O 4 # Chase et al., JANAF thermochemical tables, 1998.
+  sl
+  0.00 6000.00
+  100.00 1000.00
+  3.01331e+05 -2.19860e+01 1.25401e+01 5.10406e-02 -1.45022e-05
+
+
