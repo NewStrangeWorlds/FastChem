@@ -42,6 +42,11 @@ unsigned int FastChem<double_type>::calcDensities(
   if (!is_initialised)
     return FASTCHEM_INITIALIZATION_FAILED;
 
+  if ((input.rainout_condensation || input.equilibrium_condensation) && condensed_phase.is_initialised == false)
+  {
+    std::cout << " FastChem is unable to perform calculations including condensation. The data for the condensate species has not been properly initialised!\n";
+    return FASTCHEM_INITIALIZATION_FAILED;
+  }
 
   if (is_busy == true)
   {
@@ -463,7 +468,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     //remove condensates that are not present 
     //i.e. those with an activity smaller than 1
     for (auto & i : condensed_phase.condensates)
-      if (i.log_activity < -0.1) i.number_density = 0.0;
+      if (i.log_activity < -0.01) i.number_density = 0.0;
     
     //and run the gas phase calculation one last time
     double_type phi_sum = 0;

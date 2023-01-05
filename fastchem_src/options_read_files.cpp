@@ -83,9 +83,9 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
   input >> file_name;
 
   if (file_name == "")
-    return false;
-  else
-    condensates_data_file = file_name;
+    file_name = "none";
+
+  condensates_data_file = file_name;
 
 
   std::getline(file, line);

@@ -203,12 +203,16 @@ bool readConfigFile(std::string &file_path, Config &config)
 
   input >> config.cond_species_data_file;
 
-  if (config.calc_condensation && config.cond_species_data_file == "")
+  if (config.calc_condensation 
+      && (config.cond_species_data_file == "" || config.cond_species_data_file == "none"))
   {
     std::cout << "Unable to read condensate species data file from: " << file_path.c_str() << "\n";
 
     return false;
   }
+
+  if (config.cond_species_data_file == "") 
+    config.cond_species_data_file = "none";
 
 
   //chemistry accuracy

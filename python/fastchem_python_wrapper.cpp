@@ -37,6 +37,7 @@ PYBIND11_MODULE(pyfastchem, m) {
 
     py::class_<fastchem::FastChem<long double>>(m, "FastChem")
         .def(py::init<const std::string &, const unsigned int>())
+        .def(py::init<const std::string &, const std::string &, const unsigned int>())
         .def(py::init<const std::string &, const std::string &, const std::string &, const unsigned int>())
 
         .def("calcDensities", &fastchem::FastChem<long double>::calcDensities)

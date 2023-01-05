@@ -41,7 +41,16 @@ CondensedPhase<double_type>::CondensedPhase(
 {
   nb_elements = elements.size();
 
-  is_initialised = readCondensateData(options.condensates_data_file);
+  if (options.condensates_data_file != "none")
+    is_initialised = readCondensateData(options.condensates_data_file);
+  else
+  {
+    is_initialised = false;
+    nb_condensates = 0;
+
+    return;
+  }
+
 
   if (options.verbose_level >= 4)
   {

@@ -89,7 +89,7 @@ struct FastChemOptions{
 
   void init();
 
-  unsigned int nb_max_fastchem_iter = 1000;
+  unsigned int nb_max_fastchem_iter = 3000;
   unsigned int nb_max_bisection_iter = 3000;
   unsigned int nb_max_newton_iter = 3000;
   unsigned int nb_max_neldermead_iter = 3000;
@@ -108,7 +108,7 @@ struct FastChemOptions{
   bool use_scaling_factor = false;
   double additional_scaling_factor = 0.0;
 
-  double_type logK_limit = 100000;
+  double_type logK_limit = 1e10;
   bool cond_use_data_validity_limits = false;
 
   bool cond_use_svd = false;

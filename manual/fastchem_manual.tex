@@ -13,6 +13,7 @@
 \usepackage{xspace}
 \usepackage{natbib}
 \usepackage{stmaryrd}
+\usepackage{tabularx}
 
 \usepackage{chemformula}
 \let\ce\ch
@@ -79,7 +80,7 @@
 \fc is an open-source computer program that can calculate the gas phase chemical equilibrium composition of general systems for a given temperature pressure and element abundances.
 
 
-equilibrium chemistry model that can calculate the gas phase chemical composition of general systems. It uses a semi-analytical approach to solve the non-linear system of mass action law equations, which results in a massive increase in computational performance over other approaches like Gibbs minimisation. The general concept and the original version 1.0 is described by \citet{Stock2018MNRAS.479..865S} (Paper I). Version 1.0, however, is restricted to systems that are dominated by hydrogen and helium and required an additional iteration to account for the pressure of the system. The current version 2.0 can now be applied to arbitrary element compositions. This version will be described by \citet{Stock2020inprep}, from here on referred to as Paper II.
+equilibrium chemistry model that can calculate the gas phase chemical composition of general systems. It uses a semi-analytical approach to solve the non-linear system of mass action law equations, which results in a massive increase in computational performance over other approaches like Gibbs minimisation. The general concept and the original version 1.0 is described by \citet{Stock2018MNRAS.479..865S} (Paper I). Version 1.0, however, is restricted to systems that are dominated by hydrogen and helium and required an additional iteration to account for the pressure of the system. The current version 2.0 can now be applied to arbitrary element compositions. This version will be described by \citet{Stock2022MNRAS.517.4070S}, from here on referred to as Paper II.
 
 \fc has already been applied to numerous different systems, from brown dwarfs \citep{Kitzmann2020ApJ...890..174K}, to mini-Neptunes, hot-Jupiters \citep{Bourrier2020A&A...637A..36B}, to ultra-hot Jupiters \citep{Hoeijmakers2019A&A...627A.165H}. It is directly coupled to the retrieval model \ttt{Helios-r2} \citep{Kitzmann2020ApJ...890..174K}, to the general atmospheric model \ttt{HELIOS} \citep{Malik2019AJ....157..170M}, and the non-equilibrium chemistry \ttt{VULCAN} \citep{Tsai2018ApJ...862...31T}, all of which are available under \url{https://github.com/exoclime}.
 
@@ -357,7 +358,7 @@ The third line lists the temperature limits of the phase state. For solids this 
 
 \fc will use the temperature limits of the phase states when it calculates the activities of the condensates. If outside the tabulated limit, the corresponding activities are set to values much smaller than unity, which automatically discards such a species from the list of potentially stable condensates. 
 
-The fourth line lists the temperature limits of the tabulated data the fit is based on. Condensate data is often only tabulated over a very limited temperature range. Applying the fit formula \eqref{eq:fit} far outside the temperature range of the data is has been fitted with can result in unphysical behaviour of the extrapolated data. Thus, \fc has the option to only use the data inside the temperature limits listed in the input file. More information on this can be found in...
+The fourth line lists the temperature limits of the tabulated data the fit is based on. Condensate data is often only tabulated over a very limited temperature range. Applying the fit formula \eqref{eq:fit} far outside the temperature range of the data it has been fitted for can result in unphysical behaviour of the extrapolated data. Thus, \fc has the option to only use the data inside the temperature limits listed in the input file. More information on this can be found in...
 
 Finally, the last line contains the fit coefficients. This line is identical to the corresponding one for the gas phase species discussed above.
 
@@ -367,7 +368,7 @@ Together with \fc, we provide two different files for gas phase species, located
 
 As an alternative version, we also provide an additional file \verb|logK_ext.dat| that includes more ions for elements up to uranium. The data for this file is discussed in \citet{Hoeijmakers2019A&A...627A.165H}.
 
-For condensate species we provide the file \verb|logK_condensates.dat| in the \verb|input/| folder that contains all species discussed in \textbf{Kitzmann et al}. We note that these condensates should only be used in combination with the standard \verb|logK.dat| file for the gas phase since it lacks condensate species for the additional elements contained in the species listed in \verb|logK_ext.dat|.
+For condensate species we provide the file \verb|logK_condensates.dat| in the \verb|input/| folder that contains all species discussed in \citet{Kitzmann2023inprep}. We note that these condensates should only be used in combination with the standard \verb|logK.dat| file for the gas phase since it lacks condensate species for the additional elements contained in the species listed in \verb|logK_ext.dat|.
 
 
 \newpage
@@ -402,7 +403,7 @@ The \cpp stand-alone version will produce two output files: a detailed chemistry
 \paragraph{Gas phase chemistry output} 
 The chemistry output is organised in columns. The first line of the file is a header that describes the content of each column.
 
-The first and second column contain the pressure in bar and the temperature in K, respectively. The third column lists the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} \right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$. This is usually only a diagnostic quantity and rarely used in other applications. 
+The first and second column contain the pressure in bar and the temperature in K, respectively. The third column lists the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic} \right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$ and the fictitious number densities of the condensate species $n_c$. This is usually only a diagnostic quantity and rarely used in other applications. 
 
 The fourth column is the number density of the gas in units of cm$^{-3}$, derived from the ideal gas law. This is followed by a column of mean molecular weights of the mixture of species in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of $\unit{g/mol}$.
 
@@ -412,7 +413,7 @@ All subsequent columns contain the number densities (in cm$^{-3}$) or the mixing
 \paragraph{Condensate species output} 
 The output for the condensate species has a similar structure than the one for the gas phase discussed above. The first two columns again refer to the pressures and temperatures. The subsequent columns for the various elements contain the corresponding degrees of condensation. 
 
-The remaining columns for the condensate species are the fictitious number densities in units of \unit{cm$^{-3}$}. As discussed in \textbf{Kitzmann et al}, for a given temperature and pressure the total number of stable condensates that can be present is limited by the number of elements. Thus, most condensates will usually have a fictitious number density of 0 \unit{cm$^{-3}$}, which indicates that they are not present.
+The remaining columns for the condensate species are the fictitious number densities in units of \unit{cm$^{-3}$}. As discussed in \citet{Kitzmann2023inprep}, for a given temperature and pressure the total number of stable condensates that can be present is limited by the number of elements. Thus, most condensates will usually have a fictitious number density of 0 \unit{cm$^{-3}$}, which indicates that they are not present.
 
 
 \paragraph{Monitor file} The monitor output file is a \textbf{very} important diagnostic output that provides crucial details on the outcome of the chemistry calculations. You should further investigate any chemistry calculations that shows problems in this file. It is, therefore, advisable to check this file after each calculation to verify that everything went fine. The first line of the file is a header that describes the content of each column.
@@ -474,7 +475,7 @@ It contains the required parameters in the following order:
   \item Maximum number of internal solver method iterations (Newton, Nelder-Mead \& bisection methods)
 \end{itemize}
 
-In the input file, the number of iterations for the Newton, Nelder-Mead, and bisection methods are assumed to be the same. This number can be adjusted individually for each of these internal solvers by using the corresponding methods of the \fc object class listed in Sect. \ref{sec:fastchem_methods}. The convergence criterion for Newton's method is also set to the accuracy of the chemistry iteration by default. This convergence criterion can also be changed by the \lstinline!FastChem.setNewtonAccuracy! method (see Sect. \ref{sec:fastchem_methods}).
+In the input file, the number of iterations for the Newton, Nelder-Mead, and bisection methods are assumed to be the same. This number can be adjusted individually for each of these internal solvers by using the corresponding methods of the \fc object class listed in Sect. \ref{sec:fastchem_methods}. The convergence criterion for Newton's method is also set to the accuracy of the chemistry iteration by default. This convergence criterion can also be changed by the \lstinline!FastChem.setParameter! method (see Sect. \ref{sec:fastchem_methods}).
 
 
 \section{Benchmark input and output files}
@@ -515,29 +516,62 @@ As a first step, we need to import the \pfc module:\\
 
 \lstinline[language=Python]!import pyfastchem!\\
 
-This will import the module compiled by \pb. Next, we have to create a \fc object (here named \lstinline[language=Python]!fastchem!) with the constructor \lstinline[language=Python]!pyfastchem.FastChem! provided by \pfc:\\
+This will import the module compiled by \pb. Next, we have to create a \fc object (here named \lstinline[language=Python]!fastchem!) with a corresponding constructor \lstinline[language=Python]!pyfastchem.FastChem! provided by \pfc. There are three different possible versions of the constructor. F
 
-\lstinline[language=Python]!fastchem = pyfastchem.FastChem('input/element_abundances.dat', 'input/logK.dat', 1)!\\
+If we're only interested in a pure gas phase chemistry calculation, we can use
+\begin{lstlisting}[language=Python]
+fastchem = pyfastchem.FastChem('input/element_abundances.dat', 
+	                       'input/logK.dat', 
+	                       1)
+\end{lstlisting}
 
-The constructor requires three different arguments: the location of the element abundance file, the location of the file with the equilibrium constants, and the verbose level. Alternatively, a \fc object can also be created via\\
+This constructor requires three different arguments: the location of the element abundance file, the location of the file with the equilibrium constants, and the verbose level. \\
+
+For a \fc object that also includes condensed species, we have:
+\begin{lstlisting}[language=Python]
+fastchem = pyfastchem.FastChem('input/element_abundances.dat', 
+	                       'input/logK.dat', 
+	                       'input/logK_condensates.dat', 
+	                       1)
+\end{lstlisting}
+
+where the additional argument is the location of the input file with the equilibrium constants of the condensed species. It is also possible to use \verb|'none'| for this argument:
+
+\begin{lstlisting}[language=Python]
+fastchem = pyfastchem.FastChem('input/element_abundances.dat', 
+                               'input/logK.dat', 
+	                       'none', 
+	                       1)
+\end{lstlisting}
+
+in which case no condensate data will be read in and this constructor behaves like the first one by only allowing the calculation of the pure gas phase composition.\\
+
+Alternatively, a \fc object can also be created via\\
 
 \lstinline[language=Python]!fastchem = pyfastchem.FastChem('input/parameters.dat', 1)!\\
 
 where the first argument is the location of the parameter file and the second one the initial verbose level. The latter one will later be replaced by the corresponding value read in from the parameter file. The structure of this parameter file is discussed in Section \ref{sec:fc_parameter_file}.\\
 
-Creating a \fc object with the first method will set internal parameters to their default values. The maximum number of chemistry iterations will be 1000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. All of these values can, however, be adjusted during runtime by using the methods listed in Section \ref{sec:pfc_methods}.\\
+Creating a \fc object with the first two methods will set internal parameters to their default values. The maximum number of chemistry iterations will be 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. All of these values can, however, be adjusted during runtime by using the methods listed in Section \ref{sec:pfc_methods}.\\
 
 Next, we need to create the input and output structures used by \pfc:\\
 
 \lstinline[language=Python]!input_data = pyfastchem.FastChemInput()!\\
 \lstinline[language=Python]!output_data = pyfastchem.FastChemOutput()!\\
 
-Details on these structures can be found in Section \ref{sec:pfc_input_ouput_struct}. The input structure basically contains the temperature (in K) and pressure (in bar) arrays that the chemistry should be calculated for. They can be set, for example, by:\\
+Details on these structures can be found in Section \ref{sec:pfc_input_ouput_struct}. The input structure contains the temperature (in K) and pressure (in bar) arrays that the chemistry should be calculated for. They can be set, for example, by:\\
 
 \lstinline[language=Python]!input_data.temperature = temperature!\\
 \lstinline[language=Python]!input_data.pressure = pressure!\\
 
-where \lstinline[language=Python]!temperature! and \lstinline[language=Python]!pressure! are standard Python lists or NumPy arrays. Both arrays need to have the same length.
+where \lstinline[language=Python]!temperature! and \lstinline[language=Python]!pressure! are standard Python lists or NumPy arrays. Both arrays need to have the same length. The input structure also contains two boolean flags that enable the calculation of the condensed phase:\\
+
+\lstinline[language=Python]!input_data.equilibrium_condensation!\\
+\lstinline[language=Python]!input_data.rainout_condensation!\\
+
+Setting the first flag to \verb|True| will calculate the chemical composition assuming equilibrium condensation for each temperature-pressure point of the input structure separately. Setting the rainout condensation flag to \verb|True| enables the calculation using the rainout approximation. Details on this can be found in \citet{Kitzmann2023inprep}. Note that if the rainout flag is set to \verb|True|, the value of the equilibrium condensation flag is ignored. By default, both flags are set to \verb|False|.\\
+
+
 With the input structure properly set up, we can now run the actual \fc calculation by calling the \lstinline[language=Python]!calcDensities! method:\\
 
 \lstinline[language=Python]!fastchem_flag = fastchem.calcDensities(input_data, output_data)!\\
@@ -551,6 +585,8 @@ will contain the number densities of the chemical species. This is a 2D list, wh
 The Python directory of the \fc repository also contains functions that save the output into files, identical to those from the \cpp version. They can be called by:\\
 
 \lstinline[language=Python, breaklines, breakatwhitespace]!saveChemistryOutput(output_dir + '/chemistry.dat', temperature, pressure, output_data.total_element_density, output_data.mean_molecular_weight,  output_data.number_densities, fastchem)!\\
+
+\lstinline[language=Python, breaklines, breakatwhitespace]!saveCondOutput(output_dir + '/condensates.dat', temperature, pressure, output_data.element_cond_degree, output_data.number_densities_cond, fastchem)!\\
 
 \lstinline[language=Python, breaklines, breakatwhitespace]!saveMonitorOutput(output_dir + '/monitor.dat', temperature, pressure, output_data.element_conserved, output_data.fastchem_flag, output_data.nb_chemistry_iterations, output_data.total_element_density, output_data.mean_molecular_weight, fastchem)!\\
 
@@ -652,13 +688,91 @@ Saving the chemistry output with the panda \lstinline[language=Python]!DataFrame
 All arguments are identical to those of the previous ASCII output function. The saved panda DataFrame contains the same columns and headers as the simple text output.
 
 
+
+\subsection{Condensate output script}
+
+The two condensate output scripts are almost identical to the gas phase chemistry one described above. The first script saves the output into a simple text file:\\
+
+\lstinline[language=Python, breaklines, breakatwhitespace]!saveCondOutput(file_path, temperature, pressure, element_cond_degree, number_densities, fastchem, output_species=None, additional_columns=None, additional_columns_desc=None)!\\
+
+It has the following arguments:
+
+\bigbreak
+
+\lstinline[language=Python]!file_path!
+\begin{addmargin}[25pt]{0pt}
+	Contains the path to the output file as a \lstinline[language=Python]!str! variable.
+\end{addmargin}
+
+
+\bigbreak
+
+\lstinline[language=Python]!temperature, pressure!
+\begin{addmargin}[25pt]{0pt}
+	Arrays of \lstinline[language=Python]!float! values with the temperature and pressure structure the chemistry has been calculated for.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline[language=Python]!element_cond_degree!
+\begin{addmargin}[25pt]{0pt}
+	Two-dimensional \lstinline[language=Python]!float! array of the degrees of condensation for all elements. The first dimension of the array refers to the temperature and pressure input arrays, while the second dimension describes the different elements.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline[language=Python]!number_densities!
+\begin{addmargin}[25pt]{0pt}
+	Two-dimensional \lstinline[language=Python]!float! array of the (fictitious) condensate number densities. The first dimension of the array refers to the temperature and pressure input arrays, while the second dimension describes the different condensate species.
+\end{addmargin}
+
+
+\bigbreak
+
+\lstinline[language=Python]!fastchem!
+\begin{addmargin}[25pt]{0pt}
+	An object of the \pfc class that has been used to calculate the chemistry. 
+\end{addmargin}
+
+
+\bigbreak
+
+\lstinline[language=Python]!output_species=None!
+\begin{addmargin}[25pt]{0pt}
+	Optional parameter. Is an array of \lstinline[language=Python]!str! values that contains the chemical symbols of condensates the chemistry output file should be saved for. Without this optional parameter, the output function will by default save all species. The symbols have to match the ones used in the \fc input file for the equilibrium constants.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline[language=Python]!additional_columns=None, additional_columns_desc=None!
+\begin{addmargin}[25pt]{0pt}
+	Optional parameters. Sometimes, \fc calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow to print additional columns in the output file. The first parameter \lstinline[language=Python]!additional_columns! is an $N\times N_\mathrm{tp}$-dimensional array of \lstinline[language=Python]!float! values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays. 
+	
+	The second optional parameter \lstinline[language=Python]!additional_columns_desc! contains an array of \lstinline[language=Python]!str! values with the header descriptions of the additional columns. The dimension has to be equal to number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled \texttt{unk} instead.
+\end{addmargin}
+
+\bigbreak
+
+All of these function arguments, except for the optional parameters, are contained within the input and output structures of \pfc, discussed in Sect. \ref{sec:pfc_input_ouput_struct}\\
+
+Saving the condensate output with the panda \lstinline[language=Python]!DataFrame! format in a pickle file is possible via the function:
+
+\bigbreak
+
+\lstinline[language=Python, breaklines, breakatwhitespace]!saveCondOutputPandas(file_path, temperature, pressure, element_cond_degree, number_densities_cond,fastchem, output_species=None, additional_columns=None, additional_columns_desc=None)!
+
+\bigbreak
+
+All arguments are identical to those of the previous ASCII output function. The saved panda DataFrame contains the same columns and headers as the simple text output.
+
+
 \subsection{Monitor output scripts}
 
 \texttt{save\_output.py} also contains two functions for the \fc monitor output. The first, \lstinline[language=Python]!savMonitorOutput!, saves the debug output in a text file that is identical to the one of the \cpp version. Just like for the chemistry output, saving the results for a large number of calculations can be quite slow. Therefore, we also provide an alternative function \lstinline[language=Python]!saveMonitorOutputPandas! that saves the output as a pandas \lstinline[language=Python]!DataFrame! format into a pickle file. 
 
 The function for saving the output as a normal text file is\\
 
-\lstinline[language=Python, breaklines, breakatwhitespace]!saveMonitorOutput(file_path, temperature, pressure, element_conserved, fastchem_flags, nb_chemistry_iterations, total_element_density, mean_molecular_weight, fastchem, additional_columns=None, additional_columns_desc=None)!
+\lstinline[language=Python, breaklines, breakatwhitespace]!saveMonitorOutput(file_path, temperature, pressure, element_conserved, fastchem_flags, nb_iterations, nb_chemistry_iterations, nb_condensation_iterations, total_element_density, mean_molecular_weight, fastchem, additional_columns=None, additional_columns_desc=None)!
 
 \bigbreak
 
@@ -688,16 +802,30 @@ with the following arguments:
 
 \bigbreak
 
-\lstinline!fastchem_flag!
+\lstinline!fastchem_flags!
 \begin{addmargin}[25pt]{0pt}
 	One-dimensional array of \lstinline[language=Python]!int! numbers. Contains flags that give information on potential issues of the chemistry calculation for each temperature-pressure point. The set of potential values is stated in Sect. \ref{sec:pfc_constants}. A string message for each corresponding flag can also be obtained from the constant \lstinline!pyfastchem.FASTCHEM_MSG! vector of strings, via \lstinline!pyfastchem.FASTCHEM_MSG[flag]!. The dimension of the array is equal to that of the input temperature and pressure vectors.
 \end{addmargin}
 
 \bigbreak
 
+\lstinline!nb_iterations!
+\begin{addmargin}[25pt]{0pt}
+	One-dimensional array of \lstinline[language=Python]!int! numbers. Contains the number of coupled chemistry-condensation iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.
+\end{addmargin}
+
+\bigbreak
+
 \lstinline!nb_chemistry_iterations!
 \begin{addmargin}[25pt]{0pt}
-	One-dimensional array of \lstinline[language=Python]!int! numbers. Contains the number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.
+	One-dimensional array of \lstinline[language=Python]!int! numbers. Contains the total number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!nb_condensation_iterations!
+\begin{addmargin}[25pt]{0pt}
+	One-dimensional array of \lstinline[language=Python]!int! numbers. Contains the total number of condensation calculation iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.
 \end{addmargin}
 
 \bigbreak
@@ -736,7 +864,7 @@ The monitor output file has the same format as the one produced by the \cpp vers
 
 \bigbreak
 
-\lstinline[language=Python, breaklines, breakatwhitespace]!saveMonitorOutputPandas(file_path, temperature, pressure, element_conserved, fastchem_flags, nb_chemistry_iterations, total_element_density, mean_molecular_weight, fastchem, additional_columns=None, additional_columns_desc=None)!
+\lstinline[language=Python, breaklines, breakatwhitespace]!saveMonitorOutputPandas(file_path, temperature, pressure, element_conserved, fastchem_flags, nb_iterations, nb_chemistry_iterations, nb_condensation_iterations, total_element_density, mean_molecular_weight, fastchem, additional_columns=None, additional_columns_desc=None)!
 
 \bigbreak
 
@@ -804,7 +932,7 @@ or
 
 \section{\fc object class}
 
-The entire \fc model is encapsulated in an object class called \fc that is defined in the header file \verb|fastchem.h|. The object class is programmed as a template that be used in either \verb|double| or \verb|long double| precision. When creating an object of this class by calling a corresponding constructor, one therefore has to specify which of the two versions should be used:
+The entire \fc model is encapsulated in an object class called \fc that is defined in the header file \verb|fastchem.h|. The object class is programmed as a template that can be used in either \verb|double| or \verb|long double| precision. When creating an object of this class by calling a corresponding constructor, one therefore has to specify which of the two versions should be used:
 \bigbreak
 \lstinline!  FastChem<long double> fastchem("model_parameter_file.dat", 1);!
 \bigbreak
@@ -857,7 +985,8 @@ In addition to these flags, \verb|fastchem_constants.h| also includes a constant
 
 
 \section{FastChem constructor}
-Since \fc is written as an object class, an instance of that class (i.e. an object) needs to be created before \fc can be used. This is done by calling the constructor of the \fc class. There are two primary ways to call the constructor and create an object.\\
+
+Since \fc is written as an object class, an instance of that class (i.e. an object) needs to be created before \fc can be used. This is done by calling the constructor of the \fc class. There are three primary ways to call the constructor and create an object.\\
 
 \lstinline!FastChem(const std::string& model_parameter_file, const unsigned int verbose_level_init)!
 \begin{addmargin}[25pt]{0pt}
@@ -868,12 +997,19 @@ Since \fc is written as an object class, an instance of that class (i.e. an obje
 
 \lstinline[breaklines=true]!FastChem(const std::string &element_abundances_file, const std::string &species_data_file, const unsigned int verbose_level)!
 \begin{addmargin}[25pt]{0pt}
-  This constructor requires three parameters: the locations of the element abundance and species data files, as well as the verbose level. All other options and parameters within \fc will be set to their default values but can be later changed by using the appropriate methods described in Sect. \ref{sec:fastchem_methods}. The default maximum number of chemistry iterations is 1000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$.
+  This constructor requires three parameters: the locations of the element abundance and species data files, as well as the verbose level. All other options and parameters within \fc will be set to their default values but can be later changed by using the appropriate methods described in Sect. \ref{sec:fastchem_methods}. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
 \end{addmargin}
 
 \bigbreak
 
-A third way to create a \fc object is to make a copy of an existing one. \fc contains an internal copy constructor that manages the copy of all the object class' data structures. Assuming that \lstinline!fastchem_a! is a valid object instance of the \fc class, a second object, say \lstinline!fastchem_b!, can simply be created by using 
+\lstinline[breaklines=true]!FastChem(const std::string &element_abundances_file, const std::string &species_data_file, const std::string &cond_species_data_file, const unsigned int verbose_level)!
+\begin{addmargin}[25pt]{0pt}
+	This constructor requires four parameters: the locations of the element abundance and species data files, the condensate data file, as well as the verbose level. All other options and parameters within \fc will be set to their default values but can be later changed by using the appropriate methods described in Sect. \ref{sec:fastchem_methods}. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. Note that instead of a location for the condensate data, a string containing \lstinline!"none"! can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
+\end{addmargin}
+
+\bigbreak
+
+A fourth way to create a \fc object is to make a copy of an existing one. \fc contains an internal copy constructor that manages the copy of all the object class' data structures. Assuming that \lstinline!fastchem_a! is a valid object instance of the \fc class, a second object, say \lstinline!fastchem_b!, can simply be created by using 
 \begin{lstlisting}[language=C++]
   fastchem::FastChem fastchem_b(fastchem_a);
 \end{lstlisting}
@@ -894,10 +1030,15 @@ The input structure is defined as follows:
   {
     std::vector<double> temperature; 
     std::vector<double> pressure;
+    
+    bool equilibrium_condensation = false;
+    bool rainout_condensation = false;
   };
 \end{lstlisting}
 
 It contains vectors for the temperatures (in K) and pressures (in bar) that the chemical composition should be calculated for. Both vectors need to have the same length. Otherwise, \lstinline!FastChem.calcDensities! will return the constant \lstinline!fastchem::FASTCHEM_WRONG_INPUT_VALUES!. Note that even if you want to run the chemistry for only a single temperature and pressure point, you still need to provide the input in vectorial form.
+
+The two boolean variables enable the calculation of either equilibrium condensation or the rainout approximation. By default, both are set to \lstinline!false!. Note that when the flag \lstinline!rainout_condensation! is set to \lstinline!true!, the value of the parameter \lstinline!equilibrium_condensation! is ignored.
 
 
 \subsection{Output structure}
@@ -909,9 +1050,14 @@ The outout structure is defined as
     std::vector<std::vector<double>> number_densities;
     std::vector<double> total_element_density;
     std::vector<double> mean_molecular_weight;
-
+    
+    std::vector<std::vector<double>> number_densities_cond;
+    std::vector<std::vector<double>> element_cond_degree;
+    
     std::vector<std::vector<unsigned int>> element_conserved;
     std::vector<unsigned int> nb_chemistry_iterations;
+    std::vector<unsigned int> nb_cond_iterations;
+    std::vector<unsigned int> nb_iterations;
     std::vector<unsigned int> fastchem_flag;
   };
 \end{lstlisting}
@@ -920,14 +1066,14 @@ It has the following variables:
 
 \lstinline!std::vector<std::vector<double>> number_densities!
   \begin{addmargin}[25pt]{0pt}
-    The two-dimensional array contains the number densities in \unit{cm$^{-3}$} of all species (elements, molecules, ions). The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of \lstinline!FastChem.getSpeciesNumber()! (see Sect. \ref{sec:fastchem_methods}).
+    The two-dimensional array contains the number densities in \unit{cm$^{-3}$} of all gas phase species (elements, molecules, ions). The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of \lstinline!FastChem.getGasSpeciesNumber()! (see Sect. \ref{sec:fastchem_methods}).
   \end{addmargin}
   
 \bigbreak
 
 \lstinline!std::vector<double> total_element_density!
 \begin{addmargin}[25pt]{0pt}
-  Contains the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} \right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the vector is equal to that of the input temperature and pressure vectors.
+  Contains the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic} \right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$ as well as condensate species $c$. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the vector is equal to that of the input temperature and pressure vectors.
 \end{addmargin}
 
 \bigbreak
@@ -935,6 +1081,20 @@ It has the following variables:
 \lstinline!std::vector<double> mean_molecular_weight!
 \begin{addmargin}[25pt]{0pt}
   Contains the mean molecular weight of the mixture in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of $\unit{g/mol}$. The dimension of the vector is equal to that of the input temperature and pressure vectors.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!std::vector<std::vector<double>> number_densities_cond!
+\begin{addmargin}[25pt]{0pt}
+	The two-dimensional array contains the fictitious number densities in \unit{cm$^{-3}$} of all condensate species. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of \lstinline!FastChem.getCondSpeciesNumber()! (see Sect. \ref{sec:fastchem_methods}).
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!std::vector<std::vector<double>> element_cond_degree!
+\begin{addmargin}[25pt]{0pt}
+	The two-dimensional array contains the degree of condensation for all elements. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of \lstinline!FastChem.getElementNumber()! (see Sect. \ref{sec:fastchem_methods}).
 \end{addmargin}
 
 \bigbreak
@@ -948,7 +1108,21 @@ It has the following variables:
 
 \lstinline!std::vector<unsigned int> nb_chemistry_iterations!
 \begin{addmargin}[25pt]{0pt}
-  Contains the number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
+  Contains the total number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!std::vector<unsigned int> nb_iterations!
+\begin{addmargin}[25pt]{0pt}
+	Contains the total number of coupled condensation-gas phase chemistry calculation iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!std::vector<unsigned int> nb_chemistry_iterations!
+\begin{addmargin}[25pt]{0pt}
+	Contains the total number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
 \end{addmargin}
 
 \bigbreak
@@ -973,9 +1147,9 @@ The vectors of the output structure don't need to be pre-allocated. This will be
 
 \bigbreak
 
-\lstinline!unsigned int FastChem.getSpeciesNumber()!
+\lstinline!unsigned int FastChem.getGasSpeciesNumber()!
   \begin{addmargin}[25pt]{0pt}
-    Returns the total number of chemical species (atoms, ions, molecules) as \lstinline!unsigned int!
+    Returns the total number of gas phase species (atoms, ions, molecules) as \lstinline!unsigned int!
   \end{addmargin}
   
 \bigbreak
@@ -994,24 +1168,78 @@ The vectors of the output structure don't need to be pre-allocated. This will be
 
 \bigbreak
 
-\lstinline!std::string FastChem.getSpeciesName(unsigned int species_index)!
+\lstinline!unsigned int FastChem.getCondSpeciesNumber()!
 \begin{addmargin}[25pt]{0pt}
-  Returns the name of a chemical species with index \lstinline!species_index! as \lstinline!std::string!; returns empty string if species does not exist
+	Returns the total number of condensate species as \lstinline!unsigned int!
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!std::string FastChem.getGasSpeciesName(unsigned int species_index)!
+\begin{addmargin}[25pt]{0pt}
+  Returns the name of a gas phase species with index \lstinline!species_index! as \lstinline!std::string!; returns empty string if species does not exist
 \end{addmargin}  
 
 \bigbreak
 
-\lstinline!std::string FastChem.getSpeciesSymbol(unsigned int species_index)!
+\lstinline!std::string FastChem.getGasSpeciesSymbol(unsigned int species_index)!
 \begin{addmargin}[25pt]{0pt}
   Returns the symbol of an element or the formula of a molecule/ion with index \lstinline!species_index! as \lstinline!std::string!; returns empty string if species does not exist
 \end{addmargin}
 
 \bigbreak
 
-\lstinline!unsigned int FastChem.getSpeciesIndex(std::string symbol)!
+\lstinline!unsigned int FastChem.getGasSpeciesIndex(std::string symbol)!
 \begin{addmargin}[25pt]{0pt}
   Returns the index of a species (element/molecule/ion) with symbol/formula \lstinline!symbol! as \lstinline!unsigned int!; returns the constant \lstinline!fastchem::FASTCHEM_UNKOWN_SPECIES! if species does not exist
 \end{addmargin}
+
+
+
+\bigbreak
+
+\lstinline!std::string FastChem.getElementName(unsigned int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the name of an element with index \lstinline!species_index! as \lstinline!std::string!; returns empty string if species does not exist
+\end{addmargin}  
+
+\bigbreak
+
+\lstinline!std::string FastChem.getElementSymbol(unsigned int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the symbol of an element with index \lstinline!species_index! as \lstinline!std::string!; returns empty string if species does not exist
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!unsigned int FastChem.getElementIndex(std::string symbol)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the index of an element with symbol \lstinline!symbol! as \lstinline!unsigned int!; returns the constant \lstinline!fastchem::FASTCHEM_UNKOWN_SPECIES! if species does not exist
+\end{addmargin}
+
+
+
+\bigbreak
+
+\lstinline!std::string FastChem.getCondSpeciesName(unsigned int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the name of a condensate species with index \lstinline!species_index! as \lstinline!std::string!; returns empty string if species does not exist
+\end{addmargin}  
+
+\bigbreak
+
+\lstinline!std::string FastChem.getCondSpeciesSymbol(unsigned int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the formula of a condensate species with index \lstinline!species_index! as \lstinline!std::string!; returns empty string if species does not exist
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!unsigned int FastChem.getCondSpeciesIndex(std::string symbol)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the index of a condensate species formula \lstinline!symbol! as \lstinline!unsigned int!; returns the constant \lstinline!fastchem::FASTCHEM_UNKOWN_SPECIES! if species does not exist
+\end{addmargin}
+
 
 \bigbreak
 
@@ -1031,15 +1259,29 @@ The vectors of the output structure don't need to be pre-allocated. This will be
 
 \bigbreak
 
-\lstinline!double FastChem.getSpeciesMolecularWeight(const unsigned int species_index)!
+\lstinline!double FastChem.getGasSpeciesWeight(unsigned int species_index)!
 \begin{addmargin}[25pt]{0pt}
-  Returns the molecular weight of a species with index \lstinline!species_index! as \lstinline!double!; returns 0 if species does not exist; for an element this refers to the atomic weight
+  Returns the weight of a gas phase species (element/molecule/ion) with index \lstinline!species_index! as \lstinline!double!; returns 0 if species does not exist; for an element this refers to the atomic weight
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!double FastChem.getElememtWeight(unsigned int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the atomic weight of an element with index \lstinline!species_index! as \lstinline!double!; returns 0 if the element does not exist
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!double FastChem.getCondSpeciesWeight(unsigned int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the weight of a condensate species with index \lstinline!species_index! as \lstinline!double!; returns 0 if species does not exist
 \end{addmargin}
 
 
 \bigbreak
 
-\lstinline!void setElementAbundances(std::vector<double> abundances)!
+\lstinline!void FastChem.setElementAbundances(std::vector<double> abundances)!
 \begin{addmargin}[25pt]{0pt}
   Sets the abundances of all elements; the abundances are supplied as \lstinline!std::vector<double>!, where the vector has to have a size of \lstinline!FastChem.getElementNumber()!; if this is not the case, \fc will print an error message and leave the element abundances unchanged
 \end{addmargin}
@@ -1053,51 +1295,172 @@ The vectors of the output structure don't need to be pre-allocated. This will be
 
 \bigbreak
 
-\lstinline!void FastChem.setMaxChemistryIter(unsigned int nb_steps)!
+\lstinline!void FastChem.setParameter(std::string param_name, param_type param_value)!
 \begin{addmargin}[25pt]{0pt}
-  Sets the maximum number of internal chemistry iterations, provided by \lstinline!unsigned int nb_steps!. This value will overwrite the one from the \fc config file.
+	Sets an internal \fc parameter with the name \lstinline!param_name!. Depending on the parameter, the variable type \lstinline!param_type! can either be an \lstinline!unsigned int!, a \lstinline!bool!, or a \lstinline!double! value. A list of parameters and their types can be found in the next section.
+\end{addmargin}
+
+
+
+\section{Internal parameters}
+\label{sect:fc_param}
+
+This section provides an overview over all the internal \fc parameters that can be adjusted via the aforementioned \lstinline!void FastChem.setParameter(std::string param_name, param_type param_value)! method. More detailed explanations on what these parameters do can be found in \citet{Stock2018MNRAS.479..865S}, \citet{Stock2022MNRAS.517.4070S}, and \citet{Kitzmann2023inprep}\\
+
+
+\lstinline!accuracyChem!
+\begin{addmargin}[25pt]{0pt}
+	Relative accuracy requirement for chemistry iteration and internal solvers (except Newton's method).\\
+	Type: \lstinline!double!\\
+	Default value: 1e-4
+\end{addmargin}
+
+\lstinline!accuracyNewton!
+\begin{addmargin}[25pt]{0pt}
+	Relative accuracy requirement for accuracy requirement for Newton's method.\\
+	Type: \lstinline!double!\\
+	Default value: 1e-4
+\end{addmargin}
+
+\lstinline!accuracyCond!
+\begin{addmargin}[25pt]{0pt}
+	Relative accuracy requirement for condensation calculations.\\
+	Type: \lstinline!double!\\
+	Default value: 1e-4
+\end{addmargin}
+
+\lstinline!nbIterationsChemCond!
+\begin{addmargin}[25pt]{0pt}
+	Maximum number of combined gas phase chemistry and condensate calculations. \\
+	Type: \lstinline!unsigned int!\\
+	Default value: 3000
+\end{addmargin}
+
+
+\lstinline!nbIterationsChem!
+\begin{addmargin}[25pt]{0pt}
+	Maximum number of chemistry iterations. \\
+	Type: \lstinline!unsigned int!\\
+	Default value: 3000
+\end{addmargin}
+
+
+\lstinline!nbIterationsCond!
+\begin{addmargin}[25pt]{0pt}
+	Maximum number of condensate calculation iterations. \\
+	Type: \lstinline!unsigned int!\\
+	Default value: 3000
+\end{addmargin}
+
+
+\lstinline!nbIterationsNewton!
+\begin{addmargin}[25pt]{0pt}
+	Maximum number of iterations for Newton's method. \\
+	Type: \lstinline!unsigned int!\\
+	Default value: 3000
+\end{addmargin}
+
+\lstinline!nbIterationsBisection!
+\begin{addmargin}[25pt]{0pt}
+	Maximum number of iterations for the bisection method. \\
+	Type: \lstinline!unsigned int!\\
+	Default value: 3000
+\end{addmargin}
+
+
+\lstinline!nbIterationsNelderMead!
+\begin{addmargin}[25pt]{0pt}
+	Maximum number of iterations for the Nelder-Mead method. \\
+	Type: \lstinline!unsigned int!\\
+	Default value: 3000
 \end{addmargin}
 
 \bigbreak
 
-\lstinline!void FastChem.setMaxNewtonIter(unsigned int nb_steps)!
+The following parameters can be considered potentially dangerous and should only be adjusted by users who know exactly what these parameters actually do and which side effects they may have. \\
+
+\lstinline!useScalingFactor!
 \begin{addmargin}[25pt]{0pt}
-  Sets the maximum number of internal Newton iterations, provided by \lstinline!unsigned int nb_steps!. This value will overwrite the one from the \fc config file.
+	Use the additional scaling factor for the $\log K$ in case they become too large. \fc will estimate a corresponding scaling factor. An additional one can be added via the \lstinline!additionalScaling! parameter.\\
+	Type: \lstinline!bool!\\
+	Default value: \lstinline!false!
 \end{addmargin}
 
-\bigbreak
-
-\lstinline!void FastChem.setMaxBisectionIter(unsigned int nb_steps)!
+\lstinline!additionalScaling!
 \begin{addmargin}[25pt]{0pt}
-  Sets the maximum number of internal bisection iterations, provided by \lstinline!unsigned int nb_steps!. This value will overwrite the one from the \fc config file.
+	Additional scaling factor, added to the one \fc estimates internally. Only used if \lstinline!useScalingFactor! is set to \lstinline!true!.\\
+	Type: \lstinline!double!\\
+	Default value: 0
 \end{addmargin}
 
-\bigbreak
-
-\lstinline!void FastChem.setMaxNelderMeadIter(unsigned int nb_steps)!
+\lstinline!minDensityExponentElement!
 \begin{addmargin}[25pt]{0pt}
-  Sets the maximum number of internal iterations of the Nelder-Mead, provided by \lstinline!unsigned int nb_steps!. This value will overwrite the one from the \fc config file.
+	Exponent for the minimum number density of elements.\\
+	Type: \lstinline!double!\\
+	Default value: -155 (double) or -512 (long double)
 \end{addmargin}
 
-\bigbreak
-
-\lstinline!void FastChem.setChemistryAccuracy(double accuracy)!
+\lstinline!minDensityExponentMolecules!
 \begin{addmargin}[25pt]{0pt}
-  Sets the desired accuracy of the chemistry convergence criterion, provided by \lstinline!double accuracy!. This value will overwrite the one from the \fc config file.
+	Exponent for the minimum number density of molecules\&ions.\\
+	Type: \lstinline!double!\\
+	Default value: -155 (double) or -512 (long double)
 \end{addmargin}
 
-\bigbreak
-
-\lstinline!void FastChem.setNewtonAccuracy(double accuracy)!
+\lstinline!maxLogK!
 \begin{addmargin}[25pt]{0pt}
-  Sets the desired accuracy of the Newton's method convergence criterion, provided by \lstinline!double accuracy!. This value will overwrite the one from the \fc config file.
+	Maximum value for the $\log K$ of molecules and ions.\\
+	Type: \lstinline!double!\\
+	Default value: 1e10
 \end{addmargin}
 
-\bigbreak
-
-\lstinline!void FastChem.useScalingFactor(bool use)!
+\lstinline!condTau!
 \begin{addmargin}[25pt]{0pt}
-  Toggles the use of the internal scaling factor. The default value in \fc is \lstinline!false!. The use of the scaling factor is currently not accessible from the config files but can only be activated by this function.
+	Baseline $\tau$ value for condensates.\\
+	Type: \lstinline!double!\\
+	Default value: 1e-15
+\end{addmargin}
+
+\lstinline!condIterChangeLimit!
+\begin{addmargin}[25pt]{0pt}
+	Maximum change of condensate densities per iteration step in log10 space.\\
+	Type: \lstinline!double!\\
+	Default value: 5
+\end{addmargin}
+
+\lstinline!condSolveFullSystem!
+\begin{addmargin}[25pt]{0pt}
+	Solve the full condensate system of equations without eliminating the $\lambda_c$. Iteration will be slower but potentially more stable.\\
+	Type: \lstinline!bool!\\
+	Default value: \lstinline!false!
+\end{addmargin}
+
+\lstinline!condReduceSystemSize!
+\begin{addmargin}[25pt]{0pt}
+	Reduce the size of the condensate system of equations by removing unstable condensates.\\
+	Type: \lstinline!bool!\\
+	Default value: \lstinline!true!
+\end{addmargin}
+
+\lstinline!condUseFullPivot!
+\begin{addmargin}[25pt]{0pt}
+	Solve the condensate system of equations using an LU decomposition with full pivoting. This enables the detection of singular Jacobians but is slower than the default partial pivoting. If a singular matrix is detected, the system is solved by a perturbed Hessian matrix or by using a singular value decomposition.\\
+	Type: \lstinline!bool!\\
+	Default value: \lstinline!false!
+\end{addmargin}
+
+\lstinline!condUseSVD!
+\begin{addmargin}[25pt]{0pt}
+	Solve the condensate system of equations using a singular value decomposition (SVD) in case the Jacobian is singular. This requires \lstinline!condUseFullPivot! to be set to \lstinline!true! as well to detect a singular matrix.\\
+	Type: \lstinline!bool!\\
+	Default value: \lstinline!false!
+\end{addmargin}
+
+\lstinline!useCondDataValidityLimit!
+\begin{addmargin}[25pt]{0pt}
+	Use data temperature limits from the condensate input file and avoid extrapolation outside the validity range of the fitted data. Outside the validity range, the activity of condensates is set to a very small value.\\
+	Type: \lstinline!bool!\\
+	Default value: \lstinline!false!
 \end{addmargin}
 
 
@@ -1180,15 +1543,23 @@ In addition to these flags, the \pfc module also includes a constant string arra
 
 \section{\pfc constructor}
 
-Since \fc is written as an object class, an instance of that class (i.e. an object) needs to be created before \fc can be used. This is done by calling the constructor of the \fc class that is contained within the \pfc module. There are two main ways to call the constructor and create an object.\\
+Since \fc is written as an object class, an instance of that class (i.e. an object) needs to be created before \fc can be used. This is done by calling the constructor of the \fc class that is contained within the \pfc module. There are three main ways to call the constructor and create an object.\\
 
 
-\lstinline[language=Python, breaklines=true]!pyfastchem.FastChem(str element_abundance_file, str equilibrium_constants_file, int verbose_level)!
+\lstinline[language=Python, breaklines=true]!pyfastchem.FastChem(str element_abundance_file, str gas_species_data_file, int verbose_level)!
 \begin{addmargin}[25pt]{0pt}
-	The constructor requires three different arguments: the location of the element abundance file, the location of the file with the equilibrium constants, and the verbose level, i.e. the amount of debug output in the terminal window. Creating a \fc object with this constructor will set internal parameters to their default values. The maximum number of chemistry iterations will be 1000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. All of these values can be adjusted during runtime by using the methods listed in Section \ref{sec:pfc_methods}.
+	This constructor requires three parameters: the locations of the element abundance and gas phase species data files, as well as the verbose level. All other options and parameters within \fc will be set to their default values but can be later changed by using the appropriate methods described in Sect. \ref{sec:fastchem_methods}. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
 \end{addmargin}
 
 \bigbreak
+
+\lstinline[language=Python, breaklines=true]!pyfastchem.FastChem(str element_abundance_file, str gas_species_data_file, str condensate_species_data_file, int verbose_level)!
+\begin{addmargin}[25pt]{0pt}
+	This constructor requires four parameters: the locations of the element abundance and gas phase species data files, the condensate data file, as well as the verbose level. All other options and parameters within \fc will be set to their default values but can be later changed by using the appropriate methods described in Sect. \ref{sec:fastchem_methods}. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. Note that instead of a location for the condensate data, a \lstinline!str! containing \lstinline!'none'! can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
+\end{addmargin}
+
+\bigbreak
+
 
 \lstinline[language=Python]!pyfastchem.FastChem(str parameter_file, int intial_verbose_level)!
 \begin{addmargin}[25pt]{0pt}
@@ -1200,15 +1571,23 @@ Since \fc is written as an object class, an instance of that class (i.e. an obje
 \section{\pfc input and output structures}
 \label{sec:pfc_input_ouput_struct}
 
-Running a FastChem chemistry calculation requires input and output data structures, resembling those of the \cpp version (see Sect. \ref{sec:fastchem_input_struct}). 
+Running a FastChem chemistry calculation requires input and output data structures, resembling those of the \cpp version (see Sect. \ref{sec:fastchem_input_struct}). In Python they are represented as classes rather than a \cpp \lstinline!struct!.
 
 \paragraph{Input structure}
-An input structure, in the example here called \lstinline!input_data!, can be defined from the \pfc module in the following way:
-\begin{lstlisting}[language=Python]
-  input_data = pyfastchem.FastChemInput()
-\end{lstlisting}
 
-The input structure contains the following variables:
+The original \cpp struct translated by \pb has the following structure in Python:
+\bigbreak
+\begin{lstlisting}[language=Python]
+  class FastChemInput:
+    temperature: list[float] = []
+    pressure: list[float] = []
+
+    equilibrium_condensation = False
+    rainout_condensation = False
+\end{lstlisting}
+\bigbreak
+
+The input class contains the following variables:
 
 \bigbreak
 
@@ -1226,31 +1605,65 @@ The input structure contains the following variables:
 
 \bigbreak
 
-Both arrays need to have the same length. The \pb library allows normal Python lists or NumPy arrays to be used here. For example, a NumPy array for the pressure could be defined using NumPy's \lstinline!logspace! function:
+\lstinline[language=Python]!equilibrium_condensation!
+\begin{addmargin}[25pt]{0pt}
+	A \lstinline[language=Python]!bool! parameter that enables the calculation of equilibrium condensation. Its default value is  \lstinline[language=Python]!False!.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline[language=Python]!rainout_condensation!
+\begin{addmargin}[25pt]{0pt}
+	A \lstinline[language=Python]!bool! parameter that enables the calculation of condensation via the rainout approximation. Its default value is \lstinline[language=Python]!False!. Note that when the flag \lstinline!rainout_condensation! is set to \lstinline!True!, the value of the parameter \lstinline!equilibrium_condensation! is ignored.
+\end{addmargin}
+
+\bigbreak
+
+An input structure, in the example here called \lstinline!input_data!, can be defined from the \pfc module in the following way:
+\begin{lstlisting}[language=Python]
+	input_data = pyfastchem.FastChemInput()
+\end{lstlisting}
+
+The two input arrays for temperature and pressure need to have the same length. The \pb library allows normal Python lists or NumPy arrays to be used here. For example, a NumPy array for the pressure could be defined using NumPy's \lstinline!logspace! function:
 
 \begin{lstlisting}[language=Python]
   input_data.pressure = np.logspace(-6, 1, num=1000)
 \end{lstlisting}
-Both input variables need to be an array-type variable, even if only a single temperature-pressure point is going to be calculated.
+Both of these input variables need to be an array-type variable, even if only a single temperature-pressure point is going to be calculated.
+
+
 
 \paragraph{Output structure}
-The output structure from the \pfc module, in the example here called \lstinline!output_data!, can be defined in the following way:
+
+The original \cpp output struct translated by \pb has the following structure in Python:
 \begin{lstlisting}[language=Python]
-  output_data = pyfastchem.FastChemOutput()
+  class FastChemOutput:
+	number_densities: list[list[float]]
+	total_element_density: list[float]
+	mean_molecular_weight: list[float]
+	
+	number_densities_cond: list[list[float]]
+	element_cond_degree: list[list[float]]
+	
+	element_conserved: list[int]
+	nb_chemistry_iterations: list[int]
+	nb_cond_iterations: list[int]
+	nb_iterations: list[int]
+	fastchem_flag: list[int]
 \end{lstlisting}
 
 It has the following variables:
 
 \lstinline!number_densities!
 \begin{addmargin}[25pt]{0pt}
-	The two-dimensional array contains the number densities in \unit{cm$^{-3}$} of all species (elements, molecules, ions) as \lstinline[language=Python]!float! numbers. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure arrays of the input structure. The second dimension refers to the number of species and has a length of \lstinline!getSpeciesNumber()! (see Sect. \ref{sec:pfc_methods}).
+	The two-dimensional array contains the number densities in \unit{cm$^{-3}$} of all gas phase species (elements, molecules, ions) as \lstinline[language=Python]!float! numbers. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure arrays of the input structure. The second dimension refers to the number of species and has a length of \lstinline!getGasSpeciesNumber()! (see Sect. \ref{sec:pfc_methods}).
 \end{addmargin}
 
 \bigbreak
 
 \lstinline!total_element_density!
 \begin{addmargin}[25pt]{0pt}
-	One-dimensional array of \lstinline[language=Python]!float! numbers that contains the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} \right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.
+	One-dimensional array of \lstinline[language=Python]!float! numbers that contains the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic} \right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$ and condensates $c$. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.
 \end{addmargin}
 
 \bigbreak
@@ -1258,6 +1671,20 @@ It has the following variables:
 \lstinline!mean_molecular_weight!
 \begin{addmargin}[25pt]{0pt}
 	One-dimensional array of \lstinline[language=Python]!float! numbers. Contains the mean molecular weight of the mixture in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of $\unit{g/mol}$. The dimension of the array is equal to that of the input temperature and pressure vectors.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!number_densities_cond!
+\begin{addmargin}[25pt]{0pt}
+	The two-dimensional array contains the fictitious number densities in \unit{cm$^{-3}$} of all condensate species  as \lstinline[language=Python]!float! numbers. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure arrays of the input structure. The second dimension refers to the number of species and has a length of \lstinline!getCondSpeciesNumber()! (see Sect. \ref{sec:pfc_methods}).
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!element_cond_degree!
+\begin{addmargin}[25pt]{0pt}
+	The two-dimensional array contains the degree of condensation for all elements. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of \lstinline!getElementNumber()! (see Sect. \ref{sec:pfc_methods}).
 \end{addmargin}
 
 \bigbreak
@@ -1271,7 +1698,21 @@ It has the following variables:
 
 \lstinline!nb_chemistry_iterations!
 \begin{addmargin}[25pt]{0pt}
-	One-dimensional array of \lstinline[language=Python]!int! numbers. Contains the number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.
+	One-dimensional array of \lstinline[language=Python]!int! numbers. Contains the total number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!nb_cond_iterations!
+\begin{addmargin}[25pt]{0pt}
+	One-dimensional array of \lstinline[language=Python]!int! numbers. Contains the total number of condensate calculation iterations that were required for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!nb_iterations!
+\begin{addmargin}[25pt]{0pt}
+	One-dimensional array of \lstinline[language=Python]!int! numbers. Contains the total number of coupled condensation-gas phase chemistry calculation iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
 \end{addmargin}
 
 \bigbreak
@@ -1282,6 +1723,11 @@ It has the following variables:
 \end{addmargin}
 
 \bigbreak
+
+The output structure from the \pfc module, in the example here called \lstinline!output_data!, can be defined in the following way:
+\begin{lstlisting}[language=Python]
+	output_data = pyfastchem.FastChemOutput()
+\end{lstlisting}
 
 The arrays of the output structure don't need to be pre-allocated. This will be done internally within \fc when running the chemistry calculations. If the arrays already contain data, their contents will be overwritten. The arrays from the output structure can also be easily converted to more practical NumPy arrays by using, for example:
 \begin{lstlisting}[language=Python]
@@ -1301,7 +1747,7 @@ The \pfc object returned from \lstinline[language=Python]!pyfastchem.FastChem()!
 
 \bigbreak
 
-\lstinline[language=Python]!int getSpeciesNumber()!
+\lstinline[language=Python]!int getGasSpeciesNumber()!
 \begin{addmargin}[25pt]{0pt}
 	Returns the total number of chemical species (atoms, ions, molecules) as \lstinline!int! value.
 \end{addmargin}
@@ -1322,26 +1768,78 @@ The \pfc object returned from \lstinline[language=Python]!pyfastchem.FastChem()!
 
 \bigbreak
 
-\lstinline[language=Python]!str getSpeciesName(int species_index)!
+\lstinline[language=Python]!int getCondSpeciesNumber()!
 \begin{addmargin}[25pt]{0pt}
-	Returns the name of a chemical species with \lstinline[language=Python]!int! index\footnote{In the \cpp class, an \lstinline!unsigned int! is required here. Since this data type doesn't exist in Python, \pb will convert the supplied integer value to its unsigned integer version for \cpp. Even though the parameter is defined as an \lstinline!int! value for Python, only positive numbers, including 0, are accepted as valid input. Using a negative value will result in an error message from \pb.} \lstinline!species_index! as \lstinline[language=Python]!str!; returns empty string if species does not exist.
+	Returns the total number of condensate species as \lstinline!int! value.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline[language=Python]!str getGasSpeciesName(int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the name of a gas phase species with \lstinline[language=Python]!int! index\footnote{In the \cpp class, an \lstinline!unsigned int! is required here. Since this data type doesn't exist in Python, \pb will convert the supplied integer value to its unsigned integer version for \cpp. Even though the parameter is defined as an \lstinline!int! value for Python, only positive numbers, including 0, are accepted as valid input. Using a negative value will result in an error message from \pb.} \lstinline!species_index! as \lstinline[language=Python]!str!; returns empty string if species does not exist.
 \end{addmargin}  
 
 \bigbreak
 
-\lstinline[language=Python]!str getSpeciesSymbol(int species_index)!
+\lstinline[language=Python]!str getGasSpeciesSymbol(int species_index)!
 \begin{addmargin}[25pt]{0pt}
 	Returns the symbol of an element or the formula of a molecule/ion with \lstinline[language=Python]!int! index\footnotemark[\value{footnote}] \lstinline!species_index! as \lstinline[language=Python]!str!; returns empty string if species does not exist
 \end{addmargin}
 
 \bigbreak
 
-\lstinline[language=Python]!int getSpeciesIndex(str symbol)!
+\lstinline[language=Python]!int getGasSpeciesIndex(str symbol)!
 \begin{addmargin}[25pt]{0pt}
-	Returns the index of a species (element/molecule/ion) with \lstinline[language=Python]!str! symbol/formula \lstinline!symbol! as \lstinline[language=Python]!int!; returns the constant \lstinline!pyfastchem.FASTCHEM_UNKOWN_SPECIES! if species does not exist.
+	Returns the index of a gas phase species (element/molecule/ion) with \lstinline[language=Python]!str! symbol/formula \lstinline!symbol! as \lstinline[language=Python]!int!; returns the constant \lstinline!pyfastchem.FASTCHEM_UNKOWN_SPECIES! if species does not exist.
+\end{addmargin}
+
+
+
+
+\bigbreak
+
+\lstinline[language=Python]!str getElementName(int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the name of an element with \lstinline[language=Python]!int! index\footnotemark[\value{footnote}] \lstinline!species_index! as \lstinline[language=Python]!str!; returns empty string if species does not exist.
+\end{addmargin}  
+
+\bigbreak
+
+\lstinline[language=Python]!str getElementSymbol(int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the symbol of an element with \lstinline[language=Python]!int! index\footnotemark[\value{footnote}] \lstinline!species_index! as \lstinline[language=Python]!str!; returns empty string if species does not exist
 \end{addmargin}
 
 \bigbreak
+
+\lstinline[language=Python]!int getElementIndex(str symbol)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the index of an element with \lstinline[language=Python]!str! symbol/formula \lstinline!symbol! as \lstinline[language=Python]!int!; returns the constant \lstinline!pyfastchem.FASTCHEM_UNKOWN_SPECIES! if species does not exist.
+\end{addmargin}
+
+\bigbreak
+
+\lstinline[language=Python]!str getCondSpeciesName(int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the name of a condensate species with \lstinline[language=Python]!int! index\footnotemark[\value{footnote}] \lstinline!species_index! as \lstinline[language=Python]!str!; returns empty string if species does not exist.
+\end{addmargin}  
+
+\bigbreak
+
+\lstinline[language=Python]!str getCondSpeciesSymbol(int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the formula of a condensate with \lstinline[language=Python]!int! index\footnotemark[\value{footnote}] \lstinline!species_index! as \lstinline[language=Python]!str!; returns empty string if species does not exist
+\end{addmargin}
+
+\bigbreak
+
+\lstinline[language=Python]!int getCondSpeciesIndex(str symbol)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the index of a condensate species with \lstinline[language=Python]!str! symbol/formula \lstinline!symbol! as \lstinline[language=Python]!int!; returns the constant \lstinline!pyfastchem.FASTCHEM_UNKOWN_SPECIES! if species does not exist.
+\end{addmargin}
+
+
 
 \lstinline[language=Python]!float getElementAbundance(int species_index)!
 \begin{addmargin}[25pt]{0pt}
@@ -1353,17 +1851,8 @@ The \pfc object returned from \lstinline[language=Python]!pyfastchem.FastChem()!
 
 \lstinline[language=Python]!float [] getElementAbundance()!
 \begin{addmargin}[25pt]{0pt}
-	Returns the abundances of all elements as an array of \lstinline[language=Python]!float! values; array has a length of \lstinline!getElementNumber()!.
+	Returns the abundances of all elements as an array of \lstinline[language=Python]!float! values; array has a length of \lstinline!getElementNumber()!
 \end{addmargin}
-
-
-\bigbreak
-
-\lstinline[language=Python]!float FastChem.getSpeciesMolecularWeight(int species_index)!
-\begin{addmargin}[25pt]{0pt}
-	Returns the molecular weight of a species with \lstinline[language=Python]!int! index\footnotemark[\value{footnote}] \lstinline!species_index! as \lstinline[language=Python]!float!; returns 0 if species does not exist; for an element this refers to the atomic weight.
-\end{addmargin}
-
 
 \bigbreak
 
@@ -1374,6 +1863,28 @@ The \pfc object returned from \lstinline[language=Python]!pyfastchem.FastChem()!
 
 \bigbreak
 
+\lstinline[language=Python]!float FastChem.getGasSpeciesWeight(int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the weight of a gas phase species with \lstinline[language=Python]!int! index\footnotemark[\value{footnote}] \lstinline!species_index! as \lstinline[language=Python]!float!; returns 0 if species does not exist; for an element this refers to the atomic weight
+\end{addmargin}
+
+\bigbreak
+
+\lstinline[language=Python]!float FastChem.getElementWeight(int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the atomic weight of an element with \lstinline[language=Python]!int! index\footnotemark[\value{footnote}] \lstinline!species_index! as \lstinline[language=Python]!float!; returns 0 if species does not exist
+\end{addmargin}
+
+\bigbreak
+
+\lstinline[language=Python]!float FastChem.getCondSpeciesWeight(int species_index)!
+\begin{addmargin}[25pt]{0pt}
+	Returns the weight of a condensate species with \lstinline[language=Python]!int! index\footnotemark[\value{footnote}] \lstinline!species_index! as \lstinline[language=Python]!float!; returns 0 if species does not exist
+\end{addmargin}
+
+
+\bigbreak
+
 \lstinline[language=Python]!setVerboseLevel(int level)!
 \begin{addmargin}[25pt]{0pt}
 	Sets the verbose level of \fc, i.e. the amount of text output in the terminal. A value of 0 will result in \fc being almost silent, whereas a value of 4 would provide a lot of debug output. A value larger than 4 will be interpreted as 4. This value will overwrite the one from the \fc config file.
@@ -1381,51 +1892,9 @@ The \pfc object returned from \lstinline[language=Python]!pyfastchem.FastChem()!
 
 \bigbreak
 
-\lstinline[language=Python]!setMaxChemistryIter(int nb_steps)!
+\lstinline[language=Python]!setParameter(str param_name, param_type param_value)!
 \begin{addmargin}[25pt]{0pt}
-	Sets the maximum number of internal chemistry iterations, provided by the \lstinline[language=Python]!int!\footnotemark[\value{footnote}] variable \lstinline!nb_steps!. This value will overwrite the one from the \fc parameter file.
-\end{addmargin}
-
-\bigbreak
-
-\lstinline[language=Python]!setMaxNewtonIter(int nb_steps)!
-\begin{addmargin}[25pt]{0pt}
-	Sets the maximum number of internal Newton iterations, provided by the \lstinline[language=Python]!int!\footnotemark[\value{footnote}] variable \lstinline!nb_steps!. This value will overwrite the one from the \fc config file.
-\end{addmargin}
-
-\bigbreak
-
-\lstinline[language=Python]!setMaxBisectionIter(int nb_steps)!
-\begin{addmargin}[25pt]{0pt}
-	Sets the maximum number of internal bisection iterations, provided by the \lstinline[language=Python]!int!\footnotemark[\value{footnote}] variable \lstinline!nb_steps!. This value will overwrite the one from the \fc config file.
-\end{addmargin}
-
-\bigbreak
-
-\lstinline[language=Python]!setMaxNelderMeadIter(int nb_steps)!
-\begin{addmargin}[25pt]{0pt}
-	Sets the maximum number of internal iterations of the Nelder-Mead, provided by the \lstinline[language=Python]!int!\footnotemark[\value{footnote}] variable \lstinline!nb_steps!. This value will overwrite the one from the \fc config file.
-\end{addmargin}
-
-\bigbreak
-
-\lstinline[language=Python]!setChemistryAccuracy(float accuracy)!
-\begin{addmargin}[25pt]{0pt}
-	Sets the desired accuracy of the chemistry convergence criterion, provided by \lstinline[language=Python]!float! variable \lstinline!accuracy!. This value will overwrite the one from the \fc config file.
-\end{addmargin}
-
-\bigbreak
-
-\lstinline[language=Python]!setNewtonAccuracy(float accuracy)!
-\begin{addmargin}[25pt]{0pt}
-	Sets the desired accuracy of the Newton's method convergence criterion, provided by \lstinline[language=Python]!float! variable \lstinline!accuracy!. This value will overwrite the one from the \fc config file.
-\end{addmargin}
-
-\bigbreak
-
-\lstinline[language=Python]!useScalingFactor(bool use)!
-\begin{addmargin}[25pt]{0pt}
-	Toggles the use of the internal scaling factor. The default value in \fc is \lstinline[language=Python]!false!. The use of the scaling factor is currently not accessible from the config files but can only be activated by this function.
+  Sets an internal \fc parameter. Depending on the parameter, the variable type \lstinline!param_type! can either be an \lstinline!int!, a \lstinline!bool!, or a \lstinline!float! value. A list of parameters and their types can be found in the Sect. \ref{sect:fc_param}. The \cpp \lstinline!double! types listed in Sect. \ref{sect:fc_param} should be replaced by Python \lstinline!float! values, while  \lstinline!unsigned int! are used as  \lstinline!int!. \pb often converts the Python \lstinline!bool! type to an integer value rather than a \cpp  \lstinline!bool! type. Setting a boolean parameter will then result in an error message. In such a case, instead of using a simple \lstinline!True! as parameter value, an explicit conversion has to be done instead, for example via \lstinline!np.bool_(True)!.
 \end{addmargin}
 
 
