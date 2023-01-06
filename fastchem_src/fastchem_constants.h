@@ -41,8 +41,8 @@ const std::vector<std::string> FASTCHEM_MSG =
 
 
 //Physical constants
-constexpr double CONST_K = 1.3806504e-16;    //Boltzmann's constant in erg K-1
-constexpr double CONST_AMU = 1.66055e-24;    //Atomic mass unit in g
+constexpr double CONST_K = 1.380649e-16;    //Boltzmann's constant in erg K-1
+constexpr double CONST_AMU = 1.66055e-24;   //Atomic mass unit in g
 
 
 }

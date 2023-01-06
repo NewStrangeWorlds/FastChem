@@ -995,16 +995,16 @@ Since \fc is written as an object class, an instance of that class (i.e. an obje
 
 \bigbreak
 
-\lstinline[breaklines=true]!FastChem(const std::string &element_abundances_file, const std::string &species_data_file, const unsigned int verbose_level)!
+\lstinline[breaklines=true]!FastChem(const std::string &element_abundances_file, const std::string &gas_species_data_file, const unsigned int verbose_level)!
 \begin{addmargin}[25pt]{0pt}
-  This constructor requires three parameters: the locations of the element abundance and species data files, as well as the verbose level. All other options and parameters within \fc will be set to their default values but can be later changed by using the appropriate methods described in Sect. \ref{sec:fastchem_methods}. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
+  This constructor requires three parameters: the locations of the element abundance and gas phase species data files, as well as the verbose level. All other options and parameters within \fc will be set to their default values but can be later changed by using the appropriate methods described in Sect. \ref{sec:fastchem_methods}. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
 \end{addmargin}
 
 \bigbreak
 
-\lstinline[breaklines=true]!FastChem(const std::string &element_abundances_file, const std::string &species_data_file, const std::string &cond_species_data_file, const unsigned int verbose_level)!
+\lstinline[breaklines=true]!FastChem(const std::string &element_abundances_file, const std::string &gas_species_data_file, const std::string &cond_species_data_file, const unsigned int verbose_level)!
 \begin{addmargin}[25pt]{0pt}
-	This constructor requires four parameters: the locations of the element abundance and species data files, the condensate data file, as well as the verbose level. All other options and parameters within \fc will be set to their default values but can be later changed by using the appropriate methods described in Sect. \ref{sec:fastchem_methods}. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. Note that instead of a location for the condensate data, a string containing \lstinline!"none"! can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
+	This constructor requires four parameters: the locations of the element abundance and gas phase species data files, the condensate data file, as well as the verbose level. All other options and parameters within \fc will be set to their default values but can be later changed by using the appropriate methods described in Sect. \ref{sec:fastchem_methods}. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to $10^{-4}$. Note that instead of a location for the condensate data, a string containing \lstinline!"none"! can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
 \end{addmargin}
 
 \bigbreak
@@ -1638,18 +1638,18 @@ Both of these input variables need to be an array-type variable, even if only a 
 The original \cpp output struct translated by \pb has the following structure in Python:
 \begin{lstlisting}[language=Python]
   class FastChemOutput:
-	number_densities: list[list[float]]
-	total_element_density: list[float]
-	mean_molecular_weight: list[float]
+    number_densities: list[list[float]]
+    total_element_density: list[float]
+    mean_molecular_weight: list[float]
 	
-	number_densities_cond: list[list[float]]
-	element_cond_degree: list[list[float]]
+    number_densities_cond: list[list[float]]
+    element_cond_degree: list[list[float]]
 	
-	element_conserved: list[int]
-	nb_chemistry_iterations: list[int]
-	nb_cond_iterations: list[int]
-	nb_iterations: list[int]
-	fastchem_flag: list[int]
+    element_conserved: list[int]
+    nb_chemistry_iterations: list[int]
+    nb_cond_iterations: list[int]
+    nb_iterations: list[int]
+    fastchem_flag: list[int]
 \end{lstlisting}
 
 It has the following variables:
@@ -1839,7 +1839,7 @@ The \pfc object returned from \lstinline[language=Python]!pyfastchem.FastChem()!
 	Returns the index of a condensate species with \lstinline[language=Python]!str! symbol/formula \lstinline!symbol! as \lstinline[language=Python]!int!; returns the constant \lstinline!pyfastchem.FASTCHEM_UNKOWN_SPECIES! if species does not exist.
 \end{addmargin}
 
-
+\bigbreak
 
 \lstinline[language=Python]!float getElementAbundance(int species_index)!
 \begin{addmargin}[25pt]{0pt}
