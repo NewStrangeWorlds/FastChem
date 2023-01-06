@@ -51,6 +51,8 @@ bool CondensedPhase<double_type>::readCondensateData(const std::string& species_
 
   //header
   std::getline(file, line);
+  std::getline(file, line);
+  std::getline(file, line);
 
 
   while (std::getline(file, line))
@@ -143,7 +145,7 @@ bool CondensedPhase<double_type>::readCondensateData(const std::string& species_
 
 
 
-//Add a molecule to the system and update all of its elements
+//Add a condensate to the system and update all of its elements
 template <class double_type>
 void CondensedPhase<double_type>::addCondensate(
   const std::string name,

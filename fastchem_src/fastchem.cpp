@@ -43,11 +43,31 @@ FastChem<double_type>::FastChem(
   {
     std::cout << "Error reading parameters\n";
     is_initialised = false;
+
+    return;
+  }
+  
+  if (element_data.is_initialised == true 
+      && gas_phase.is_initialised == true 
+      && (condensed_phase.is_initialised == true || options.condensates_data_file == "none"))
+    is_initialised = true;
+  else
+  {
+    std::cout << "Error initialising FastChem!\n\n";
+    is_initialised = false;
+
+    return;
   }
 
+  if (options.verbose_level >= 1)
+    std::cout << "\nFastChem initialisation summary:\n"
+              << "  number of species: " << gas_phase.nb_species + condensed_phase.nb_condensates
+              << "    elements: " << element_data.nb_elements
+              << "    molecules: " << gas_phase.nb_molecules
+              << "    condensates: " << condensed_phase.nb_condensates
+              << "\n\n";
 
-  if (options.parameter_file_loaded) 
-    init();
+  init();
 }
 
 

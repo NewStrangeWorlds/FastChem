@@ -79,6 +79,8 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
   else
     species_data_file = file_name;
   
+  file_name = "";
+  
    //condensate species data file
   input >> file_name;
 
@@ -86,7 +88,6 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     file_name = "none";
 
   condensates_data_file = file_name;
-
 
   std::getline(file, line);
 

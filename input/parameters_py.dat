@@ -1,0 +1,14 @@
+#element abundance file   
+../input/element_abundances_solar.dat
+
+#species data file    
+../input/logK.dat ../input/logK_condensates.dat
+
+#accuracy of chemistry iteration
+1.0e-4
+
+#max number of chemistry iterations 
+80000  
+
+#max number internal solver iterations
+20000
