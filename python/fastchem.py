@@ -24,17 +24,9 @@ plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1']
 plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 
 
-#create a FastChem object
-# fastchem = pyfastchem.FastChem(
-#   '../input/element_abundances_solar.dat', 
-#   '../input/logK.dat', 
-#   '../input/condensate_all.dat',
-#   1)
-
 fastchem = pyfastchem.FastChem(
   '../input/element_abundances_solar.dat', 
   '../input/logK.dat',
-  'none',
   1)
 
 

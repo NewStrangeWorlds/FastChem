@@ -42,15 +42,16 @@ template <class double_type>
 class FastChem {
   public:
     FastChem(
-      const std::string& model_parameter_file, const unsigned int verbose_level_init);
-    FastChem(
-      const std::string &element_abundances_file,
-      const std::string &species_data_file,
-      const std::string &cond_species_data_file,
+      const std::string& model_parameter_file, 
       const unsigned int verbose_level_init);
     FastChem(
-      const std::string &element_abundances_file,
-      const std::string &species_data_file,
+      const std::string& element_abundances_file,
+      const std::string& species_data_file,
+      const std::string& cond_species_data_file,
+      const unsigned int verbose_level_init);
+    FastChem(
+      const std::string& element_abundances_file,
+      const std::string& species_data_file,
       const unsigned int verbose_level_init);
     FastChem(const FastChem &obj);
 

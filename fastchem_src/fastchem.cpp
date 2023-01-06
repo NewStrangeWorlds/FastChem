@@ -59,7 +59,7 @@ template <class double_type>
 FastChem<double_type>::FastChem(
   const std::string& element_abundances_file,
   const std::string& species_data_file,
-  const std::string &cond_species_data_file,
+  const std::string& cond_species_data_file,
   const unsigned int verbose_level_start) 
     : options(element_abundances_file, species_data_file, cond_species_data_file, verbose_level_start)
     , element_data(element_abundances_file, options.chemical_element_file)

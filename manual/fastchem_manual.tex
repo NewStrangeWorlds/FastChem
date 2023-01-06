@@ -337,9 +337,9 @@ The data for each species consists of two lines, while different species are sep
 The first line starts with the species' sum formula. In the standard \fc files, we use the modified Hill notation for the formulas. Isomeric species would in principle have the same formula in the Hill notation. For example, the two species \ce{HCN} and \ce{HNC} would both be referred to as \texttt{C1H1N1}. To distinguish the two in the standard set of \fc, underscores are used, such that \texttt{C1H1N1\_1} refers to \ce{HCN}, while \texttt{C1H1N1\_2} represents \ce{HNC}.
 The use of the Hill notation is not a requirement. In a custom version of the species file, a different chemical notation could be used.\\
 
-The sum formula is followed by an optional name for the species. This name should be contained within a single string. Thus, if the species name is a compound noun, the separating white spaces should be replaced by other characters, for example underscores $\_$ as shown above (e.g. \verb|Aluminum_Chloride| instead of \verb|Aluminum Chloride|). \\
+The sum formula is followed by an optional name for the species, for example \verb|Aluminum Chloride|. The name is read until the seperator \verb|:| is encountered. Note that there has to be a white space between the last part of the species' name and the \verb|:|.
 
-After a seperator \verb|:|, \fc expects the stoichiometric information of the species, i.e. the elements and their stoichiometric coefficients. The elements need to be present in the element abundance file as well, otherwise the species will be discarded. They don't need to be in any specific order.\\
+After the seperator \verb|:|, \fc expects the stoichiometric information of the species, i.e. the elements and their stoichiometric coefficients. The elements need to be present in the element abundance file as well, otherwise the species will be discarded. They don't need to be in any specific order.\\
 The stoichiometric information is followed by an optional reference for the data. If a reference is used, a separator \verb|#| is required between the stoichiometry and the reference.\\
 
 The second line contains the fit coefficients for the mass action constants. \fc will read in as many coefficients as it can find in that line but for its own parametrisation in Eq. \eqref{eq:fit} it will only use the first five.
@@ -630,7 +630,7 @@ with the following arguments:
 
 \lstinline[language=Python]!total_element_density!
 \begin{addmargin}[25pt]{0pt}
-	\lstinline[language=Python]!float! array of the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} \right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the temperature and pressure vectors.
+	\lstinline[language=Python]!float! array of the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic}\right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$ and condensate species $c$. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the temperature and pressure vectors.
 \end{addmargin}
 
 \bigbreak
@@ -832,7 +832,7 @@ with the following arguments:
 
 \lstinline!total_element_density!
 \begin{addmargin}[25pt]{0pt}
-	One-dimensional array of \lstinline[language=Python]!float! numbers that contains the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} \right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.
+	One-dimensional array of \lstinline[language=Python]!float! numbers that contains the total number density of all atoms $i$, i.e. $n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic}\right)$, summed over their atomic number densities, as well as the ones contained in all other molecules/ions $j$ and condensate species $c$. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.
 \end{addmargin}
 
 \bigbreak
@@ -1749,7 +1749,7 @@ The \pfc object returned from \lstinline[language=Python]!pyfastchem.FastChem()!
 
 \lstinline[language=Python]!int getGasSpeciesNumber()!
 \begin{addmargin}[25pt]{0pt}
-	Returns the total number of chemical species (atoms, ions, molecules) as \lstinline!int! value.
+	Returns the total number of gas phase species (atoms, ions, molecules) as \lstinline!int! value.
 \end{addmargin}
 
 \bigbreak

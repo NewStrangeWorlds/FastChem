@@ -62,12 +62,24 @@ bool GasPhase<double_type>::readSpeciesData(const std::string& file_path)
 
     std::string symbol, name, element_string, stoichiometric_coeff_string;
 
-    input >> symbol >> name;
+    input >> symbol; // >> name;
 
-    if (name == ":")
+    std::string name_part;
+
+    while (input >> name_part)
+    {
+      if (name_part == ":") break;
+
+      if (name == "") 
+        name = name_part;
+      else
+        name = name + " " + name_part; 
+    }
+
+    /*if (name == ":")
       name = "";
     else
-      input >> element_string;
+      input >> element_string;*/
 
     std::vector<std::string> species_elements;
     std::vector<int> stoichiometric_coeff;
