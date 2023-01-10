@@ -34,7 +34,7 @@ plot_species_cond = ['Fe[s]', 'MgSiO3[s]']
 fastchem = pyfastchem.FastChem(
   '../input/element_abundances_solar.dat', 
   '../input/logK.dat', 
-  '../input/condensate_all.dat',
+  '../input/logK_condensates.dat',
   1)
 
 
