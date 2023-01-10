@@ -389,7 +389,12 @@ It contains three columns, where the first one lists the elements' symbols, the 
 \paragraph{File structure}
 The optional parameter file has the following structure:
 \lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{aux/parameters.dat}
-The first two entries are the locations of the element abundance and species data files. The next parameter determines the convergence criterion of the chemistry iteration. This value is also used for the internal Newton's method. The latter one can be adjusted within in the code by the methods listed in Sects. \ref{sec:fastchem_methods} \& \ref{sec:pfc_methods}.
+The first two entries are the locations of the element abundance and gas phase \& condensate species data files. 
+The condensate species data file is optional and can be left out or also replaced by \verb|none|. In that case, \fc won't be able to perform calculations including condensation, though.
+
+The next parameter determines the convergence criterion of the chemistry iteration. This value is also used for the internal Newton's method and the condensation calculation iteration. The latter ones can be adjusted within in the code by the methods listed in Sects. \ref{sec:fastchem_methods} \& \ref{sec:pfc_methods}.
+
+This is followed by the maximum number of chemistry iterations. The value here is also used for the maximum number of condensation iterations and for the number of coupled gas and condensed phase iterations.
 
 The next parameter sets the maximum numbers of iterations for the different internal numerical methods employed within \fc. This includes the Newton, Nelder-Mead, and bisection methods. Using the corresponding functions of the \fc object class (Sects. \ref{sec:fastchem_methods} \& \ref{sec:pfc_methods}), this number can be adjusted for each of these numerical methods individually. 
 The last parameter is optional and does not need to be present in the file. It contains the path to the file for an alternative basic element data file. If this parameter is not present, \fc will use the standard set that is directly located in the \fc source code (see previous section).

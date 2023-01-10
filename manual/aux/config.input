@@ -1,7 +1,7 @@
 #Atmospheric profile input file
 input/Late_M-dwarf.dat
 
-#Chemistry calculation type (gas phase only = g, equilibrium condensation = ce, rainout condensation = cr)
+#Chemistry calculation type (gas phase = g, equilibrium condensation = ce, rainout = cr)
 ce
 
 #Chemistry output file

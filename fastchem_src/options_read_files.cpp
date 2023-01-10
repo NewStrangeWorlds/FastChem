@@ -105,6 +105,7 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
   std::getline(file, line);
   
   newton_err = accuracy;
+  cond_accuracy = accuracy;
 
 
   //chemistry iteration number
@@ -117,6 +118,9 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     return initialization_status;
   else
     nb_max_fastchem_iter = nb_value;
+
+  nb_max_cond_iter = nb_value;
+  nb_chem_cond_iter = nb_value;
 
   std::getline(file, line);
 
@@ -163,9 +167,11 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     std::cout << "chemistry accuracy: " << accuracy << "\n";
     std::cout << "Newton's method error: " << newton_err << "\n";
     std::cout << "max number of chemistry iterations: " << nb_max_fastchem_iter << "\n";
+    std::cout << "max number of condensation iterations: " << nb_max_cond_iter << "\n";
+    std::cout << "max number of coupled gas phase-condensation iterations: " << nb_chem_cond_iter << "\n";
     std::cout << "max number of Newton iterations: " << nb_max_newton_iter << "\n";
-    std::cout << "max number of Nelder-Mead iterations: " << nb_max_newton_iter << "\n";
-    std::cout << "max number of bisection iterations: " << nb_max_newton_iter << "\n";
+    std::cout << "max number of Nelder-Mead iterations: " << nb_max_neldermead_iter << "\n";
+    std::cout << "max number of bisection iterations: " << nb_max_bisection_iter << "\n";
     std::cout << "\n";
   }
 

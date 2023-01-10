@@ -1,7 +1,7 @@
 #element abundance file   
 ../input/element_abundances_solar.dat
 
-#species data file    
+#species data files    
 ../input/logK.dat ../input/logK_condensates.dat
 
 #accuracy of chemistry iteration

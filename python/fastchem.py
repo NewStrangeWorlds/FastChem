@@ -24,16 +24,18 @@ plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1']
 plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 
 
-# fastchem = pyfastchem.FastChem(
-#   '../input/element_abundances_solar.dat', 
-#   '../input/logK.dat',
-#   1)
+
+#First, we have to create a FastChem object
+fastchem = pyfastchem.FastChem(
+  '../input/element_abundances_solar.dat', 
+  '../input/logK.dat',
+  1)
 
 
 #we could also create a FastChem object by using the parameter file
 #note, however, that the file locations in the parameter file are relative
 #to the location from where this Python script is called from
-fastchem = pyfastchem.FastChem('../input/parameters_py.dat', 1)
+#fastchem = pyfastchem.FastChem('../input/parameters_py.dat', 4)
 
 
 
@@ -56,14 +58,6 @@ if np.amin(output_data.element_conserved[:]) == 1:
 else:
   print("  - element conservation: fail")
 
-
-#convert the output into a numpy array
-number_densities = np.array(output_data.number_densities)
-
-
-#total gas particle number density from the ideal gas law 
-#used later to convert the number densities to mixing ratios
-gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
 
 
 #check if output directory exists
@@ -103,16 +97,16 @@ saveChemistryOutput(output_dir + '/chemistry_select.dat',
 
 #save the monitor output to a file
 #here, the data is saved as a pandas DataFrame inside a pickle file
-saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
-                  temperature, pressure, 
-                  output_data.element_conserved,
-                  output_data.fastchem_flag,
-                  output_data.nb_iterations,
-                  output_data.nb_chemistry_iterations,
-                  output_data.nb_cond_iterations,
-                  output_data.total_element_density,
-                  output_data.mean_molecular_weight,
-                  fastchem)
+# saveMonitorOutputPandas(output_dir + '/monitor.pkl', 
+#                   temperature, pressure, 
+#                   output_data.element_conserved,
+#                   output_data.fastchem_flag,
+#                   output_data.nb_iterations,
+#                   output_data.nb_chemistry_iterations,
+#                   output_data.nb_cond_iterations,
+#                   output_data.total_element_density,
+#                   output_data.mean_molecular_weight,
+#                   fastchem)
 
 #this would save the output of all species
 #here, the data is saved as a pandas DataFrame inside a pickle file
@@ -137,6 +131,15 @@ for i, species in enumerate(plot_species):
     plot_species_symbols.append(plot_species_lables[i])
   else:
     print("Species", species, "to plot not found in FastChem")
+
+
+#convert the output into a numpy array
+number_densities = np.array(output_data.number_densities)
+
+
+#total gas particle number density from the ideal gas law 
+#used later to convert the number densities to mixing ratios
+gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
 
 
 #and plot...
