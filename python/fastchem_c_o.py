@@ -31,15 +31,14 @@ plot_species_lables = ['H2O', 'CO', 'CH4', 'CO2', 'C2H2', 'C2H4', 'HCN']
 #these locations have to be relative to the one this Python script is called from
 fastchem = pyfastchem.FastChem(
   '../input/element_abundances_solar.dat', 
-  '../input/logK.dat', 
-  '../input/condensate_all.dat',
+  '../input/logK.dat',
   1)
 
 
 #we could also create a FastChem object by using the parameter file
 #note, however, that the file locations in the parameter file are relative
 #to the location from where this Python script is called from
-#fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
+#fastchem = pyfastchem.FastChem('../input/parameters_py.dat', 1)
 
 
 #allocate the data for the output

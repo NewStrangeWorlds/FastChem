@@ -8,7 +8,7 @@ from astropy import constants as const
 
 
 #we read in a p-T structure for a brown dwarf
-data = np.atleast_2d(np.loadtxt("../input/protoplanetary_disk1.dat"))
+data = np.atleast_2d(np.loadtxt("../input/protoplanetary_disk.dat"))
 
 #and extract temperature and pressure values
 temperature = data[:,1]

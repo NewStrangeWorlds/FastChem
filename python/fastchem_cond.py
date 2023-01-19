@@ -22,12 +22,12 @@ output_dir = '../output'
 
 #the chemical species we want to plot later
 #note that the standard FastChem input files use the Hill notation
-plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'Fe1H1']
+plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'Fe1S1', 'H2S1']
 #for the plot lables, we therefore use separate strings in the usual notation
-plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
+plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeS', 'H2S']
 
-plot_species_cond = ['Fe[s]', 'MgSiO3[s]']
-
+#the default condensate data doesn't use the Hill notation
+plot_species_cond = ['Fe[s]', 'FeS[s]', 'MgSiO3[s]', 'Mg2SiO4[s]']
 
 
 #create a FastChem object
@@ -38,13 +38,6 @@ fastchem = pyfastchem.FastChem(
   1)
 
 
-#we could also create a FastChem object by using the parameter file
-#note, however, that the file locations in the parameter file are relative
-#to the location from where this Python script is called from
-#fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
-
-
-
 #create the input and output structures for FastChem
 input_data = pyfastchem.FastChemInput()
 output_data = pyfastchem.FastChemOutput()
@@ -52,7 +45,11 @@ output_data = pyfastchem.FastChemOutput()
 input_data.temperature = temperature
 input_data.pressure = pressure
 
+#use equilibrium condensation
 input_data.equilibrium_condensation = True
+
+#this would turn on the rainout condensation approach
+#input_data.rainout_condensation = True
 
 
 #run FastChem on the entire p-T structure
@@ -72,11 +69,6 @@ else:
 #convert the output into a numpy array
 number_densities = np.array(output_data.number_densities)
 number_densities_cond = np.array(output_data.number_densities_cond)
-
-
-#total gas particle number density from the ideal gas law 
-#used later to convert the number densities to mixing ratios
-gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
 
 
 #check if output directory exists
@@ -143,6 +135,11 @@ saveCondOutput(output_dir + '/condensates.dat',
 
 
 
+#total gas particle number density from the ideal gas law 
+#used later to convert the number densities to mixing ratios
+gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
+
+
 #check the gas-phase species we want to plot and get their indices from FastChem
 plot_species_indices = []
 plot_species_symbols = []
@@ -176,6 +173,9 @@ fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 6))
 
 for i in range(0, len(plot_species_symbols)):
   ax1.plot(number_densities[:, plot_species_indices[i]]/gas_number_density, pressure)
+  
+ax1.set_xlim(1e-10,1.1)
+ax1.set_title("Gas phase")
 
 ax1.set(xscale='log', yscale = 'log')
 ax1.set_ylim(ax1.get_ylim()[::-1])
@@ -186,6 +186,9 @@ ax1.legend(plot_species_symbols)
 
 for i in range(0, len(plot_species_symbols_cond)):
   ax2.plot(number_densities_cond[:, plot_species_indices_cond[i]], pressure)
+
+ax2.set_xlim(left=1e5)
+ax2.set_title("Condensates")
 
 ax2.set(xscale='log', yscale = 'log')
 ax2.set_ylim(ax2.get_ylim()[::-1])
