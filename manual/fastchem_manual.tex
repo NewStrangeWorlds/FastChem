@@ -1571,7 +1571,7 @@ Since \fc is written as an object class, an instance of that class (i.e. an obje
 	The constructor requires two different arguments: the location of the parameter file and the initial verbose level. The latter one will be replaced by the corresponding value read in from the parameter file. The structure of this parameter file is discussed in Section \ref{sec:fc_parameter_file}. All of parameter values read in from the file can also be adjusted during runtime by using the methods listed in Section \ref{sec:pfc_methods}.
 \end{addmargin}
 
-
+\pagebreak
 
 \section{\pfc input and output structures}
 \label{sec:pfc_input_ouput_struct}
@@ -1650,7 +1650,7 @@ The original \cpp output struct translated by \pb has the following structure in
     number_densities_cond: list[list[float]]
     element_cond_degree: list[list[float]]
 	
-    element_conserved: list[int]
+    element_conserved: list[list[int]]
     nb_chemistry_iterations: list[int]
     nb_cond_iterations: list[int]
     nb_iterations: list[int]

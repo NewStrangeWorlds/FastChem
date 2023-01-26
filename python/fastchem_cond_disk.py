@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from astropy import constants as const
 
 
-#we read in a p-T structure for a brown dwarf
+#we read in a p-T structure for a protoplanetary disk
 data = np.atleast_2d(np.loadtxt("../input/protoplanetary_disk.dat"))
 
 #and extract temperature and pressure values
@@ -26,7 +26,7 @@ plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'Fe1H1']
 #for the plot lables, we therefore use separate strings in the usual notation
 plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
 
-plot_species_cond = ['Fe[s]', 'MgSiO3[s]']
+plot_species_cond = ['MgSiO3[s]', 'Mg2SiO4[s]', 'H2O[s]', 'CH4[s]']
 
 
 
@@ -44,6 +44,8 @@ fastchem = pyfastchem.FastChem(
 #fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
 
 
+#for this calculation, we need to change some of FastChem's internal
+#parameters
 fastchem.setParameter('condSolveFullSystem', np.bool_(True))
 fastchem.setParameter('minDensityExponentElement', -4920.0)
 fastchem.setParameter('maxLogK', 10000.0)
