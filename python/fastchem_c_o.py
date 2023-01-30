@@ -22,8 +22,8 @@ output_dir = '../output'
 #the chemical species we want to plot later
 #note that the standard FastChem input files use the Hill notation
 plot_species = ['H2O1', 'C1O1', 'C1H4', 'C1O2', 'C2H2', 'C2H4', 'C1H1N1_1']
-#for the plot lables, we therefore use separate strings in the usual notation
-plot_species_lables = ['H2O', 'CO', 'CH4', 'CO2', 'C2H2', 'C2H4', 'HCN']
+#for the plot labels, we therefore use separate strings in the usual notation
+plot_species_labels = ['H2O', 'CO', 'CH4', 'CO2', 'C2H2', 'C2H4', 'HCN']
 
 
 #create a FastChem object
@@ -183,7 +183,7 @@ for i, species in enumerate(plot_species):
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices.append(index)
-    plot_species_symbols.append(plot_species_lables[i])
+    plot_species_symbols.append(plot_species_labels[i])
   else:
     print("Species", species, "to plot not found in FastChem")
 

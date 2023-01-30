@@ -146,7 +146,7 @@ unsigned int FastChem<double_type>::calcDensities(
           output.element_conserved[i],
           output.nb_chemistry_iterations[i]);
 
-        output.nb_iterations[i] = output.nb_chemistry_iterations[i];
+        output.nb_iterations[i] = 0;
         output.nb_cond_iterations[i] = 0;
       }
       else
