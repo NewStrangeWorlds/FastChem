@@ -57,7 +57,7 @@ void FastChem<double_type>::calculateElementDensities(
   //in case the usual FastChem iterations failed to converge, we switch to a backup
   if (use_backup_solver)
   {
-    if (species.solver_order == 0 && species.minor_molecules.size() != 0)
+    if (species.solver_order == 0 && species.minor_molecules.size() == 0)
       solver.intertSol(species, elements, molecules, gas_density);
     else
       solver.backupSol(species, elements, molecules, gas_density);
