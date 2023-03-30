@@ -22,7 +22,7 @@
 	    Joachim Stock
 }
 
-\title{FastChem 2.2 Cond}
+\title{FastChem X.x Cond}
 \subtitle{User and Reference Guide}
 \date{}
 
@@ -392,9 +392,9 @@ The optional parameter file has the following structure:
 The first two entries are the locations of the element abundance and gas phase \& condensate species data files. 
 The condensate species data file is optional and can be left out or also replaced by \verb|none|. In that case, \fc won't be able to perform calculations including condensation, though.
 
-The next parameter determines the convergence criterion of the chemistry iteration. This value is also used for the internal Newton's method and the condensation calculation iteration. The latter ones can be adjusted within in the code by the methods listed in Sects. \ref{sec:fastchem_methods} \& \ref{sec:pfc_methods}.
+The next parameter determines the convergence criterion of the chemistry iteration. This value is also used for the internal Newton's method and the condensation calculation iteration. The latter ones can be adjusted within in the code by the methods listed in Sects. \ref{sec:fastchem_methods} \& \ref{sec:pfc_methods}. This is followed by the (relative) accuracy of the element conservation checks. 
 
-This is followed by the maximum number of chemistry iterations. The value here is also used for the maximum number of condensation iterations and for the number of coupled gas and condensed phase iterations.
+The maximum number of chemistry iterations is listed next. The value here is also used for the maximum number of condensation iterations and for the number of coupled gas and condensed phase iterations.
 
 The next parameter sets the maximum numbers of iterations for the different internal numerical methods employed within \fc. This includes the Newton, Nelder-Mead, and bisection methods. Using the corresponding functions of the \fc object class (Sects. \ref{sec:fastchem_methods} \& \ref{sec:pfc_methods}), this number can be adjusted for each of these numerical methods individually. 
 The last parameter is optional and does not need to be present in the file. It contains the path to the file for an alternative basic element data file. If this parameter is not present, \fc will use the standard set that is directly located in the \fc source code (see previous section).
@@ -476,6 +476,7 @@ It contains the required parameters in the following order:
   \item Location of the file with the element abundances, see Sect. \ref{sec:fastchem_input_files} for details
   \item Location of the file with the thermochemical and stoichiometric data for all species, see Sect. \ref{sec:fastchem_input_files} for details. The first entry refers to the gas-phase species, while the second one is for the condensate data. 
   \item Relative accuracy of the chemistry iterations, used as convergence criterion (also for Newton's method)
+  \item Relative accuracy for the checks of the element conservation
   \item Maximum number of chemistry iterations
   \item Maximum number of internal solver method iterations (Newton, Nelder-Mead \& bisection methods)
 \end{itemize}
@@ -1316,6 +1317,13 @@ This section provides an overview over all the internal \fc parameters that can 
 \lstinline!accuracyChem!
 \begin{addmargin}[25pt]{0pt}
 	Relative accuracy requirement for chemistry iteration and internal solvers (except Newton's method).\\
+	Type: \lstinline!double!\\
+	Default value: 1e-4
+\end{addmargin}
+
+\lstinline!accuracyElementConservation!
+\begin{addmargin}[25pt]{0pt}
+	Relative accuracy for checking the element conservation.\\
 	Type: \lstinline!double!\\
 	Default value: 1e-4
 \end{addmargin}

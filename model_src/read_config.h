@@ -45,13 +45,14 @@ struct Config{
   std::string element_abundance_file = "";
   std::string species_data_file = "";
   std::string cond_species_data_file = "";
-  double chemistry_accuracy;
-  double newton_error;
+  double chemistry_accuracy = 0;
+  double element_conservation_accuracy = 0;
+  double newton_error = 0;
 
-  unsigned int nb_chemistry_iterations;
-  unsigned int nb_newton_iterations;
-  unsigned int nb_nelder_mead_iterations;
-  unsigned int nb_bisection_iterations;
+  unsigned int nb_chemistry_iterations = 0;
+  unsigned int nb_newton_iterations = 0;
+  unsigned int nb_nelder_mead_iterations = 0;
+  unsigned int nb_bisection_iterations = 0;
 };
 
 
@@ -231,6 +232,22 @@ bool readConfigFile(std::string &file_path, Config &config)
   config.newton_error = config.chemistry_accuracy;
 
 
+  //element conservation accuracy
+  std::getline(file, line); std::getline(file, line); std::getline(file, line);
+  
+  input.str(line); input.clear();
+  input >> config.element_conservation_accuracy;
+
+  if (line == "" || !(config.element_conservation_accuracy > 0.0))
+  {
+    std::cout << "Unable to element conservation accuracy parameter from: " << file_path.c_str() << "\n";
+
+    return false;
+  }
+
+  config.newton_error = config.chemistry_accuracy;
+
+
   //chemistry iteration number
   std::getline(file, line); std::getline(file, line); std::getline(file, line);
   
@@ -275,6 +292,7 @@ bool readConfigFile(std::string &file_path, Config &config)
             << "  Element abundance file: " << config.element_abundance_file << "\n"
             << "  Species data file: " << config.species_data_file << "\n"
             << "  Chemistry accuracy: " << config.chemistry_accuracy << "\n"
+            << "  Element conservation accuracy: " << config.element_conservation_accuracy << "\n"
             << "  Number of chemistry iterations: " << config.nb_chemistry_iterations << "\n"
             << "  Number of solver iterations: " << config.nb_newton_iterations << "\n"
             << "\n";

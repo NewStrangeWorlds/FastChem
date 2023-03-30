@@ -252,8 +252,12 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const dou
       options.cond_iter_change_limit = value;
       break;
 
-    case ParameterFloat::accuracy:
-      options.accuracy = value;
+    case ParameterFloat::chem_accuracy:
+      options.chem_accuracy = value;
+      break;
+
+    case ParameterFloat::element_conserve_accuracy:
+      options.element_conserve_accuracy = value;
       break;
 
     case ParameterFloat::cond_accuracy:

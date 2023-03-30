@@ -27,15 +27,15 @@ plot_species_labels = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 
 #First, we have to create a FastChem object
 fastchem = pyfastchem.FastChem(
-  '../input/element_abundances_solar.dat', 
-  '../input/logK.dat',
-  1)
+ '../input/element_abundances_solar.dat', 
+ '../input/logK.dat',
+ 1)
 
 
 #we could also create a FastChem object by using the parameter file
 #note, however, that the file locations in the parameter file are relative
 #to the location from where this Python script is called from
-#fastchem = pyfastchem.FastChem('../input/parameters_py.dat', 4)
+#fastchem = pyfastchem.FastChem('../input/parameters_py.dat', 1)
 
 
 

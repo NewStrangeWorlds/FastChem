@@ -7,6 +7,9 @@ input/logK.dat input/logK_condensates.dat
 #accuracy of chemistry iteration
 1.0e-4
 
+#accuracy of element conservation
+1.0e-4
+
 #max number of chemistry iterations 
 80000  
 

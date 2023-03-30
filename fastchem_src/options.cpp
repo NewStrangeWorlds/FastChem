@@ -57,7 +57,8 @@ ParameterFloat FastChemOptions<double_type>::resolveParameter(
   {
     { std::string("condTau"), ParameterFloat::cond_tau },
     { std::string("condIterChangeLimit"), ParameterFloat::cond_limit_change },
-    { std::string("accuracyChem"), ParameterFloat::accuracy },
+    { std::string("accuracyChem"), ParameterFloat::chem_accuracy },
+    { std::string("accuracyElementConservation"), ParameterFloat::element_conserve_accuracy },
     { std::string("accuracyCond"), ParameterFloat::cond_accuracy },
     { std::string("accuracyNewton"), ParameterFloat::newton_err },
     { std::string("additionalScaling"), ParameterFloat::additional_scaling_factor },

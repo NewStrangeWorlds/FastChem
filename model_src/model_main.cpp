@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
 
   //set the FastChem parameters from the config file
   fastchem.setParameter(std::string("accuracyChem"), (long double) config.chemistry_accuracy);
+  fastchem.setParameter(std::string("accuracyElementConservation"), (long double) config.element_conservation_accuracy);
   fastchem.setParameter(std::string("accuracyNewton"), (long double) config.newton_error);
   fastchem.setParameter(std::string("nbIterationsChem"), config.nb_chemistry_iterations);
   fastchem.setParameter(std::string("nbIterationsNewton"), config.nb_newton_iterations);

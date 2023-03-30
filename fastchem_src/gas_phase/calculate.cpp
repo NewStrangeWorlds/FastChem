@@ -95,12 +95,12 @@ bool GasPhase<double_type>::calculate(
       converged = true;
 
       for (size_t i=0; i<nb_species; ++i)
-        if (std::fabs((species[i]->number_density - number_density_old[i])) > options.accuracy*number_density_old[i]
+        if (std::fabs((species[i]->number_density - number_density_old[i])) > options.chem_accuracy*number_density_old[i]
              && species[i]->number_density/gas_density > 1.e-155)
         { 
           // std::cout << iter_step << "\t" << species[i]->symbol << "\t" 
           //           << std::fabs((species[i]->number_density - number_density_old[i]))/number_density_old[i] << "\t" 
-          //           << options.accuracy*number_density_old[i] << "\t" 
+          //           << options.chem_accuracy*number_density_old[i] << "\t" 
           //           << species[i]->number_density << "\t" 
           //           <<  number_density_old[i] << "\t" 
           //           << use_backup_solver << "\n";

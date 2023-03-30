@@ -100,13 +100,25 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
   if (!(parameter_value > 0))
     return initialization_status;
   else
-    accuracy = parameter_value;
+    chem_accuracy = parameter_value;
 
   std::getline(file, line);
   
-  newton_err = accuracy;
-  cond_accuracy = accuracy;
+  newton_err = chem_accuracy;
+  cond_accuracy = chem_accuracy;
 
+  //element conservation accuracy
+  std::getline(file, line); std::getline(file, line);
+  
+  input.str(line); input.clear();
+  input >> parameter_value;
+
+  if (!(parameter_value > 0))
+    return initialization_status;
+  else
+    element_conserve_accuracy = parameter_value;
+
+  std::getline(file, line);
 
   //chemistry iteration number
   std::getline(file, line); std::getline(file, line);
@@ -164,7 +176,7 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     std::cout << "element abundances file: " << element_abundances_file << "\n";
     std::cout << "elements data file (optional): " << chemical_element_file << "\n";
     std::cout << "species data file: " << species_data_file << "\n";
-    std::cout << "chemistry accuracy: " << accuracy << "\n";
+    std::cout << "chemistry accuracy: " << chem_accuracy << "\n";
     std::cout << "Newton's method error: " << newton_err << "\n";
     std::cout << "max number of chemistry iterations: " << nb_max_fastchem_iter << "\n";
     std::cout << "max number of condensation iterations: " << nb_max_cond_iter << "\n";

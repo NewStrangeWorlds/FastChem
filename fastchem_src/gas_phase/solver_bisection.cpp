@@ -77,7 +77,7 @@ bool GasPhaseSolver<double_type>::bisection(
 
     //Convergence test. We need to be a little more accurate than the required accuracy.
     //Otherwise FastChem doesn't converge to the desired accuracy.
-    if ( std::fabs(x[0] - x[1])/x[1] < options.accuracy * 1e-3 )
+    if ( std::fabs(x[0] - x[1])/x[1] < options.chem_accuracy * 1e-3 )
     {
       converged = true;
       break;
@@ -92,7 +92,7 @@ bool GasPhaseSolver<double_type>::bisection(
 
   if (!converged && options.verbose_level >= 3)
     std::cout << "Bisection iteration limit reached, result may not be optimal." << "\t" << x[0] << "\t" << x[1]
-              << "\t" << std::fabs(std::exp(x[0]) - std::exp(x[1]))/std::exp(x[1]) << "\t" << options.accuracy * 1e-3  << "\n";
+              << "\t" << std::fabs(std::exp(x[0]) - std::exp(x[1]))/std::exp(x[1]) << "\t" << options.chem_accuracy * 1e-3  << "\n";
 
 
   return converged;

@@ -20,9 +20,12 @@ MR
 input/element_abundances_solar.dat
 
 #Species data files    
-input/logK.dat input/condensate_all.dat
+input/logK.dat input/logK_condensates.dat
 
 #Accuracy of chemistry iteration
+1.0e-4
+
+#Accuracy of element conservation
 1.0e-4
 
 #Max number of chemistry iterations 

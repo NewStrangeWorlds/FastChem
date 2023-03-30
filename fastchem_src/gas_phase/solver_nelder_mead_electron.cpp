@@ -128,7 +128,7 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
 
 
     //check if the function has a root in a delta region around xg
-    const double_type delta = xg * options.accuracy*1e-4;
+    const double_type delta = xg * options.chem_accuracy*1e-4;
 
  
     const double_type vf_epsilon_plus = charge_conservation(xg+delta);

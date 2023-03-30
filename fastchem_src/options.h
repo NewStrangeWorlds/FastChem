@@ -34,7 +34,8 @@ enum class ParameterFloat {
     invalid_parameter,
     cond_tau,
     cond_limit_change,
-    accuracy,
+    chem_accuracy,
+    element_conserve_accuracy,
     newton_err,
     cond_accuracy,
     additional_scaling_factor,
@@ -96,9 +97,10 @@ struct FastChemOptions{
   unsigned int nb_max_cond_iter = 3000;
   unsigned int nb_chem_cond_iter = 3000;
 
-  double accuracy = 1e-4;
+  double chem_accuracy = 1e-4;
   double newton_err = 1e-4;
   double cond_accuracy = 1e-4;
+  double element_conserve_accuracy = 1e-4;
 
   double_type element_density_minlimit = 1e-155; //smallest allowed particle number densities
   double_type molecule_density_minlimit = 1e-155;
