@@ -402,10 +402,10 @@ bool CondPhaseSolver<double_type>::solveSystem(
     if (options.cond_use_svd)
     { 
       if (options.verbose_level >= 3)
-        std::cout << "Switching to Single Value Decomposition.\n";
+        std::cout << "Switching to Singular Value Decomposition.\n";
 
       Eigen::BDCSVD<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
-      Eigen::VectorXdt<double_type> result = jacobian.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(rhs);
+      result = jacobian.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(rhs);
     }
     else
     {
