@@ -162,6 +162,10 @@ bool Element<double_type>::checkElementConservation(
   if (this->symbol == "e-")
     return checkChargeConservation(molecules, accuracy);
 
+  //if the element abundance is 0, it is automatically conserved
+  if (this->epsilon == 0)
+    return true;
+
   //sum up the elements contained in each molecule and compare the result to its elemental abundance
   double_type sum_gas = this->number_density;
 
@@ -210,6 +214,9 @@ void Element<double_type>::calcDegreeOfCondensation(
 
   if (degree_of_condensation > 1) 
     degree_of_condensation = 1.0;
+
+  if (this->epsilon == 0) 
+    degree_of_condensation = 0;
 
   phi = this->epsilon * (1.0 - degree_of_condensation);
 }

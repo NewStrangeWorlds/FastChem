@@ -132,6 +132,7 @@ else()
   target_compile_options(fastchem_lib PRIVATE "-O3")
 endif()
 
+file(MAKE_DIRECTORY "output")
 
 #in case we build the executable
 if (NOT ONLY_LIBRARY)

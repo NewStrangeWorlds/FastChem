@@ -47,7 +47,7 @@ void GasPhase<double_type>::calculateElementDensities(
 
   species.number_density_maj = n_major * species.phi;
 
-  if (species.fixed_by_condensation == false)
+  if (species.fixed_by_condensation == false && species.epsilon > 0)
   {
     //calculate the scaling factor if required
     if (options.use_scaling_factor)
@@ -76,6 +76,9 @@ void GasPhase<double_type>::calculateElementDensities(
       }
     }
   }
+
+  if (species.epsilon == 0)
+    species.number_density = 0.0;
 
   species.checkN(options.element_density_minlimit, gas_density);
 
