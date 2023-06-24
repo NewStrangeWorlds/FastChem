@@ -1,6 +1,6 @@
 #logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:
 #includes elements with eps >= eps_Ge
-#fit coefficients calculateted from indicated data source. Last update Dec 2022 dk.
+#fit coefficients calculateted from indicated data source. Last update June 2023 dk.
 Al(s) Aluminum : Al 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    s
    1200.0

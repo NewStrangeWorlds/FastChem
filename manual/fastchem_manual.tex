@@ -22,7 +22,7 @@
 	    Joachim Stock
 }
 
-\title{FastChem X.x Cond}
+\title{FastChem Cond (FastChem 3.0)}
 \subtitle{User and Reference Guide}
 \date{}
 
@@ -350,18 +350,17 @@ For \fc, the species information file should have the following structure:
 \lstinputlisting[basicstyle=\ttfamily\scriptsize, language={}, frame=single]{aux/logK_condensates_sample.dat}
 The first three lines of the file are again header lines and discarded when reading in the file. \\
 
-For condensates, the data set for each species consists of five lines. The first one is identical to the one for gas phase species described above. One difference with respect to the species' formulas compared to those for molecules and ions is that we don't use the Hill notation here. To be consistent with general mineralogy, we rather use the normal sum formulas here, together with the phase state. 
+For condensates, the data set for each species consists of at least five lines. The first one is identical to the one for gas phase species described above. One difference with respect to the species' formulas compared to those for molecules and ions is that we don't use the Hill notation here. To be consistent with general mineralogy, we rather use the normal sum formulas here, together with the phase state. 
 
 The second line contains the phase state information. \fc currently recognises three different states:  \verb|s| (solid),  \verb|l| (liquid), and  \verb|sl| (solid and liquid).
 
-The third line lists the temperature limits of the phase state. For solids this usually extends from low temperatures to the melting point, whereas liquids typically are stable from the melting point to the critical point. If data for the latter one is not given in the thermochemical databases, we typically use a value of 6000 K, which is the upper validity limit of the thermochemical data used in \fc. We note that the melting point listed in our standard input files is given for the standard of pressure of 1 bar. In principle, the melting point is often a function of pressure, which, however, is currently not treated in \fc.
+Condensates can have multiple data fits attached to them. Phase changes can result in non-monotonic slopes within the Gibb's free energy of formation. To allow for a better fit to the resulting mass action coefficients, it is therefore usually beneficial to fit each phase separately. Additionally, thermochemical data for condensates is often only tabulated over a restricted temperature range, which makes extrapolation to higher temperatures problematic.  
 
-\fc will use the temperature limits of the phase states when it calculates the activities of the condensates. If outside the tabulated limit, the corresponding activities are set to values much smaller than unity, which automatically discards such a species from the list of potentially stable condensates. 
+The third line, thus, lists the temperature limits of the different fitted data sets in the order they appear below. For solids, the limit is usually the melting point, whereas for liquids this can typically be the critical point or the last tabulated data point. 
 
-The fourth line lists the temperature limits of the tabulated data the fit is based on. Condensate data is often only tabulated over a very limited temperature range. Applying the fit formula \eqref{eq:fit} far outside the temperature range of the data it has been fitted for can result in unphysical behaviour of the extrapolated data. Thus, \fc has the option to only use the data inside the temperature limits listed in the input file. More information on this can be found in...
+\fc will use these temperature limits of the phase states when it calculates the activities of the condensates. By default, \fc will also \textit{not} extrapolate the date fits beyond the last listed temperature. The user can override this behaviour by setting a special \fc parameter. More information on this can be found in Sect. \ref{sect:fc_param}.
 
-Finally, the last line contains the fit coefficients. This line is identical to the corresponding one for the gas phase species discussed above.
-
+The following lines finally contain the fit coefficients for the different data fits. Their format is identical to the corresponding one for the gas phase species discussed above. The number of data fits has to be equal to the number of temperature limits discussed above.
 
 \paragraph{Standard files}
 Together with \fc, we provide two different files for gas phase species, located in the \verb|input/| folder. The file \verb|logK.dat| provides the standard set, discussed in \citet{Stock2018MNRAS.479..865S}. This includes species for all elements at least as abundant as germanium.
@@ -1471,9 +1470,9 @@ The following parameters can be considered potentially dangerous and should only
 
 \lstinline!useCondDataValidityLimit!
 \begin{addmargin}[25pt]{0pt}
-	Use data temperature limits from the condensate input file and avoid extrapolation outside the validity range of the fitted data. Outside the validity range, the activity of condensates is set to a very small value.\\
+	Use data temperature limits from the condensate input file and avoid extrapolation outside the validity range of the fitted data. Outside the validity range, the activity of condensates is automatically set to a very small value.\\
 	Type: \lstinline!bool!\\
-	Default value: \lstinline!false!
+	Default value: \lstinline!true!
 \end{addmargin}
 
 
