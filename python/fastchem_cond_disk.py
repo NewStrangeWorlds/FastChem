@@ -26,7 +26,7 @@ plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'Fe1H1']
 #for the plot labels, we therefore use separate strings in the usual notation
 plot_species_labels = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
 
-plot_species_cond = ['MgSiO3[s]', 'Mg2SiO4[s]', 'H2O[s]', 'CH4[s]']
+plot_species_cond = ['MgSiO3(s,l)', 'Mg2SiO4(s,l)', 'H2O(s,l)', 'CH4(s,l)']
 
 
 
@@ -49,6 +49,8 @@ fastchem = pyfastchem.FastChem(
 fastchem.setParameter('condSolveFullSystem', np.bool_(True))
 fastchem.setParameter('minDensityExponentElement', -4920.0)
 fastchem.setParameter('maxLogK', 10000.0)
+fastchem.setParameter('accuracyChem', 1e-5)
+fastchem.setParameter('accuracyCond', 1e-5)
 
 
 #create the input and output structures for FastChem

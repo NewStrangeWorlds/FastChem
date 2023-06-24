@@ -41,7 +41,7 @@ void Molecule<double_type>::calcMassActionConstant(const double temperature, con
                     + mass_action_coeff[4]*temperature * temperature;
   
   //adjusting log_K from its standard pressure (1 bar = 1e-6 dyn cm-2) to the actual pressure 
-  double_type pressure_scaling = 1.0e-6 * CONST_K * temperature;
+  const double_type pressure_scaling = 1.0e-6 * CONST_K * temperature;
   mass_action_constant = log_K - sigma * std::log(pressure_scaling);
 
   if (mass_action_constant > logK_limit) mass_action_constant = logK_limit;

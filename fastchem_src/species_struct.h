@@ -156,10 +156,8 @@ struct Condensate : public ChemicalSpecies<double_type>
   std::vector<unsigned int> element_indices;
   std::vector<int> stoichiometric_vector;
 
-  double_type mass_density = 0.0;
-  std::vector<double_type> fit_coeff;
-  std::vector<double> fit_temp_limits;
-  std::vector<double> phase_temp_limits;
+  std::vector<std::vector<double_type>> fit_coeff;
+  std::vector<double> fit_coeff_limits;
 
   double_type mass_action_constant = 0.0;
 

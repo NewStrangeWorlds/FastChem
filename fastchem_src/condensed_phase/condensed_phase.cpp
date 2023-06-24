@@ -61,9 +61,13 @@ CondensedPhase<double_type>::CondensedPhase(
       
       std::cout << "    lnK coeff: ";
       for (size_t j=0; j<condensates[i].fit_coeff.size(); ++j)
-        std::cout << condensates[i].fit_coeff[j] << "\t";
-      std::cout << "\n";
-      
+      {
+        for (auto& c : condensates[i].fit_coeff[j])
+          std::cout << c << "\t";
+
+       std::cout << "\n";
+      }
+
       std::cout << "    stoichiometry: ";
       for (size_t j=0; j<condensates[i].stoichiometric_vector.size(); ++j)
         std::cout << condensates[i].stoichiometric_vector[j] << " ";

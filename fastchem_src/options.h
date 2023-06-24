@@ -111,7 +111,7 @@ struct FastChemOptions{
   double additional_scaling_factor = 0.0;
 
   double_type logK_limit = 1e10;
-  bool cond_use_data_validity_limits = false;
+  bool cond_use_data_validity_limits = true;
 
   bool cond_use_svd = false;
   bool cond_use_full_pivot = false;

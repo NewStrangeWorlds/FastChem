@@ -79,11 +79,9 @@ class CondensedPhase {
       const std::string symbol,
       const std::vector<std::string> species_elements,
       const std::vector<int> stoichiometric_coeff,
-      const double_type density,
-      const std::string phase, 
-      const std::vector<double>& phase_temp_limits,
-      const std::vector<double>& fit_temp_limits,
-      const std::vector<double_type> fit_coeff);
+      const std::string phase,
+      const std::vector<double>& fit_coeff_limits,
+      const std::vector<std::vector<double_type>>& fit_coeff);
 
     void selectJacobianCondensates(
       const std::vector<Condensate<double_type>*>& condensates,

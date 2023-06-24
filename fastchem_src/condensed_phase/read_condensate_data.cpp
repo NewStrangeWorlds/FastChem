@@ -84,53 +84,46 @@ bool CondensedPhase<double_type>::readCondensateData(const std::string& species_
     std::vector<std::string> elements;
     std::vector<int> stoichometric_coeff;
 
-
     while ( (input >> element_string >> stoichometric_coeff_string) && (element_string != "#") )
     {
       elements.push_back(element_string);
       stoichometric_coeff.push_back(std::stoi( stoichometric_coeff_string ));
     }
 
-
-
     //read in the phase and density
     std::string line;
     std::getline(file, line);
     std::istringstream basic_data_input(line);
 
-    double density = 0;
     std::string phase = "";
-    basic_data_input >> phase >> density;
-
+    basic_data_input >> phase;
 
 
     //read in the phase temperature limits
     std::getline(file, line);
-    std::istringstream phase_limit_input(line);
+    std::istringstream fit_limits_input(line);
+    std::vector<double> fit_coeff_limits;
 
-    std::vector<double> phase_temp_limits(2, 0.0);
-    phase_limit_input >> phase_temp_limits[0] >> phase_temp_limits[1];
+    double fit_coeff_limit;
 
-
-
-    //read in the fit temperature limits
-    std::getline(file, line);
-    std::istringstream fit_limit_input(line);
-
-    std::vector<double> fit_temp_limits(2, 0.0);
-    fit_limit_input >> fit_temp_limits[0] >> fit_temp_limits[1];
+    while (fit_limits_input >> fit_coeff_limit)
+      fit_coeff_limits.push_back(fit_coeff_limit);
 
 
-    std::getline(file, line);
-    std::istringstream fit_input(line);
-    std::vector<double_type> fit_coeff;
+    std::vector<std::vector<double_type>> fit_coeff(fit_coeff_limits.size(), std::vector<double_type>{});
 
-    double fit_coefficient;
+    for (size_t i=0; i<fit_coeff_limits.size(); ++i)
+    {
+      std::getline(file, line);
+      std::istringstream fit_input(line);
 
-    while (fit_input >> fit_coefficient)
-      fit_coeff.push_back(fit_coefficient);
+      double fit_coefficient;
+      
+      while (fit_input >> fit_coefficient)
+        fit_coeff[i].push_back(fit_coefficient);
+    }
 
-    addCondensate(name, symbol, elements, stoichometric_coeff, density, phase, phase_temp_limits, fit_temp_limits, fit_coeff);
+    addCondensate(name, symbol, elements, stoichometric_coeff, phase, fit_coeff_limits, fit_coeff);
 
     //blank separation line
     std::getline(file, line);
@@ -152,21 +145,17 @@ void CondensedPhase<double_type>::addCondensate(
   const std::string symbol,
   const std::vector<std::string> species_elements,
   const std::vector<int> stoichiometric_coeff,
-  const double_type density,
   const std::string phase, 
-  const std::vector<double>& phase_temp_limits,
-  const std::vector<double>& fit_temp_limits,
-  const std::vector<double_type> fit_coeff)
+  const std::vector<double>& fit_coeff_limits,
+  const std::vector<std::vector<double_type>>& fit_coeff)
 {
   Condensate<double_type> species;
 
   species.name = name;
   species.symbol = symbol;
 
-  species.phase_temp_limits = phase_temp_limits;
-  species.fit_temp_limits = fit_temp_limits;
+  species.fit_coeff_limits = fit_coeff_limits;
   species.fit_coeff = fit_coeff;
-
 
   species.stoichiometric_vector.assign(nb_elements, 0);
 
@@ -190,10 +179,6 @@ void CondensedPhase<double_type>::addCondensate(
 
   if (is_stoichiometry_complete)
   {
-    
-    species.mass_density = density;
-
-
     PhaseState phase_state;
 
     if (phase == "s" || phase == "solid")

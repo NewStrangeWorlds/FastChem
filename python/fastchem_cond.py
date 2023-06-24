@@ -8,7 +8,8 @@ from astropy import constants as const
 
 
 #we read in a p-T structure for a brown dwarf
-data = np.loadtxt("../input/Gliese_229b.dat")
+#data = np.loadtxt("../input/Gliese_229b.dat")
+data = np.loadtxt("../input/L5_dwarf_Sonora.dat")
 
 #and extract temperature and pressure values
 temperature = data[:,1]
@@ -27,7 +28,7 @@ plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'Fe1S1', 'H2S1']
 plot_species_labels = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeS', 'H2S']
 
 #the default condensate data doesn't use the Hill notation
-plot_species_cond = ['Fe[s]', 'FeS[s]', 'MgSiO3[s]', 'Mg2SiO4[s]']
+plot_species_cond = ['Fe(s,l)', 'FeS(s,l)', 'MgSiO3(s,l)', 'Mg2SiO4(s,l)']
 
 
 #create a FastChem object
@@ -47,9 +48,10 @@ input_data.pressure = pressure
 
 #use equilibrium condensation
 input_data.equilibrium_condensation = True
+fastchem.setParameter('accuracyChem', 1e-5)
 
 #this would turn on the rainout condensation approach
-#input_data.rainout_condensation = True
+input_data.rainout_condensation = False
 
 
 #run FastChem on the entire p-T structure

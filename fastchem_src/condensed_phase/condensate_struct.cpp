@@ -33,20 +33,31 @@ namespace fastchem {
 template <class double_type>
 void Condensate<double_type>::calcMassActionConstant(const double temperature)
 {
-  const double_type thermal_energy = 1.0e6 / (CONST_K * temperature);
+  size_t set_index = 0;
 
-  double_type log_K = fit_coeff[0]/temperature
-                    + fit_coeff[1]*std::log(temperature)
-                    + fit_coeff[2]
-                    + fit_coeff[3]*temperature
-                    + fit_coeff[4]*temperature * temperature;
+  for (size_t i=0; i<fit_coeff_limits.size(); ++i)
+    if (temperature <= fit_coeff_limits[i])
+    {
+      set_index = i;
+      break;
+    }
+
+  if (fit_coeff_limits.back() < temperature) 
+    set_index = fit_coeff_limits.size()-1;
+
+  double_type log_K = fit_coeff[set_index][0]/temperature
+                    + fit_coeff[set_index][1]*std::log(temperature)
+                    + fit_coeff[set_index][2]
+                    + fit_coeff[set_index][3]*temperature
+                    + fit_coeff[set_index][4]*temperature * temperature;
 
   double_type sigma = 0;
 
   for (auto & i : stoichiometric_vector)
     sigma += i;
 
-  mass_action_constant = log_K - (sigma) * std::log(thermal_energy);
+  const double_type pressure_scaling = 1.0e6 / (CONST_K * temperature);
+  mass_action_constant = log_K - sigma * std::log(pressure_scaling);
 }
 
 
@@ -57,13 +68,7 @@ void Condensate<double_type>::calcActivity(
   const std::vector<Element<double_type>>& elements,
   const bool use_data_validity_limits)
 {
-  if (!(temperature > phase_temp_limits[0] && temperature <= phase_temp_limits[1]))
-  {
-    log_activity = -10.0;
-    return;
-  }
-
-  if (use_data_validity_limits && !(temperature > fit_temp_limits[0] && temperature <= fit_temp_limits[1]))
+  if (use_data_validity_limits && temperature > fit_coeff_limits.back())
   {
     log_activity = -10.0;
     return;
@@ -86,10 +91,7 @@ double_type Condensate<double_type>::calcActivity(
   const std::vector<double_type> elem_number_densities,
   const bool use_data_validity_limits)
 {
-  if (!(temperature > phase_temp_limits[0] && temperature <= phase_temp_limits[1]))
-    return -10.0;
-
-  if (use_data_validity_limits && !(temperature > fit_temp_limits[0] && temperature <= fit_temp_limits[1]))
+  if (use_data_validity_limits && temperature > fit_coeff_limits.back())
     return -10.0;
 
   double_type log_activity = mass_action_constant;
