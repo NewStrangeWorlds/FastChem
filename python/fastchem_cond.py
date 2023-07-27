@@ -8,7 +8,6 @@ from astropy import constants as const
 
 
 #we read in a p-T structure for a brown dwarf
-#data = np.loadtxt("../input/Gliese_229b.dat")
 data = np.loadtxt("../input/L5_dwarf_Sonora.dat")
 
 #and extract temperature and pressure values
