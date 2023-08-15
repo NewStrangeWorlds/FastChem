@@ -8,11 +8,12 @@ from astropy import constants as const
 
 
 #we read in a p-T structure for a protoplanetary disk
-data = np.atleast_2d(np.loadtxt("../input/protoplanetary_disk.dat"))
+data = np.atleast_2d(np.loadtxt("../input/example_p_t_structures/protoplanetary_disk1.dat"))
 
 #and extract temperature and pressure values
 temperature = data[:,1]
 pressure = data[:,0]
+distance = data[:,2]
 
 
 #define the directory for the output
@@ -29,23 +30,16 @@ plot_species_labels = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
 plot_species_cond = ['MgSiO3(s,l)', 'Mg2SiO4(s,l)', 'H2O(s,l)', 'CH4(s,l)']
 
 
-
 #create a FastChem object
 fastchem = pyfastchem.FastChem(
-  '../input/element_abundances_solar.dat', 
-  '../input/logK_wo_ions.dat', 
-  '../input/logK_condensates.dat',
+  '../input/element_abundances/asplund_2009.dat', 
+  '../input/logK/logK_wo_ions.dat', 
+  '../input/logK/logK_condensates.dat',
   1)
 
 
-#we could also create a FastChem object by using the parameter file
-#note, however, that the file locations in the parameter file are relative
-#to the location from where this Python script is called from
-#fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
 
-
-#for this calculation, we need to change some of FastChem's internal
-#parameters
+#for this calculation, we need to change some of FastChem's internal parameters
 fastchem.setParameter('condSolveFullSystem', np.bool_(True))
 fastchem.setParameter('minDensityExponentElement', -4920.0)
 fastchem.setParameter('maxLogK', 10000.0)
@@ -180,25 +174,24 @@ for i, species in enumerate(plot_species_cond):
 
 
 #and plot everything...
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 6))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 6))
 
 for i in range(0, len(plot_species_symbols)):
-  ax1.plot(number_densities[:, plot_species_indices[i]]/gas_number_density, pressure)
+  ax1.plot(distance, number_densities[:, plot_species_indices[i]]/gas_number_density)
 
 ax1.set(xscale='log', yscale = 'log')
-ax1.set_ylim(ax1.get_ylim()[::-1])
 
-ax1.set(xlabel = 'Mixing ratios', ylabel = 'Pressure (bar)')
+
+ax1.set(ylabel = 'Mixing ratios', xlabel = 'Distance (au)')
 ax1.legend(plot_species_symbols)
 
 
 for i in range(0, len(plot_species_symbols_cond)):
-  ax2.plot(number_densities_cond[:, plot_species_indices_cond[i]], pressure)
+  ax2.plot(distance, number_densities_cond[:, plot_species_indices_cond[i]])
 
 ax2.set(xscale='log', yscale = 'log')
-ax2.set_ylim(ax2.get_ylim()[::-1])
 
-ax2.set(xlabel = 'Number density (cm$^{-3}$)', ylabel = 'Pressure (bar)')
+ax2.set(ylabel = 'Number density (cm$^{-3}$)', xlabel = 'Distance (au)')
 ax2.legend(plot_species_symbols_cond)
 
 

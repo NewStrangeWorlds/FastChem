@@ -8,7 +8,7 @@ from astropy import constants as const
 
 
 #we read in a p-T structure for a brown dwarf
-data = np.loadtxt("../input/L5_dwarf_Sonora.dat")
+data = np.loadtxt("../input/example_p_t_structures/L5_dwarf_Sonora.dat")
 
 #and extract temperature and pressure values
 temperature = data[:,1]
@@ -32,10 +32,16 @@ plot_species_cond = ['Fe(s,l)', 'FeS(s,l)', 'MgSiO3(s,l)', 'Mg2SiO4(s,l)']
 
 #create a FastChem object
 fastchem = pyfastchem.FastChem(
-  '../input/element_abundances_solar.dat', 
-  '../input/logK.dat', 
-  '../input/logK_condensates.dat',
+  '../input/element_abundances/asplund_2009.dat', 
+  '../input/logK/logK.dat',
+  '../input/logK/logK_condensates.dat',
   1)
+
+
+#we could also create a FastChem object by using the parameter file
+#note, however, that the file locations in the parameter file are relative
+#to the location from where this Python script is called from
+#fastchem = pyfastchem.FastChem('../input/parameters_py.dat', 1)
 
 
 #create the input and output structures for FastChem

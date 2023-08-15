@@ -27,8 +27,8 @@ plot_species_labels = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 
 #First, we have to create a FastChem object
 fastchem = pyfastchem.FastChem(
- '../input/element_abundances_solar.dat', 
- '../input/logK.dat',
+ '../input/element_abundances/asplund_2009.dat', 
+ '../input/logK/logK.dat',
  1)
 
 

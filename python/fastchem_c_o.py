@@ -30,8 +30,8 @@ plot_species_labels = ['H2O', 'CO', 'CH4', 'CO2', 'C2H2', 'C2H4', 'HCN']
 #it needs the locations of the element abundance and equilibrium constants files
 #these locations have to be relative to the one this Python script is called from
 fastchem = pyfastchem.FastChem(
-  '../input/element_abundances_solar.dat', 
-  '../input/logK.dat',
+  '../input/element_abundances/asplund_2009.dat', 
+  '../input/logK/logK.dat',
   1)
 
 
