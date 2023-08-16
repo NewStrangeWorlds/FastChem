@@ -8,7 +8,7 @@ from astropy import constants as const
 
 
 #we read in a p-T structure for a protoplanetary disk
-data = np.atleast_2d(np.loadtxt("../input/example_p_t_structures/protoplanetary_disk1.dat"))
+data = np.atleast_2d(np.loadtxt("../input/example_p_t_structures/protoplanetary_disk.dat"))
 
 #and extract temperature and pressure values
 temperature = data[:,1]
@@ -56,7 +56,6 @@ input_data.pressure = pressure
 
 input_data.equilibrium_condensation = True
 
-
 #run FastChem on the entire p-T structure
 fastchem_flag = fastchem.calcDensities(input_data, output_data)
 
@@ -64,6 +63,7 @@ fastchem_flag = fastchem.calcDensities(input_data, output_data)
 #convergence summary report
 print("FastChem reports:")
 print("  -", pyfastchem.FASTCHEM_MSG[fastchem_flag])
+
 
 if np.amin(output_data.element_conserved[:]) == 1:
   print("  - element conservation: ok")

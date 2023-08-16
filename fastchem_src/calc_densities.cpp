@@ -66,16 +66,16 @@ unsigned int FastChem<double_type>::calcDensities(
 
   size_t nb_gridpoints = input.temperature.size();
 
-  output.element_conserved.resize(nb_gridpoints);
-  output.number_densities.resize(nb_gridpoints);
-  output.number_densities_cond.resize(nb_gridpoints);
-  output.element_cond_degree.resize(nb_gridpoints);
-  output.total_element_density.resize(nb_gridpoints);
-  output.nb_chemistry_iterations.resize(nb_gridpoints);
-  output.nb_cond_iterations.resize(nb_gridpoints);
-  output.nb_iterations.resize(nb_gridpoints);
-  output.mean_molecular_weight.resize(nb_gridpoints);
-  output.fastchem_flag.assign(nb_gridpoints, 0);
+  output.element_conserved.assign(nb_gridpoints, std::vector<unsigned int>(element_data.nb_elements, 0));
+  output.number_densities.assign(nb_gridpoints, std::vector<double>(gas_phase.nb_species, 0.0));
+  output.number_densities_cond.assign(nb_gridpoints, std::vector<double>(condensed_phase.nb_condensates, 0.0));
+  output.element_cond_degree.assign(nb_gridpoints, std::vector<double>(element_data.nb_elements, 0.0));
+  output.total_element_density.assign(nb_gridpoints, 0.0);
+  output.nb_chemistry_iterations.assign(nb_gridpoints, 0);
+  output.nb_cond_iterations.assign(nb_gridpoints, 0);
+  output.nb_iterations.assign(nb_gridpoints, 0);
+  output.mean_molecular_weight.assign(nb_gridpoints, 0.0);
+  output.fastchem_flag.assign(nb_gridpoints, FASTCHEM_NO_CONVERGENCE);
 
 
   if (input.rainout_condensation)
@@ -241,8 +241,6 @@ unsigned int FastChem<double_type>::calcDensity(
       condensed_phase.condensates,
       total_element_density,
       options.element_conserve_accuracy);
-  
-  element_conserved.assign(element_data.nb_elements, 0);
 
   for (size_t i=0; i<element_data.nb_elements; ++i)
     element_conserved[i] = element_data.elements[i].element_conserved;
@@ -298,6 +296,9 @@ void FastChem<double_type>::rainoutCondensation(
     //       << "\t" << element_data.elements[j].epsilon 
     //       << "\t" << element_data.elements[i].number_density << "\n";
     // }
+
+    if (output.fastchem_flag[i] != FASTCHEM_SUCCESS)
+      break;
 
     std::vector<double> element_abundance_cond(element_data.nb_elements, 0.0);
 
@@ -397,6 +398,10 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
 
 
+  //check for the phase rule
+  if (elements_cond.size() == element_data.elements_wo_e.size())
+    return FASTCHEM_PHASE_RULE_VIOLATION;
+
 
   bool cond_converged = false;
   bool combined_converged = false;
@@ -412,6 +417,12 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     for (nb_combined_iter=0; nb_combined_iter<options.nb_chem_cond_iter; ++nb_combined_iter)
     {
       condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
+
+
+      //check for the phase rule
+      if (elements_cond.size() == element_data.elements_wo_e.size())
+        return FASTCHEM_PHASE_RULE_VIOLATION;
+
 
       for (auto & i : condensates_act)
       {

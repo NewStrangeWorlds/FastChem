@@ -153,6 +153,9 @@ void CondensedPhase<double_type>::selectActiveCondensates(
       }
   }
 
+
+  if (elements_cond.size() == element_data.elements_wo_e.size())
+    std::cout << "Phase rule violated! The number of condensing elements equals the total number of elements.\n";
 }
 
 
