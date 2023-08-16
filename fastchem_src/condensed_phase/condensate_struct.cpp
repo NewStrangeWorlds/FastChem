@@ -106,6 +106,7 @@ double_type Condensate<double_type>::calcActivity(
 
 
 
+//the reference element is the one with the smallest abundance in the condensate
 template <class double_type>
 void Condensate<double_type>::findReferenceElement(
   const std::vector<Element<double_type>>& elements)
@@ -125,6 +126,7 @@ void Condensate<double_type>::findReferenceElement(
 
 
 
+//degree of condensation for the condensate
 template <class double_type>
 void Condensate<double_type>::degreeOfCondensation(
   const std::vector<Element<double_type>>& elements, const double_type total_element_density)
@@ -137,7 +139,8 @@ void Condensate<double_type>::degreeOfCondensation(
 }
 
 
-
+//maximum condensate density
+//see Eq. 13 in Paper III
 template <class double_type>
 void Condensate<double_type>::maxDensity(
   const std::vector< Element<double_type> >& elements, double_type total_number_density)

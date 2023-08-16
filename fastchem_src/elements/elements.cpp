@@ -87,7 +87,6 @@ void ElementData<double_type>::init(double_type initial_density)
 
 
 
-
 //Add a new atom to the system
 template <class double_type>
 void ElementData<double_type>::add(const std::string& symbol)

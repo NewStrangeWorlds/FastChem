@@ -125,6 +125,7 @@ bool CondPhaseSolver<double_type>::newtonStepFull(
 }
 
 
+//The reduced Jacobian, see Eq. 43, Paper III
 template <class double_type>
 Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
   const std::vector<Condensate<double_type>*>& condensates,
@@ -193,7 +194,7 @@ Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
 }
 
 
-
+//Full Jacobian, see Eq. 33, Paper III
 template <class double_type>
 Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleJacobianFull(
   const std::vector<Condensate<double_type>*>& condensates,
@@ -254,6 +255,7 @@ Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleJacobianFull
 }
 
 
+//see Eq. 43, Paper III
 template <class double_type>
 double_type CondPhaseSolver<double_type>::assembleRightHandSide(
       const std::vector<Condensate<double_type>*>& condensates,
@@ -309,7 +311,7 @@ double_type CondPhaseSolver<double_type>::assembleRightHandSide(
 }
 
 
-
+//see Eq. 33, Paper III
 template <class double_type>
 double_type CondPhaseSolver<double_type>::assembleRightHandSideFull(
   const std::vector<Condensate<double_type>*>& condensates,
@@ -475,6 +477,7 @@ double_type CondPhaseSolver<double_type>::backtrackStep(
   
   return lambda;
 }
+
 
 
 template <class double_type> 

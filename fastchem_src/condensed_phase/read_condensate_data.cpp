@@ -75,11 +75,6 @@ bool CondensedPhase<double_type>::readCondensateData(const std::string& species_
         name = name + " " + name_part; 
     }
 
-    /*if (name == ":")
-      name = "";
-    else
-      input >> element_string;*/
-
 
     std::vector<std::string> elements;
     std::vector<int> stoichometric_coeff;

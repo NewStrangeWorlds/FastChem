@@ -76,10 +76,6 @@ bool GasPhase<double_type>::readSpeciesData(const std::string& file_path)
         name = name + " " + name_part; 
     }
 
-    /*if (name == ":")
-      name = "";
-    else
-      input >> element_string;*/
 
     std::vector<std::string> species_elements;
     std::vector<int> stoichiometric_coeff;
@@ -120,7 +116,6 @@ bool GasPhase<double_type>::readSpeciesData(const std::string& file_path)
   molecules.shrink_to_fit();
 
   nb_molecules = molecules.size();
-  //nb_species = nb_molecules + nb_elements;
 
   return true;
 }

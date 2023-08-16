@@ -260,7 +260,9 @@ unsigned int FastChem<double_type>::calcDensity(
 
 
 
-
+//calculates condensation using the rainout approximation, see Sect. 3.6 in Paper III
+//Note: this is a private function, that can not be accessed from outside of FastChem
+//This function will be called by any public calcDensity function
 template <class double_type>
 void FastChem<double_type>::rainoutCondensation(
   FastChemInput& input, FastChemOutput& output)
@@ -287,19 +289,13 @@ void FastChem<double_type>::rainoutCondensation(
       output.nb_cond_iterations[i],
       output.nb_iterations[i]);
 
-    // if (output.fastchem_flag[i] == FASTCHEM_NO_CONVERGENCE)
-    // {
-    //   for (size_t j=0; j<element_data.nb_elements; ++j)
-    //     std::cout << element_data.elements[j].symbol 
-    //       << "\t" << element_data.elements[j].abundance 
-    //       << "\t" << original_element_abundance[j] 
-    //       << "\t" << element_data.elements[j].epsilon 
-    //       << "\t" << element_data.elements[i].number_density << "\n";
-    // }
-
+    //if the calculation at a point fails, 
+    //we stop the entire calculation along the p-T structure
     if (output.fastchem_flag[i] != FASTCHEM_SUCCESS)
       break;
 
+
+    //calculate the new effective element abundances in the gas phase
     std::vector<double> element_abundance_cond(element_data.nb_elements, 0.0);
 
     for (size_t j=0; j<element_data.nb_elements; ++j)
@@ -307,9 +303,11 @@ void FastChem<double_type>::rainoutCondensation(
       element_abundance_cond[j] = element_data.elements[j].phi;
       element_data.elements[j].degree_of_condensation = 0.0;
 
-      output.element_cond_degree[i][j] = (original_element_epsilon[j] - element_abundance_cond[j])/original_element_epsilon[j];
+      output.element_cond_degree[i][j] = 
+        (original_element_epsilon[j] - element_abundance_cond[j])/original_element_epsilon[j];
 
-      if (original_element_epsilon[j] == 0 || output.element_cond_degree[i][j] < 0) output.element_cond_degree[i][j] = 0;
+      if (original_element_epsilon[j] == 0 || output.element_cond_degree[i][j] < 0) 
+        output.element_cond_degree[i][j] = 0;
     }
 
     setElementAbundances(element_abundance_cond);
@@ -321,6 +319,7 @@ void FastChem<double_type>::rainoutCondensation(
   }
 
 
+  //set everything back to their original values
   setElementAbundances(original_element_abundance);
   element_data.setRelativeAbundances();
   gas_phase.reInitialise();
@@ -328,7 +327,7 @@ void FastChem<double_type>::rainoutCondensation(
 
 
 
-//Solve the chemistry for a single temperature and a single pressure
+//Solve the equilibrium condensation for a single temperature and a single pressure
 //Note: this is a private function, that can not be accessed from outside of FastChem
 //This function will be called by any public calcDensity function
 template <class double_type>
@@ -361,12 +360,12 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
   element_data.init(options.element_density_minlimit);
 
-  for (auto & i : condensed_phase.condensates)
+  for (auto & c : condensed_phase.condensates)
   {
-    i.number_density = 0;
-    i.degree_of_condensation = 0;
-    i.activity_correction = 0;
-    i.is_calculated = false;
+    c.number_density = 0;
+    c.degree_of_condensation = 0;
+    c.activity_correction = 0;
+    c.is_calculated = false;
   }
 
 
@@ -467,8 +466,9 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
       if (combined_converged && cond_converged) break;
     }
-    
-    //sanity check
+
+
+    //sanity check for the condensate activities
     for (auto & i : condensed_phase.condensates)
       if (i.log_activity > 0.001)
       { 
@@ -499,7 +499,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       nb_iter);
   }
   else
-  {
+  { //no condensates stable...
     cond_converged = true;
     combined_converged = true;
   }
@@ -541,8 +541,6 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       condensed_phase.condensates,
       total_element_density,
       options.element_conserve_accuracy);
-
-  element_conserved.assign(element_data.nb_elements, 0);
 
   for (size_t i=0; i<element_data.nb_elements; ++i)
     element_conserved[i] = element_data.elements[i].element_conserved;
