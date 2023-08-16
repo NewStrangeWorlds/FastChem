@@ -60,6 +60,8 @@ int main(int argc, char *argv[])
     config.species_data_file, 
     config.cond_species_data_file,
     config.verbose_level);
+
+  //we could also create a FastChem object using a separate parameter file
   //fastchem::FastChem<long double> fastchem("input/parameters.dat", config.verbose_level); 
 
 
@@ -94,7 +96,6 @@ int main(int argc, char *argv[])
     double pressure_in;
 
     if (!(line_stream >> pressure_in >> temperature_in)) continue;
-    //if (!(line_stream >> temperature_in >> pressure_in)) continue;
 
     pressure.push_back(pressure_in);  
     temperature.push_back(temperature_in);

@@ -43,7 +43,6 @@ bool CondensedPhase<double_type>::readCondensateData(const std::string& species_
   if (file.fail())
   {
     std::cout << "Unable to open condensate data file " << species_data_file << "\n";
-
     return false;
   }
 
