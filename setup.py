@@ -9,7 +9,7 @@ from distutils.errors import CCompilerError
 from distutils import sysconfig
 
 
-__version__ = "2.1"
+__version__ = "2.1.1"
 
 
 #Custom build class that provides additional checks for OpenMP
