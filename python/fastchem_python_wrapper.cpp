@@ -79,6 +79,7 @@ PYBIND11_MODULE(pyfastchem, m) {
         m.attr("FASTCHEM_INITIALIZATION_FAILED") = py::cast(fastchem::FASTCHEM_INITIALIZATION_FAILED);
         m.attr("FASTCHEM_IS_BUSY") = py::cast(fastchem::FASTCHEM_IS_BUSY);
         m.attr("FASTCHEM_WRONG_INPUT_VALUES") = py::cast(fastchem::FASTCHEM_WRONG_INPUT_VALUES);
+        m.attr("FASTCHEM_PHASE_RULE_VIOLATION") = py::cast(fastchem::FASTCHEM_PHASE_RULE_VIOLATION);
         m.attr("FASTCHEM_MSG") = py::cast(fastchem::FASTCHEM_MSG);
 }
 

@@ -104,14 +104,18 @@ saveChemistryOutput(output_dir + '/chemistry.dat',
                     output_data.total_element_density, 
                     output_data.mean_molecular_weight, 
                     output_data.number_densities, 
-                    fastchem)
+                    fastchem,
+                    None, 
+                    distance, 'd (au)')
 
 #this would save the output of all species
 saveCondOutput(output_dir + '/condensates.dat', 
                temperature, pressure, 
                output_data.element_cond_degree, 
                output_data.number_densities_cond, 
-               fastchem)
+               fastchem,
+               None, 
+               distance, 'd (au)')
 
 
 #save the monitor output to a file

@@ -50,8 +50,8 @@ bool saveChemistryOutput(
 
   if (!file.fail())
   {
-    file << std::setw(16) << std::left << "#P (bar)" << "\t"
-         << std::setw(16) << std::left << "T(k)" << "\t"
+    file << std::setw(16) << std::left << "#p (bar)" << "\t"
+         << std::setw(16) << std::left << "T (K)" << "\t"
          << std::setw(16) << std::left << "n_<tot> (cm-3)" << "\t"
          << std::setw(16) << std::left << "n_g (cm-3)" << "\t"
          << std::setw(16) << std::left << "m (u)";
@@ -108,8 +108,8 @@ bool saveCondOutput(
 
   if (!file.fail())
   {
-    file << std::setw(16) << std::left << "#P (bar)" << "\t"
-         << std::setw(16) << std::left << "T(k)";
+    file << std::setw(16) << std::left << "#p (bar)" << "\t"
+         << std::setw(16) << std::left << "T (K)";
 
     for (size_t i=0; i<nb_elements; i++)
       file << "\t" << std::setw(16) << std::left << element_symbols[i];
@@ -169,7 +169,7 @@ bool saveMonitorOutput(
          << std::setw(16) << std::left << "cond_iter" << "\t"
          << std::setw(16) << std::left << "converged" << "\t"
          << std::setw(16) << std::left << "elem_conserved" << "\t"
-         << std::setw(16) << std::left << "P (bar)" << "\t"
+         << std::setw(16) << std::left << "p (bar)" << "\t"
          << std::setw(16) << std::left << "T (K)" << "\t"
          << std::setw(16) << std::left << "n_<tot> (cm-3)" << "\t"
          << std::setw(16) << std::left << "n_g (cm-3)" << "\t"

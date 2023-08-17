@@ -46,7 +46,7 @@ def saveChemistryOutput(file_path,                     #the path to the output f
 
   with open(file_path, 'w') as file:
     #file header
-    file.write('{0:<16}\t{1:<16}\t{2:<16}\t{3:<16}\t{4:<16}'.format('#P (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (g/mol)'))
+    file.write('{0:<16}\t{1:<16}\t{2:<16}\t{3:<16}\t{4:<16}'.format('#p (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (u)'))
 
     #print the description of the additional columns
     #use 'unk' if the their number do not correspond to the number of additonal columns
@@ -158,7 +158,7 @@ def saveCondOutput(file_path,                     #the path to the output file
 
   with open(file_path, 'w') as file:
     #file header
-    file.write('{0:<16}\t{1:<16}'.format('#P (bar)', 'T (K)'))
+    file.write('{0:<16}\t{1:<16}'.format('#p (bar)', 'T (K)'))
 
     #print the description of the additional columns
     #use 'unk' if the their number do not correspond to the number of additonal columns
@@ -291,11 +291,11 @@ def saveMonitorOutput(file_path,                     #the path to the output fil
       '#cond_iter',
       'converged', 
       'elem_conserved', 
-      'P (bar)', 
+      'p (bar)', 
       'T (K)', 
       'n_<tot> (cm-3)', 
       'n_g (cm-3)', 
-      'm (g/mol)'))
+      'm (u)'))
 
     #print the header description of the additional columns
     #use 'unk' if the their number do not correspond to the number of additonal columns
@@ -394,7 +394,7 @@ def saveChemistryOutputPandas(file_path,                     #the path to the ou
 
 
   #general column headers
-  columns = ['P (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (g/mol)']
+  columns = ['p (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (u)']
 
 
   #add the descriptions of the additional columns to the header
@@ -588,7 +588,7 @@ def saveMonitorOutputPandas(file_path,                     #the path to the outp
 
 
   #general column headers
-  columns = ['iterations', 'chem_iterations', 'cond_iterations', 'c_convergence', 'elem_conserved', 'P (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (g/mol)']
+  columns = ['iterations', 'chem_iterations', 'cond_iterations', 'c_convergence', 'elem_conserved', 'p (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (u)']
 
 
   #add the descriptions of the additional columns to the header

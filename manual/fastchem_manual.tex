@@ -308,8 +308,9 @@ The first line is always a header line that provides important information for t
 
 
 \paragraph{Standard files}
-Together with \fc, we provide two different element abundance files, located in the \verb|input/| folder. The file \verb|element_abundances_solar.dat| provides the solar element abundances for species that are at least as abundant as germanium. This set of element abundances is used as our standard input file and is based on \citet{Asplund2009ARA&A..47..481A}.\\
-As an alternative version, we also also include an additional file \verb|element_abundances_solar_ext.dat| that includes more elements, up to uranium. This file can be used for the extended set of ion species described in the next section. These element abundances are also based on the \citet{Asplund2009ARA&A..47..481A} compilation.
+Together with \fc, we provide several different element abundance files, located in the \verb|input/element_abundances/| folder. The folder includes three different sets of element abundances: \citet{Asplund2009ARA&A..47..481A}, \citet{Asplund2021A&A...653A.141A}, and \citet{Lodders2003ApJ...591.1220L}.
+
+The standard files provide the solar element abundances for species that are at least as abundant as germanium. As alternative versions, we also include additional files \verb|*_extended.dat| for each compilation, that includes more elements, up to uranium. These files can be used for the extended set of ion species described in the next section.
 
 
 \section{Species data files}
@@ -363,11 +364,11 @@ The third line, thus, lists the temperature limits of the different fitted data 
 The following lines finally contain the fit coefficients for the different data fits. Their format is identical to the corresponding one for the gas phase species discussed above. The number of data fits has to be equal to the number of temperature limits discussed above.
 
 \paragraph{Standard files}
-Together with \fc, we provide two different files for gas phase species, located in the \verb|input/| folder. The file \verb|logK.dat| provides the standard set, discussed in \citet{Stock2018MNRAS.479..865S}. This includes species for all elements at least as abundant as germanium.
+Together with \fc, we provide two different files for gas phase species, located in the \verb|input/logK/| folder. The file \verb|logK.dat| provides the standard set, discussed in \citet{Stock2018MNRAS.479..865S} and \citet{Stock2022MNRAS.517.4070S}. This includes species for all elements at least as abundant as germanium.
 
-As an alternative version, we also provide an additional file \verb|logK_ext.dat| that includes more ions for elements up to uranium. The data for this file is discussed in \citet{Hoeijmakers2019A&A...627A.165H}.
+As an alternative version, we also provide an additional file \verb|logK_extended.dat| that includes more ions for elements up to uranium. The data for this file is discussed in \citet{Hoeijmakers2019A&A...627A.165H}.
 
-For condensate species we provide the file \verb|logK_condensates.dat| in the \verb|input/| folder that contains all species discussed in \citet{Kitzmann2023inprep}. We note that these condensates should only be used in combination with the standard \verb|logK.dat| file for the gas phase since it lacks condensate species for the additional elements contained in the species listed in \verb|logK_ext.dat|.
+For condensate species we provide the file \verb|logK_condensates.dat| in the \verb|input/logK/| folder that contains all species discussed in \citet{Kitzmann2023inprep}. We note that these condensates should only be used in combination with the standard \verb|logK.dat| file for the gas phase since it lacks condensate species for the additional elements contained in the species listed in \verb|logK_extended.dat|.
 
 
 \newpage
@@ -485,7 +486,7 @@ In the input file, the number of iterations for the Newton, Nelder-Mead, and bis
 
 \section{Benchmark input and output files}
 
-The input folder contains a selected sample of atmospheric structures of various objects, from AGB stars to exoplanets. These files have the same format as the one expected by the \cpp stand-alone version. The pre-computed chemistry output of these benchmark structures can be found in the folder \texttt{output\_benchmarks}. This chemistry output has been generated with the standard \fc options and the standard solar element abundance and equilibrium constants files. These benchmarks can be used to validate if the FastChem installation works correctly.
+The input folder contains a selected sample of atmospheric structures of various objects, from AGB stars to exoplanets. These files have the same format as the one expected by the \cpp stand-alone version. The pre-computed chemistry output of these benchmark structures can be found in the folder \texttt{output\_benchmarks}. This chemistry output has been generated with the standard \fc options and the standard solar element abundance and equilibrium constants files. These benchmarks can be used to validate that the FastChem installation works correctly.
 
 
 \chapter{Running \pfc}
@@ -509,6 +510,16 @@ Currently, we provide the following examples:\\
 \lstinline!fastchem_metallicity.py!
 \begin{addmargin}[25pt]{0pt}
   Runs a \fc calculation on a temperature-pressure structure defined within the script and for a range of different metallicity factors. It will write output files, and create a plot with selected species.\\
+\end{addmargin}
+
+\lstinline!fastchem_cond.py!
+\begin{addmargin}[25pt]{0pt}
+	Runs a \fc calculation on a read-in temperature-pressure structure of an L5 brown dwarf with equilibrium condensation turned on. The rainout approximation can optionally be turned on as well. It will write output files, and create a plot with selected species.\\
+\end{addmargin}
+
+\lstinline!fastchem_cond_disk.py!
+\begin{addmargin}[25pt]{0pt}
+	Runs a \fc calculation for the temperature-pressure structure of the midplane of a protoplanetary disk with equilibrium condensation. It will write output files, and create a plot with selected species. \textbf{Warning}: Due to the very low temperatures in the outer part of the disk, this calculation might take quite some time depending on your computer.\\
 \end{addmargin}
 
 Note that the scripts should be executed from within the \textsc{Python} folder since all file paths in the scripts are given relative to this directory.
@@ -985,6 +996,15 @@ The chemistry calculation will return several output flags that are also defined
 \begin{addmargin}[25pt]{0pt}
   \fc returns this flag if some input values are wrong. Currently, this refers to the temperature and pressure vectors in the input structure not having the same size (see Sect. \ref{sec:fastchem_input_struct} for details on the input structure). \\
 \end{addmargin}
+
+\bigbreak
+
+\lstinline!constexpr unsigned int fastchem::FASTCHEM_PHASE_RULE_VIOLATION!
+\begin{addmargin}[25pt]{0pt}
+	\fc returns this flag if condensation is used and the system violates the phase rule. This happens when the number of elements contained in condensates equals the total number of elements. In this case, the gas phase lacks a degree of freedom to yield the correct gas pressure. Such a system cannot be solved as there has always to be at least one incondensable element in the gas phase (see the section about the phase rule in Paper III). \\
+\end{addmargin}
+
+\bigbreak
 
 In addition to these flags, \verb|fastchem_constants.h| also includes a constant string vector \lstinline!const std::vector<std::string> fastchem::FASTCHEM_MSG! that contains string expressions for each of these flags. Using this vector with any of the aforementioned flags \lstinline!fastchem::FASTCHEM_MSG[flag]! returns a string with a description of the corresponding flag's meaning. For example, \lstinline!fastchem::FASTCHEM_MSG[fastchem::FASTCHEM_NO_CONVERGENCE]! will return the string \lstinline!"convergence failed"!.
 
@@ -1546,6 +1566,13 @@ The chemistry calculation can also return several output flags of type \lstinlin
 \lstinline!pyfastchem.FASTCHEM_WRONG_INPUT_VALUES!
 \begin{addmargin}[25pt]{0pt}
   \fc returns this flag if some input values are wrong. Currently, this refers to the temperature and pressure vectors in the input structure not having the same size (see Sect. \ref{sec:fastchem_input_struct} for details on the input structure).
+\end{addmargin}
+
+\bigbreak
+
+\lstinline!pyfastchem.FASTCHEM_PHASE_RULE_VIOLATION!
+\begin{addmargin}[25pt]{0pt}
+	\fc returns this flag if condensation is used and the system violates the phase rule. This happens when the number of elements contained in condensates equals the total number of elements. In this case, the gas phase lacks a degree of freedom to yield the correct gas pressure. Such a system cannot be solved as there has always to be at least one incondensable element in the gas phase (see the section about the phase rule in Paper III). \\
 \end{addmargin}
 
 \bigbreak
