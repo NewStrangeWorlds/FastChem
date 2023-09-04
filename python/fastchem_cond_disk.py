@@ -6,6 +6,9 @@ import os
 import matplotlib.pyplot as plt
 from astropy import constants as const
 
+#Warning: Running this script for the protoplanetary disk might take quite some time
+#depending on your computer due to the *very* low temperatures!
+
 
 #we read in a p-T structure for a protoplanetary disk
 data = np.atleast_2d(np.loadtxt("../input/example_p_t_structures/protoplanetary_disk.dat"))
@@ -27,6 +30,7 @@ plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'Fe1H1']
 #for the plot labels, we therefore use separate strings in the usual notation
 plot_species_labels = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
 
+#the default condensate data doesn't use the Hill notation
 plot_species_cond = ['MgSiO3(s,l)', 'Mg2SiO4(s,l)', 'H2O(s,l)', 'CH4(s,l)']
 
 

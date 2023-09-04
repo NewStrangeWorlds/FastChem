@@ -1,5 +1,5 @@
-#protoplanetary disk
-#pressure in bar, temperature in K, distance in au
+#midplane of a protoplanetary disk, modelled by Jesse Weder & Christoph Mordasini
+#p (bar)        T (K)          d (au)
 1.743424e-10	1.746627e+03   5.0948509E-002
 2.440441e-05	1.743984e+03   5.1096889E-002
 4.831361e-05	1.735319e+03   5.1245701E-002
