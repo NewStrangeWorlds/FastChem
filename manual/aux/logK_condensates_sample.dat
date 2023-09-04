@@ -1,0 +1,18 @@
+#logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:
+#includes elements with eps >= eps_Ge
+#fit coefficients calculated from indicated data source.
+Al2O3(s,l) Aluminum Oxide, Corundum : Al 2 O 3 # Chase et al., JANAF tables, 1998.
+   sl
+   2327.0 4000.0
+   3.68482e+05 -1.04194e+01 -2.79243e+01 1.17904e-02 -1.58786e-06 
+   3.71349e+05 5.273685e+00 -1.35345e+02 1.68173e-03 -8.80259e-08 
+
+Al2SiO5(s) Aluminum Silicate, Kyanite : Al 2 O 5 Si 1 # Chase et al., JANAF tables, 1998.
+   s
+   3000.0
+   5.91829e+05 -1.46795e+01 -5.53926e+01 1.428257e-02 -1.5322e-06
+   
+CO(l) Carbon Monoxide : C 1 O 1 # Goodwin, R. D., 1985.
+  l
+  132.85
+  1.298145e+05 2.919440e+00 -3.27363e+01 -1.57201e-02 -5.51055e-05

@@ -1,10 +1,13 @@
 #element abundance file   
-input/element_abundances_solar.dat
+input/element_abundances/asplund_2009.dat
 
-#species data file    
-input/logK.dat
+#species data files    
+input/logK/logK.dat input/logK/logK_condensates.dat
 
 #accuracy of chemistry iteration
+1.0e-4
+
+#accuracy of element conservation
 1.0e-4
 
 #max number of chemistry iterations 

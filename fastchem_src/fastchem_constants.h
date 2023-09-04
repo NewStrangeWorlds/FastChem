@@ -35,14 +35,15 @@ constexpr unsigned int FASTCHEM_NO_CONVERGENCE = 1;
 constexpr unsigned int FASTCHEM_INITIALIZATION_FAILED = 2;
 constexpr unsigned int FASTCHEM_IS_BUSY = 3;
 constexpr unsigned int FASTCHEM_WRONG_INPUT_VALUES = 4;
+constexpr unsigned int FASTCHEM_PHASE_RULE_VIOLATION = 5;
 
 const std::vector<std::string> FASTCHEM_MSG = 
-{"convergence ok", "convergence failed", "initialization failed", "is busy", "wrong input value"};
+{"convergence ok", "convergence failed", "initialisation failed", "is busy", "wrong input value", "phase rule violation"};
 
 
 //Physical constants
-constexpr double CONST_K = 1.3806504e-16;    //Boltzmann's constant in erg K-1
-constexpr double CONST_AMU = 1.66055e-24;    //Atomic mass unit in g
+constexpr double CONST_K = 1.380649e-16;    //Boltzmann's constant in erg K-1
+constexpr double CONST_AMU = 1.66055e-24;   //Atomic mass unit in g
 
 
 }

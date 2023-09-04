@@ -20,18 +20,22 @@ output_dir = '../output'
 #the chemical species we want to plot later
 #note that the standard FastChem input files use the Hill notation
 plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1']
-#for the plot lables, we therefore use separate strings in the usual notation
-plot_species_lables = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
+#for the plot labels, we therefore use separate strings in the usual notation
+plot_species_labels = ['H2O', 'CO2', 'CO', 'CH4', 'NH3']
 
 
-#create a FastChem object
-fastchem = pyfastchem.FastChem('../input/element_abundances_solar.dat', '../input/logK.dat', 1)
+
+#First, we have to create a FastChem object
+fastchem = pyfastchem.FastChem(
+ '../input/element_abundances/asplund_2009.dat', 
+ '../input/logK/logK.dat',
+ 1)
 
 
 #we could also create a FastChem object by using the parameter file
 #note, however, that the file locations in the parameter file are relative
 #to the location from where this Python script is called from
-#fastchem = pyfastchem.FastChem('../input/parameters.dat', 1)
+#fastchem = pyfastchem.FastChem('../input/parameters_py.dat', 1)
 
 
 
@@ -45,16 +49,15 @@ input_data.pressure = pressure
 
 #run FastChem on the entire p-T structure
 fastchem_flag = fastchem.calcDensities(input_data, output_data)
-print("FastChem reports:", pyfastchem.FASTCHEM_MSG[fastchem_flag])
 
+print("FastChem reports:")
+print("  -", pyfastchem.FASTCHEM_MSG[fastchem_flag])
 
-#convert the output into a numpy array
-number_densities = np.array(output_data.number_densities)
+if np.amin(output_data.element_conserved[:]) == 1:
+  print("  - element conservation: ok")
+else:
+  print("  - element conservation: fail")
 
-
-#total gas particle number density from the ideal gas law 
-#used later to convert the number densities to mixing ratios
-gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
 
 
 #check if output directory exists
@@ -67,7 +70,9 @@ saveMonitorOutput(output_dir + '/monitor.dat',
                   temperature, pressure, 
                   output_data.element_conserved,
                   output_data.fastchem_flag,
+                  output_data.nb_iterations,
                   output_data.nb_chemistry_iterations,
+                  output_data.nb_cond_iterations,
                   output_data.total_element_density,
                   output_data.mean_molecular_weight,
                   fastchem)
@@ -96,13 +101,15 @@ saveChemistryOutput(output_dir + '/chemistry_select.dat',
 #                   temperature, pressure, 
 #                   output_data.element_conserved,
 #                   output_data.fastchem_flag,
+#                   output_data.nb_iterations,
 #                   output_data.nb_chemistry_iterations,
+#                   output_data.nb_cond_iterations,
 #                   output_data.total_element_density,
 #                   output_data.mean_molecular_weight,
 #                   fastchem)
 
-# #this would save the output of all species
-# #here, the data is saved as a pandas DataFrame inside a pickle file
+#this would save the output of all species
+#here, the data is saved as a pandas DataFrame inside a pickle file
 # saveChemistryOutputPandas(output_dir + '/chemistry.pkl',
 #                     temperature, pressure,
 #                     output_data.total_element_density,
@@ -117,13 +124,22 @@ plot_species_indices = []
 plot_species_symbols = []
 
 for i, species in enumerate(plot_species):
-  index = fastchem.getSpeciesIndex(species)
+  index = fastchem.getGasSpeciesIndex(species)
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices.append(index)
-    plot_species_symbols.append(plot_species_lables[i])
+    plot_species_symbols.append(plot_species_labels[i])
   else:
     print("Species", species, "to plot not found in FastChem")
+
+
+#convert the output into a numpy array
+number_densities = np.array(output_data.number_densities)
+
+
+#total gas particle number density from the ideal gas law 
+#used later to convert the number densities to mixing ratios
+gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
 
 
 #and plot...

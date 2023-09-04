@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,12 @@
 */
 
 
-#include "fastchem.h"
-
 #include <string>
 #include <vector>
 #include <cmath>
+#include <limits>
+
+#include "fastchem.h"
 
 
 namespace fastchem {
@@ -32,25 +33,41 @@ namespace fastchem {
 //Requires: parameter file path and the initial verbose level that is used while reading the input files
 template <class double_type>
 FastChem<double_type>::FastChem(
-  const std::string& model_parameter_file, const unsigned int verbose_level_init) 
-    : solver(&options)
+  const std::string& model_parameter_file, const unsigned int verbose_level_start)
+    : options(model_parameter_file, verbose_level_start)
+    , element_data(options.element_abundances_file, options.chemical_element_file)
+    , gas_phase(options, element_data)
+    , condensed_phase(options, element_data)
 {
-  options.verbose_level = verbose_level_init;
-
-  bool parameter_file_loaded = false;
-
-  if (model_parameter_file != "")
-    parameter_file_loaded = options.readParameterFile(model_parameter_file);
-
-
-  if (!parameter_file_loaded)
+  if (!options.parameter_file_loaded)
   {
     std::cout << "Error reading parameters\n";
-    is_initialized = false;
+    is_initialised = false;
+
+    return;
+  }
+  
+  if (element_data.is_initialised == true 
+      && gas_phase.is_initialised == true 
+      && (condensed_phase.is_initialised == true || options.condensates_data_file == "none"))
+    is_initialised = true;
+  else
+  {
+    std::cout << "Error initialising FastChem!\n\n";
+    is_initialised = false;
+
+    return;
   }
 
+  if (options.verbose_level >= 1)
+    std::cout << "\nFastChem initialisation summary:\n"
+              << "  number of species: " << gas_phase.nb_species + condensed_phase.nb_condensates
+              << "    elements: " << element_data.nb_elements
+              << "    molecules: " << gas_phase.nb_molecules
+              << "    condensates: " << condensed_phase.nb_condensates
+              << "\n\n";
 
-  if (parameter_file_loaded) init();
+  init();
 }
 
 
@@ -60,83 +77,95 @@ FastChem<double_type>::FastChem(
 //          and the initial verbose level that is used while reading the input files
 template <class double_type>
 FastChem<double_type>::FastChem(
-  const std::string &element_abundances_file,
-  const std::string &species_data_file,
-  const unsigned int verbose_level_init) 
-    : solver(&options)
+  const std::string& element_abundances_file,
+  const std::string& species_data_file,
+  const std::string& cond_species_data_file,
+  const unsigned int verbose_level_start) 
+    : options(element_abundances_file, species_data_file, cond_species_data_file, verbose_level_start)
+    , element_data(element_abundances_file, options.chemical_element_file)
+    , gas_phase(options, element_data)
+    , condensed_phase(options, element_data)
 {
-  options.verbose_level = verbose_level_init;
-  options.element_abundances_file = element_abundances_file;
-  options.species_data_file = species_data_file;
+  if (element_data.is_initialised == true 
+      && gas_phase.is_initialised == true 
+      && (condensed_phase.is_initialised == true || cond_species_data_file == "none"))
+    is_initialised = true;
+  else
+  {
+    std::cout << "Error initialising FastChem!\n\n";
+    is_initialised = false;
+
+    return;
+  }
+
+  if (options.verbose_level >= 1)
+    std::cout << "\nFastChem initialisation summary:\n"
+              << "  number of species: " << gas_phase.nb_species + condensed_phase.nb_condensates
+              << "    elements: " << element_data.nb_elements
+              << "    molecules: " << gas_phase.nb_molecules
+              << "    condensates: " << condensed_phase.nb_condensates
+              << "\n\n";
 
   init();
 }
 
 
 
-
-//Copy constructor
-//Could be made more pretty, but this one does the job as well...
+//Constructor for the FastChem class
+//This version only initiales the gas phase
+//Requires: file paths for element abundance and species data files 
+//          and the initial verbose level that is used while reading the input files
 template <class double_type>
-FastChem<double_type>::FastChem(const FastChem &obj) 
-  : solver(&options)
+FastChem<double_type>::FastChem(
+  const std::string& element_abundances_file,
+  const std::string& species_data_file,
+  const unsigned int verbose_level_start) 
+    : options(element_abundances_file, species_data_file, std::string("none"), verbose_level_start)
+    , element_data(element_abundances_file, options.chemical_element_file)
+    , gas_phase(options, element_data)
+    , condensed_phase(options, element_data)
 {
-  nb_chemical_element_data = obj.nb_chemical_element_data;
-  nb_species = obj.nb_species;
-  nb_molecules = obj.nb_molecules;
-  nb_elements = obj.nb_elements;
-
-  e_ = obj.e_;
-
-  is_initialized = obj.is_initialized;
-  is_busy = false;
-
-  chemical_element_data = obj.chemical_element_data;
-  elements = obj.elements;
-  molecules = obj.molecules;
-  
-  element_calculation_order = obj.element_calculation_order;
-  
-  
-  species.reserve(nb_elements + nb_molecules);
-  elements_wo_e.reserve(nb_elements);
-
-  for (auto & i : elements)
+  if (element_data.is_initialised == true && gas_phase.is_initialised == true)
+    is_initialised = true;
+  else
   {
-    species.push_back(&i);
-    
-    if (i.symbol != "e-") elements_wo_e.push_back(&i);
+    std::cout << "Error initialising FastChem!\n\n";
+    is_initialised = false;
+
+    return;
   }
-    
-  for (auto & i : molecules)
-    species.push_back(&i);
 
+  if (options.verbose_level >= 1)
+    std::cout << "\nFastChem initialisation summary:\n"
+              << "  number of species: " << gas_phase.nb_species + condensed_phase.nb_condensates
+              << "    elements: " << element_data.nb_elements
+              << "    molecules: " << gas_phase.nb_molecules
+              << "    condensates: " << condensed_phase.nb_condensates
+              << "\n\n";
 
-  //Options object
-  options.nb_max_fastchem_iter = obj.options.nb_max_fastchem_iter;
-  options.nb_max_bisection_iter = obj.options.nb_max_bisection_iter;
-  options.nb_max_neldermead_iter = obj.options.nb_max_neldermead_iter;
-  options.nb_max_newton_iter = obj.options.nb_max_newton_iter;
-
-  options.element_density_minlimit = obj.options.element_density_minlimit;
-  options.molecule_density_minlimit = obj.options.molecule_density_minlimit;
-
-  options.accuracy = obj.options.accuracy;
-  options.newton_err = obj.options.newton_err;
-
-  options.verbose_level = obj.options.verbose_level;
-  options.use_scaling_factor = obj.options.use_scaling_factor;
-  
-  options.chemical_element_file = obj.options.chemical_element_file;
-  options.species_data_file = obj.options.species_data_file;
-  options.element_abundances_file = obj.options.element_abundances_file;
-
-
-  //Solver object
-  solver.order_anion = obj.solver.order_anion;
-  solver.order_cation = obj.solver.order_cation;
+  init();
 }
 
+
+
+template <class double_type>
+void FastChem<double_type>::init()
+{
+
+}
+
+
+
+//the copy constructor
+template <class double_type>
+FastChem<double_type>::FastChem(const FastChem &obj)
+  : options(obj.options)
+  , element_data(obj.element_data)
+  , gas_phase(obj.gas_phase, options, element_data)
+  , condensed_phase(obj.condensed_phase, options, element_data)
+{
+
+}
 
 
 template class FastChem<double>;

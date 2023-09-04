@@ -31,21 +31,28 @@
 
 
 struct Config{
-  std::string atmosphere_file;
-  std::string chem_output_file;
-  std::string monitor_output_file;
-  unsigned int verbose_level; 
-  bool output_mixing_ratios;
+  std::string atmosphere_file = "";
+  std::string chem_output_file = "";
+  std::string cond_output_file = "";
+  std::string monitor_output_file = "";
+  
+  bool calc_condensation = false;
+  bool rainout_condensation = false;
 
-  std::string element_abundance_file;
-  std::string species_data_file;
-  double chemistry_accuracy;
-  double newton_error;
+  unsigned int verbose_level = 1; 
+  bool output_mixing_ratios = true;
 
-  unsigned int nb_chemistry_iterations;
-  unsigned int nb_newton_iterations;
-  unsigned int nb_nelder_mead_iterations;
-  unsigned int nb_bisection_iterations;
+  std::string element_abundance_file = "";
+  std::string species_data_file = "";
+  std::string cond_species_data_file = "";
+  double chemistry_accuracy = 0;
+  double element_conservation_accuracy = 0;
+  double newton_error = 0;
+
+  unsigned int nb_chemistry_iterations = 0;
+  unsigned int nb_newton_iterations = 0;
+  unsigned int nb_nelder_mead_iterations = 0;
+  unsigned int nb_bisection_iterations = 0;
 };
 
 
@@ -77,7 +84,32 @@ bool readConfigFile(std::string &file_path, Config &config)
 
     return false;
   }
-  
+
+  std::getline(file, line); std::getline(file, line); std::getline(file, line);
+  std::string calc_type;
+
+  input.str(line); input.clear();
+  input >> calc_type;
+
+  if (calc_type != "g" && calc_type != "ce" && calc_type !="cr")
+  {
+    std::cout << "Unknown calculation type \"" << calc_type << "\" found in: " << file_path << "\n";
+
+    return false;
+  }
+
+  if (calc_type == "ce")
+  {
+    config.calc_condensation = true;
+    config.rainout_condensation = false;
+  }
+
+  if (calc_type == "cr")
+  {
+    config.calc_condensation = true;
+    config.rainout_condensation = true;
+  }
+
   //chemistry output file
   std::getline(file, line); std::getline(file, line); std::getline(file, line);
   
@@ -87,6 +119,15 @@ bool readConfigFile(std::string &file_path, Config &config)
   if (config.chem_output_file == "")
   {
     std::cout << "Unable to read chemistry output file location from: " << file_path << "\n";
+
+    return false;
+  }
+
+  input >> config.cond_output_file;
+  
+  if (config.calc_condensation && config.cond_output_file == "")
+  {
+    std::cout << "Unable to read condensate output file location from: " << file_path << "\n";
 
     return false;
   }
@@ -161,6 +202,19 @@ bool readConfigFile(std::string &file_path, Config &config)
     return false;
   }
 
+  input >> config.cond_species_data_file;
+
+  if (config.calc_condensation 
+      && (config.cond_species_data_file == "" || config.cond_species_data_file == "none"))
+  {
+    std::cout << "Unable to read condensate species data file from: " << file_path.c_str() << "\n";
+
+    return false;
+  }
+
+  if (config.cond_species_data_file == "") 
+    config.cond_species_data_file = "none";
+
 
   //chemistry accuracy
   std::getline(file, line); std::getline(file, line); std::getline(file, line);
@@ -171,6 +225,22 @@ bool readConfigFile(std::string &file_path, Config &config)
   if (line == "" || !(config.chemistry_accuracy > 0.0))
   {
     std::cout << "Unable to chemistry accuracy parameter from: " << file_path.c_str() << "\n";
+
+    return false;
+  }
+
+  config.newton_error = config.chemistry_accuracy;
+
+
+  //element conservation accuracy
+  std::getline(file, line); std::getline(file, line); std::getline(file, line);
+  
+  input.str(line); input.clear();
+  input >> config.element_conservation_accuracy;
+
+  if (line == "" || !(config.element_conservation_accuracy > 0.0))
+  {
+    std::cout << "Unable to element conservation accuracy parameter from: " << file_path.c_str() << "\n";
 
     return false;
   }
@@ -222,6 +292,7 @@ bool readConfigFile(std::string &file_path, Config &config)
             << "  Element abundance file: " << config.element_abundance_file << "\n"
             << "  Species data file: " << config.species_data_file << "\n"
             << "  Chemistry accuracy: " << config.chemistry_accuracy << "\n"
+            << "  Element conservation accuracy: " << config.element_conservation_accuracy << "\n"
             << "  Number of chemistry iterations: " << config.nb_chemistry_iterations << "\n"
             << "  Number of solver iterations: " << config.nb_newton_iterations << "\n"
             << "\n";

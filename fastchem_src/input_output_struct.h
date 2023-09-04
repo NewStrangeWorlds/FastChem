@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,9 @@ struct FastChemInput
 {
   std::vector<double> temperature; 
   std::vector<double> pressure;
+
+  bool equilibrium_condensation = false;
+  bool rainout_condensation = false;
 };
 
 
@@ -42,9 +45,14 @@ struct FastChemOutput
   std::vector<double> total_element_density;
   std::vector<double> mean_molecular_weight;
 
+  std::vector<std::vector<double>> number_densities_cond;
+  std::vector<std::vector<double>> element_cond_degree;
+
   //diagnostic output
   std::vector<std::vector<unsigned int>> element_conserved;
   std::vector<unsigned int> nb_chemistry_iterations;
+  std::vector<unsigned int> nb_cond_iterations;
+  std::vector<unsigned int> nb_iterations;
   std::vector<unsigned int> fastchem_flag;
 };
 

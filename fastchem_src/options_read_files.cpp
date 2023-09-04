@@ -68,7 +68,7 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
 
   std::getline(file, line);
 
-  //species data file
+  //gas phase species data file
   std::getline(file, line); std::getline(file, line);
   
   input.str(line); input.clear();
@@ -78,6 +78,16 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     return initialization_status;
   else
     species_data_file = file_name;
+  
+  file_name = "";
+  
+   //condensate species data file
+  input >> file_name;
+
+  if (file_name == "")
+    file_name = "none";
+
+  condensates_data_file = file_name;
 
   std::getline(file, line);
 
@@ -90,12 +100,25 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
   if (!(parameter_value > 0))
     return initialization_status;
   else
-    accuracy = parameter_value;
+    chem_accuracy = parameter_value;
 
   std::getline(file, line);
   
-  newton_err = accuracy;
+  newton_err = chem_accuracy;
+  cond_accuracy = chem_accuracy;
 
+  //element conservation accuracy
+  std::getline(file, line); std::getline(file, line);
+  
+  input.str(line); input.clear();
+  input >> parameter_value;
+
+  if (!(parameter_value > 0))
+    return initialization_status;
+  else
+    element_conserve_accuracy = parameter_value;
+
+  std::getline(file, line);
 
   //chemistry iteration number
   std::getline(file, line); std::getline(file, line);
@@ -107,6 +130,9 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     return initialization_status;
   else
     nb_max_fastchem_iter = nb_value;
+
+  nb_max_cond_iter = nb_value;
+  nb_chem_cond_iter = nb_value;
 
   std::getline(file, line);
 
@@ -150,12 +176,14 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
     std::cout << "element abundances file: " << element_abundances_file << "\n";
     std::cout << "elements data file (optional): " << chemical_element_file << "\n";
     std::cout << "species data file: " << species_data_file << "\n";
-    std::cout << "chemistry accuracy: " << accuracy << "\n";
+    std::cout << "chemistry accuracy: " << chem_accuracy << "\n";
     std::cout << "Newton's method error: " << newton_err << "\n";
     std::cout << "max number of chemistry iterations: " << nb_max_fastchem_iter << "\n";
+    std::cout << "max number of condensation iterations: " << nb_max_cond_iter << "\n";
+    std::cout << "max number of coupled gas phase-condensation iterations: " << nb_chem_cond_iter << "\n";
     std::cout << "max number of Newton iterations: " << nb_max_newton_iter << "\n";
-    std::cout << "max number of Nelder-Mead iterations: " << nb_max_newton_iter << "\n";
-    std::cout << "max number of bisection iterations: " << nb_max_newton_iter << "\n";
+    std::cout << "max number of Nelder-Mead iterations: " << nb_max_neldermead_iter << "\n";
+    std::cout << "max number of bisection iterations: " << nb_max_bisection_iter << "\n";
     std::cout << "\n";
   }
 

@@ -39,28 +39,33 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 
 #define the source files   
 set(SRC_FASTCHEM
+  fastchem_src/options.cpp
   fastchem_src/calc_densities.cpp
-  fastchem_src/calc_electron_densities.cpp
-  fastchem_src/calc_mean_mol_weight.cpp
-  fastchem_src/calc_species_densities.cpp
-  fastchem_src/check.cpp
   fastchem_src/fastchem.cpp
-  fastchem_src/get.cpp
-  fastchem_src/init_add_species.cpp
-  fastchem_src/init_read_files.cpp
-  fastchem_src/init_solver.cpp
-  fastchem_src/init.cpp
-  fastchem_src/mass_action_constant.cpp
+  fastchem_src/fastchem_get_set.cpp
   fastchem_src/options_read_files.cpp
-  fastchem_src/set.cpp
-  fastchem_src/solve_fastchem.cpp
-  fastchem_src/solver_bisection.cpp
-  fastchem_src/solver_coeff.cpp
-  fastchem_src/solver_linsol_quadsol.cpp
-  fastchem_src/solver_nelder_mead_electron.cpp
-  fastchem_src/solver_newtsol.cpp
-  fastchem_src/solver.cpp
-  fastchem_src/species_struct.cpp)
+  fastchem_src/elements/element_struct.cpp
+  fastchem_src/elements/elements.cpp
+  fastchem_src/elements/read_files.cpp
+  fastchem_src/gas_phase/molecule_struct.cpp
+  fastchem_src/gas_phase/gas_phase.cpp
+  fastchem_src/gas_phase/init_read_files.cpp
+  fastchem_src/gas_phase/calc_species_densities.cpp
+  fastchem_src/gas_phase/calculate.cpp
+  fastchem_src/gas_phase/solver_bisection.cpp
+  fastchem_src/gas_phase/solver_coeff.cpp
+  fastchem_src/gas_phase/solver_linsol_quadsol.cpp
+  fastchem_src/gas_phase/solver_nelder_mead_electron.cpp
+  fastchem_src/gas_phase/solver_newtsol.cpp
+  fastchem_src/gas_phase/calc_electron_densities.cpp
+  fastchem_src/gas_phase/calc_mean_mol_weight.cpp
+  fastchem_src/gas_phase/init_solver.cpp
+  fastchem_src/gas_phase/solver.cpp
+  fastchem_src/condensed_phase/condensed_phase.cpp
+  fastchem_src/condensed_phase/calculate.cpp
+  fastchem_src/condensed_phase/solver.cpp
+  fastchem_src/condensed_phase/condensate_struct.cpp
+  fastchem_src/condensed_phase/read_condensate_data.cpp)
   
 
 set(SRC_MAIN
@@ -127,6 +132,7 @@ else()
   target_compile_options(fastchem_lib PRIVATE "-O3")
 endif()
 
+file(MAKE_DIRECTORY "output")
 
 #in case we build the executable
 if (NOT ONLY_LIBRARY)

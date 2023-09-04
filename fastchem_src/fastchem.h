@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,13 @@
 #include <iostream>
 #include <string>
 
+#include "options.h"
 #include "fastchem_constants.h"
 #include "species_struct.h"
 #include "input_output_struct.h"
-
-#include "options.h"
-#include "solver.h"
+#include "elements/elements.h"
+#include "gas_phase/gas_phase.h"
+#include "condensed_phase/condensed_phase.h"
 
 
 namespace fastchem {
@@ -38,13 +39,19 @@ namespace fastchem {
 
 //FastChem class
 template <class double_type>
-class FastChem{
+class FastChem {
   public:
     FastChem(
-      const std::string& model_parameter_file, const unsigned int verbose_level_init);
+      const std::string& model_parameter_file, 
+      const unsigned int verbose_level_init);
     FastChem(
-      const std::string &element_abundances_file,
-      const std::string &species_data_file,
+      const std::string& element_abundances_file,
+      const std::string& species_data_file,
+      const std::string& cond_species_data_file,
+      const unsigned int verbose_level_init);
+    FastChem(
+      const std::string& element_abundances_file,
+      const std::string& species_data_file,
       const unsigned int verbose_level_init);
     FastChem(const FastChem &obj);
 
@@ -52,19 +59,29 @@ class FastChem{
     unsigned int calcDensities(FastChemInput& input, FastChemOutput& output);
 
     //public query functions
-    std::string getSpeciesName(const unsigned int species_index);
-    std::string getSpeciesSymbol(const unsigned int species_index);
-    unsigned int getSpeciesIndex(const std::string symbol);
+    std::string getGasSpeciesName(const unsigned int species_index);
+    std::string getGasSpeciesSymbol(const unsigned int species_index);
+    unsigned int getGasSpeciesIndex(const std::string symbol);
 
-    unsigned int getSpeciesNumber() {return nb_species;}
-    unsigned int getElementNumber() {return nb_elements;}
-    unsigned int getMoleculeNumber() {return nb_molecules;}
+    std::string getElementName(const unsigned int species_index);
+    std::string getElementSymbol(const unsigned int species_index);
+    unsigned int getElementIndex(const std::string symbol);
+
+    std::string getCondSpeciesName(const unsigned int species_index);
+    unsigned int getCondSpeciesIndex(const std::string symbol);
+    std::string getCondSpeciesSymbol(const unsigned int species_index);
+
+    unsigned int getGasSpeciesNumber() {return gas_phase.nb_species;}
+    unsigned int getElementNumber() {return element_data.nb_elements;}
+    unsigned int getMoleculeNumber() {return gas_phase.nb_molecules;}
+    unsigned int getCondSpeciesNumber() {return condensed_phase.nb_condensates;}
 
     double getElementAbundance(const unsigned int species_index);
     std::vector<double> getElementAbundances();
 
-    double getSpeciesMolecularWeight(const unsigned int species_index);
-
+    double getGasSpeciesWeight(const unsigned int species_index);
+    double getElementWeight(const unsigned int species_index);
+    double getCondSpeciesWeight(const unsigned int species_index);
 
     //functions to set internal variables during runtime
     //they will override any read-in values
@@ -73,79 +90,22 @@ class FastChem{
     void setVerboseLevel(const unsigned int level) { 
       if (level > 4) options.verbose_level = 4; else options.verbose_level = level;}
 
-    void setMaxChemistryIter(const unsigned int nb_steps) {
-      options.nb_max_fastchem_iter = nb_steps;}
-    void setMaxNewtonIter(const unsigned int nb_steps) {
-      options.nb_max_newton_iter = nb_steps;}
-    void setMaxBisectionIter(const unsigned int nb_steps) {
-      options.nb_max_bisection_iter = nb_steps;}
-    void setMaxNelderMeadIter(const unsigned int nb_steps) {
-      options.nb_max_neldermead_iter = nb_steps;}
-
-    void setChemistryAccuracy(const double chem_accuracy) {
-      options.accuracy = chem_accuracy;}
-    void setNewtonAccuracy(const double newton_accuracy) {
-      options.newton_err = newton_accuracy;}
-
-    void useScalingFactor(const bool use_switch) {
-      options.use_scaling_factor = use_switch;}
-    void setAdditionalScalingFactor(const double scaling_factor) {
-      options.additional_scaling_factor = scaling_factor;}
+    void setParameter(const std::string& parameter, const double_type param_value);
+    void setParameter(const std::string& parameter, const bool param_value);
+    void setParameter(const std::string& parameter, const unsigned int param_value);
 
   private:
     FastChemOptions<double_type> options;
-    FastChemSolver<double_type> solver;
+    
+    ElementData<double_type> element_data;
+    GasPhase<double_type> gas_phase;
+    CondensedPhase<double_type> condensed_phase;
 
-    unsigned int nb_chemical_element_data = 0;
-    unsigned int nb_species = 0;
-    unsigned int nb_molecules = 0;
-    unsigned int nb_elements = 0;
-
-    unsigned int e_ = FASTCHEM_UNKNOWN_SPECIES; //electron element index
-
-    bool is_initialized = false;
+    bool is_initialised = false;
     bool is_busy = false;
-
-    std::vector<ChemicalElementData> chemical_element_data;
-
-    std::vector< ChemicalSpecies<double_type>* > species;
-    std::vector< Element<double_type> > elements;
-    std::vector< Molecule<double_type> > molecules;
-    std::vector< Element<double_type>* > elements_wo_e;
-
-    std::vector<unsigned int> element_calculation_order;
 
     //Initialisation functions
     void init();
-
-    bool readElementList();
-    bool readElementAbundances();
-    void setElementAbundance(const std::string symbol, const double abundance);
-    void setMoleculeAbundances();
-    bool checkForDuplicates();
-
-    bool readSpeciesData();
-    void addMolecule(
-      const std::string name,
-      const std::string symbol,
-      const std::vector<std::string> species_elements,
-      const std::vector<int> stoichiometric_coeff,
-      const std::vector<double_type> mass_action_coeff,
-      const int charge);
-    void addAtom(std::string symbol);
-
-    void reInitialiseFastChem();
-
-    unsigned int determineSolverOrder(const Element<double_type>& species);
-    void determineSolverOrder();
-    void determineElementCalculationOrder();
-
-    void createMoleculeLists();
-
-    //Internal query functions
-    unsigned int getChemicalElementIndex(const std::string symbol);
-    unsigned int getElementIndex(const std::string symbol);
-    unsigned int getMoleculeIndex(const std::string symbol);
 
     //Functions for the calculations of the number densities
     unsigned int calcDensity(
@@ -158,26 +118,20 @@ class FastChem{
       std::vector<unsigned int>& element_conserved,
       unsigned int& nb_chemistry_iterations);
 
-    bool solveFastchem(
-      const double temperature_gas, const double gas_density, unsigned int& nb_iterations);
+    unsigned int equilibriumCondensation(
+      const double temperature,
+      const double pressure,
+      std::vector<double>& number_densities,
+      std::vector<double>& number_densities_cond,
+      std::vector<double>& element_cond_degree,
+      double& total_element_density, 
+      double& mean_molecular_weight,
+      std::vector<unsigned int>& element_conserved,
+      unsigned int& nb_chemistry_iterations,
+      unsigned int& nb_cond_iterations,
+      unsigned int& nb_combined_iter);
 
-    void calculateElementDensities(
-      Element<double_type>& species,
-      const double_type gas_density,
-      bool use_backup_solver,
-      double_type& n_major);
-    double_type calculateMoleculeDensities(
-      Element<double_type>& species, const double_type gas_density);
-
-    void calculateElectronDensities(
-      Element<double_type>& species, const double_type& old_number_density, const double_type gas_density);
-    void calculateSinglyIonElectrons(
-      Element<double_type>& electron, const double_type& old_number_density);
-    void calculateMultIonElectrons(
-      Element<double_type>& electron, const double_type& old_number_density, const double_type& gas_density);
-
-    double totalElementDensity();
-    double meanMolecularWeight(const double gas_density);
+    void rainoutCondensation(FastChemInput& input, FastChemOutput& output);
 };
 
 
