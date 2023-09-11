@@ -1,7 +1,7 @@
 from glob import glob
 import os
 import sys
-from setuptools import setup
+from setuptools import setup, Extension
 import tempfile
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from distutils.dir_util import mkpath
@@ -9,7 +9,7 @@ from distutils.errors import CCompilerError
 from distutils import sysconfig
 
 
-__version__ = "3.0"
+__version__ = "3.0.4"
 
 
 #Custom build class that provides additional checks for OpenMP

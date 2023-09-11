@@ -1,0 +1,5 @@
+recursive-include fastchem_src/condensed_phase *.h 
+recursive-include fastchem_src/elements *.h
+recursive-include fastchem_src/gas_phase *.h 
+recursive-include fastchem_src *.h 
+recursive-include _ext *
