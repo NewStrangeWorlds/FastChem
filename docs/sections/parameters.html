@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Internal parameters &#8212; FastChem 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5bc47236" />
+    <script src="../_static/documentation_options.js?v=110ea713"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Detailed pyFastChem module description" href="python_module.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="internal-parameters">
+<span id="sect-fc-param"></span><h1>Internal parameters<a class="headerlink" href="#internal-parameters" title="Link to this heading">¶</a></h1>
+<div class="line-block">
+<div class="line">This section provides an overview over all the internal <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>
+parameters that can be adjusted via the aforementioned</div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">setParameter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">param_name</span><span class="p">,</span>
+<span class="w">                           </span><span class="n">param_type</span><span class="w"> </span><span class="n">param_value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>method of the C++ object class or with its Python equivalent</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pyfastchem</span><span class="o">.</span><span class="n">setParameter</span><span class="p">(</span><span class="nb">str</span> <span class="n">param_name</span><span class="p">,</span>
+                        <span class="n">param_type</span> <span class="n">param_value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>More detailed explanations on what these parameters do can be found in <a class="reference external" href="http://adsabs.harvard.edu/abs/2018MNRAS.479..865S">Stock et al. (2018)</a>, <a class="reference external" href="http://adsabs.harvard.edu/abs/2022MNRAS.517.4070S">Stock, Kitzmann &amp; Patzer (2022)</a>, and <a class="reference external" href="http://adsabs.harvard.edu/abs/2023arXiv230902337K">Kitzmann, Stock &amp; Patzer (2023)</a></p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">setParameter</span></code> method is used within Python, the <code class="docutils literal notranslate"><span class="pre">C++</span></code><code class="docutils literal notranslate"><span class="pre">double</span></code> types listed in the following should be replaced by Python <code class="docutils literal notranslate"><span class="pre">float</span></code> values, while <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code> are used as <code class="docutils literal notranslate"><span class="pre">int</span></code>. <code class="docutils literal notranslate"><span class="pre">PyBind11</span></code> often converts the Python <code class="docutils literal notranslate"><span class="pre">bool</span></code> type to an integer value rather than a <code class="docutils literal notranslate"><span class="pre">C++</span></code><code class="docutils literal notranslate"><span class="pre">bool</span></code> type. Setting a boolean parameter will then result in an error message. In such a case, instead of using a simple <code class="docutils literal notranslate"><span class="pre">True</span></code> as parameter value, an explicit conversion has to be done instead, for example via <code class="docutils literal notranslate"><span class="pre">np.bool_(True)</span></code>.</p>
+<section id="standard-parameters">
+<h2>Standard parameters<a class="headerlink" href="#standard-parameters" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">accuracyChem</span></code></div>
+<div class="line-block">
+<div class="line">Relative accuracy requirement for chemistry iteration and internal solvers (except Newton’s method).</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 1e-4</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">accuracyElementConservation</span></code></div>
+<div class="line-block">
+<div class="line">Relative accuracy for checking the element conservation.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 1e-4</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">accuracyNewton</span></code></div>
+<div class="line-block">
+<div class="line">Relative accuracy requirement for accuracy requirement for Newton’s method.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 1e-4</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">accuracyCond</span></code></div>
+<div class="line-block">
+<div class="line">Relative accuracy requirement for condensation calculations.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 1e-4</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">nbIterationsChemCond</span></code></div>
+<div class="line-block">
+<div class="line">Maximum number of combined gas phase chemistry and condensate calculations.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></div>
+<div class="line">Default value: 3000</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">nbIterationsChem</span></code></div>
+<div class="line-block">
+<div class="line">Maximum number of chemistry iterations.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></div>
+<div class="line">Default value: 3000</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">nbIterationsCond</span></code></div>
+<div class="line-block">
+<div class="line">Maximum number of condensate calculation iterations.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></div>
+<div class="line">Default value: 3000</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">nbIterationsNewton</span></code></div>
+<div class="line-block">
+<div class="line">Maximum number of iterations for Newton’s method.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></div>
+<div class="line">Default value: 3000</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">nbIterationsBisection</span></code></div>
+<div class="line-block">
+<div class="line">Maximum number of iterations for the bisection method.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></div>
+<div class="line">Default value: 3000</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">nbIterationsNelderMead</span></code></div>
+<div class="line-block">
+<div class="line">Maximum number of iterations for the Nelder-Mead method.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></div>
+<div class="line">Default value: 3000</div>
+</div>
+</div>
+</section>
+<section id="advanced-parameters">
+<h2>Advanced parameters<a class="headerlink" href="#advanced-parameters" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">The following parameters can be considered potentially dangerous and
+should only be adjusted by users who know exactly what these
+parameters actually do and which side effects they may have.</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">useScalingFactor</span></code></div>
+<div class="line-block">
+<div class="line">Use the additional scaling factor for the <span class="math notranslate nohighlight">\(\log K\)</span> in case they become too large. <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will estimate a corresponding scaling factor. An additional one can be added via the <code class="docutils literal notranslate"><span class="pre">additionalScaling</span></code> parameter.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
+<div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">false</span></code></div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">additionalScaling</span></code></div>
+<div class="line-block">
+<div class="line">Additional scaling factor, added to the one <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> estimates internally. Only used if <code class="docutils literal notranslate"><span class="pre">useScalingFactor</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 0</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">minDensityExponentElement</span></code></div>
+<div class="line-block">
+<div class="line">Exponent for the minimum number density of elements.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: -155 (double) or -512 (long double)</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">minDensityExponentMolecules</span></code></div>
+<div class="line-block">
+<div class="line">Exponent for the minimum number density of molecules&amp;ions.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: -155 (double) or -512 (long double)</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">maxLogK</span></code></div>
+<div class="line-block">
+<div class="line">Maximum value for the <span class="math notranslate nohighlight">\(\log K\)</span> of molecules and ions.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 1e10</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">condTau</span></code></div>
+<div class="line-block">
+<div class="line">Baseline <span class="math notranslate nohighlight">\(\tau\)</span> value for condensates.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 1e-15</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">condIterChangeLimit</span></code></div>
+<div class="line-block">
+<div class="line">Maximum change of condensate densities per iteration step in log10 space.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 5</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">condSolveFullSystem</span></code></div>
+<div class="line-block">
+<div class="line">Solve the full condensate system of equations without eliminating the <span class="math notranslate nohighlight">\(\lambda_c\)</span>. Iteration will be slower but potentially more stable.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
+<div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">false</span></code></div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">condReduceSystemSize</span></code></div>
+<div class="line-block">
+<div class="line">Reduce the size of the condensate system of equations by removing unstable condensates.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
+<div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">true</span></code></div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">condUseFullPivot</span></code></div>
+<div class="line-block">
+<div class="line">Solve the condensate system of equations using an LU decomposition with full pivoting. This enables the detection of singular Jacobians but is slower than the default partial pivoting. If a singular matrix is detected, the system is solved by a perturbed Hessian matrix or by using a singular value decomposition.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
+<div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">false</span></code></div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">condUseSVD</span></code></div>
+<div class="line-block">
+<div class="line">Solve the condensate system of equations using a singular value decomposition (SVD) in case the Jacobian is singular. This requires <code class="docutils literal notranslate"><span class="pre">condUseFullPivot</span></code> to be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> as well to detect a singular matrix.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
+<div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">false</span></code></div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">useCondDataValidityLimit</span></code></div>
+<div class="line-block">
+<div class="line">Use data temperature limits from the condensate input file and avoid extrapolation outside the validity range of the fitted data. Outside the validity range, the activity of condensates is automatically set to a very small value.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
+<div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">true</span></code></div>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_l.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">FastChem - Ultrafast Equilibrium Chemistry</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=exoclime&repo=fastchem&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_output.html">Standard input and output files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_standalone.html">C++ stand-alone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyfastchem.html">Running pyFastChem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_class.html">Detailed C++ object class description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_module.html">Detailed pyFastChem module description</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Internal parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#standard-parameters">Standard parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-parameters">Advanced parameters</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="python_module.html" title="previous chapter">Detailed pyFastChem module description</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019 - 2023, Daniel Kitzmann, Joachim Stock.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/sections/parameters.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
