@@ -1,4 +1,4 @@
-This folder contains calculations for the L5 brown dwarf from Mark Marley's Sonora grid.
+This folder contains calculations for the brown dwarf from Mark Marley's Sonora grid.
 There are three different sets of calculations:
 
 without condensation:
