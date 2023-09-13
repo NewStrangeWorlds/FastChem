@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Detailed C++ object class description &#8212; FastChem 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5bc47236" />
+    <script src="../_static/documentation_options.js?v=110ea713"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Detailed pyFastChem module description" href="python_module.html" />
+    <link rel="prev" title="Running pyFastChem" href="pyfastchem.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="detailed-c-object-class-description">
+<h1>Detailed C++ object class description<a class="headerlink" href="#detailed-c-object-class-description" title="Link to this heading">¶</a></h1>
+<p id="sec-fc-class"><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> has been written in an object oriented way, split across
+several different object classes. The entire source code of <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>
+is contained in the folder <code class="docutils literal notranslate"><span class="pre">fastchem_src/</span></code>. For including <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>
+in another <code class="docutils literal notranslate"><span class="pre">C++</span></code> project, only adding the main fastchem header file
+<code class="docutils literal notranslate"><span class="pre">fastchem.h</span></code> is required. All <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> code is encapsulated in its
+own namespace called <code class="docutils literal notranslate"><span class="pre">fastchem</span></code> to avoid clashing with other
+libraries.</p>
+<section id="some-comments-on-coding-conventions">
+<h2>Some comments on coding conventions<a class="headerlink" href="#some-comments-on-coding-conventions" title="Link to this heading">¶</a></h2>
+<p>The entire <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> code has been programmed using specific
+conventions that make it easy to recognise and differentiate class,
+method and variable names.</p>
+<p>Class and structure names are always capitalised, for example</p>
+<p><code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">FastChem{...</span></code> or <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">Molecule{...</span></code></p>
+<div class="line-block">
+<div class="line">If the name is a compound noun, each noun is capitalised separately,
+e.g. <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">ChemicalElementData{...</span></code> No separators like _ are used
+for class or structure names.</div>
+<div class="line">Class methods and functions in general always start with a lowercase
+letter. If the name is a compound noun, the start of every other noun
+is capitalised and no separator is used, for example:
+<code class="docutils literal notranslate"><span class="pre">FastChem.setElementAbundances(...)</span></code> or
+<code class="docutils literal notranslate"><span class="pre">Molecule.calcMassActionConstant(...)</span></code></div>
+</div>
+<p>Variable names are always written in lowercase and compound nouns are
+separated by a _. For example: <code class="docutils literal notranslate"><span class="pre">FastChem.element_calculation_order</span></code>
+or <code class="docutils literal notranslate"><span class="pre">Element.molecule_list</span></code> The only exceptions are global constants.
+They contain only capitalised letters, e.g.:
+<code class="docutils literal notranslate"><span class="pre">constexpr</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">FASTCHEM_UNKNOWN_SPECIES</span></code> or
+<code class="docutils literal notranslate"><span class="pre">constexpr</span> <span class="pre">double</span> <span class="pre">CONST_AMU</span></code></p>
+</section>
+<section id="fastchem-object-class">
+<h2>FastChem object class<a class="headerlink" href="#fastchem-object-class" title="Link to this heading">¶</a></h2>
+<p>The entire <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> model is encapsulated in an object class called
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> that is defined in the header file <code class="docutils literal notranslate"><span class="pre">fastchem.h</span></code>. The
+object class is programmed as a template that can be used in either
+<code class="docutils literal notranslate"><span class="pre">double</span></code> or <code class="docutils literal notranslate"><span class="pre">long</span> <span class="pre">double</span></code> precision. When creating an object of this
+class by calling a corresponding constructor, one therefore has to
+specify which of the two versions should be used:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">FastChem</span><span class="o">&lt;</span><span class="kt">long</span><span class="w"> </span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fastchem</span><span class="p">(</span><span class="s">&quot;model_parameter_file.dat&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="n">FastChem</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fastchem</span><span class="p">(</span><span class="s">&quot;model_parameter_file.dat&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">long</span> <span class="pre">double</span></code> version has a slightly higher computational overhead and
+larger memory requirements than the <code class="docutils literal notranslate"><span class="pre">double</span></code> one. On the other hand,
+it offers a higher numerical precision which is especially important
+when dealing with chemical systems where the mass action constants and
+number densities can vary by many orders of magnitudes. We strongly
+suggest to always use the <code class="docutils literal notranslate"><span class="pre">long</span> <span class="pre">double</span></code> version despite the additional
+computational overhead. In fact, in our experience the increased
+numerical precision of <code class="docutils literal notranslate"><span class="pre">long</span> <span class="pre">double</span></code> can effectively lead to a smaller
+number of iterations.</p>
+</section>
+<section id="fastchem-constants">
+<span id="sec-fastchem-constants"></span><h2>FastChem constants<a class="headerlink" href="#fastchem-constants" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">The <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> namespace <code class="docutils literal notranslate"><span class="pre">fastchem</span></code> contains a number of constants that are all defined in the file <code class="docutils literal notranslate"><span class="pre">fastchem_constants.h</span></code>. This includes the constant</div>
+</div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">fastchem</span><span class="o">::</span><span class="n">FASTCHEM_UNKNOWN_SPECIES</span>
+</pre></div>
+</div>
+<p>that is returned by some <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> methods when a chemical species is not found. The chemistry calculation will return several output flags that are also defined in this file. This includes the following constants:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">constexpr</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">fastchem::FASTCHEM_SUCCESS</span></code></dt><dd><p>Indicates that the calculation has been successful, i.e. that the chemistry iterations converged.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">constexpr</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">fastchem::FASTCHEM_NO_CONVERGENCE</span></code></dt><dd><p>Indicates that the calculation was not successful, i.e. that the chemistry did not converge within the allowed maximum number of iterations steps given in the config file or set manually via <code class="docutils literal notranslate"><span class="pre">FastChem.setMaxChemistryIter</span></code> (see <a class="reference internal" href="#sec-fastchem-methods"><span class="std std-ref">here</span></a>). One way to solve such a problem is to increase the maximum number of iteration steps.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">constexpr</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">fastchem::FASTCHEM_INITIALIZATION_FAILED</span></code></dt><dd><p>Indicates that something went wrong during reading one of the input files. To find the source of the problem, one can set the verbose level in the config file or manually via <code class="docutils literal notranslate"><span class="pre">FastChem.setVerboseLevel</span></code> (see <a class="reference internal" href="#sec-fastchem-methods"><span class="std std-ref">here</span></a>) to a higher value and look at the terminal output.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">constexpr</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">fastchem::FASTCHEM_IS_BUSY</span></code></dt><dd><p>The chemistry calculations of <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> can only be called once for each object class instance. Attempting to start a new calculation while another is still running, for example via OpenMP, will result in <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> returning this flag.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">constexpr</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">fastchem::FASTCHEM_WRONG_INPUT_VALUES</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> returns this flag if some input values are wrong. Currently, this refers to the temperature and pressure vectors in the input structure not having the same size (see <a class="reference internal" href="#sec-fastchem-input-struct"><span class="std std-ref">here</span></a> for details on the input structure).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">constexpr</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">fastchem::FASTCHEM_PHASE_RULE_VIOLATION</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> returns this flag if condensation is used and the system violates the phase rule. This happens when the number of elements contained in condensates equals the total number of elements. In this case, the gas phase lacks a degree of freedom to yield the correct gas pressure. Such a system cannot be solved as there has always to be at least one incondensable element in the gas phase (see the section about the phase rule in Paper III).</p>
+</dd>
+</dl>
+<p>In addition to these flags, <code class="docutils literal notranslate"><span class="pre">fastchem_constants.h</span></code> also includes a
+constant string vector</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fastchem</span><span class="o">::</span><span class="n">FASTCHEM_MSG</span>
+</pre></div>
+</div>
+<p>that contains string expressions for each of these flags. Using this vector with any
+of the aforementioned flags <code class="docutils literal notranslate"><span class="pre">fastchem::FASTCHEM_MSG[flag]</span></code> returns a
+string with a description of the corresponding flag’s meaning. For
+example,</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span><span class="o">::</span><span class="n">FASTCHEM_MSG</span><span class="p">[</span><span class="n">fastchem</span><span class="o">::</span><span class="n">FASTCHEM_NO_CONVERGENCE</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>will return the string <code class="docutils literal notranslate"><span class="pre">&quot;convergence</span> <span class="pre">failed&quot;</span></code>.</p>
+</section>
+<section id="fastchem-constructor">
+<h2>FastChem constructor<a class="headerlink" href="#fastchem-constructor" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">Since <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> is written as an object class, an instance of that
+class (i.e. an object) needs to be created before <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> can be
+used. This is done by calling the constructor of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>
+class. There are three primary ways to call the constructor and create
+an object.</div>
+</div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">FastChem</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">model_parameter_file</span><span class="p">,</span>
+<span class="w">         </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">verbose_level_init</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>This constructor requires two parameters: the location of the parameter file, described <a class="reference internal" href="input_output.html#sec-fc-parameter-file"><span class="std std-ref">here</span></a>, as well as the initial verbose, i.e. the amount of debug output in the terminal window. All main options and parameters will be read from the parameter file, but can be changed later by using the appropriate methods described <a class="reference internal" href="#sec-fastchem-methods"><span class="std std-ref">here</span></a>.</p>
+</div></blockquote>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">FastChem</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element_abundances_file</span><span class="p">,</span>
+<span class="w">         </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gas_species_data_file</span><span class="p">,</span>
+<span class="w">         </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">verbose_level</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>This constructor requires three parameters: the locations of the element abundance and gas phase species data files, as well as the verbose level. All other options and parameters within <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will be set to their default values but can be later changed by using the appropriate methods described <a class="reference internal" href="#sec-fastchem-methods"><span class="std std-ref">here</span></a>. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to <span class="math notranslate nohighlight">\(10^{-4}\)</span>. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.</p>
+</div></blockquote>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">FastChem</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">element_abundances_file</span><span class="p">,</span>
+<span class="w">         </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gas_species_data_file</span><span class="p">,</span>
+<span class="w">         </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cond_species_data_file</span><span class="p">,</span>
+<span class="w">         </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">verbose_level</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>This constructor requires four parameters: the locations of the element abundance and gas phase species data files, the condensate data file, as well as the verbose level. All other options and parameters within <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will be set to their default values but can be later changed by using the appropriate methods described <a class="reference internal" href="#sec-fastchem-methods"><span class="std std-ref">here</span></a>. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to <span class="math notranslate nohighlight">\(10^{-4}\)</span>. Note that instead of a location for the condensate data, a string containing <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.</p>
+</div></blockquote>
+<p>A fourth way to create a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object is to make a copy of an
+existing one. <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> contains an internal copy constructor that
+manages the copy of all the object class’ data structures. Assuming that
+<code class="docutils literal notranslate"><span class="pre">fastchem_a</span></code> is a valid object instance of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> class, a
+second object, say <code class="docutils literal notranslate"><span class="pre">fastchem_b</span></code>, can simply be created by using</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span><span class="o">::</span><span class="n">FastChem</span><span class="w"> </span><span class="nf">fastchem_b</span><span class="p">(</span><span class="n">fastchem_a</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In this example, <code class="docutils literal notranslate"><span class="pre">fastchem_b</span></code> is a direct copy of <code class="docutils literal notranslate"><span class="pre">fastchem_a</span></code>, i.e.
+all parameters, options, and species &amp; element data structures are
+identical. After the creation of <code class="docutils literal notranslate"><span class="pre">fastchem_b</span></code>, both objects can be
+used independently from each other and can even be run at the same time.</p>
+</section>
+<section id="input-and-output-structures">
+<h2>Input and output structures<a class="headerlink" href="#input-and-output-structures" title="Link to this heading">¶</a></h2>
+<p>When the chemistry calculation of FastChem,</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">FastChem</span><span class="p">.</span><span class="n">calcDensities</span><span class="p">(</span><span class="n">FastChemInput</span><span class="p">,</span><span class="w"> </span><span class="n">FastChemOutput</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is called, input and output structures are required. Their definitions can be found
+in the source file <code class="docutils literal notranslate"><span class="pre">fastchem_src/input_output_struct.h</span></code></p>
+<section id="input-structure">
+<span id="sec-fastchem-input-struct"></span><h3>Input structure<a class="headerlink" href="#input-structure" title="Link to this heading">¶</a></h3>
+<p>The input structure is defined as follows:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">FastChemInput</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">temperature</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pressure</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">equilibrium_condensation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">rainout_condensation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="p">};</span>
+</pre></div>
+</div>
+<p>It contains vectors for the temperatures (in K) and pressures (in bar)
+that the chemical composition should be calculated for. Both vectors
+need to have the same length. Otherwise, <code class="docutils literal notranslate"><span class="pre">FastChem.calcDensities</span></code> will
+return the constant <code class="docutils literal notranslate"><span class="pre">fastchem::FASTCHEM_WRONG_INPUT_VALUES</span></code>. Note that
+even if you want to run the chemistry for only a single temperature and
+pressure point, you still need to provide the input in vectorial form.</p>
+<p>The two boolean variables enable the calculation of either equilibrium
+condensation or the rainout approximation. By default, both are set to
+<code class="docutils literal notranslate"><span class="pre">false</span></code>. Note that when the flag <code class="docutils literal notranslate"><span class="pre">rainout_condensation</span></code> is set to
+<code class="docutils literal notranslate"><span class="pre">true</span></code>, the value of the parameter <code class="docutils literal notranslate"><span class="pre">equilibrium_condensation</span></code> is
+ignored.</p>
+</section>
+<section id="output-structure">
+<h3>Output structure<a class="headerlink" href="#output-structure" title="Link to this heading">¶</a></h3>
+<p>The outout structure is defined as</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">FastChemOutput</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">number_densities</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">total_element_density</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mean_molecular_weight</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">number_densities_cond</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">element_cond_degree</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">element_conserved</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">nb_chemistry_iterations</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">nb_cond_iterations</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">nb_iterations</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fastchem_flag</span><span class="p">;</span>
+<span class="w">  </span><span class="p">};</span>
+</pre></div>
+</div>
+<p>It has the following variables:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;std::vector&lt;double&gt;&gt;</span> <span class="pre">number_densities</span></code></dt><dd><p>The two-dimensional array contains the number densities in of all gas phase species (elements, molecules, ions). The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of <code class="docutils literal notranslate"><span class="pre">FastChem.getGasSpeciesNumber()</span></code> (see <a class="reference internal" href="#sec-fastchem-methods"><span class="std std-ref">here</span></a>).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;double&gt;</span> <span class="pre">total_element_density</span></code></dt><dd><p>Contains the total number density of all atoms <span class="math notranslate nohighlight">\(i\)</span>, i.e. <span class="math notranslate nohighlight">\(n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic} \right)\)</span>, summed over their atomic number densities, as well as the ones contained in all other molecules/ions <span class="math notranslate nohighlight">\(j\)</span> as well as condensate species <span class="math notranslate nohighlight">\(c\)</span>. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the vector is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;double&gt;</span> <span class="pre">mean_molecular_weight</span></code></dt><dd><p>Contains the mean molecular weight of the mixture in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of g/mol. The dimension of the vector is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;std::vector&lt;double&gt;&gt;</span> <span class="pre">number_densities_cond</span></code></dt><dd><p>The two-dimensional array contains the fictitious number densities in of all condensate species. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of <code class="docutils literal notranslate"><span class="pre">FastChem.getCondSpeciesNumber()</span></code> (see <a class="reference internal" href="#sec-fastchem-methods"><span class="std std-ref">here</span></a>).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;std::vector&lt;double&gt;&gt;</span> <span class="pre">element_cond_degree</span></code></dt><dd><p>The two-dimensional array contains the degree of condensation for all elements. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of <code class="docutils literal notranslate"><span class="pre">FastChem.getElementNumber()</span></code> (see <a class="reference internal" href="#sec-fastchem-methods"><span class="std std-ref">here</span></a>).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;std::vector&lt;unsigned</span> <span class="pre">int&gt;&gt;</span> <span class="pre">element_conserved</span></code></dt><dd><p>The two-dimensional array contains information on the state of element conservation. A value of 0 indicates that element conservation is violated, whereas a value of 1 means that the element has been conserved. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of <code class="docutils literal notranslate"><span class="pre">FastChem.getElementNumber()</span></code> (see <a class="reference internal" href="#sec-fastchem-methods"><span class="std std-ref">here</span></a>).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;unsigned</span> <span class="pre">int&gt;</span> <span class="pre">nb_chemistry_iterations</span></code></dt><dd><p>Contains the total number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;unsigned</span> <span class="pre">int&gt;</span> <span class="pre">nb_iterations</span></code></dt><dd><p>Contains the total number of coupled condensation-gas phase chemistry calculation iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;unsigned</span> <span class="pre">int&gt;</span> <span class="pre">nb_chemistry_iterations</span></code></dt><dd><p>Contains the total number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">std::vector&lt;unsigned</span> <span class="pre">int&gt;</span> <span class="pre">fastchem_flag</span></code></dt><dd><p>Contains flags that give information on potential issues of the chemistry calculation for each temperature-pressure point. The set of potential values is stated <a class="reference internal" href="#sec-fastchem-constants"><span class="std std-ref">here</span></a>. A string message for each corresponding flag can also be obtained from the constant <code class="docutils literal notranslate"><span class="pre">fastchem::FASTCHEM_MSG</span></code> vector of strings, via <code class="docutils literal notranslate"><span class="pre">fastchem::FASTCHEM_MSG[flag]</span></code>. The dimension of the vector is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+</dl>
+<p>The vectors of the output structure don’t need to be pre-allocated. This
+will be done internally within <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> when running the chemistry
+calculations. If the vectors already contain data, their contents will
+be overwritten.</p>
+</section>
+</section>
+<section id="public-methods-of-the-fastchem-object-class">
+<span id="sec-fastchem-methods"></span><h2>Public methods of the FastChem object class<a class="headerlink" href="#public-methods-of-the-fastchem-object-class" title="Link to this heading">¶</a></h2>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">calcDensities</span><span class="p">(</span><span class="n">FastChemInput</span><span class="w"> </span><span class="n">input</span><span class="p">,</span>
+<span class="w">                                    </span><span class="n">FastChemOutput</span><span class="w"> </span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Starts a chemistry calculation with the provided <code class="docutils literal notranslate"><span class="pre">FastChemInput</span></code> and <code class="docutils literal notranslate"><span class="pre">FastChemOutput</span></code> structs. Returns an <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code> that represents the highest value from the flag vector within the <code class="docutils literal notranslate"><span class="pre">FastChemOutput</span></code> struct.</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">setParameter</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">param_name</span><span class="p">,</span>
+<span class="w">                           </span><span class="n">param_type</span><span class="w"> </span><span class="n">param_value</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Sets an internal <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> parameter with the name <code class="docutils literal notranslate"><span class="pre">param_name</span></code>. Depending on the parameter, the variable type <code class="docutils literal notranslate"><span class="pre">param_type</span></code> can either be an <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code>, a <code class="docutils literal notranslate"><span class="pre">bool</span></code>, or a <code class="docutils literal notranslate"><span class="pre">double</span></code> value. A list of parameters and their types can be found in the next section.</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getGasSpeciesNumber</span><span class="p">()</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the total number of gas phase species (atoms, ions, molecules) as <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getElementNumber</span><span class="p">()</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the total number of elements as <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getMoleculeNumber</span><span class="p">()</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the total number of molecules and ions (anything other than elements) as <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getCondSpeciesNumber</span><span class="p">()</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the total number of condensate species as <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getGasSpeciesName</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the name of a gas phase species with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">std::string</span></code>; returns empty string if species does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getGasSpeciesSymbol</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the symbol of an element or the formula of a molecule/ion with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">std::string</span></code>; returns empty string if species does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getGasSpeciesIndex</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">symbol</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the index of a species (element/molecule/ion) with symbol/formula <code class="docutils literal notranslate"><span class="pre">symbol</span></code> as <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code>; returns the constant <code class="docutils literal notranslate"><span class="pre">fastchem::FASTCHEM_UNKOWN_SPECIES</span></code> if species does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getElementName</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the name of an element with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">std::string</span></code>; returns empty string if species does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getElementSymbol</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the symbol of an element with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">std::string</span></code>; returns empty string if species does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getElementIndex</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">symbol</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the index of an element with symbol <code class="docutils literal notranslate"><span class="pre">symbol</span></code> as <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code>; returns the constant <code class="docutils literal notranslate"><span class="pre">fastchem::FASTCHEM_UNKOWN_SPECIES</span></code> if species does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getCondSpeciesName</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the name of a condensate species with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">std::string</span></code>; returns empty string if species does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getCondSpeciesSymbol</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the formula of a condensate species with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">std::string</span></code>; returns empty string if species does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getCondSpeciesIndex</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">symbol</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the index of a condensate species formula <code class="docutils literal notranslate"><span class="pre">symbol</span></code> as <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code>; returns the constant <code class="docutils literal notranslate"><span class="pre">fastchem::FASTCHEM_UNKOWN_SPECIES</span></code> if species does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">double</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getElementAbundance</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the abundance of an element with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">double</span></code>; returns 0 if element does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getElementAbundance</span><span class="p">()</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the abundances of all elements as a vector of <code class="docutils literal notranslate"><span class="pre">double</span></code>; vector has a length of <code class="docutils literal notranslate"><span class="pre">FastChem.getElementNumber()</span></code></p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">double</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getGasSpeciesWeight</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the weight of a gas phase species (element/molecule/ion) with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">double</span></code>; returns 0 if species does not exist; for an element this refers to the atomic weight</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">double</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getElememtWeight</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns the atomic weight of an element with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">double</span></code>; returns 0 if the element does not exist</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">double</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getCondSpeciesWeight</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Returns the weight of a condensate species with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">double</span></code>; returns 0 if species does not exist</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">setElementAbundances</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">abundances</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Sets the abundances of all elements; the abundances are supplied as <code class="docutils literal notranslate"><span class="pre">std::vector&lt;double&gt;</span></code>, where the vector has to have a size of <code class="docutils literal notranslate"><span class="pre">FastChem.getElementNumber()</span></code>; if this is not the case, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will print an error message and leave the element abundances unchanged</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">setVerboseLevel</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">level</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Sets the verbose level of <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, i.e. the amount of text output in the terminal. A value of 0 will result in <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> being almost silent, whereas a value of 4 would provide a lot of debug output. A value larger than 4 will be interpreted as 4. This value will overwrite the one from the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> config file.</p>
+</div></blockquote>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_l.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">FastChem - Ultrafast Equilibrium Chemistry</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=exoclime&repo=fastchem&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_output.html">Standard input and output files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_standalone.html">C++ stand-alone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyfastchem.html">Running pyFastChem</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Detailed C++ object class description</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#some-comments-on-coding-conventions">Some comments on coding conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fastchem-object-class">FastChem object class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fastchem-constants">FastChem constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fastchem-constructor">FastChem constructor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-and-output-structures">Input and output structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#public-methods-of-the-fastchem-object-class">Public methods of the FastChem object class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="python_module.html">Detailed pyFastChem module description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Internal parameters</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="pyfastchem.html" title="previous chapter">Running pyFastChem</a></li>
+      <li>Next: <a href="python_module.html" title="next chapter">Detailed pyFastChem module description</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019 - 2023, Daniel Kitzmann, Joachim Stock.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/sections/cpp_class.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Overview &#8212; FastChem 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5bc47236" />
+    <script src="../_static/documentation_options.js?v=110ea713"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Licence" href="licence.html" />
+    <link rel="prev" title="FastChem Documentation" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> is an open-source computer program that can calculate the gas phase chemical equilibrium composition as well as equilibrium condensation and rainout of general systems for a given temperature pressure and element abundances. Its latest version 3.x is also referred to as <code class="docutils literal notranslate"><span class="pre">FastChem</span> <span class="pre">Cond</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> uses a semi-analytical approach to solve the non-linear system of mass action law equations for the gas-phase calculations, which results in a massive increase in computational performance over other approaches like Gibbs minimisation.
+The general concept and the original version 1.0 is described by <a class="reference external" href="http://adsabs.harvard.edu/abs/2018MNRAS.479..865S">Stock et al. (2018)</a> (Paper I). Version 1.0, however, is restricted to systems that are dominated by hydrogen and helium and required an additional iteration to account for the pressure of the system. The current version 2.0 can now be applied to arbitrary element compositions. This version will is described by <a class="reference external" href="http://adsabs.harvard.edu/abs/2022MNRAS.517.4070S">Stock, Kitzmann &amp; Patzer (2022)</a>, from here on referred to as Paper II. Paper III (<a class="reference external" href="http://adsabs.harvard.edu/abs/2023arXiv230902337K">Kitzmann, Stock &amp; Patzer (2023)</a>) introduced stoichiometric condensates for calculations of equilibrium condensation and rainout to FastChem.</p>
+<p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> has already been applied to numerous different systems,
+from brown dwarfs (<a class="reference external" href="http://adsabs.harvard.edu/abs/2020ApJ...890..174K">Kitzmann et al. 2020</a>), to
+mini-Neptunes, hot-Jupiters (<a class="reference external" href="http://adsabs.harvard.edu/abs/2020A%26A...637A..36B">Bourrier et al. 2020</a>), to ultra-hot Jupiters
+(<a class="reference external" href="http://adsabs.harvard.edu/abs/2019A%26A...627A.165H">Hoeijmakers et al. 2019</a>). It is directly
+coupled to the retrieval model <code class="docutils literal notranslate"><span class="pre">Helios-r2</span></code> (<a class="reference external" href="http://adsabs.harvard.edu/abs/2020ApJ...890..174K">Kitzmann et al. 2020</a>), to the general
+atmospheric model <code class="docutils literal notranslate"><span class="pre">HELIOS</span></code> (<a class="reference external" href="http://adsabs.harvard.edu/abs/2019AJ....157..170M">Malik et al. 2019</a>), and the non-equilibrium
+chemistry <code class="docutils literal notranslate"><span class="pre">VULCAN</span></code> (<a class="reference external" href="http://adsabs.harvard.edu/abs/2018ApJ...862...31T">Tsai et al. 2018</a>), all of which are available under <a class="reference external" href="https://github.com/exoclime">https://github.com/exoclime</a>.</p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_l.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">FastChem - Ultrafast Equilibrium Chemistry</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=exoclime&repo=fastchem&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_output.html">Standard input and output files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_standalone.html">C++ stand-alone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyfastchem.html">Running pyFastChem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_class.html">Detailed C++ object class description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_module.html">Detailed pyFastChem module description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Internal parameters</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">FastChem Documentation</a></li>
+      <li>Next: <a href="licence.html" title="next chapter">Licence</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019 - 2023, Daniel Kitzmann, Joachim Stock.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/sections/overview.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

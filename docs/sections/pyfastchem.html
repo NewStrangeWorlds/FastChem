@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Running pyFastChem &#8212; FastChem 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5bc47236" />
+    <script src="../_static/documentation_options.js?v=110ea713"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Detailed C++ object class description" href="cpp_class.html" />
+    <link rel="prev" title="C++ stand-alone executable" href="cpp_standalone.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="running-pyfastchem">
+<h1>Running pyFastChem<a class="headerlink" href="#running-pyfastchem" title="Link to this heading">¶</a></h1>
+<p>In addition to the <code class="docutils literal notranslate"><span class="pre">C++</span></code> executable, we provide several Python scripts
+that can run the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> code through its Python interface
+<code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code>. The sample scripts can be found within the <code class="docutils literal notranslate"><span class="pre">python/</span></code>
+folder. These sample scripts show different use cases and can be used as
+a basis for your own <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> Python scripts.</p>
+<section id="provided-python-examples">
+<span id="sec-pyfc-examples"></span><h2>Provided Python examples<a class="headerlink" href="#provided-python-examples" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">Currently, we provide the following examples:</div>
+</div>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">fastchem.py</span></code></dt><dd><p>Runs a simple <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> calculation on a temperature-pressure structure defined within the script, writes output files, and creates a plot with selected species.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">fastchem_c_o.py</span></code></dt><dd><p>Runs a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> calculation on a temperature-pressure structure defined within the script and for a range of different C/O ratios. It will write output files, and create a plot with selected species.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">fastchem_metallicity.py</span></code></dt><dd><p>Runs a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> calculation on a temperature-pressure structure defined within the script and for a range of different metallicity factors. It will write output files, and create a plot with selected species.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">fastchem_cond.py</span></code></dt><dd><p>Runs a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> calculation on a read-in temperature-pressure structure of a brown dwarf with equilibrium condensation turned on. The rainout approximation can optionally be turned on as well. It will write output files, and create a plot with selected species.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">fastchem_cond_disk.py</span></code></dt><dd><p>Runs a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> calculation for the temperature-pressure structure of the midplane of a protoplanetary disk with equilibrium condensation. It will write output files, and create a plot with selected species. <strong>Warning</strong>: Due to the very low temperatures in the outer part of the disk, this calculation might take quite some time depending on your computer.</p>
+</dd>
+</dl>
+<p>Note that the scripts should be executed from within the Python folder
+since all file paths in the scripts are given relative to this
+directory. These files can be used as templates to create your own
+special Python scripts to run <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code>. The following section
+provides some details on the steps required to run <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> from
+within Python. A more detailed overview of all the methods and variables
+available within <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> can be found <a class="reference internal" href="python_module.html#sec-pyfc-details"><span class="std std-ref">here</span></a>.</p>
+</section>
+<section id="detailed-steps-for-running-pyfastchem">
+<h2>Detailed steps for running pyFastChem<a class="headerlink" href="#detailed-steps-for-running-pyfastchem" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">As a first step, we need to import the <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> module:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyfastchem</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">This will import the module compiled by <code class="docutils literal notranslate"><span class="pre">PyBind11</span></code>. Next, we have to
+create a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object (here named <code class="docutils literal notranslate"><span class="pre">fastchem</span></code>) with a
+corresponding constructor <code class="docutils literal notranslate"><span class="pre">pyfastchem.FastChem</span></code> provided by
+<code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code>. There are three different possible versions of the
+constructor. F</div>
+</div>
+<p>If we’re only interested in a pure gas phase chemistry calculation, we
+can use</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">&#39;input/element_abundances/asplund_2009.dat&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;input/logK/logK.dat&#39;</span><span class="p">,</span>
+                               <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">This constructor requires three different arguments: the location of
+the element abundance file, the location of the file with the
+equilibrium constants, and the verbose level.</div>
+<div class="line">For a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object that also includes condensed species, we
+have:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">&#39;input/element_abundances/asplund_2009.dat&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;input/logK/logK.dat&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;input/logK/logK_condensates.dat&#39;</span><span class="p">,</span>
+                               <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where the additional argument is the location of the input file with the
+equilibrium constants of the condensed species. It is also possible to
+use <code class="docutils literal notranslate"><span class="pre">'none'</span></code> for this argument:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">&#39;input/element_abundances/asplund_2009.dat&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;input/logK/logK.dat&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                                <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">in which case no condensate data will be read in and this constructor
+behaves like the first one by only allowing the calculation of the
+pure gas phase composition.</div>
+<div class="line">Alternatively, a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object can also be created via</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">&#39;input/parameters_py.dat&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">where the first argument is the location of the parameter file and the
+second one the initial verbose level. The latter one will later be
+replaced by the corresponding value read in from the parameter file.
+The structure of this parameter file is discussed <a class="reference internal" href="input_output.html#sec-fc-parameter-file"><span class="std std-ref">here</span></a>.</div>
+</div>
+<div class="line-block">
+<div class="line">Creating a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object with the first two methods will set
+internal parameters to their default values. The maximum number of
+chemistry iterations will be 3000, the number of Newton, bisection and
+Nelder-Mead method iterations is 3000, and the accuracy of the of
+Newton method and the chemistry iterations is set to <span class="math notranslate nohighlight">\(10^{-4}\)</span>.
+All of these values can, however, be adjusted during runtime by using
+the methods listed <a class="reference internal" href="python_module.html#sec-pfc-methods"><span class="std std-ref">here</span></a>.</div>
+</div>
+<div class="line-block">
+<div class="line">Next, we need to create the input and output structures used by
+<code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code>:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_data</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChemInput</span><span class="p">()</span>
+<span class="n">output_data</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChemOutput</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">Details on these structures can be found <a class="reference internal" href="python_module.html#sec-pfc-input-ouput-struct"><span class="std std-ref">here</span></a>.
+The input structure contains
+the temperature (in K) and pressure (in bar) arrays that the chemistry
+should be calculated for. They can be set, for example, by:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_data</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+<span class="n">input_data</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">pressure</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">where <code class="docutils literal notranslate"><span class="pre">temperature</span></code> and <code class="docutils literal notranslate"><span class="pre">pressure</span></code> are standard Python lists or
+NumPy arrays. Both arrays need to have the same length. The input
+structure also contains two boolean flags that enable the calculation
+of the condensed phase:</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">input_data.equilibrium_condensation</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">input_data.rainout_condensation</span></code></div>
+</div>
+<div class="line-block">
+<div class="line">Setting the first flag to <code class="docutils literal notranslate"><span class="pre">True</span></code> will calculate the chemical
+composition assuming equilibrium condensation for each
+temperature-pressure point of the input structure separately. Setting
+the rainout condensation flag to <code class="docutils literal notranslate"><span class="pre">True</span></code> enables the calculation
+using the rainout approximation. Details on this can be found in
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2023arXiv230902337K">Kitzmann, Stock &amp; Patzer (2023)</a>.
+Note that if the rainout flag
+is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the value of the equilibrium condensation flag is
+ignored. By default, both flags are set to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</div>
+</div>
+<div class="line-block">
+<div class="line">With the input structure properly set up, we can now run the actual
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> calculation by calling the <code class="docutils literal notranslate"><span class="pre">calcDensities</span></code> method:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem_flag</span> <span class="o">=</span> <span class="n">fastchem</span><span class="o">.</span><span class="n">calcDensities</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">output_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">This method returns an integer flag that describes the overall outcome
+of the calculation. A description of the different flags can be found
+<a class="reference internal" href="python_module.html#sec-pfc-constants"><span class="std std-ref">here</span></a>. After calling the
+<code class="docutils literal notranslate"><span class="pre">calcDensity</span></code> method, the output structure will be filled with the
+corresponding output data. For example,</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">output_data.number_densities</span></code> will contain the number densities of
+the chemical species. This is a 2D list, where the first dimension
+refers to the temperature and pressure input arrays and the second
+dimension refers to the different chemical species. The list can be
+easily converted into a NumPy array via:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">number_densities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">output_data</span><span class="o">.</span><span class="n">number_densities</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">The Python directory of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> repository also contains
+functions that save the output into files, identical to those from the
+<code class="docutils literal notranslate"><span class="pre">C++</span></code> version. They can be called by:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveChemistryOutput</span><span class="p">(</span><span class="n">output_dir</span> <span class="o">+</span> <span class="s1">&#39;/chemistry.dat&#39;</span><span class="p">,</span>
+                    <span class="n">temperature</span><span class="p">,</span>
+                    <span class="n">pressure</span><span class="p">,</span>
+                    <span class="n">output_data</span><span class="o">.</span><span class="n">total_element_density</span><span class="p">,</span>
+                    <span class="n">output_data</span><span class="o">.</span><span class="n">mean_molecular_weight</span><span class="p">,</span>
+                    <span class="n">output_data</span><span class="o">.</span><span class="n">number_densities</span><span class="p">,</span>
+                    <span class="n">fastchem</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveCondOutput</span><span class="p">(</span><span class="n">output_dir</span> <span class="o">+</span> <span class="s1">&#39;/condensates.dat&#39;</span><span class="p">,</span>
+               <span class="n">temperature</span><span class="p">,</span>
+               <span class="n">pressure</span><span class="p">,</span>
+               <span class="n">output_data</span><span class="o">.</span><span class="n">element_cond_degree</span><span class="p">,</span>
+               <span class="n">output_data</span><span class="o">.</span><span class="n">number_densities_cond</span><span class="p">,</span>
+               <span class="n">fastchem</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveMonitorOutput</span><span class="p">(</span><span class="n">output_dir</span> <span class="o">+</span> <span class="s1">&#39;/monitor.dat&#39;</span><span class="p">,</span>
+                  <span class="n">temperature</span><span class="p">,</span>
+                  <span class="n">pressure</span><span class="p">,</span>
+                  <span class="n">output_data</span><span class="o">.</span><span class="n">element_conserved</span><span class="p">,</span>
+                  <span class="n">output_data</span><span class="o">.</span><span class="n">fastchem_flag</span><span class="p">,</span>
+                  <span class="n">output_data</span><span class="o">.</span><span class="n">nb_chemistry_iterations</span><span class="p">,</span>
+                  <span class="n">output_data</span><span class="o">.</span><span class="n">total_element_density</span><span class="p">,</span>
+                  <span class="n">output_data</span><span class="o">.</span><span class="n">mean_molecular_weight</span><span class="p">,</span>
+                  <span class="n">fastchem</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">A more detailed description of the output functions can be found in
+the next section.</div>
+</div>
+</section>
+<section id="output-functions-of-pyfastchem">
+<h2>Output functions of pyFastChem<a class="headerlink" href="#output-functions-of-pyfastchem" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">The Python directory includes several scripts that can save the
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> chemistry and monitor output in either text or binary
+data files. All these functions are located within the file
+<code class="docutils literal notranslate"><span class="pre">save_output.py</span></code>. Examples of their usage can be found in the three
+Python scripts discussed above.</div>
+</div>
+<section id="chemistry-output-scripts">
+<h3>Chemistry output scripts<a class="headerlink" href="#chemistry-output-scripts" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">save_output.py</span></code> contains two functions for the general chemistry
+output. The first, <code class="docutils literal notranslate"><span class="pre">saveChemistryOutput</span></code>, saves the results in a text
+file that is identical to the one of the <code class="docutils literal notranslate"><span class="pre">C++</span></code> version. If the
+chemistry is calculated for a larger number of pressure and temperature
+points, the output can become quite large. Saving these results into a
+simple text file can, therefore, take a very long time - in extreme
+cases even longer than the calculation itself.</p>
+<p>Therefore, we provide an alternative function
+<code class="docutils literal notranslate"><span class="pre">saveChemistryOutputPandas</span></code> that saves the output in a pandas
+<code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> format into a pickle file. Since this is a binary format,
+saving a large output is substantially faster than the corresponding
+ASCII text version.</p>
+<div class="line-block">
+<div class="line">The function for saving the output as a normal text file is</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveChemistryOutput</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
+                    <span class="n">temperature</span><span class="p">,</span>
+                    <span class="n">pressure</span><span class="p">,</span>
+                    <span class="n">total_element_density</span><span class="p">,</span>
+                    <span class="n">mean_molecular_weight</span><span class="p">,</span>
+                    <span class="n">number_densities</span><span class="p">,</span>
+                    <span class="n">fastchem</span><span class="p">,</span>
+                    <span class="n">output_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">additional_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">additional_columns_desc</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>with the following arguments:</p>
+<dl>
+<dt><code class="docutils literal notranslate"><span class="pre">file_path</span></code></dt><dd><p>Contains the path to the output file as a <code class="docutils literal notranslate"><span class="pre">str</span></code> variable.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">temperature,</span> <span class="pre">pressure</span></code></dt><dd><p>Arrays of <code class="docutils literal notranslate"><span class="pre">float</span></code> values with the temperature and pressure structure the chemistry has been calculated for.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">total_element_density</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">float</span></code> array of the total number density of all atoms <span class="math notranslate nohighlight">\(i\)</span>, i.e. <span class="math notranslate nohighlight">\(n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic}\right)\)</span>, summed over their atomic number densities, as well as the ones contained in all other molecules/ions <span class="math notranslate nohighlight">\(j\)</span> and condensate species <span class="math notranslate nohighlight">\(c\)</span>. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">mean_molecular_weight</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">float</span></code> array of the computed mean molecular weight. The dimension of the array is equal to that of the temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">number_densities</span></code></dt><dd><p>Two-dimensional <code class="docutils literal notranslate"><span class="pre">float</span></code> array of the number densities. The first dimension of the array refers to the temperature and pressure input arrays, while the second dimension describes the different chemical species.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">fastchem</span></code></dt><dd><p>An object of the <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> class that has been used to calculate the chemistry.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">output_species=None</span></code></dt><dd><p>Optional parameter. Is an array of <code class="docutils literal notranslate"><span class="pre">str</span></code> values that contains the chemical symbols of species the chemistry output file should be saved for. Without this optional parameter, the output function will by default save all species. The symbols have to match the ones used in the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> input file for the equilibrium constants. For the standard files supplied with <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, the Hill notation, therefore, needs to be used here.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">additional_columns=None,</span> <span class="pre">additional_columns_desc=None</span></code></dt><dd><p>Optional parameters. Sometimes, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow to print additional columns in the output file. The first parameter <code class="docutils literal notranslate"><span class="pre">additional_columns</span></code> is an <span class="math notranslate nohighlight">\(N\times N_\mathrm{tp}\)</span>-dimensional array of <code class="docutils literal notranslate"><span class="pre">float</span></code> values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays.</p>
+<p>The second optional parameter <code class="docutils literal notranslate"><span class="pre">additional_columns_desc</span></code> contains an array of <code class="docutils literal notranslate"><span class="pre">str</span></code> values with the header descriptions of the additional columns. The dimension has to be equal to number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled <code class="docutils literal notranslate"><span class="pre">unk</span></code> instead.</p>
+</dd>
+</dl>
+<div class="line-block">
+<div class="line">All of these function arguments, except for the optional parameters,
+are contained within the input and output structures of
+<code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code>, discussed <a class="reference internal" href="python_module.html#sec-pfc-input-ouput-struct"><span class="std std-ref">here</span></a>.</div>
+</div>
+<div class="line-block">
+<div class="line">Saving the chemistry output with the panda <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> format in a
+pickle file is possible via the function:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveChemistryOutputPandas</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
+                          <span class="n">temperature</span><span class="p">,</span>
+                          <span class="n">pressure</span><span class="p">,</span>
+                          <span class="n">total_element_density</span><span class="p">,</span>
+                          <span class="n">mean_molecular_weight</span><span class="p">,</span>
+                          <span class="n">number_densities</span><span class="p">,</span>
+                          <span class="n">fastchem</span><span class="p">,</span>
+                          <span class="n">output_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">additional_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">additional_columns_desc</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All arguments are identical to those of the previous ASCII output
+function. The saved panda DataFrame contains the same columns and
+headers as the simple text output.</p>
+</section>
+<section id="condensate-output-script">
+<h3>Condensate output script<a class="headerlink" href="#condensate-output-script" title="Link to this heading">¶</a></h3>
+<div class="line-block">
+<div class="line">The two condensate output scripts are almost identical to the gas
+phase chemistry one described above. The first script saves the output
+into a simple text file:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveCondOutput</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
+               <span class="n">temperature</span><span class="p">,</span>
+               <span class="n">pressure</span><span class="p">,</span>
+               <span class="n">element_cond_degree</span><span class="p">,</span>
+               <span class="n">number_densities</span><span class="p">,</span>
+               <span class="n">fastchem</span><span class="p">,</span>
+               <span class="n">output_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">additional_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">additional_columns_desc</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">It has the following arguments:</div>
+</div>
+<dl>
+<dt><code class="docutils literal notranslate"><span class="pre">file_path</span></code></dt><dd><p>Contains the path to the output file as a <code class="docutils literal notranslate"><span class="pre">str</span></code> variable.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">temperature,</span> <span class="pre">pressure</span></code></dt><dd><p>Arrays of <code class="docutils literal notranslate"><span class="pre">float</span></code> values with the temperature and pressure structure the chemistry has been calculated for.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">element_cond_degree</span></code></dt><dd><p>Two-dimensional <code class="docutils literal notranslate"><span class="pre">float</span></code> array of the degrees of condensation for all elements. The first dimension of the array refers to the temperature and pressure input arrays, while the second dimension describes the different elements.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">number_densities</span></code></dt><dd><p>Two-dimensional <code class="docutils literal notranslate"><span class="pre">float</span></code> array of the (fictitious) condensate number densities. The first dimension of the array refers to the temperature and pressure input arrays, while the second dimension describes the different condensate species.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">fastchem</span></code></dt><dd><p>An object of the <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> class that has been used to calculate the chemistry.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">output_species=None</span></code></dt><dd><p>Optional parameter. Is an array of <code class="docutils literal notranslate"><span class="pre">str</span></code> values that contains the chemical symbols of condensates the chemistry output file should be saved for. Without this optional parameter, the output function will by default save all species. The symbols have to match the ones used in the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> input file for the equilibrium constants.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">additional_columns=None,</span> <span class="pre">additional_columns_desc=None</span></code></dt><dd><p>Optional parameters. Sometimes, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow to print additional columns in the output file. The first parameter <code class="docutils literal notranslate"><span class="pre">additional_columns</span></code> is an <span class="math notranslate nohighlight">\(N\times N_\mathrm{tp}\)</span>-dimensional array of <code class="docutils literal notranslate"><span class="pre">float</span></code> values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays.</p>
+<p>The second optional parameter <code class="docutils literal notranslate"><span class="pre">additional_columns_desc</span></code> contains an array of <code class="docutils literal notranslate"><span class="pre">str</span></code> values with the header descriptions of the additional columns. The dimension has to be equal to number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled <code class="docutils literal notranslate"><span class="pre">unk</span></code> instead.</p>
+</dd>
+</dl>
+<div class="line-block">
+<div class="line">All of these function arguments, except for the optional parameters,
+are contained within the input and output structures of
+<code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code>, discussed <a class="reference internal" href="python_module.html#sec-pfc-input-ouput-struct"><span class="std std-ref">here</span></a>.</div>
+<div class="line">Saving the condensate output with the panda <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> format in a
+pickle file is possible via the function:</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveCondOutputPandas</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
+                     <span class="n">temperature</span><span class="p">,</span>
+                     <span class="n">pressure</span><span class="p">,</span>
+                     <span class="n">element_cond_degree</span><span class="p">,</span>
+                     <span class="n">number_densities_cond</span><span class="p">,</span>
+                     <span class="n">fastchem</span><span class="p">,</span>
+                     <span class="n">output_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">additional_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">additional_columns_desc</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All arguments are identical to those of the previous ASCII output
+function. The saved panda DataFrame contains the same columns and
+headers as the simple text output.</p>
+</section>
+<section id="monitor-output-scripts">
+<h3>Monitor output scripts<a class="headerlink" href="#monitor-output-scripts" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">save_output.py</span></code> also contains two functions for the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>
+monitor output. The first, <code class="docutils literal notranslate"><span class="pre">savMonitorOutput</span></code>, saves the debug output
+in a text file that is identical to the one of the <code class="docutils literal notranslate"><span class="pre">C++</span></code> version. Just
+like for the chemistry output, saving the results for a large number of
+calculations can be quite slow. Therefore, we also provide an
+alternative function <code class="docutils literal notranslate"><span class="pre">saveMonitorOutputPandas</span></code> that saves the output
+as a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> format into a pickle file.</p>
+<div class="line-block">
+<div class="line">The function for saving the output as a normal text file is</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveMonitorOutput</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
+                  <span class="n">temperature</span><span class="p">,</span>
+                  <span class="n">pressure</span><span class="p">,</span>
+                  <span class="n">element_conserved</span><span class="p">,</span>
+                  <span class="n">fastchem_flags</span><span class="p">,</span>
+                  <span class="n">nb_iterations</span><span class="p">,</span>
+                  <span class="n">nb_chemistry_iterations</span><span class="p">,</span>
+                  <span class="n">nb_condensation_iterations</span><span class="p">,</span>
+                  <span class="n">total_element_density</span><span class="p">,</span>
+                  <span class="n">mean_molecular_weight</span><span class="p">,</span>
+                  <span class="n">fastchem</span><span class="p">,</span>
+                  <span class="n">additional_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">additional_columns_desc</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>with the following arguments:</p>
+<dl>
+<dt><code class="docutils literal notranslate"><span class="pre">file_path</span></code></dt><dd><p>Contains the path to the output file as a <code class="docutils literal notranslate"><span class="pre">str</span></code> variable.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">temperature,</span> <span class="pre">pressure</span></code></dt><dd><p>Arrays of <code class="docutils literal notranslate"><span class="pre">float</span></code> values with the temperature and pressure structure the chemistry has been calculated for.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">element_conserved</span></code></dt><dd><p>The two-dimensional array of <code class="docutils literal notranslate"><span class="pre">int</span></code> numbers contains information on the state of element conservation. A value of 0 indicates that element conservation is not fulfilled, whereas a value of 1 means that the element has been conserved. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of <code class="docutils literal notranslate"><span class="pre">getElementNumber()</span></code> (see <a class="reference internal" href="python_module.html#sec-pfc-methods"><span class="std std-ref">here</span></a>).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">fastchem_flags</span></code></dt><dd><p>One-dimensional array of <code class="docutils literal notranslate"><span class="pre">int</span></code> numbers. Contains flags that give information on potential issues of the chemistry calculation for each temperature-pressure point. The set of potential values is stated <a class="reference internal" href="python_module.html#sec-pfc-constants"><span class="std std-ref">here</span></a>. A string message for each corresponding flag can also be obtained from the constant <code class="docutils literal notranslate"><span class="pre">pyfastchem.FASTCHEM_MSG</span></code> vector of strings, via <code class="docutils literal notranslate"><span class="pre">pyfastchem.FASTCHEM_MSG[flag]</span></code>. The dimension of the array is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">nb_iterations</span></code></dt><dd><p>One-dimensional array of <code class="docutils literal notranslate"><span class="pre">int</span></code> numbers. Contains the number of coupled chemistry-condensation iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">nb_chemistry_iterations</span></code></dt><dd><p>One-dimensional array of <code class="docutils literal notranslate"><span class="pre">int</span></code> numbers. Contains the total number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">nb_condensation_iterations</span></code></dt><dd><p>One-dimensional array of <code class="docutils literal notranslate"><span class="pre">int</span></code> numbers. Contains the total number of condensation calculation iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">total_element_density</span></code></dt><dd><p>One-dimensional array of <code class="docutils literal notranslate"><span class="pre">float</span></code> numbers that contains the total number density of all atoms <span class="math notranslate nohighlight">\(i\)</span>, i.e. <span class="math notranslate nohighlight">\(n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic}\right)\)</span>, summed over their atomic number densities, as well as the ones contained in all other molecules/ions <span class="math notranslate nohighlight">\(j\)</span> and condensate species <span class="math notranslate nohighlight">\(c\)</span>. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">mean_molecular_weight</span></code></dt><dd><p>One-dimensional array of <code class="docutils literal notranslate"><span class="pre">float</span></code> numbers. Contains the mean molecular weight of the mixture in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of g/mol. The dimension of the array is equal to that of the input temperature and pressure vectors.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">fastchem</span></code></dt><dd><p>An object of the <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> class that has been used to calculate the chemistry.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">additional_columns=None,</span> <span class="pre">additional_columns_desc=None</span></code></dt><dd><p>Optional parameters. Sometimes, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow to print additional columns in the output file. The first parameter <code class="docutils literal notranslate"><span class="pre">additional_columns</span></code> is an <span class="math notranslate nohighlight">\(N\times N_\mathrm{tp}\)</span>-dimensional array of <code class="docutils literal notranslate"><span class="pre">float</span></code> values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays.</p>
+<p>The second optional parameter <code class="docutils literal notranslate"><span class="pre">additional_columns_desc</span></code> contains an array of <code class="docutils literal notranslate"><span class="pre">str</span></code> values with the header descriptions of the additional columns. The dimension has to be equal to number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled <code class="docutils literal notranslate"><span class="pre">unk</span></code> instead.</p>
+</dd>
+</dl>
+<p>The monitor output file has the same format as the one produced by the
+<code class="docutils literal notranslate"><span class="pre">C++</span></code> version discussed <a class="reference internal" href="input_output.html#sec-fc-cpp-output"><span class="std std-ref">here</span></a>. Saving
+the chemistry output with the panda <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> format in a pickle
+file is possible via the function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveMonitorOutputPandas</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
+                        <span class="n">temperature</span><span class="p">,</span>
+                        <span class="n">pressure</span><span class="p">,</span>
+                        <span class="n">element_conserved</span><span class="p">,</span>
+                        <span class="n">fastchem_flags</span><span class="p">,</span>
+                        <span class="n">nb_iterations</span><span class="p">,</span>
+                        <span class="n">nb_chemistry_iterations</span><span class="p">,</span>
+                        <span class="n">nb_condensation_iterations</span><span class="p">,</span>
+                        <span class="n">total_element_density</span><span class="p">,</span>
+                        <span class="n">mean_molecular_weight</span><span class="p">,</span>
+                        <span class="n">fastchem</span><span class="p">,</span>
+                        <span class="n">additional_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">additional_columns_desc</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All arguments are identical to those of the previous ASCII output
+function. The saved panda <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> contains the same columns and
+headers as the simple text output. The only difference between the
+outputs is that for the <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> format, the element conservation
+and <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> flags are not converted to strings (i.e. to <code class="docutils literal notranslate"><span class="pre">fail</span></code> or
+<code class="docutils literal notranslate"><span class="pre">ok</span></code>) but rather have their original integer values that are returned
+by <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. Their values are discussed <a class="reference internal" href="python_module.html#sec-pfc-input-ouput-struct"><span class="std std-ref">here</span></a>
+&amp; <a class="reference internal" href="python_module.html#sec-pfc-constants"><span class="std std-ref">here</span></a>.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_l.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">FastChem - Ultrafast Equilibrium Chemistry</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=exoclime&repo=fastchem&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_output.html">Standard input and output files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_standalone.html">C++ stand-alone executable</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Running pyFastChem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#provided-python-examples">Provided Python examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detailed-steps-for-running-pyfastchem">Detailed steps for running pyFastChem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output-functions-of-pyfastchem">Output functions of pyFastChem</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_class.html">Detailed C++ object class description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_module.html">Detailed pyFastChem module description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Internal parameters</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="cpp_standalone.html" title="previous chapter">C++ stand-alone executable</a></li>
+      <li>Next: <a href="cpp_class.html" title="next chapter">Detailed C++ object class description</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019 - 2023, Daniel Kitzmann, Joachim Stock.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/sections/pyfastchem.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

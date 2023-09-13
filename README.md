@@ -17,7 +17,7 @@ FastChem includes the Python interface, PyFastChem, that allows to run the C++ c
 
 # User guide #
 
-FastChem comes with user guide in pdf format that can be found in the *manual* folder. It describes the installation and usage of FastChem and covers both the C++ stand-alone version as well as the Python interface. The manual also provides detailed information on the internal interface functions that the FastChem object class and its Python interface provide.
+FastChem comes with a user guide that can be found here: https://github.com/exoclime/FastChem/docs/index.html . It describes the installation and usage of FastChem and covers both the C++ stand-alone version as well as the Python interface. The manual also provides detailed information on the internal interface functions that the FastChem object class and its Python interface provide.
 
 
 # Licence #

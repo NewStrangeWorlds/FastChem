@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Standard input and output files &#8212; FastChem 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5bc47236" />
+    <script src="../_static/documentation_options.js?v=110ea713"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="C++ stand-alone executable" href="cpp_standalone.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="standard-input-and-output-files">
+<span id="sec-fastchem-input-files"></span><h1>Standard input and output files<a class="headerlink" href="#standard-input-and-output-files" title="Link to this heading">¶</a></h1>
+<p>Besides optional other parameter files that are used within the <code class="docutils literal notranslate"><span class="pre">C++</span></code>
+stand-alone version or the Python version, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> requires two
+special input files, one for the element abundances and a second
+describing the mass action law constant parametrisations. Both are
+described in the following.</p>
+<section id="element-abundance-file">
+<h2>Element abundance file<a class="headerlink" href="#element-abundance-file" title="Link to this heading">¶</a></h2>
+<p>This file should contain the element abundances for all chemical
+elements that are used in <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. The location of this file is
+usually supplied either within a separate parameter file or directly in
+the constructor of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object class.</p>
+<section id="a-note-on-element-abundances">
+<h3>A note on element abundances<a class="headerlink" href="#a-note-on-element-abundances" title="Link to this heading">¶</a></h3>
+<p>It is important to note that there are two different ways to define an
+element abundance. Both variants, denoted by <span class="math notranslate nohighlight">\(x_j\)</span> and
+<span class="math notranslate nohighlight">\(\epsilon_j\)</span>, are related via:</p>
+<div class="math notranslate nohighlight">
+\[\epsilon_j = 10^{x_j - 12}\]</div>
+<p>or</p>
+<div class="math notranslate nohighlight">
+\[x_j = \log\left(\epsilon_j\right) + 12 \ .\]</div>
+<p>In the <span class="math notranslate nohighlight">\(x_i\)</span> version, widely used in the astronomical literature,
+hydrogen has a value of 12 for solar element abundances, such that its
+<span class="math notranslate nohighlight">\(\epsilon_i\)</span> is unity.</p>
+<div class="line-block">
+<div class="line">In its input file, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> uses the <span class="math notranslate nohighlight">\(x_j\)</span> notation, also
+employed in the usual standard abundance compilations (e.g. <a class="reference external" href="http://adsabs.harvard.edu/abs/2009ARA&amp;A..47..481A">Asplund et al. 2009</a>).
+For example, in the
+<span class="math notranslate nohighlight">\(x_j\)</span> notation, the solar element abundance for oxygen is
+<span class="math notranslate nohighlight">\(x_\mathrm{O}\)</span> = 8.69, whereas its value for
+<span class="math notranslate nohighlight">\(\epsilon_\mathrm{O}\)</span> would be <span class="math notranslate nohighlight">\(0.00048978\)</span>.</div>
+<div class="line">Internally, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> converts the <span class="math notranslate nohighlight">\(x_j\)</span> from the input file
+to the computationally more appropriate <span class="math notranslate nohighlight">\(\epsilon_j\)</span>. This also
+refers to all methods of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object class that are used
+to interact with the element abundances: these will <strong>always</strong> refer
+to <span class="math notranslate nohighlight">\(\epsilon_j\)</span>.</div>
+</div>
+<p>Thus, if one wants to change the oxygen element abundance in the input
+file (which refers to <span class="math notranslate nohighlight">\(x_j\)</span>) to ten times its solar value, one
+would need to use a value of <span class="math notranslate nohighlight">\(x_\mathrm{O}\)</span> = 1 + 8.69 = 9.69. If
+one, on the other hand, uses one of the internal <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> methods to
+change element abundances on the fly, one would need to set it to a
+value of <span class="math notranslate nohighlight">\(\epsilon_\mathrm{O} = 10 \cdot 0.00048978 =  0.0048978\)</span>.</p>
+</section>
+<section id="file-structure">
+<h3>File structure<a class="headerlink" href="#file-structure" title="Link to this heading">¶</a></h3>
+<p>The element abundance file should have the following structure to be
+readable by <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Solar element abundances based on Asplund et al. (2009)</span>
+<span class="n">e</span><span class="o">-</span>  <span class="mf">0.00</span>
+<span class="n">Al</span>  <span class="mf">6.45</span>
+<span class="n">Ar</span>  <span class="mf">6.40</span>
+<span class="n">C</span>   <span class="mf">8.43</span>
+<span class="n">Ca</span>  <span class="mf">6.34</span>
+<span class="n">Cl</span>  <span class="mf">5.50</span>
+<span class="n">Co</span>  <span class="mf">4.99</span>
+<span class="n">Cr</span>  <span class="mf">5.64</span>
+<span class="n">Cu</span>  <span class="mf">4.19</span>
+<span class="n">F</span>   <span class="mf">4.56</span>
+<span class="n">Fe</span>  <span class="mf">7.50</span>
+<span class="n">Ge</span>  <span class="mf">3.65</span>
+<span class="n">H</span>   <span class="mf">12.00</span>
+<span class="n">He</span>  <span class="mf">10.93</span>
+<span class="n">K</span>   <span class="mf">5.03</span>
+<span class="n">Mg</span>  <span class="mf">7.60</span>
+<span class="n">Mn</span>  <span class="mf">5.43</span>
+<span class="n">N</span>   <span class="mf">7.83</span>
+<span class="n">Na</span>  <span class="mf">6.24</span>
+<span class="n">Ne</span>  <span class="mf">7.93</span>
+<span class="n">Ni</span>  <span class="mf">6.22</span>
+<span class="n">O</span>   <span class="mf">8.69</span>
+<span class="n">P</span>   <span class="mf">5.41</span>
+<span class="n">S</span>   <span class="mf">7.12</span>
+<span class="n">Si</span>  <span class="mf">7.51</span>
+<span class="n">Ti</span>  <span class="mf">4.95</span>
+<span class="n">V</span>   <span class="mf">3.93</span>
+<span class="n">Zn</span>  <span class="mf">4.56</span>
+</pre></div>
+</div>
+<p>The first line is always a header line that provides important
+information for the user and is ignored by <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. All subsequent
+lines contain each the symbol for an element and its element abundance.
+Molecules that contain elements not present in this file are ignored.
+The element abundance for the electron has an arbitrary value. It is
+only present in the file to inform <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> that the electrons (and
+thus ions) should be included in the chemistry calculations. Its element
+abundance <span class="math notranslate nohighlight">\(\epsilon_e\)</span> will internally be set to 0 because its
+number density is determined by charge balance. The elements are not
+required to be in any particular order.</p>
+</section>
+<section id="standard-files">
+<h3>Standard files<a class="headerlink" href="#standard-files" title="Link to this heading">¶</a></h3>
+<p>Together with <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, we provide several different element
+abundance files, located in the <code class="docutils literal notranslate"><span class="pre">input/element_abundances/</span></code> folder.
+The folder includes three different sets of element abundances:
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2009ARA&amp;A..47..481A">Asplund et al. (2009)</a>,
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2021A&amp;A...653A.141A">Asplund et al. (2021)</a>, and
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2003ApJ...591.1220L">Lodders (2003)</a> .</p>
+<p>The standard files provide the solar element abundances for species that
+are at least as abundant as germanium. As alternative versions, we also
+include additional files <code class="docutils literal notranslate"><span class="pre">*_extended.dat</span></code> for each compilation, that
+includes more elements, up to uranium. These files can be used for the
+extended set of ion species described in the next section.</p>
+</section>
+</section>
+<section id="species-data-files">
+<h2>Species data files<a class="headerlink" href="#species-data-files" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">Another important input is the thermochemical data for all gas phase
+species (molecules and ions) as well as condensates. This includes in
+particular their stoichiometric information as well as a
+parametrisation for their mass action constants. As described in the
+first <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> publication
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2018MNRAS.479..865S">Stock et al. (2018)</a>, we use the natural
+logarithm of the dimensionless mass action constant of species
+<span class="math notranslate nohighlight">\(i\)</span></div>
+</div>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\ln\bar{K}_i(T) = - \frac{\Delta_\mathrm{r} G_i(T)}{R\,T} \ ,
+\label{eq:lnK}\]</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line">where <span class="math notranslate nohighlight">\(G_i(T)\)</span> is the Gibbs free energy of dissociation.
+For <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, these mass action constants are fitted with the
+expression</div>
+</div>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\ln\bar{K}_i(T) = \frac{a_0}{T} + a_1\,\ln T + b_0 + b_1\,T + b_2\,T^2 \ ,
+\label{eq:fit}\]</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line">where <span class="math notranslate nohighlight">\(a_0\)</span>, <span class="math notranslate nohighlight">\(a_1\)</span>, <span class="math notranslate nohighlight">\(b_0\)</span>, <span class="math notranslate nohighlight">\(b_1\)</span>, and
+<span class="math notranslate nohighlight">\(b_2\)</span> are the fit coefficients.</div>
+<div class="line">It is in principle possible to use your own parametrisation. For that,
+you need to edit the source code that performs the calculation of the
+mass action constants. For the gas phase species, the corresponding
+code can be found in the source file
+<code class="docutils literal notranslate"><span class="pre">gas_phase/molecule_struct.cpp</span></code>, while the one for condensates is
+located in <code class="docutils literal notranslate"><span class="pre">condensed_phase/condensate_struct.cpp</span></code>.</div>
+</div>
+<section id="file-structure-for-gas-phase-species">
+<h3>File structure for gas phase species<a class="headerlink" href="#file-structure-for-gas-phase-species" title="Link to this heading">¶</a></h3>
+<p>For <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, the species information file should have the following
+structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:</span>
+<span class="c1">#includes elements with eps &gt;= eps_Ge</span>
+<span class="c1">#fit coefficients calculated from indicated data source.</span>
+<span class="n">Al1Cl1</span> <span class="n">Aluminum_Chloride</span> <span class="p">:</span> <span class="n">Al</span> <span class="mi">1</span> <span class="n">Cl</span> <span class="mi">1</span> <span class="c1"># JANAF tables</span>
+   <span class="mf">6.01726e+04</span>  <span class="o">-</span><span class="mf">9.82181e-01</span>  <span class="o">-</span><span class="mf">5.80778e+00</span>   <span class="mf">1.65774e-04</span>  <span class="o">-</span><span class="mf">6.11197e-09</span>
+
+<span class="n">Al1Cl1F1</span> <span class="n">Aluminum_Chloride_Fluoride</span> <span class="p">:</span> <span class="n">Al</span> <span class="mi">1</span> <span class="n">Cl</span> <span class="mi">1</span> <span class="n">F</span> <span class="mi">1</span> <span class="c1"># JANAF tables</span>
+   <span class="mf">1.22295e+05</span>  <span class="o">-</span><span class="mf">1.60844e+00</span>  <span class="o">-</span><span class="mf">1.43675e+01</span>   <span class="mf">3.72486e-04</span>  <span class="o">-</span><span class="mf">1.98493e-08</span>
+
+<span class="n">Al1Cl1F2</span> <span class="n">Aluminum_Chloride_Fluoride</span> <span class="p">:</span> <span class="n">Al</span> <span class="mi">1</span> <span class="n">Cl</span> <span class="mi">1</span> <span class="n">F</span> <span class="mi">2</span> <span class="c1"># JANAF tables</span>
+   <span class="mf">1.93126e+05</span>  <span class="o">-</span><span class="mf">1.90100e+00</span>  <span class="o">-</span><span class="mf">3.00531e+01</span>   <span class="mf">6.68640e-04</span>  <span class="o">-</span><span class="mf">3.72957e-08</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">The first three lines of the file are treated as header lines and
+discarded when reading in the file.</div>
+<div class="line">The data for each species consists of two lines, while different
+species are separated by a blank line. The first line starts with the
+species’ sum formula. In the standard <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> files, we use the
+modified Hill notation for the formulas. Isomeric species would in
+principle have the same formula in the Hill notation. For example, the
+two species and would both be referred to as <code class="docutils literal notranslate"><span class="pre">C1H1N1</span></code>. To
+distinguish the two in the standard set of <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, underscores
+are used, such that <code class="docutils literal notranslate"><span class="pre">C1H1N1_1</span></code> refers to , while <code class="docutils literal notranslate"><span class="pre">C1H1N1_2</span></code>
+represents . The use of the Hill notation is not a requirement. In a
+custom version of the species file, a different chemical notation
+could be used.</div>
+<div class="line">The sum formula is followed by an optional name for the species, for
+example <code class="docutils literal notranslate"><span class="pre">Aluminum</span> <span class="pre">Chloride</span></code>. The name is read until the seperator
+<code class="docutils literal notranslate"><span class="pre">:</span></code> is encountered. Note that there has to be a white space between
+the last part of the species’ name and the <code class="docutils literal notranslate"><span class="pre">:</span></code>.</div>
+</div>
+<div class="line-block">
+<div class="line">After the seperator <code class="docutils literal notranslate"><span class="pre">:</span></code>, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> expects the stoichiometric
+information of the species, i.e. the elements and their stoichiometric
+coefficients. The elements need to be present in the element abundance
+file as well, otherwise the species will be discarded. They don’t need
+to be in any specific order.</div>
+<div class="line">The stoichiometric information is followed by an optional reference
+for the data. If a reference is used, a separator <code class="docutils literal notranslate"><span class="pre">#</span></code> is required
+between the stoichiometry and the reference.</div>
+<div class="line">The second line contains the fit coefficients for the mass action
+constants. <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will read in as many coefficients as it can
+find in that line but for its own parametrisation it will only use the first five.</div>
+</div>
+</section>
+<section id="file-structure-for-condensate-species">
+<h3>File structure for condensate species<a class="headerlink" href="#file-structure-for-condensate-species" title="Link to this heading">¶</a></h3>
+<p>For <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, the species information file should have the following
+structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:</span>
+<span class="c1">#includes elements with eps &gt;= eps_Ge</span>
+<span class="c1">#fit coefficients calculated from indicated data source.</span>
+<span class="n">Al2O3</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">l</span><span class="p">)</span> <span class="n">Aluminum</span> <span class="n">Oxide</span><span class="p">,</span> <span class="n">Corundum</span> <span class="p">:</span> <span class="n">Al</span> <span class="mi">2</span> <span class="n">O</span> <span class="mi">3</span> <span class="c1"># JANAF tables</span>
+   <span class="n">sl</span>
+   <span class="mf">2327.0</span> <span class="mf">4000.0</span>
+   <span class="mf">3.68482e+05</span> <span class="o">-</span><span class="mf">1.04194e+01</span> <span class="o">-</span><span class="mf">2.79243e+01</span> <span class="mf">1.17904e-02</span> <span class="o">-</span><span class="mf">1.58786e-06</span>
+   <span class="mf">3.71349e+05</span> <span class="mf">5.273685e+00</span> <span class="o">-</span><span class="mf">1.35345e+02</span> <span class="mf">1.68173e-03</span> <span class="o">-</span><span class="mf">8.80259e-08</span>
+
+<span class="n">Al2SiO5</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="n">Aluminum</span> <span class="n">Silicate</span><span class="p">,</span> <span class="n">Kyanite</span> <span class="p">:</span> <span class="n">Al</span> <span class="mi">2</span> <span class="n">O</span> <span class="mi">5</span> <span class="n">Si</span> <span class="mi">1</span> <span class="c1"># JANAF tables</span>
+   <span class="n">s</span>
+   <span class="mf">3000.0</span>
+   <span class="mf">5.91829e+05</span> <span class="o">-</span><span class="mf">1.46795e+01</span> <span class="o">-</span><span class="mf">5.53926e+01</span> <span class="mf">1.428257e-02</span> <span class="o">-</span><span class="mf">1.5322e-06</span>
+
+<span class="n">CO</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="n">Carbon</span> <span class="n">Monoxide</span> <span class="p">:</span> <span class="n">C</span> <span class="mi">1</span> <span class="n">O</span> <span class="mi">1</span> <span class="c1"># Goodwin, R. D., 1985.</span>
+  <span class="n">l</span>
+  <span class="mf">132.85</span>
+  <span class="mf">1.298145e+05</span> <span class="mf">2.919440e+00</span> <span class="o">-</span><span class="mf">3.27363e+01</span> <span class="o">-</span><span class="mf">1.57201e-02</span> <span class="o">-</span><span class="mf">5.51055e-05</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">The first three lines of the file are again header lines and discarded
+when reading in the file.</div>
+<div class="line">For condensates, the data set for each species consists of at least
+five lines. The first one is identical to the one for gas phase
+species described above. One difference with respect to the species’
+formulas compared to those for molecules and ions is that we don’t use
+the Hill notation here. To be consistent with general mineralogy, we
+rather use the normal sum formulas here, together with the phase
+state.</div>
+</div>
+<p>The second line contains the phase state information. <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>
+currently recognises three different states: <code class="docutils literal notranslate"><span class="pre">s</span></code> (solid), <code class="docutils literal notranslate"><span class="pre">l</span></code>
+(liquid), and <code class="docutils literal notranslate"><span class="pre">sl</span></code> (solid and liquid).</p>
+<p>Condensates can have multiple data fits attached to them. Phase changes
+can result in non-monotonic slopes within the Gibb’s free energy of
+formation. To allow for a better fit to the resulting mass action
+coefficients, it is therefore usually beneficial to fit each phase
+separately. Additionally, thermochemical data for condensates is often
+only tabulated over a restricted temperature range, which makes
+extrapolation to higher temperatures problematic.</p>
+<p>The third line, thus, lists the temperature limits of the different
+fitted data sets in the order they appear below. For solids, the limit
+is usually the melting point, whereas for liquids this can typically be
+the critical point or the last tabulated data point.</p>
+<p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will use these temperature limits of the phase states when
+it calculates the activities of the condensates. By default,
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will also <em>not</em> extrapolate the date fits beyond the last
+listed temperature. The user can override this behaviour by setting a
+special <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> parameter. More information on this can be found <a class="reference internal" href="parameters.html#sect-fc-param"><span class="std std-ref">here</span></a>.</p>
+<p>The following lines finally contain the fit coefficients for the
+different data fits. Their format is identical to the corresponding one
+for the gas phase species discussed above. The number of data fits has
+to be equal to the number of temperature limits discussed above.</p>
+</section>
+<section id="standard-files-1">
+<span id="id2"></span><h3>Standard files<a class="headerlink" href="#standard-files-1" title="Link to this heading">¶</a></h3>
+<p>Together with <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, we provide two different files for gas phase
+species, located in the <code class="docutils literal notranslate"><span class="pre">input/logK/</span></code> folder. The file <code class="docutils literal notranslate"><span class="pre">logK.dat</span></code>
+provides the standard set, discussed in
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2018MNRAS.479..865S">Stock et al. (2018)</a> and
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2022MNRAS.517.4070S">Stock, Kitzmann &amp; Patzer (2022)</a>. This includes species for
+all elements at least as abundant as germanium.</p>
+<p>As an alternative version, we also provide an additional file
+<code class="docutils literal notranslate"><span class="pre">logK_extended.dat</span></code> that includes more ions for elements up to
+uranium. The data for this file is discussed in
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2019A%26A...627A.165H">Hoeijmakers et al. (2019)</a>.</p>
+<p>For condensate species we provide the file <code class="docutils literal notranslate"><span class="pre">logK_condensates.dat</span></code> in
+the <code class="docutils literal notranslate"><span class="pre">input/logK/</span></code> folder that contains all species discussed in
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2023arXiv230902337K">Kitzmann, Stock &amp; Patzer (2023)</a>. We note that these condensates
+should only be used in combination with the standard <code class="docutils literal notranslate"><span class="pre">logK.dat</span></code> file
+for the gas phase since it lacks condensate species for the additional
+elements contained in the species listed in <code class="docutils literal notranslate"><span class="pre">logK_extended.dat</span></code>.</p>
+</section>
+</section>
+<section id="basic-element-data-file-optional">
+<h2>Basic element data file (optional)<a class="headerlink" href="#basic-element-data-file-optional" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">In addition to the element abundances, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> also needs to have
+additional basic data for the elements, such as their atomic weight to
+calculate the molecular weights of molecules, for example. For most
+elements up to uranium, this data is hard-coded in a standard set
+located in the header file <code class="docutils literal notranslate"><span class="pre">chemical_element_data.h</span></code>. If you want to
+change this standard set by removing or adding elements or add
+isotopes, you can change it directly in the header file and re-compile
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code>.</div>
+<div class="line">Alternatively, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> also has the option to read an external
+file with the required information.</div>
+</div>
+<section id="file-structure-1">
+<span id="id4"></span><h3>File structure<a class="headerlink" href="#file-structure-1" title="Link to this heading">¶</a></h3>
+<p>The optional file has the following, simple structure, starting with a
+header line that is ignored when reading in the file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Basic element data based on Meija et al. (2016)</span>
+<span class="n">e</span><span class="o">-</span>   <span class="n">Electron</span>        <span class="mf">5.4857990907e-4</span>
+<span class="n">H</span>    <span class="n">Hydrogen</span>        <span class="mf">1.008</span>
+<span class="n">He</span>   <span class="n">Helium</span>          <span class="mf">4.002602</span>
+<span class="n">Li</span>   <span class="n">Lithium</span>         <span class="mf">6.94</span>
+<span class="n">Be</span>   <span class="n">Beryllium</span>       <span class="mf">9.0121831</span>
+<span class="n">B</span>    <span class="n">Boron</span>           <span class="mf">10.81</span>
+<span class="n">C</span>    <span class="n">Carbon</span>          <span class="mf">12.011</span>
+<span class="n">N</span>    <span class="n">Nitrogen</span>        <span class="mf">14.007</span>
+<span class="n">O</span>    <span class="n">Oxygen</span>          <span class="mf">15.999</span>
+<span class="n">F</span>    <span class="n">Fluorine</span>        <span class="mf">18.998403163</span>
+<span class="n">Ne</span>   <span class="n">Neon</span>            <span class="mf">20.1797</span>
+<span class="n">Na</span>   <span class="n">Sodium</span>          <span class="mf">22.98976928</span>
+<span class="n">Mg</span>   <span class="n">Magnesium</span>       <span class="mf">24.305</span>
+<span class="n">Al</span>   <span class="n">Aluminium</span>       <span class="mf">26.9815385</span>
+<span class="n">Si</span>   <span class="n">Silicon</span>         <span class="mf">28.085</span>
+<span class="n">P</span>    <span class="n">Phosphorus</span>      <span class="mf">30.973761998</span>
+<span class="n">S</span>    <span class="n">Sulfur</span>          <span class="mf">32.06</span>
+<span class="n">Cl</span>   <span class="n">Chlorine</span>        <span class="mf">35.45</span>
+<span class="n">Ar</span>   <span class="n">Argon</span>           <span class="mf">39.948</span>
+<span class="n">K</span>    <span class="n">Potassium</span>       <span class="mf">39.0983</span>
+<span class="n">Ca</span>   <span class="n">Calcium</span>         <span class="mf">40.078</span>
+<span class="n">Sc</span>   <span class="n">Scandium</span>        <span class="mf">44.955908</span>
+<span class="n">Ti</span>   <span class="n">Titanium</span>        <span class="mf">47.867</span>
+<span class="n">Mn</span>   <span class="n">Manganese</span>       <span class="mf">54.938044</span>
+<span class="n">Fe</span>   <span class="n">Iron</span>            <span class="mf">55.845</span>
+<span class="n">Co</span>   <span class="n">Cobalt</span>          <span class="mf">58.933194</span>
+<span class="n">Ni</span>   <span class="n">Nickel</span>          <span class="mf">58.6934</span>
+<span class="n">Cu</span>   <span class="n">Copper</span>          <span class="mf">63.546</span>
+<span class="n">Zn</span>   <span class="n">Zinc</span>            <span class="mf">65.38</span>
+<span class="n">Ga</span>   <span class="n">Gallium</span>         <span class="mf">69.723</span>
+<span class="n">Ge</span>   <span class="n">Germanium</span>       <span class="mf">72.630</span>
+<span class="n">As</span>   <span class="n">Arsenic</span>         <span class="mf">74.921595</span>
+<span class="n">Se</span>   <span class="n">Selenium</span>        <span class="mf">78.971</span>
+<span class="n">Br</span>   <span class="n">Bromine</span>         <span class="mf">79.904</span>
+</pre></div>
+</div>
+<p>It contains three columns, where the first one lists the elements’
+symbols, the second their names, and the third their atomic weights. An
+example of this file can be found in the folder
+<code class="docutils literal notranslate"><span class="pre">fastchem_src/chem_input/</span></code>.</p>
+</section>
+</section>
+<section id="fastchem-parameter-file-optional">
+<span id="sec-fc-parameter-file"></span><h2>FastChem parameter file (optional)<a class="headerlink" href="#fastchem-parameter-file-optional" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> is able to load a specific parameter file when one of its
+instances is created through the object class constructor. This
+parameter file includes the most important parameters and options used
+within <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. All of these quantities can also be changed during
+runtime by using the appropriate methods listed <a class="reference internal" href="cpp_class.html#sec-fastchem-methods"><span class="std std-ref">here</span></a>
+for the <code class="docutils literal notranslate"><span class="pre">C++</span></code> object class and <a class="reference internal" href="python_module.html#sec-pfc-methods"><span class="std std-ref">here</span></a>
+for the Python module. Using the parameter
+file in principle allows changing these options and parameters outside
+of the code and, therefore, does not require the code to be recompiled.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">input/</span></code> folder of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> repository contains two example files:
+<code class="docutils literal notranslate"><span class="pre">parameters.dat</span></code> and <code class="docutils literal notranslate"><span class="pre">parameters_py.dat</span></code>. The former is to be used for the C++
+version, while the latter is intended for the Python version. The only difference
+between the two files are the relative locations of the other input files since the Python
+scripts are called from within a separate folder.</p>
+<section id="file-structure-2">
+<span id="id5"></span><h3>File structure<a class="headerlink" href="#file-structure-2" title="Link to this heading">¶</a></h3>
+<p>The optional parameter file has the following structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#element abundance file</span>
+<span class="nb">input</span><span class="o">/</span><span class="n">element_abundances</span><span class="o">/</span><span class="n">asplund_2009</span><span class="o">.</span><span class="n">dat</span>
+
+<span class="c1">#species data files</span>
+<span class="nb">input</span><span class="o">/</span><span class="n">logK</span><span class="o">/</span><span class="n">logK</span><span class="o">.</span><span class="n">dat</span> <span class="nb">input</span><span class="o">/</span><span class="n">logK</span><span class="o">/</span><span class="n">logK_condensates</span><span class="o">.</span><span class="n">dat</span>
+
+<span class="c1">#accuracy of chemistry iteration</span>
+<span class="mf">1.0e-4</span>
+
+<span class="c1">#accuracy of element conservation</span>
+<span class="mf">1.0e-4</span>
+
+<span class="c1">#max number of chemistry iterations</span>
+<span class="mi">80000</span>
+
+<span class="c1">#max number internal solver iterations</span>
+<span class="mi">20000</span>
+
+<span class="c1">#element data file (optional)</span>
+<span class="nb">input</span><span class="o">/</span><span class="n">basic_element_data</span><span class="o">.</span><span class="n">dat</span>
+</pre></div>
+</div>
+<p>The first two entries are the locations of the element abundance and gas
+phase &amp; condensate species data files. The condensate species data file
+is optional and can be left out or also replaced by <code class="docutils literal notranslate"><span class="pre">none</span></code>. In that
+case, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> won’t be able to perform calculations including
+condensation, though.</p>
+<p>The next parameter determines the convergence criterion of the chemistry
+iteration. This value is also used for the internal Newton’s method and
+the condensation calculation iteration. The latter ones can be adjusted
+within in the code by the methods listed <a class="reference internal" href="cpp_class.html#sec-fastchem-methods"><span class="std std-ref">here</span></a>
+C++ version and <a class="reference internal" href="python_module.html#sec-pfc-methods"><span class="std std-ref">here</span></a> for Python. This is
+followed by the (relative) accuracy of the element conservation checks.</p>
+<p>The maximum number of chemistry iterations is listed next. The value
+here is also used for the maximum number of condensation iterations and
+for the number of coupled gas and condensed phase iterations.</p>
+<p>The next parameter sets the maximum numbers of iterations for the
+different internal numerical methods employed within <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. This
+includes the Newton, Nelder-Mead, and bisection methods. Using the
+corresponding functions of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object class, this
+number can be adjusted for each of these numerical methods individually.
+The last parameter is optional and does not need to be present in the
+file. It contains the path to the file for an alternative basic element
+data file. If this parameter is not present, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will use the
+standard set that is directly located in the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> source code
+(see previous section).</p>
+</section>
+</section>
+<section id="output-files">
+<span id="sec-fc-cpp-output"></span><h2>Output files<a class="headerlink" href="#output-files" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">C++</span></code> stand-alone version will produce two output files: a
+detailed chemistry output and a monitor file with diagnostic
+information. The file names of both files can be chosen in the config
+file discussed in the previous section.</p>
+<section id="gas-phase-chemistry-output">
+<h3>Gas phase chemistry output<a class="headerlink" href="#gas-phase-chemistry-output" title="Link to this heading">¶</a></h3>
+<p>The chemistry output is organised in columns. The first line of the file
+is a header that describes the content of each column.</p>
+<p>The first and second column contain the pressure in bar and the
+temperature in K, respectively. The third column lists the total number
+density of all atoms <span class="math notranslate nohighlight">\(i\)</span>, i.e.
+<span class="math notranslate nohighlight">\(n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic} \right)\)</span>,
+summed over their atomic number densities, as well as the ones contained
+in all other molecules/ions <span class="math notranslate nohighlight">\(j\)</span> and the fictitious number
+densities of the condensate species <span class="math notranslate nohighlight">\(n_c\)</span>. This is usually only a
+diagnostic quantity and rarely used in other applications.</p>
+<p>The fourth column is the number density of the gas in units of
+cm<span class="math notranslate nohighlight">\(^{-3}\)</span>, derived from the ideal gas law. This is followed by a
+column of mean molecular weights of the mixture of species in units of
+the unified atomic mass unit. For all practical purposes, this can also
+be converted into units of g/mol.</p>
+<p>All subsequent columns contain the number densities (in
+cm<span class="math notranslate nohighlight">\(^{-3}\)</span>) or the mixing ratios of all species, depending on the
+choice of output made in the config file. By default, elements will be
+placed in the beginning, followed by molecules and ions. Note that in
+its species data files, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> employs the modified Hill notation
+as used in the JANAF thermochemical tables (<a class="reference external" href="https://janaf.nist.gov/">Chase, 1986</a>)
+for the formulas of all
+non-element species. If, for example, you are looking for the abundance
+of carbon dioxide, you need to locate the <code class="docutils literal notranslate"><span class="pre">C1O2</span></code> column rather than
+<code class="docutils literal notranslate"><span class="pre">CO2</span></code>, whereas <code class="docutils literal notranslate"><span class="pre">NH3</span></code> would be listed as <code class="docutils literal notranslate"><span class="pre">H3N1</span></code>.</p>
+</section>
+<section id="condensate-species-output">
+<h3>Condensate species output<a class="headerlink" href="#condensate-species-output" title="Link to this heading">¶</a></h3>
+<p>The output for the condensate species has a similar structure than the
+one for the gas phase discussed above. The first two columns again refer
+to the pressures and temperatures. The subsequent columns for the
+various elements contain the corresponding degrees of condensation.</p>
+<p>The remaining columns for the condensate species are the fictitious
+number densities in units of cm<span class="math notranslate nohighlight">\(^{-3}\)</span>. As discussed in
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2023arXiv230902337K">Kitzmann, Stock &amp; Patzer (2023)</a>, for a given temperature and
+pressure the total number of stable condensates that can be present is
+limited by the number of elements. Thus, most condensates will usually
+have a fictitious number density of 0 cm<span class="math notranslate nohighlight">\(^{-3}\)</span>, which indicates that they are
+not present.</p>
+</section>
+<section id="monitor-file">
+<h3>Monitor file<a class="headerlink" href="#monitor-file" title="Link to this heading">¶</a></h3>
+<p>The monitor output file is a <strong>very</strong> important diagnostic output that
+provides crucial details on the outcome of the chemistry calculations.
+You should further investigate any chemistry calculations that shows
+problems in this file. It is, therefore, advisable to check this file
+after each calculation to verify that everything went fine. The first
+line of the file is a header that describes the content of each column.</p>
+<p>The monitor output is organised in columns, where the first column
+contains a simple integer that refers to index of the input
+temperature-pressure structure. The second column lists the number of
+coupled gas-phase chemistry and condensed phase iterations that were
+required to solve the system. If the number is zero, then no condensates
+were stable and only a pure gas-phase chemistry calculation was
+required.</p>
+<p>The third columns contains the total number of gas-phase chemistry
+iterations, while the fourth column lists the total number of iterations
+for the condensed phase.</p>
+<p>The next columns contain information on the convergence of the chemistry
+and on the status of overall element conservation. If the chemistry did
+converge properly <code class="docutils literal notranslate"><span class="pre">ok</span></code> will be listed as output, whereas <code class="docutils literal notranslate"><span class="pre">fail</span></code> is
+used when the chemistry failed to converge in the maximum allowed number
+of steps. The same keywords are used for the element conservation
+status: <code class="docutils literal notranslate"><span class="pre">ok</span></code> if all elements were conserved, <code class="docutils literal notranslate"><span class="pre">fail</span></code> if any element
+was not conserved.</p>
+<p>The next four columns contain basic chemistry output, that is also found
+in the chemistry output file: the pressure, temperature, total element
+density, gas number density, and mean molecular weight.</p>
+<p>All remaining columns list the status of the element conservation for
+each element separately. The same keywords as for the overall element
+conservation status are used again in these columns. For the electrons,
+this status refers to the charge balance rather than element
+conservation.</p>
+</section>
+</section>
+<section id="benchmark-input-and-output-files">
+<h2>Benchmark input and output files<a class="headerlink" href="#benchmark-input-and-output-files" title="Link to this heading">¶</a></h2>
+<p>The input folder contains a selected sample of atmospheric structures of
+various objects, from AGB stars to exoplanets.  The
+pre-computed chemistry output of these benchmark structures can be found
+in the folder <code class="docutils literal notranslate"><span class="pre">output_benchmarks</span></code>. This chemistry output has been
+generated with the standard <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> options and the standard solar
+element abundance and equilibrium constants files. These benchmarks can
+be used to validate that the FastChem installation works correctly.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_l.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">FastChem - Ultrafast Equilibrium Chemistry</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=exoclime&repo=fastchem&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Standard input and output files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#element-abundance-file">Element abundance file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#species-data-files">Species data files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-element-data-file-optional">Basic element data file (optional)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fastchem-parameter-file-optional">FastChem parameter file (optional)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output-files">Output files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#benchmark-input-and-output-files">Benchmark input and output files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_standalone.html">C++ stand-alone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyfastchem.html">Running pyFastChem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_class.html">Detailed C++ object class description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_module.html">Detailed pyFastChem module description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Internal parameters</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="cpp_standalone.html" title="next chapter">C++ stand-alone executable</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019 - 2023, Daniel Kitzmann, Joachim Stock.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/sections/input_output.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
