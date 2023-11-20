@@ -59,7 +59,21 @@ bool GasPhase<double_type>::calculate(
   for (iter_step=0; iter_step<max_iter; ++iter_step)
   {
     double_type n_maj = 0.0;
-   
+
+    //check if n_j_min are small enough, if not use backup solver
+    for (auto & i : elements)
+      if ( (i.number_density_min + i.number_density_maj > i.phi * gas_density) && use_backup_solver == false)
+      {
+        use_backup_solver = true;
+       
+        if (options.verbose_level >= 4)
+          std::cout << "Too large n_min and n_maj for species " 
+            << i.symbol << ". Switching to backup.  Iteration step: " 
+            << iter_step << "\n";
+
+        break;
+      }
+
     //calculate the element densities in their respective order
     for (auto it = element_calculation_order.begin(); it<element_calculation_order.end(); it++)
       calculateElementDensities(elements[*it], gas_density, use_backup_solver, n_maj);

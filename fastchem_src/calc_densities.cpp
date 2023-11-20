@@ -442,10 +442,6 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
       //gas_phase.reInitialise();
 
-      //reset minor species densities for all elements
-      for (auto & e : element_data.elements)
-        e.number_density_min = 0.0;
-
       fastchem_converged = gas_phase.calculate(
         temperature,
         gas_density,
