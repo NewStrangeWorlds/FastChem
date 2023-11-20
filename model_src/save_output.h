@@ -50,11 +50,11 @@ bool saveChemistryOutput(
 
   if (!file.fail())
   {
-    file << std::setw(16) << std::left << "#p (bar)" << "\t"
-         << std::setw(16) << std::left << "T (K)" << "\t"
-         << std::setw(16) << std::left << "n_<tot> (cm-3)" << "\t"
-         << std::setw(16) << std::left << "n_g (cm-3)" << "\t"
-         << std::setw(16) << std::left << "m (u)";
+    file << std::setw(16) << std::left << "#p(bar)" << "\t"
+         << std::setw(16) << std::left << "T(K)" << "\t"
+         << std::setw(16) << std::left << "n_<tot>(cm-3)" << "\t"
+         << std::setw(16) << std::left << "n_g(cm-3)" << "\t"
+         << std::setw(16) << std::left << "m(u)";
 
     for (size_t i=0; i<nb_species; i++)
       file << "\t" << std::setw(16) << std::left << species_symbols[i];
@@ -108,8 +108,8 @@ bool saveCondOutput(
 
   if (!file.fail())
   {
-    file << std::setw(16) << std::left << "#p (bar)" << "\t"
-         << std::setw(16) << std::left << "T (K)";
+    file << std::setw(16) << std::left << "#p(bar)" << "\t"
+         << std::setw(16) << std::left << "T(K)";
 
     for (size_t i=0; i<nb_elements; i++)
       file << "\t" << std::setw(16) << std::left << element_symbols[i];
@@ -163,17 +163,17 @@ bool saveMonitorOutput(
 
   if (!file.fail())
   {
-    file << std::setw(16) << std::left << "#grid point" << "\t"
+    file << std::setw(16) << std::left << "#grid_point" << "\t"
          << std::setw(16) << std::left << "iterations" << "\t"
          << std::setw(16) << std::left << "chem_iter" << "\t"
          << std::setw(16) << std::left << "cond_iter" << "\t"
          << std::setw(16) << std::left << "converged" << "\t"
          << std::setw(16) << std::left << "elem_conserved" << "\t"
-         << std::setw(16) << std::left << "p (bar)" << "\t"
-         << std::setw(16) << std::left << "T (K)" << "\t"
-         << std::setw(16) << std::left << "n_<tot> (cm-3)" << "\t"
-         << std::setw(16) << std::left << "n_g (cm-3)" << "\t"
-         << std::setw(16) << std::left << "m (u)";
+         << std::setw(16) << std::left << "p(bar)" << "\t"
+         << std::setw(16) << std::left << "T(K)" << "\t"
+         << std::setw(16) << std::left << "n_<tot>(cm-3)" << "\t"
+         << std::setw(16) << std::left << "n_g(cm-3)" << "\t"
+         << std::setw(16) << std::left << "m(u)";
     
     for (unsigned int i=0; i<nb_elements; i++)
       file << "\t" << std::setw(5) << std::left << element_symbols[i];

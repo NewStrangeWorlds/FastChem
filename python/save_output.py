@@ -46,7 +46,7 @@ def saveChemistryOutput(file_path,                     #the path to the output f
 
   with open(file_path, 'w') as file:
     #file header
-    file.write('{0:<16}\t{1:<16}\t{2:<16}\t{3:<16}\t{4:<16}'.format('#p (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (u)'))
+    file.write('{0:<16}\t{1:<16}\t{2:<16}\t{3:<16}\t{4:<16}'.format('#p(bar)', 'T(K)', 'n_<tot>(cm-3)', 'n_g(cm-3)', 'm(u)'))
 
     #print the description of the additional columns
     #use 'unk' if the their number do not correspond to the number of additonal columns
@@ -158,7 +158,7 @@ def saveCondOutput(file_path,                     #the path to the output file
 
   with open(file_path, 'w') as file:
     #file header
-    file.write('{0:<16}\t{1:<16}'.format('#p (bar)', 'T (K)'))
+    file.write('{0:<16}\t{1:<16}'.format('#p(bar)', 'T(K)'))
 
     #print the description of the additional columns
     #use 'unk' if the their number do not correspond to the number of additonal columns
@@ -285,17 +285,17 @@ def saveMonitorOutput(file_path,                     #the path to the output fil
   with open(file_path, 'w') as file:
     #file header
     file.write('{0:<16}{1:<16}{2:<16}{3:<16}{4:<24}{5:<24}{6:<24}{7:<24}{8:<24}{9:<24}{10:<24}'.format(
-      '#grid point', 
+      '#grid_point', 
       '#iterations', 
       '#chem_iter', 
       '#cond_iter',
       'converged', 
       'elem_conserved', 
-      'p (bar)', 
-      'T (K)', 
-      'n_<tot> (cm-3)', 
-      'n_g (cm-3)', 
-      'm (u)'))
+      'p(bar)', 
+      'T(K)', 
+      'n_<tot>(cm-3)', 
+      'n_g(cm-3)', 
+      'm(u)'))
 
     #print the header description of the additional columns
     #use 'unk' if the their number do not correspond to the number of additonal columns
@@ -394,7 +394,7 @@ def saveChemistryOutputPandas(file_path,                     #the path to the ou
 
 
   #general column headers
-  columns = ['p (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (u)']
+  columns = ['p(bar)', 'T(K)', 'n_<tot>(cm-3)', 'n_g(cm-3)', 'm(u)']
 
 
   #add the descriptions of the additional columns to the header
@@ -486,7 +486,7 @@ def saveCondOutputPandas(file_path,                     #the path to the output 
 
 
   #general column headers
-  columns = ['P (bar)', 'T (K)']
+  columns = ['P(bar)', 'T(K)']
 
 
   #add the descriptions of the additional columns to the header
@@ -588,7 +588,7 @@ def saveMonitorOutputPandas(file_path,                     #the path to the outp
 
 
   #general column headers
-  columns = ['iterations', 'chem_iterations', 'cond_iterations', 'c_convergence', 'elem_conserved', 'p (bar)', 'T (K)', 'n_<tot> (cm-3)', 'n_g (cm-3)', 'm (u)']
+  columns = ['iterations', 'chem_iterations', 'cond_iterations', 'c_convergence', 'elem_conserved', 'p(bar)', 'T(K)', 'n_<tot>(cm-3)', 'n_g(cm-3)', 'm(u)']
 
 
   #add the descriptions of the additional columns to the header

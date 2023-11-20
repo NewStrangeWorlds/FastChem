@@ -185,10 +185,10 @@ structure:
   species’ sum formula. In the standard ``FastChem`` files, we use the
   modified Hill notation for the formulas. Isomeric species would in
   principle have the same formula in the Hill notation. For example, the
-  two species and would both be referred to as ``C1H1N1``. To
+  two species ``HCN`` and ``HNC`` would both be referred to as ``C1H1N1``. To
   distinguish the two in the standard set of ``FastChem``, underscores
-  are used, such that ``C1H1N1_1`` refers to , while ``C1H1N1_2``
-  represents . The use of the Hill notation is not a requirement. In a
+  are used, such that ``C1H1N1_1`` refers to ``HCN``, while ``C1H1N1_2``
+  represents ``HNC``. The use of the Hill notation is not a requirement. In a
   custom version of the species file, a different chemical notation
   could be used.
 | The sum formula is followed by an optional name for the species, for
