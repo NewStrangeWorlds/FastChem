@@ -52,7 +52,7 @@ bool GasPhase<double_type>::calculate(
 
   bool converged = false;
   unsigned int iter_step = 0;
-  bool use_backup_solver = false;
+  bool use_backup_solver = options.chem_use_backup_solver;
 
   unsigned int max_iter = options.nb_max_fastchem_iter;
 

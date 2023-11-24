@@ -113,6 +113,8 @@ struct FastChemOptions{
   double_type logK_limit = 1e10;
   bool cond_use_data_validity_limits = true;
 
+  bool chem_use_backup_solver = false;
+
   bool cond_use_svd = false;
   bool cond_use_full_pivot = false;
   bool cond_solve_full_matrix = false;

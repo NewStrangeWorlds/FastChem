@@ -405,8 +405,13 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   bool cond_converged = false;
   bool combined_converged = false;
 
+  bool chem_backup_solver_default = options.chem_use_backup_solver;
+
+
   if (condensates_act.size() > 0)
-  { 
+  {
+    options.chem_use_backup_solver = true;
+
     std::vector<double_type> number_density_old(element_data.nb_elements, 0.0);
 
     for (size_t i=0; i<element_data.nb_elements; ++i)
@@ -503,6 +508,9 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     cond_converged = true;
     combined_converged = true;
   }
+
+
+  options.chem_use_backup_solver = chem_backup_solver_default;
 
 
   if (!fastchem_converged && options.verbose_level >= 1) 
