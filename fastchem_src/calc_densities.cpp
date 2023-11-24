@@ -463,7 +463,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
       for (auto & i : element_data.elements)
       {
-        if (std::fabs((i.number_density - number_density_old[i.index])) > options.chem_accuracy*number_density_old[i.index]*0.1)
+        if (std::fabs((i.number_density - number_density_old[i.index])) > options.chem_accuracy*number_density_old[i.index])
           combined_converged = false;
 
         number_density_old[i.index] = i.number_density;
