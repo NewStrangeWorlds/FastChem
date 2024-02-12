@@ -99,7 +99,7 @@ template <class double_type>
 void Element<double_type>::checkN(
   const double_type& min_limit, const double_type& gas_density)
 {
-  if (this->number_density < min_limit) this->number_density = min_limit;
+  if (this->number_density < min_limit && !this->fixed_by_condensation) this->number_density = min_limit;
 
   if (this->number_density > gas_density) this->number_density = gas_density;
 }

@@ -57,6 +57,7 @@ set(SRC_FASTCHEM
   fastchem_src/gas_phase/solver_linsol_quadsol.cpp
   fastchem_src/gas_phase/solver_nelder_mead_electron.cpp
   fastchem_src/gas_phase/solver_newtsol.cpp
+  fastchem_src/gas_phase/solver_newtsol_mult.cpp
   fastchem_src/gas_phase/calc_electron_densities.cpp
   fastchem_src/gas_phase/calc_mean_mol_weight.cpp
   fastchem_src/gas_phase/init_solver.cpp

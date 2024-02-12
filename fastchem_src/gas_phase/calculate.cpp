@@ -124,18 +124,74 @@ bool GasPhase<double_type>::calculate(
     }
 
 
+    //sanity check
+    for (auto & e : elements)
+    {
+      if (std::isnan(e.number_density) || std::isinf(e.number_density))
+      {
+        if (options.verbose_level >= 4)
+          std::cout << "Encountered NaN or Inf number density for element " 
+                    << e.symbol << ". Stopping calculation.\n";
+
+        nb_iterations = iter_step;
+
+        return false;
+      }
+    }
+
+
     if (converged)
       break;
 
 
+    if (iter_step > 400)
+    {
+      std::vector<Element<double_type>*> newton_elements;
+
+      solver.selectNewtonElements(
+        elements,
+        molecules,
+        number_density_old,
+        gas_density,
+        newton_elements);
+
+      if (newton_elements.size() > 0)
+      {
+        // std::cout << "Newton elements:\n";
+        // for (auto & e : newton_elements)
+        //   std::cout << e->symbol << "\n";
+
+        // for (auto & e : elements)
+        //   if (e.symbol == "O" || e.symbol == "C")
+        //     newton_elements.push_back(&e);
+
+        double total_element_density = totalElementDensity();
+
+        solver.newtonSolMult(
+          newton_elements,
+          elements,
+          molecules,
+          total_element_density);
+
+        //update densities
+        for (auto & e : elements) 
+          calculateMoleculeDensities(e, gas_density);
+
+        for (auto & e : elements) 
+          e.calcMinorSpeciesDensities(molecules);
+      }
+
+    }
+
+
     //in case the standard FastChem iteration doesn't converge, switch to the backup solver
-    if (iter_step == max_iter-1 && !converged && use_backup_solver == false)
+    if (iter_step == 390 && !converged && use_backup_solver == false)
     {
       if (options.verbose_level >= 4)
         std::cout << "Standard FastChem iteration failed. Switching to backup. " << "\n";
 
       use_backup_solver = true;
-      max_iter += options.nb_max_fastchem_iter;
+      //max_iter += options.nb_max_fastchem_iter;
     }
 
 

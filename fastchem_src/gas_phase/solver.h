@@ -29,6 +29,18 @@
 #include "../species_struct.h"
 #include "../options.h"
 
+#include "../../_ext/Eigen/Dense"
+
+
+namespace Eigen {
+
+template <class double_type>
+using MatrixXdt = Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>;
+
+template <class double_type>
+using VectorXdt = Matrix<double_type, Eigen::Dynamic, 1>;
+}
+
 
 namespace fastchem {
 
@@ -62,6 +74,19 @@ class GasPhaseSolver{
       const std::vector<Molecule<double_type>>& molecules, 
       const double_type gas_density,
       const bool use_alternative);
+
+    void selectNewtonElements(
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules,
+      const std::vector<double_type>& old_number_densities,
+      const double gas_density,
+      std::vector<Element<double_type>*>& newton_elements);
+
+    void newtonSolMult(
+      std::vector<Element<double_type>*>& species,
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules, 
+      const double_type gas_density);
 
     void newtonSolElectron(
       Element<double_type>& species,
@@ -114,6 +139,20 @@ class GasPhaseSolver{
       const std::vector<Element<double_type>>& elements,
       const std::vector<Molecule<double_type>>& molecules,
       const unsigned int order);
+
+    Eigen::VectorXdt<double_type> assembleJacobian(
+      const std::vector<Element<double_type>*>& species,
+      const std::vector< Element<double_type> >& elements,
+      const std::vector< Molecule<double_type> >& molecules,
+      Eigen::MatrixXdt<double_type>& jacobian);
+
+    void assembleRightHandSide(
+      const std::vector<Element<double_type>*>& species,
+      const std::vector< Element<double_type> >& elements,
+      const std::vector< Molecule<double_type> >& molecules,
+      const double gas_density,
+      const Eigen::VectorXdt<double_type>& scaling_factors,
+      Eigen::VectorXdt<double_type>& rhs);
 
     double_type AmCoeffElectron(
       const Element<double_type>& electron,
