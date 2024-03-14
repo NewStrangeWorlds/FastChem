@@ -464,8 +464,8 @@ is a header that describes the content of each column.
 
 The first and second column contain the pressure in bar and the
 temperature in K, respectively. The third column lists the total number
-density of all atoms :math:`i`, i.e.
-:math:`n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic} \right)`,
+density of all atoms :math:`j`, i.e.
+:math:`n_\mathrm{tot} = \sum_j \left( n_j + \sum_i \nu_{ij} n_i + \sum_c \nu_{cj} n_c \right)`,
 summed over their atomic number densities, as well as the ones contained
 in all other molecules/ions :math:`j` and the fictitious number
 densities of the condensate species :math:`n_c`. This is usually only a

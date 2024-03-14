@@ -102,8 +102,9 @@ use ``'none'`` for this argument:
 | Creating a ``FastChem`` object with the first two methods will set
   internal parameters to their default values. The maximum number of
   chemistry iterations will be 3000, the number of Newton, bisection and
-  Nelder-Mead method iterations is 3000, and the accuracy of the of
-  Newton method and the chemistry iterations is set to :math:`10^{-4}`.
+  Nelder-Mead method iterations is 3000, and the accuracy of
+  Newton's method and the convergence criterion for the chemistry iterations 
+  is set to :math:`10^{-5}`. The requirement for element conservation is set to :math:`10^{-4}` by default.
   All of these values can, however, be adjusted during runtime by using
   the methods listed :ref:`here<sec:pfc_methods>`.
   
@@ -252,7 +253,7 @@ with the following arguments:
   Arrays of ``float`` values with the temperature and pressure structure the chemistry has been calculated for.
 
 ``total_element_density``
-  ``float`` array of the total number density of all atoms :math:`i`, i.e. :math:`n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic}\right)`, summed over their atomic number densities, as well as the ones contained in all other molecules/ions :math:`j` and condensate species :math:`c`. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the temperature and pressure vectors.
+  ``float`` array of the total number density of all atoms :math:`j`, i.e. :math:`n_\mathrm{tot} = \sum_j \left( n_j + \sum_i \nu_{ij} n_i + \sum_c \nu_{cj} n_c \right)`, summed over their atomic number densities, as well as the ones contained in all other molecules/ions :math:`j` and condensate species :math:`c`. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the temperature and pressure vectors.
 
 ``mean_molecular_weight``
   ``float`` array of the computed mean molecular weight. The dimension of the array is equal to that of the temperature and pressure vectors.
@@ -414,7 +415,7 @@ with the following arguments:
   One-dimensional array of ``int`` numbers. Contains the total number of condensation calculation iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.
 
 ``total_element_density``
-  One-dimensional array of ``float`` numbers that contains the total number density of all atoms :math:`i`, i.e. :math:`n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic}\right)`, summed over their atomic number densities, as well as the ones contained in all other molecules/ions :math:`j` and condensate species :math:`c`. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.
+  One-dimensional array of ``float`` numbers that contains the total number density of all atoms :math:`j`, i.e. :math:`n_\mathrm{tot} = \sum_j \left( n_j + \sum_i \nu_{ij} n_i + \sum_c \nu_{cj} n_c \right)`, summed over their atomic number densities, as well as the ones contained in all other molecules/ions :math:`j` and condensate species :math:`c`. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.
 
 ``mean_molecular_weight``
   One-dimensional array of ``float`` numbers. Contains the mean molecular weight of the mixture in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of g/mol. The dimension of the array is equal to that of the input temperature and pressure vectors.

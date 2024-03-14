@@ -29,7 +29,7 @@ Standard parameters
 | ``accuracyChem``
 |  Relative accuracy requirement for chemistry iteration and internal solvers (except Newton’s method).
 |  Type: ``double``
-|  Default value: 1e-4
+|  Default value: 1e-5
 
 | ``accuracyElementConservation``
 |  Relative accuracy for checking the element conservation.
@@ -39,12 +39,12 @@ Standard parameters
 | ``accuracyNewton``
 |  Relative accuracy requirement for accuracy requirement for Newton’s method.
 |  Type: ``double``
-|  Default value: 1e-4
+|  Default value: 1e-5
 
 | ``accuracyCond``
 |  Relative accuracy requirement for condensation calculations.
 |  Type: ``double``
-|  Default value: 1e-4
+|  Default value: 1e-5
 
 
 | ``nbIterationsChemCond``
@@ -61,6 +61,11 @@ Standard parameters
 |  Maximum number of condensate calculation iterations.
 |  Type: ``unsigned int``
 |  Default value: 3000
+
+| ``nbSwitchToNewton``
+|  Number of iterations above which the gas phase calculations switch to a multi-dimensional Newton’s method.
+|  Type: ``unsigned int``
+|  Default value: 400
 
 | ``nbIterationsNewton``
 |  Maximum number of iterations for Newton’s method.

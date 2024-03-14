@@ -445,8 +445,8 @@ file discussed in the previous section.</p>
 is a header that describes the content of each column.</p>
 <p>The first and second column contain the pressure in bar and the
 temperature in K, respectively. The third column lists the total number
-density of all atoms <span class="math notranslate nohighlight">\(i\)</span>, i.e.
-<span class="math notranslate nohighlight">\(n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic} \right)\)</span>,
+density of all atoms <span class="math notranslate nohighlight">\(j\)</span>, i.e.
+<span class="math notranslate nohighlight">\(n_\mathrm{tot} = \sum_j \left( n_j + \sum_i \nu_{ij} n_i + \sum_c \nu_{cj} n_c \right)\)</span>,
 summed over their atomic number densities, as well as the ones contained
 in all other molecules/ions <span class="math notranslate nohighlight">\(j\)</span> and the fictitious number
 densities of the condensate species <span class="math notranslate nohighlight">\(n_c\)</span>. This is usually only a

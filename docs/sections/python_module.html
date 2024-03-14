@@ -211,7 +211,7 @@ following structure in Python:</p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">number_densities</span></code></dt><dd><p>The two-dimensional array contains the number densities in of all gas phase species (elements, molecules, ions) as <code class="docutils literal notranslate"><span class="pre">float</span></code> numbers. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure arrays of the input structure. The second dimension refers to the number of species and has a length of <code class="docutils literal notranslate"><span class="pre">getGasSpeciesNumber()</span></code> (see <a class="reference internal" href="#sec-pfc-methods"><span class="std std-ref">here</span></a>).</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">total_element_density</span></code></dt><dd><p>One-dimensional array of <code class="docutils literal notranslate"><span class="pre">float</span></code> numbers that contains the total number density of all atoms <span class="math notranslate nohighlight">\(i\)</span>, i.e. <span class="math notranslate nohighlight">\(n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic} \right)\)</span>, summed over their atomic number densities, as well as the ones contained in all other molecules/ions <span class="math notranslate nohighlight">\(j\)</span> and condensates <span class="math notranslate nohighlight">\(c\)</span>. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">total_element_density</span></code></dt><dd><p>One-dimensional array of <code class="docutils literal notranslate"><span class="pre">float</span></code> numbers that contains the total number density of all atoms <span class="math notranslate nohighlight">\(j\)</span>, i.e. <span class="math notranslate nohighlight">\(n_\mathrm{tot} = \sum_j \left( n_j + \sum_i \nu_{ij} n_i + \sum_c \nu_{cj} n_c \right)\)</span>, summed over their atomic number densities, as well as the ones contained in all other molecules/ions <span class="math notranslate nohighlight">\(j\)</span> and condensates <span class="math notranslate nohighlight">\(c\)</span>. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">mean_molecular_weight</span></code></dt><dd><p>One-dimensional array of <code class="docutils literal notranslate"><span class="pre">float</span></code> numbers. Contains the mean molecular weight of the mixture in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of g/mol. The dimension of the array is equal to that of the input temperature and pressure vectors.</p>
 </dd>
@@ -309,7 +309,7 @@ value will result in an error message from PyBind11.</div>
 </pre></div>
 </div>
 <blockquote>
-<div><p>Returns the symbol of an element or the formula of a molecule/ion with <code class="docutils literal notranslate"><span class="pre">int</span></code> index<code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">str</span></code>; returns empty string if species does not exist</p>
+<div><p>Returns the symbol of an element or the formula of a molecule/ion with <code class="docutils literal notranslate"><span class="pre">int</span></code> index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">str</span></code>; returns empty string if species does not exist</p>
 </div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">getGasSpeciesIndex</span><span class="p">(</span><span class="nb">str</span> <span class="n">symbol</span><span class="p">)</span>
 </pre></div>
@@ -321,13 +321,13 @@ value will result in an error message from PyBind11.</div>
 </pre></div>
 </div>
 <blockquote>
-<div><p>Returns the name of an element with <code class="docutils literal notranslate"><span class="pre">int</span></code> index<code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">str</span></code>; returns empty string if species does not exist.</p>
+<div><p>Returns the name of an element with <code class="docutils literal notranslate"><span class="pre">int</span></code> index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">str</span></code>; returns empty string if species does not exist.</p>
 </div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">str</span> <span class="n">getElementSymbol</span><span class="p">(</span><span class="nb">int</span> <span class="n">species_index</span><span class="p">)</span>
 </pre></div>
 </div>
 <blockquote>
-<div><p>Returns the symbol of an element with <code class="docutils literal notranslate"><span class="pre">int</span></code> index<code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">str</span></code>; returns empty string if species does not exist</p>
+<div><p>Returns the symbol of an element with <code class="docutils literal notranslate"><span class="pre">int</span></code> index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">str</span></code>; returns empty string if species does not exist</p>
 </div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">getElementIndex</span><span class="p">(</span><span class="nb">str</span> <span class="n">symbol</span><span class="p">)</span>
 </pre></div>
@@ -339,11 +339,14 @@ value will result in an error message from PyBind11.</div>
 </pre></div>
 </div>
 <blockquote>
-<div><p>Returns the name of a condensate species with <code class="docutils literal notranslate"><span class="pre">int</span></code> index<code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">str</span></code>; returns empty string if species does not exist.</p>
+<div><p>Returns the name of a condensate species with <code class="docutils literal notranslate"><span class="pre">int</span></code> index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">str</span></code>; returns empty string if species does not exist.</p>
 </div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">str</span> <span class="n">getCondSpeciesSymbol</span><span class="p">(</span><span class="nb">int</span> <span class="n">species_index</span><span class="p">)</span>
 </pre></div>
 </div>
+<blockquote>
+<div><p>Returns the formula of a condensate with <code class="docutils literal notranslate"><span class="pre">int</span></code> index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">str</span></code>; returns empty string if species does not exist</p>
+</div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">getCondSpeciesIndex</span><span class="p">(</span><span class="nb">str</span> <span class="n">symbol</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -353,7 +356,7 @@ value will result in an error message from PyBind11.</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">float</span> <span class="n">getElementAbundance</span><span class="p">(</span><span class="nb">int</span> <span class="n">species_index</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Returns the abundance of an element with <code class="docutils literal notranslate"><span class="pre">int</span></code> index<code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">float</span></code>; returns 0 if the element does not exist</p>
+<p>Returns the abundance of an element with <code class="docutils literal notranslate"><span class="pre">int</span></code> index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">float</span></code>; returns 0 if the element does not exist</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">float</span> <span class="p">[]</span> <span class="n">getElementAbundance</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -370,19 +373,19 @@ value will result in an error message from PyBind11.</div>
 </pre></div>
 </div>
 <blockquote>
-<div><p>Returns the weight of a gas phase species with <code class="docutils literal notranslate"><span class="pre">int</span></code> index<code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">float</span></code>; returns 0 if species does not exist; for an element this refers to the atomic weight</p>
+<div><p>Returns the weight of a gas phase species with <code class="docutils literal notranslate"><span class="pre">int</span></code> index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">float</span></code>; returns 0 if species does not exist; for an element this refers to the atomic weight</p>
 </div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">float</span> <span class="n">FastChem</span><span class="o">.</span><span class="n">getElementWeight</span><span class="p">(</span><span class="nb">int</span> <span class="n">species_index</span><span class="p">)</span>
 </pre></div>
 </div>
 <blockquote>
-<div><p>Returns the atomic weight of an element with <code class="docutils literal notranslate"><span class="pre">int</span></code> index<code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">float</span></code>; returns 0 if species does not exist</p>
+<div><p>Returns the atomic weight of an element with <code class="docutils literal notranslate"><span class="pre">int</span></code> index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">float</span></code>; returns 0 if species does not exist</p>
 </div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">float</span> <span class="n">FastChem</span><span class="o">.</span><span class="n">getCondSpeciesWeight</span><span class="p">(</span><span class="nb">int</span> <span class="n">species_index</span><span class="p">)</span>
 </pre></div>
 </div>
 <blockquote>
-<div><p>Returns the weight of a condensate species with <code class="docutils literal notranslate"><span class="pre">int</span></code> index<code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">float</span></code>; returns 0 if species does not exist</p>
+<div><p>Returns the weight of a condensate species with <code class="docutils literal notranslate"><span class="pre">int</span></code> index <code class="docutils literal notranslate"><span class="pre">species_index</span></code> as <code class="docutils literal notranslate"><span class="pre">float</span></code>; returns 0 if species does not exist</p>
 </div></blockquote>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">setVerboseLevel</span><span class="p">(</span><span class="nb">int</span> <span class="n">level</span><span class="p">)</span>
 </pre></div>

@@ -239,7 +239,7 @@ It has the following variables:
   The two-dimensional array contains the number densities in of all gas phase species (elements, molecules, ions). The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of ``FastChem.getGasSpeciesNumber()`` (see :ref:`here<sec:fastchem_methods>`).
 
 ``std::vector<double> total_element_density``
-  Contains the total number density of all atoms :math:`i`, i.e. :math:`n_\mathrm{tot} = \sum_i \left( n_i + \sum_j n_j \nu_{ij} + \sum_c n_c \nu_{ic} \right)`, summed over their atomic number densities, as well as the ones contained in all other molecules/ions :math:`j` as well as condensate species :math:`c`. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the vector is equal to that of the input temperature and pressure vectors.
+  Contains the total number density of all atoms :math:`j`, i.e. :math:`n_\mathrm{tot} = \sum_j \left( n_j + \sum_i \nu_{ij} n_i + \sum_c \nu_{cj} n_c \right)`, summed over their atomic number densities, as well as the ones contained in all other molecules/ions :math:`j` as well as condensate species :math:`c`. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the vector is equal to that of the input temperature and pressure vectors.
 
 ``std::vector<double> mean_molecular_weight``
   Contains the mean molecular weight of the mixture in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of g/mol. The dimension of the vector is equal to that of the input temperature and pressure vectors.
@@ -424,7 +424,7 @@ Public methods of the FastChem object class
 
 .. code:: c++
 
-  double FastChem.getElememtWeight(unsigned int species_index)
+  double FastChem.getElementWeight(unsigned int species_index)
 
 ..
 

@@ -55,7 +55,7 @@ parameters that can be adjusted via the aforementioned</div>
 <div class="line-block">
 <div class="line">Relative accuracy requirement for chemistry iteration and internal solvers (except Newton’s method).</div>
 <div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
-<div class="line">Default value: 1e-4</div>
+<div class="line">Default value: 1e-5</div>
 </div>
 </div>
 <div class="line-block">
@@ -71,7 +71,7 @@ parameters that can be adjusted via the aforementioned</div>
 <div class="line-block">
 <div class="line">Relative accuracy requirement for accuracy requirement for Newton’s method.</div>
 <div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
-<div class="line">Default value: 1e-4</div>
+<div class="line">Default value: 1e-5</div>
 </div>
 </div>
 <div class="line-block">
@@ -79,7 +79,7 @@ parameters that can be adjusted via the aforementioned</div>
 <div class="line-block">
 <div class="line">Relative accuracy requirement for condensation calculations.</div>
 <div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
-<div class="line">Default value: 1e-4</div>
+<div class="line">Default value: 1e-5</div>
 </div>
 </div>
 <div class="line-block">
@@ -104,6 +104,14 @@ parameters that can be adjusted via the aforementioned</div>
 <div class="line">Maximum number of condensate calculation iterations.</div>
 <div class="line">Type: <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></div>
 <div class="line">Default value: 3000</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">nbSwitchToNewton</span></code></div>
+<div class="line-block">
+<div class="line">Number of iterations above which the gas phase calculations switch to a multi-dimensional Newton’s method.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></div>
+<div class="line">Default value: 400</div>
 </div>
 </div>
 <div class="line-block">
