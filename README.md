@@ -9,7 +9,7 @@ The code is written in object-oriented C++, including template programming that 
 
 Besides the actual FastChem model, we provide a C++ stand-alone version in the *model_src* folder that allows to calculate the equilibrium chemistry for a given temperature-pressure structure. This stand-alone version can be adapted further to perform also more sophisticated calculations. In addition to the C++ stand-alone version, we also provide the Python interface PyFastChem.
 
-Version 3.1 includes updates to the calculation of the gas-phase chemistry. The new version will now switch to a multi-dimensional Newton's method for more complicated scenarios what were previously challenging to solve with the standard hierarchical approach of FastChem.
+Version 3.1 includes updates to the calculation of the gas-phase chemistry. The new version will now switch to a multi-dimensional Newton's method for more complicated scenarios that were previously challenging to solve with the standard hierarchical approach of FastChem.
 
 
 # PyFastChem #
