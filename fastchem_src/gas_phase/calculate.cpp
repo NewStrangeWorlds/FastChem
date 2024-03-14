@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2024 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,8 @@ bool GasPhase<double_type>::calculate(
       {
         if (options.verbose_level >= 4)
           std::cout << "Encountered NaN or Inf number density for element " 
-                    << e.symbol << ". Stopping calculation.\n";
+                    << e.symbol 
+                    << ". Stopping calculation.\n";
 
         nb_iterations = iter_step;
 
@@ -144,8 +145,13 @@ bool GasPhase<double_type>::calculate(
       break;
 
 
-    if (iter_step > 400)
+    //switch to multi-dimensional Newton solver if the system
+    //hasn't converged yet
+    if (iter_step > options.nb_switch_to_newton)
     {
+      if (options.verbose_level >= 4)
+        std::cout << "Standard FastChem iteration failed. Switching to multi-dimensional Newton. " << "\n";
+
       std::vector<Element<double_type>*> newton_elements;
 
       solver.selectNewtonElements(
@@ -157,14 +163,6 @@ bool GasPhase<double_type>::calculate(
 
       if (newton_elements.size() > 0)
       {
-        // std::cout << "Newton elements:\n";
-        // for (auto & e : newton_elements)
-        //   std::cout << e->symbol << "\n";
-
-        // for (auto & e : elements)
-        //   if (e.symbol == "O" || e.symbol == "C")
-        //     newton_elements.push_back(&e);
-
         double total_element_density = totalElementDensity();
 
         solver.newtonSolMult(
@@ -191,7 +189,6 @@ bool GasPhase<double_type>::calculate(
         std::cout << "Standard FastChem iteration failed. Switching to backup. " << "\n";
 
       use_backup_solver = true;
-      //max_iter += options.nb_max_fastchem_iter;
     }
 
 

@@ -5,7 +5,7 @@
 ../input/logK/logK.dat ../input/logK/logK_condensates.dat
 
 #accuracy of chemistry iteration
-1.0e-4
+1.0e-5
 
 #accuracy of element conservation
 1.0e-4

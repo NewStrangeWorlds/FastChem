@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2021 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2024 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,63 +47,42 @@ void GasPhaseSolver<double_type>::selectNewtonElements(
   {
     if (std::fabs((elements[i].number_density - number_density_old[i])) > options.chem_accuracy*number_density_old[i])
     {
-      // std::cout << elements[i].symbol << "\t" 
-      //           << std::fabs((elements[i].number_density - number_density_old[i]))/number_density_old[i] << "\t" 
-      //           << options.chem_accuracy*number_density_old[i] << "\t" 
-      //           << elements[i].number_density << "\t" 
-      //           << number_density_old[i] << "\n";
-      
-      if (elements[i].symbol != "e-")
+      if (elements[i].symbol != "e-" && elements[i].fixed_by_condensation == false)
         select_elements[i] = 1;
     }
   }
 
 
-    for (size_t i=0; i<molecules.size(); ++i)
-    {
-      size_t j = i + elements.size();
+  for (size_t i=0; i<molecules.size(); ++i)
+  {
+    size_t j = i + elements.size();
 
-      if (std::fabs((molecules[i].number_density - number_density_old[j])) > options.chem_accuracy*number_density_old[j]
-             && molecules[i].number_density/gas_density > 1.e-155)
+    if (std::fabs((molecules[i].number_density - number_density_old[j])) > options.chem_accuracy*number_density_old[j]
+            && molecules[i].number_density/gas_density > 1.e-155)
+    {
+      double_type max_abundance = 0;
+      size_t max_index = 0;
+
+      for (auto & e : molecules[i].element_indices)
       {
-        // std::cout << molecules[i].symbol << "\t" 
-        //           << std::fabs((molecules[i].number_density - number_density_old[j]))/number_density_old[j] << "\t" 
-        //           << options.chem_accuracy*number_density_old[j] << "\t" 
-        //           << molecules[i].number_density << "\t" 
-        //           << number_density_old[j] << "\n";
+        if (elements[e].symbol == "e-" || elements[e].fixed_by_condensation) continue;
 
-        // for (auto & e : molecules[i].element_indices)
-        // {
-        //   if (elements[e].symbol == "e-") continue;
-
-        //   select_elements[e] = 1;
-        // }
-
-
-        
-        double_type max_abundance = 0;
-        size_t max_index = 0;
-
-        for (auto & e : molecules[i].element_indices)
+        if (elements[e].abundance > max_abundance)
         {
-          if (elements[e].symbol == "e-") continue;
-
-          if (elements[e].abundance > max_abundance)
-          {
-            max_index = e;
-            max_abundance = elements[e].abundance;
-          }
+          max_index = e;
+          max_abundance = elements[e].abundance;
         }
-
-        select_elements[max_index] = 1;
       }
+
+      select_elements[max_index] = 1;
     }
+  }
 
 
-    for (size_t i=0; i<elements.size(); ++i)
-    {
-      if (select_elements[i] == 1) newton_elements.push_back(&elements[i]);
-    }
+  for (size_t i=0; i<elements.size(); ++i)
+  {
+    if (select_elements[i] == 1) newton_elements.push_back(&elements[i]);
+  }
 
 }
 
@@ -167,8 +146,8 @@ void GasPhaseSolver<double_type>::assembleRightHandSide(
       rhs(i) -= molecules[j].stoichiometric_vector[species[i]->index] * molecules[j].number_density;
   }
 
-  //for (auto i=0; i<rhs.rows(); ++i)
-    //rhs(i) /= scaling_factors(i);
+  // for (auto i=0; i<rhs.rows(); ++i)
+  //   rhs(i) /= scaling_factors(i);
 }
 
 
@@ -197,33 +176,20 @@ void GasPhaseSolver<double_type>::newtonSolMult(
     scaling_factors,
     rhs);
 
-  // std::cout << jacobian << "\n";
-  // std::cout << rhs << "\n";
 
   Eigen::PartialPivLU<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
   solver.compute(jacobian);
   Eigen::VectorXdt<double_type> result = solver.solve(rhs);
 
-  // std::cout << result << "\n";
-
   Eigen::VectorXdt<double_type> result_scaled = result;
 
   double_type max_value = result_scaled.cwiseAbs().maxCoeff();
 
-  if (max_value > 2)
-    result_scaled *= 2/max_value;
-
-  // for (size_t i=0; i<species.size(); ++i)
-  //   std::cout << species[i]->symbol << "\t" << species[i]->number_density << "\t" << species[i]->number_density * std::exp(result[i]) << "\n";
+  if (max_value > 2.0)
+    result_scaled *= 2.0/max_value;
 
   for (size_t i=0; i<species.size(); ++i)
     species[i]->number_density = species[i]->number_density * std::exp(result_scaled[i]);
-
-  for (size_t i=0; i<species.size(); ++i)
-    if (std::isnan(species[i]->number_density) || std::isinf(species[i]->number_density)) exit(0);
-
-
-  //exit(0);
 }
 
 

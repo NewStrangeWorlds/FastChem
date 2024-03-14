@@ -7,6 +7,8 @@
 /pyfastchem.egg-info/
 python/pyfastchem.cpython*
 python/__pycache__/*
+python_test/*
+input_test/*
 manual/fastchem_manual.aux
 manual/fastchem_manual.bbl
 manual/fastchem_manual.blg

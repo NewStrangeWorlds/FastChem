@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2024 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -189,7 +189,6 @@ bool Element<double_type>::checkElementConservation(
   else
     element_conserved = 0;
 
-  //if (!element_conserved) exit(0);
   return element_conserved;
 }
 

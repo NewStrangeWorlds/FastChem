@@ -23,7 +23,7 @@ input/element_abundances/asplund_2009.dat
 input/logK/logK.dat input/logK/logK_condensates.dat
 
 #Accuracy of chemistry iteration
-1.0e-4
+1.0e-5
 
 #Accuracy of element conservation
 1.0e-4

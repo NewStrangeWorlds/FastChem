@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2024 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -112,7 +112,8 @@ ParameterInt FastChemOptions<double_type>::resolveParameterInt(
     { std::string("nbIterationsChemCond"), ParameterInt::nb_max_comb_iter },
     { std::string("nbIterationsChem"), ParameterInt::nb_max_fastchem_iter },
     { std::string("nbIterationsNelderMead"), ParameterInt::nb_max_neldermead_iter },
-    { std::string("nbIterationsNewton"), ParameterInt::nb_max_newton_iter }
+    { std::string("nbIterationsNewton"), ParameterInt::nb_max_newton_iter },
+    { std::string("nbSwitchToNewton"), ParameterInt::nb_switch_to_newton }
   };
 
   auto itr = parameter_strings.find(parameter);

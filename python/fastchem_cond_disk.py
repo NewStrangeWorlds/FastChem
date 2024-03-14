@@ -45,10 +45,8 @@ fastchem = pyfastchem.FastChem(
 
 #for this calculation, we need to change some of FastChem's internal parameters
 fastchem.setParameter('condSolveFullSystem', np.bool_(True))
-fastchem.setParameter('minDensityExponentElement', -4920.0)
+fastchem.setParameter('minDensityExponentElement', -3000.0)
 fastchem.setParameter('maxLogK', 10000.0)
-fastchem.setParameter('accuracyChem', 1e-5)
-fastchem.setParameter('accuracyCond', 1e-5)
 
 
 #create the input and output structures for FastChem
@@ -182,28 +180,28 @@ for i, species in enumerate(plot_species_cond):
 
 
 #and plot everything...
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 6))
-
-for i in range(0, len(plot_species_symbols)):
-  ax1.plot(distance, number_densities[:, plot_species_indices[i]]/gas_number_density)
-
-ax1.set(xscale='log', yscale = 'log')
-
-
-ax1.set(ylabel = 'Mixing ratios', xlabel = 'Distance (au)')
-ax1.legend(plot_species_symbols)
-
-
-for i in range(0, len(plot_species_symbols_cond)):
-  ax2.plot(distance, number_densities_cond[:, plot_species_indices_cond[i]])
-
-ax2.set(xscale='log', yscale = 'log')
-
-ax2.set(ylabel = 'Number density (cm$^{-3}$)', xlabel = 'Distance (au)')
-ax2.legend(plot_species_symbols_cond)
-
-
-plt.show()
+# fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 6))
+# 
+# for i in range(0, len(plot_species_symbols)):
+#   ax1.plot(distance, number_densities[:, plot_species_indices[i]]/gas_number_density)
+# 
+# ax1.set(xscale='log', yscale = 'log')
+# 
+# 
+# ax1.set(ylabel = 'Mixing ratios', xlabel = 'Distance (au)')
+# ax1.legend(plot_species_symbols)
+# 
+# 
+# for i in range(0, len(plot_species_symbols_cond)):
+#   ax2.plot(distance, number_densities_cond[:, plot_species_indices_cond[i]])
+# 
+# ax2.set(xscale='log', yscale = 'log')
+# 
+# ax2.set(ylabel = 'Number density (cm$^{-3}$)', xlabel = 'Distance (au)')
+# ax2.legend(plot_species_symbols_cond)
+# 
+# 
+# plt.show()
 
 #we could also save the figure as a pdf
 #plt.savefig(output_dir + '/fastchem_fig.pdf')

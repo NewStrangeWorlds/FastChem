@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2024 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,8 @@ enum class ParameterInt {
     nb_max_fastchem_iter,
     nb_max_bisection_iter,
     nb_max_newton_iter,
-    nb_max_neldermead_iter
+    nb_max_neldermead_iter,
+    nb_switch_to_newton
 };
 
 
@@ -96,10 +97,11 @@ struct FastChemOptions{
   unsigned int nb_max_neldermead_iter = 3000;
   unsigned int nb_max_cond_iter = 3000;
   unsigned int nb_chem_cond_iter = 3000;
+  unsigned int nb_switch_to_newton = 400;
 
-  double chem_accuracy = 1e-4;
-  double newton_err = 1e-4;
-  double cond_accuracy = 1e-4;
+  double chem_accuracy = 1e-5;
+  double newton_err = 1e-5;
+  double cond_accuracy = 1e-5;
   double element_conserve_accuracy = 1e-4;
 
   double_type element_density_minlimit = 1e-155; //smallest allowed particle number densities

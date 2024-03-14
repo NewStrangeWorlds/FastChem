@@ -58,10 +58,6 @@ input_data.equilibrium_condensation = True
 #input_data.rainout_condensation = True
 
 
-#for this calculation, we need to change some of FastChem's internal parameters
-fastchem.setParameter('accuracyChem', 1e-5)
-
-
 #run FastChem on the entire p-T structure
 fastchem_flag = fastchem.calcDensities(input_data, output_data)
 
