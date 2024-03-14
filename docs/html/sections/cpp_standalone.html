@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>C++ stand-alone executable &#8212; FastChem 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5bc47236" />
+    <script src="../_static/documentation_options.js?v=110ea713"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Running pyFastChem" href="pyfastchem.html" />
+    <link rel="prev" title="Standard input and output files" href="input_output.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="c-stand-alone-executable">
+<h1>C++ stand-alone executable<a class="headerlink" href="#c-stand-alone-executable" title="Link to this heading">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object class is designed to be easily coupled to other
+models. In addition to the object class itself, we also provide a
+stand-alone executable that can call the module with some simple input
+scripts. This stand-alone version, however, only provides a very basic
+functionality, such as reading in a specific temperature-pressure
+profile that <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will be run for. The stand-alone version does,
+for example, not provide more advanced capabilities, such as looping
+over different metallicity values or C/O ratios. If you intend to use
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> for such purposes, you need to adapt the code that calls
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code>.</p>
+<p>The source code that is responsible for calling the actual <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>
+chemistry is located in the folder <code class="docutils literal notranslate"><span class="pre">model_src/</span></code>. It is split across
+three different files: <code class="docutils literal notranslate"><span class="pre">model_src/model_main.cpp</span></code>, the actual main
+program, <code class="docutils literal notranslate"><span class="pre">model_src/read_config.h</span></code> for reading in the config file, and
+<code class="docutils literal notranslate"><span class="pre">model_src/save_output.h</span></code> for managing the output. Thus, if you want
+to add another parameter to the config file, you would need to edit
+<code class="docutils literal notranslate"><span class="pre">model_src/read_config.h</span></code>, while changes to the format of the output
+files can be made in <code class="docutils literal notranslate"><span class="pre">model_src/save_output.h</span></code>. Changing the contents
+of these files obviously require a re-compilation of the code.</p>
+<section id="running-the-fastchem-executable">
+<h2>Running the FastChem executable<a class="headerlink" href="#running-the-fastchem-executable" title="Link to this heading">¶</a></h2>
+<p>Following a successful configuration and compilation via <code class="docutils literal notranslate"><span class="pre">CMake</span></code>, the
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> executable <code class="docutils literal notranslate"><span class="pre">fastchem</span></code> should be present in the root
+directory. The executable is started via</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./fastchem<span class="w"> </span>input/config.input
+</pre></div>
+</div>
+<p>where the second argument is the location of the config file that is
+explained in the next section. <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will read in a pre-defined
+pressure-temperature structures, the location of which is also specified
+in the config file. After a successful calculation, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will
+produce two output files with a detailed chemistry output and one with
+diagnostic output. The location of these files is also contained in the
+config file and its contents are discussed <a class="reference internal" href="input_output.html#sec-fc-cpp-output"><span class="std std-ref">here</span></a>.</p>
+</section>
+<section id="config-file">
+<h2>Config file<a class="headerlink" href="#config-file" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">The config file that <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will read in at the beginning
+contains all important parameters and file locations necessary to
+initialise the chemistry and to perform the calculations. The
+numerical methods that these parameters refer to are described in
+Paper II. An example of such an input file is located in the input
+folder: <code class="docutils literal notranslate"><span class="pre">input/config.input</span></code>. While this config file allows to set
+the most important <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> parameters, some more advanced ones
+are not contained in this file and can only be set by invoking special
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> functions during runtime. This, in particular, refers to
+the use of the optional scaling factors as described in the appendix
+of Paper II. More information on activating these scaling factors can
+be found in the <a class="reference internal" href="cpp_class.html#sec-fastchem-methods"><span class="std std-ref">description</span></a> of the object
+class and the set of <a class="reference internal" href="parameters.html#sect-fc-param"><span class="std std-ref">external parameters</span></a>.</div>
+<div class="line">The config file used for the <code class="docutils literal notranslate"><span class="pre">C++</span></code> stand-alone executable has the
+following structure:</div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Atmospheric profile input file</span>
+<span class="nb">input</span><span class="o">/</span><span class="n">example_p_t_structures</span><span class="o">/</span><span class="n">Late_M</span><span class="o">-</span><span class="n">dwarf</span><span class="o">.</span><span class="n">dat</span>
+
+<span class="c1">#Chemistry calculation type</span>
+<span class="n">ce</span>
+
+<span class="c1">#Chemistry output file</span>
+<span class="n">output</span><span class="o">/</span><span class="n">chemistry</span><span class="o">.</span><span class="n">dat</span> <span class="n">output</span><span class="o">/</span><span class="n">condensates</span><span class="o">.</span><span class="n">dat</span>
+
+<span class="c1">#Monitor output file</span>
+<span class="n">output</span><span class="o">/</span><span class="n">monitor</span><span class="o">.</span><span class="n">dat</span>
+
+<span class="c1">#FastChem console verbose level (1 - 4)</span>
+<span class="mi">1</span>
+
+<span class="c1">#Output mixing ratios (MR) or particle number densities (ND, default)</span>
+<span class="n">MR</span>
+
+<span class="c1">#Element abundance file</span>
+<span class="nb">input</span><span class="o">/</span><span class="n">element_abundances</span><span class="o">/</span><span class="n">asplund_2009</span><span class="o">.</span><span class="n">dat</span>
+
+<span class="c1">#Species data files</span>
+<span class="nb">input</span><span class="o">/</span><span class="n">logK</span><span class="o">/</span><span class="n">logK</span><span class="o">.</span><span class="n">dat</span> <span class="nb">input</span><span class="o">/</span><span class="n">logK</span><span class="o">/</span><span class="n">logK_condensates</span><span class="o">.</span><span class="n">dat</span>
+
+<span class="c1">#Accuracy of chemistry iteration</span>
+<span class="mf">1.0e-4</span>
+
+<span class="c1">#Accuracy of element conservation</span>
+<span class="mf">1.0e-4</span>
+
+<span class="c1">#Max number of chemistry iterations</span>
+<span class="mi">80000</span>
+
+<span class="c1">#Max number internal solver iterations</span>
+<span class="mi">20000</span>
+</pre></div>
+</div>
+<p>It contains the required parameters in the following order:</p>
+<ul class="simple">
+<li><p>Location of the file with the pressure-temperature structure the
+chemistry should be calculated for. The file should contain two
+columns, where the first one is the pressure in units of bar and the
+second one the temperature in K. Header lines will be ignored.</p></li>
+<li><p>the type of chemistry calculation:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">g</span></code> calculate only the gas phase without condensation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ce</span></code> calculate the gas phase with equilibrium condensation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cr</span></code> calculate the gas phase with rainout condensation
+approximation</p></li>
+</ul>
+</li>
+<li><p>Desired location and file name for the output of the gas phase
+species and condensates</p></li>
+<li><p>Desired location and file name for the diagnostic output</p></li>
+<li><p>Verbose level, where a level of <code class="docutils literal notranslate"><span class="pre">1</span></code> is almost silent and <code class="docutils literal notranslate"><span class="pre">4</span></code>
+produces a lot of diagnostic output on the terminal. Increase this
+level if you encounter issues to identify the source of the problems.</p></li>
+<li><p>The output format for the gas-phase species’ abundances. By default,
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will use number densities in units of cm<span class="math notranslate nohighlight">\(^{-3}\)</span>.
+If you use the keyword <code class="docutils literal notranslate"><span class="pre">MR</span></code>, mixing ratios will be used instead.
+Any keyword other than <code class="docutils literal notranslate"><span class="pre">MR</span></code> will result in the default option of
+using number densities.</p></li>
+<li><p>Location of the file with the element abundances, see
+<a class="reference internal" href="input_output.html#sec-fastchem-input-files"><span class="std std-ref">here</span></a> for details</p></li>
+<li><p>Location of the file with the thermochemical and stoichiometric data
+for all species, see <a class="reference internal" href="input_output.html#sec-fastchem-input-files"><span class="std std-ref">here</span></a> for
+details. The first entry refers to the gas-phase species, while the
+second one is for the condensate data.</p></li>
+<li><p>Relative accuracy of the chemistry iterations, used as convergence
+criterion (also for Newton’s method)</p></li>
+<li><p>Relative accuracy for the checks of the element conservation</p></li>
+<li><p>Maximum number of chemistry iterations</p></li>
+<li><p>Maximum number of internal solver method iterations (Newton,
+Nelder-Mead &amp; bisection methods)</p></li>
+</ul>
+<p>In the input file, the number of iterations for the Newton, Nelder-Mead,
+and bisection methods are assumed to be the same. This number can be
+adjusted individually for each of these internal solvers by using the
+<code class="docutils literal notranslate"><span class="pre">FastChem.setParameter</span></code> method (see <a class="reference internal" href="cpp_class.html#sec-fastchem-methods"><span class="std std-ref">here</span></a>).
+The convergence criterion for Newton’s
+method is also set to the accuracy of the chemistry iteration by
+default. This convergence criterion can also be changed by the
+<code class="docutils literal notranslate"><span class="pre">FastChem.setParameter</span></code> method.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo_l.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">FastChem - Ultrafast Equilibrium Chemistry</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=exoclime&repo=fastchem&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input_output.html">Standard input and output files</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">C++ stand-alone executable</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-fastchem-executable">Running the FastChem executable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config-file">Config file</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyfastchem.html">Running pyFastChem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_class.html">Detailed C++ object class description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_module.html">Detailed pyFastChem module description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Internal parameters</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="input_output.html" title="previous chapter">Standard input and output files</a></li>
+      <li>Next: <a href="pyfastchem.html" title="next chapter">Running pyFastChem</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019 - 2023, Daniel Kitzmann, Joachim Stock.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/sections/cpp_standalone.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
