@@ -401,6 +401,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   bool combined_converged = false;
 
   bool chem_backup_solver_default = options.chem_use_backup_solver;
+  size_t nb_condensed_elements = 0;
 
 
   if (condensates_act.size() > 0)
@@ -493,7 +494,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     
     //and run the gas phase calculation one last time
     double_type phi_sum = 0;
-    size_t nb_condensed_elements = 0;
+    nb_condensed_elements = 0;
 
     for (auto & i : element_data.elements)
     {
@@ -514,10 +515,6 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       temperature,
       gas_density,
       nb_iter);
-
-    //check for the phase rule
-    if (nb_condensed_elements == element_data.elements_wo_e.size())
-      return FASTCHEM_PHASE_RULE_VIOLATION;
   }
   else
   { //no condensates stable...
@@ -575,6 +572,9 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   if (!fastchem_converged || !cond_converged || !combined_converged) 
     return_state = FASTCHEM_NO_CONVERGENCE;
 
+  //check for the phase rule
+  if (nb_condensed_elements == element_data.elements_wo_e.size())
+    return_state = FASTCHEM_PHASE_RULE_VIOLATION;
 
   return return_state;
 }
