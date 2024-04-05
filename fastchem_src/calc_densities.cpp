@@ -1,6 +1,6 @@
 /*
 * This file is part of the FastChem code (https://github.com/exoclime/fastchem).
-* Copyright (C) 2024 Daniel Kitzmann, Joachim Stock
+* Copyright (C) 2022 Daniel Kitzmann, Joachim Stock
 *
 * FastChem is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -395,17 +395,13 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   std::vector<Element<double_type>*> elements_cond;
 
   condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
-
-
-  //check for the phase rule
-  if (elements_cond.size() == element_data.elements_wo_e.size())
-    return FASTCHEM_PHASE_RULE_VIOLATION;
-
+  
 
   bool cond_converged = false;
   bool combined_converged = false;
 
   bool chem_backup_solver_default = options.chem_use_backup_solver;
+  size_t nb_condensed_elements = 0;
 
 
   if (condensates_act.size() > 0)
@@ -421,12 +417,6 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     for (nb_combined_iter=0; nb_combined_iter<options.nb_chem_cond_iter; ++nb_combined_iter)
     {
       condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
-
-
-      //check for the phase rule
-      if (elements_cond.size() == element_data.elements_wo_e.size())
-        return FASTCHEM_PHASE_RULE_VIOLATION;
-
 
       for (auto & i : condensates_act)
       {
@@ -446,6 +436,23 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       nb_cond_iter += nb_iter;
 
       //gas_phase.reInitialise();
+
+      for (auto & e : element_data.elements)
+      {
+        bool is_condensed = false;
+
+        for (auto & c : e.condensate_list)
+        {
+          if (condensed_phase.condensates[c].log_activity > -0.01)
+          {
+            is_condensed = true;
+            break;
+          }
+        }
+        
+        if (!is_condensed)
+          e.fixed_by_condensation = false;
+      }
 
       fastchem_converged = gas_phase.calculate(
         temperature,
@@ -480,7 +487,6 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
         cond_converged = false;
       }
 
-
     //remove condensates that are not present 
     //i.e. those with an activity smaller than 1
     for (auto & i : condensed_phase.condensates)
@@ -488,10 +494,17 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     
     //and run the gas phase calculation one last time
     double_type phi_sum = 0;
+    nb_condensed_elements = 0;
 
     for (auto & i : element_data.elements)
     {
       i.calcDegreeOfCondensation(condensed_phase.condensates, total_element_density);
+      
+      if (i.degree_of_condensation == 0) 
+        i.fixed_by_condensation = false;
+      else
+        nb_condensed_elements++;
+
       phi_sum += i.phi;
     }
 
@@ -559,6 +572,9 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   if (!fastchem_converged || !cond_converged || !combined_converged) 
     return_state = FASTCHEM_NO_CONVERGENCE;
 
+  //check for the phase rule
+  if (nb_condensed_elements == element_data.elements_wo_e.size())
+    return_state = FASTCHEM_PHASE_RULE_VIOLATION;
 
   return return_state;
 }
