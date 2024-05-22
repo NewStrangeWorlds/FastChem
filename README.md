@@ -1,4 +1,4 @@
-# FastChem Cond (FastChem 3.1) #
+# FastChem Cond (FastChem 3.1.x) #
 #### Authors: Daniel Kitzmann, Joachim Stock ####
 
 # Important Notice #
@@ -28,7 +28,7 @@ FastChem includes the Python interface, PyFastChem, that allows to run the C++ c
 
 # User guide #
 
-FastChem comes with a user guide that can be found here: https://exoclime.github.io/FastChem/ . It describes the installation and usage of FastChem and covers both the C++ stand-alone version as well as the Python interface. The manual also contains detailed information on the internal interface functions that the FastChem object class and its Python interface provide.
+FastChem comes with a user guide that can be found here: https://newstrangeworlds.github.io/FastChem/ . It describes the installation and usage of FastChem and covers both the C++ stand-alone version as well as the Python interface. The manual also contains detailed information on the internal interface functions that the FastChem object class and its Python interface provide.
 
 
 # Licence #
