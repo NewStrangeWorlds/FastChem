@@ -1,6 +1,15 @@
 # FastChem Cond (FastChem 3.1) #
 #### Authors: Daniel Kitzmann, Joachim Stock ####
 
+# Important Notice #
+
+The FastChem repository has been transferred from Exoclime to the new GitHub Team "New Strange Worlds". All previous links to the repository remain active and are being forwarded to the new location. However, it is recommended to update your local repositories with:
+
+git remote set-url origin https://github.com/newstrangeworlds/fastchem
+
+The new repository location also has the discussion forum turned on. You can post questions and suggestions for FastChem there.
+
+
 # Overview #
 
 FastChem is an equilibrium chemistry code that calculates the chemical composition of the gas and condensed phase for given temperatures and pressures. The calculation of the gas phase is based on a semi-analytic approach, described in detail in Stock et al. (2018) and Stock et al. (2022). The new version 3 version of FastChem, called FastChem Cond, adds condensation to the code. It can now compute the chemical composition using equilibrium condensation or the rainout approximation that is commonly used in the field of exoplanets or brown dwarfs. FastChem Cond is described in detail in Kitzmann, Stock & Patzer (2023).
