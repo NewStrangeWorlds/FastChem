@@ -80,7 +80,7 @@ set(SRC_PYTHON_WRAPPER
 find_package(OpenMP)  
 
 
-if (USE_PYTHON MATCHES ON)
+if ((USE_PYTHON MATCHES ON) AND (NOT ONLY_LIBRARY))
 
     include(FetchContent)
     FetchContent_Declare(
@@ -103,24 +103,37 @@ if (USE_PYTHON MATCHES ON)
   else()
     target_compile_options(fastchem_for_py PRIVATE "-O3" PRIVATE "-fPIC")
   endif()
-
+  
+  
   #find the python version
   find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+    
+  #compilation target for FastChem's Python wrapper
+  pybind11_add_module(pyfastchem ${SRC_PYTHON_WRAPPER})
   
-  if (ONLY_LIBRARY MATCHES OFF)
-    #compilation target for FastChem's Python wrapper
-    pybind11_add_module(pyfastchem ${SRC_PYTHON_WRAPPER})
+  #find_package(pybind11 REQUIRED)
   
-    #find_package(pybind11 REQUIRED)
+  set_target_properties(pyfastchem PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python")
   
-    set_target_properties(pyfastchem PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python")
+  if (OpenMP_FOUND)
+    target_link_libraries(pyfastchem PRIVATE OpenMP::OpenMP_CXX)
+  endif()
   
-    if (OpenMP_FOUND)
-      target_link_libraries(pyfastchem PRIVATE OpenMP::OpenMP_CXX)
-    endif()
+  #target_link_libraries(pyfastchem PRIVATE fastchem_for_py OpenMP::OpenMP_CXX pybind11::module)
+  target_link_libraries(pyfastchem PRIVATE fastchem_for_py pybind11::module)
+endif()
+
+
+
+if ((USE_PYTHON MATCHES ON) AND (ONLY_LIBRARY MATCHES ON))
+
+  #compilation target for FastChem's Python library
+  add_library(fastchem_lib_for_py ${SRC_FASTCHEM})
   
-    #target_link_libraries(pyfastchem PRIVATE fastchem_for_py OpenMP::OpenMP_CXX pybind11::module)
-    target_link_libraries(pyfastchem PRIVATE fastchem_for_py pybind11::module)
+  if (OpenMP_FOUND)
+    target_compile_options(fastchem_lib_for_py PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3" PRIVATE "-fPIC")
+  else()
+    target_compile_options(fastchem_lib_for_py PRIVATE "-O3" PRIVATE "-fPIC")
   endif()
 endif()
 
