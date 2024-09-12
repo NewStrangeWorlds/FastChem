@@ -11,13 +11,14 @@
 cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
 
 OPTION(USE_PYTHON "Compile FastChem's Python Wrapper" OFF)
-
+OPTION(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library only" OFF)
 
 project(fastchem CXX C)
 
 
 include(CMakeDependentOption)
 cmake_dependent_option(ONLY_LIBRARY "Compile FastChem library only" ON "FASTCHEM_ONLY_LIBRARY" OFF)
+cmake_dependent_option(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library only" OFF "FASTCHEM_ONLY_PYTHON_LIBRARY" OFF)
 
 
 #some C++/C flags
@@ -80,7 +81,7 @@ set(SRC_PYTHON_WRAPPER
 find_package(OpenMP)  
 
 
-if ((USE_PYTHON MATCHES ON) AND (NOT ONLY_LIBRARY))
+if ((USE_PYTHON MATCHES ON) AND (NOT ONLY_PYTHON_LIBRARY))
 
     include(FetchContent)
     FetchContent_Declare(
@@ -125,7 +126,7 @@ endif()
 
 
 
-if ((USE_PYTHON MATCHES ON) AND (ONLY_LIBRARY MATCHES ON))
+if (ONLY_PYTHON_LIBRARY MATCHES ON)
 
   #compilation target for FastChem's Python library
   add_library(fastchem_lib_for_py ${SRC_FASTCHEM})
@@ -139,19 +140,23 @@ endif()
 
 
 
-#compilation target for FastChem
-add_library(fastchem_lib ${SRC_FASTCHEM})
+if (NOT ONLY_PYTHON_LIBRARY)
 
-if (OpenMP_FOUND)
-  target_compile_options(fastchem_lib PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3")
-else()
-  target_compile_options(fastchem_lib PRIVATE "-O3")
+  #compilation target for FastChem
+  add_library(fastchem_lib ${SRC_FASTCHEM})
+
+  if (OpenMP_FOUND)
+    target_compile_options(fastchem_lib PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3")
+  else()
+    target_compile_options(fastchem_lib PRIVATE "-O3")
+  endif()
 endif()
+
 
 file(MAKE_DIRECTORY "output")
 
 #in case we build the executable
-if (NOT ONLY_LIBRARY)
+if ((NOT ONLY_LIBRARY) AND (NOT ONLY_PYTHON_LIBRARY))
   #compilation target for FastChem's standalone main
   add_executable(fastchem ${SRC_MAIN})
 
@@ -162,3 +167,4 @@ if (NOT ONLY_LIBRARY)
 
   target_link_libraries(fastchem PRIVATE fastchem_lib)
 endif()
+
