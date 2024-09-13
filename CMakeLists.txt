@@ -11,7 +11,7 @@
 cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
 
 OPTION(USE_PYTHON "Compile FastChem's Python Wrapper" OFF)
-OPTION(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library only" OFF)
+
 
 project(fastchem CXX C)
 
@@ -19,6 +19,13 @@ project(fastchem CXX C)
 include(CMakeDependentOption)
 cmake_dependent_option(ONLY_LIBRARY "Compile FastChem library only" ON "FASTCHEM_ONLY_LIBRARY" OFF)
 cmake_dependent_option(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library only" ON "FASTCHEM_ONLY_PYTHON_LIBRARY" OFF)
+
+include(CMakePrintHelpers)
+
+cmake_print_variables(USE_PYTHON)
+cmake_print_variables(ONLY_PYTHON_LIBRARY)
+cmake_print_variables(FASTCHEM_ONLY_LIBRARY)
+cmake_print_variables(FASTCHEM_ONLY_PYTHON_LIBRARY)
 
 
 #some C++/C flags
@@ -167,4 +174,3 @@ if ((NOT ONLY_LIBRARY) AND (NOT ONLY_PYTHON_LIBRARY))
 
   target_link_libraries(fastchem PRIVATE fastchem_lib)
 endif()
-
