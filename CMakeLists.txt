@@ -18,7 +18,7 @@ project(fastchem CXX C)
 
 include(CMakeDependentOption)
 cmake_dependent_option(ONLY_LIBRARY "Compile FastChem library only" ON "FASTCHEM_ONLY_LIBRARY" OFF)
-cmake_dependent_option(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library only" ON "FASTCHEM_ONLY_PYTHON_LIBRARY" OFF)
+cmake_dependent_option(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library only" OFF "FASTCHEM_ONLY_PYTHON_LIBRARY" OFF)
 
 include(CMakePrintHelpers)
 
