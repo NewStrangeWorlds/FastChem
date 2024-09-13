@@ -11,7 +11,7 @@
 cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
 
 OPTION(USE_PYTHON "Compile FastChem's Python Wrapper" OFF)
-#OPTION(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library only" OFF)
+
 
 project(fastchem CXX C)
 
