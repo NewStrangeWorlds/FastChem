@@ -20,29 +20,20 @@ include(CMakeDependentOption)
 cmake_dependent_option(ONLY_LIBRARY "Compile FastChem library only" ON "FASTCHEM_ONLY_LIBRARY" OFF)
 cmake_dependent_option(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library only" ON "FASTCHEM_ONLY_PYTHON_LIBRARY" OFF)
 
-include(CMakePrintHelpers)
-
-cmake_print_variables(USE_PYTHON)
-cmake_print_variables(ONLY_PYTHON_LIBRARY)
-cmake_print_variables(FASTCHEM_ONLY_LIBRARY)
-cmake_print_variables(FASTCHEM_ONLY_PYTHON_LIBRARY)
-
 
 #some C++/C flags
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set(CMAKE_CXX_FLAGS "-Wall -pedantic -MMD")
 
 
 set(CMAKE_BUILD_TYPE Release)
 
-  
+
 #output directories
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-
 
 
 #define the source files   
