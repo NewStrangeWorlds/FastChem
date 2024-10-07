@@ -1,5 +1,8 @@
 name: Build
 
+env:
+  CIBW_SKIP: pp38-*
+
 on: [push, pull_request]
 
 jobs:
