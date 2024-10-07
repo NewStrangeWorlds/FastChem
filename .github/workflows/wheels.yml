@@ -1,7 +1,7 @@
 name: Build
 
 env:
-  CIBW_SKIP: pp38-* pp39-*
+  CIBW_SKIP: pp*
 
 on: [push, pull_request]
 
