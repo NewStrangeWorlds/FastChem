@@ -2,7 +2,7 @@ name: Build
 
 env:
   CIBW_SKIP: pp*
-  #CIBW_BUILD: cp310-manylinux*
+  CIBW_BUILD: cp310-manylinux*
 
 on: [push]
 
