@@ -11,6 +11,9 @@ from distutils import sysconfig
 
 __version__ = "3.1.1"
 
+def __read__(file_name):
+    return open(os.path.join(os.path.dirname(__file__), file_name)).read()
+
 
 #Custom build class that provides additional checks for OpenMP
 class custom_build_ext(build_ext):
