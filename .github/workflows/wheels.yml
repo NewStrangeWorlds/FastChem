@@ -14,7 +14,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
         #os: [ubuntu-latest]
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.event_name == 'release'
     steps:
       - uses: actions/checkout@v4
 
@@ -39,7 +39,7 @@ jobs:
   build_sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.event_name == 'release'
     steps:
       - uses: actions/checkout@v4
 
