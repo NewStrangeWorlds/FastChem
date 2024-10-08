@@ -97,6 +97,7 @@ setup(
   name        = "pyfastchem",
   description = "FastChem, an ultra-fast equilibrium chemistry",
   long_description=__read__('README.md'),
+  long_description_content_type='text/markdown',
   author      = "Daniel Kitzmann, Joachim Stock, Brett Morris",
   license     = "GPL 3.0",
   url         = "https://github.com/NewStrangeWorlds/FastChem",
