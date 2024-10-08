@@ -9,7 +9,7 @@ from distutils.errors import CCompilerError
 from distutils import sysconfig
 
 
-__version__ = "3.1.5"
+__version__ = "3.1.2"
 
 def __read__(file_name):
     return open(os.path.join(os.path.dirname(__file__), file_name)).read()
