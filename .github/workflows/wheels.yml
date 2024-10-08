@@ -63,7 +63,7 @@ jobs:
       id-token: write
     #if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     #if: github.event_name == 'release'
-    # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
+    # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)#
     # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     #if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
