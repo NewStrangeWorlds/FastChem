@@ -93,9 +93,10 @@ ext_modules = [
 setup(
   name        = "pyfastchem",
   description = "FastChem, an ultra-fast equilibrium chemistry",
+  long_description=__read__('README.md'),
   author      = "Daniel Kitzmann, Joachim Stock, Brett Morris",
   license     = "GPL 3.0",
-  url         = "https://github.com/exoclime/FastChem",
+  url         = "https://github.com/NewStrangeWorlds/FastChem",
   version     = __version__,
   ext_modules = ext_modules,
   cmdclass    = {"build_ext": custom_build_ext}

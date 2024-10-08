@@ -52,6 +52,7 @@ jobs:
 
 
   upload_pypi:
+    name: Upload to PyPI
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     environment: pypi_release
