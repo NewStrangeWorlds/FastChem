@@ -1,8 +1,8 @@
 name: Build
 
 env:
-  CIBW_BUILD: cp310-manylinux*
   CIBW_SKIP: pp*
+  #CIBW_BUILD: cp310-manylinux*
 
 on: [push, pull_request]
 
@@ -12,8 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        #os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        #os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -58,7 +58,7 @@ jobs:
     environment: pypi_release
     permissions:
       id-token: write
-    #if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.event_name == 'release' && github.event.action == 'published'
     # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
     # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     #if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
