@@ -36,7 +36,7 @@ html_theme_options = {
 	'logo': 'logo_l.png',
 	'description': 'FastChem - Ultrafast Equilibrium Chemistry',
 	'github_button': 'true',
-	'github_user': 'exoclime',
+	'github_user': 'newstrangeworlds',
     'github_repo': 'fastchem',
 	'github_type': 'watch',
 	'page_width' : '1001px',
