@@ -109,9 +109,9 @@ double_type GasPhase<double_type>::calculateMoleculeDensities(
     }
     
     molecules[i].number_density = std::exp(sum + molecules[i].mass_action_constant);
-    n_major += molecules[i].number_density * molecules[i].sigma;
-   
     molecules[i].checkN(options.molecule_density_minlimit, gas_density);
+    
+    n_major += molecules[i].number_density * molecules[i].sigma;
   }
 
   return n_major;
