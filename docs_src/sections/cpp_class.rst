@@ -446,6 +446,36 @@ Returns the weight of a condensate species with index ``species_index`` as ``dou
 
   Sets the abundances of all elements; the abundances are supplied as ``std::vector<double>``, where the vector has to have a size of ``FastChem.getElementNumber()``; if this is not the case, ``FastChem`` will print an error message and leave the element abundances unchanged
 
+
+.. code:: c++
+
+  std::string FastChem.convertToHillNotation(std::string formula)
+
+..
+
+  Converts a chemical formula to the Hill notation that is used for the gas-phase species in ``FastChem``. For example, ``H2O`` would be returned as ``H2O1``. 
+  The conversion can also treat formulas with brackets, for example, ``Na(OH)2`` or ions, such as ``Fe+`` or ``Fe++``. The latter two would be returned as ``Fe1+`` and ``Fe1++``, respectively.
+  Higher ionsation stages are supported via ``^``, even though they are currently not included in the standard ``FastChem`` data files. For example, ``Fe^3+`` would be returned as ``Fe1^3+``.
+
+
+.. code:: c++
+
+  std::vector<int> FastChem.getGasSpeciesStoichiometry(int species_index)
+
+..
+
+  Returns a vector with the stoichiometric coefficients of a gas-phase species with index ``species_index``; array has a length of ``getElementNumber()``
+
+
+.. code:: c++
+
+  std::vector<int> FastChem.getCondSpeciesStoichiometry(int species_index)
+
+..
+
+  Returns a vector with the stoichiometric coefficients of a condensed-phase species with index ``species_index``; array has a length of ``getElementNumber()``
+
+
 .. code:: c++
 
   void FastChem.setVerboseLevel(unsigned int level)

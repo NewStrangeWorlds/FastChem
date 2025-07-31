@@ -430,7 +430,7 @@ Returns the abundance of an element with ``int`` index ``species_index`` as ``fl
   
 .. code:: python
 
-  float FastChem.getGasSpeciesWeight(int species_index)
+  float getGasSpeciesWeight(int species_index)
 
 .. 
 
@@ -438,7 +438,7 @@ Returns the abundance of an element with ``int`` index ``species_index`` as ``fl
 
 .. code:: python
 
-  float FastChem.getElementWeight(int species_index)
+  float getElementWeight(int species_index)
 
 ..  
 
@@ -446,11 +446,41 @@ Returns the abundance of an element with ``int`` index ``species_index`` as ``fl
   
 .. code:: python
 
-  float FastChem.getCondSpeciesWeight(int species_index)
+  float getCondSpeciesWeight(int species_index)
 
 .. 
 
   Returns the weight of a condensate species with ``int`` index ``species_index`` as ``float``; returns 0 if species does not exist
+
+
+.. code:: python
+
+  str convertToHillNotation(str formula)
+
+..
+
+  Converts a chemical formula to the Hill notation that is used for the gas-phase species in ``FastChem``. For example, ``H2O`` would be returned as ``H2O1``. 
+  The conversion can also treat formulas with brackets, for example, ``Na(OH)2`` or ions, such as ``Fe+`` or ``Fe++``. The latter two would be returned as ``Fe1+`` and ``Fe1++``, respectively.
+  Higher ionsation stages are supported via ``^``, even though they are currently not included in the standard ``FastChem`` data files. For example, ``Fe^3+`` would be returned as ``Fe1^3+``.
+
+
+.. code:: python
+
+  int [] getGasSpeciesStoichiometry(int species_index)
+
+..
+
+  Returns a vector with the stoichiometric coefficients of a gas-phase species with ``int`` index ``species_index`` ; array has a length of ``getElementNumber()``
+
+
+.. code:: python
+
+  int [] getCondSpeciesStoichiometry(int species_index)
+
+..
+
+  Returns a vector with the stoichiometric coefficients of a condensed-phase species with ``int`` index ``species_index`` ; array has a length of ``getElementNumber()``
+
 
 .. code:: python
 

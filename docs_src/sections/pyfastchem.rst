@@ -50,7 +50,7 @@ Detailed steps for running pyFastChem
   create a ``FastChem`` object (here named ``fastchem``) with a
   corresponding constructor ``pyfastchem.FastChem`` provided by
   ``pyFastChem``. There are three different possible versions of the
-  constructor. F
+  constructor.
 
 If we’re only interested in a pure gas phase chemistry calculation, we
 can use
