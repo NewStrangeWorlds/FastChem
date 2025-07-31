@@ -30,6 +30,10 @@ FastChem includes the Python interface, PyFastChem, that allows to run the C++ c
 
 FastChem comes with a user guide that can be found here: https://newstrangeworlds.github.io/FastChem/ . It describes the installation and usage of FastChem and covers both the C++ stand-alone version as well as the Python interface. The manual also contains detailed information on the internal interface functions that the FastChem object class and its Python interface provide.
 
+# Notes on Apple-based computers #
+
+Newer Apple computers contain an ARM-based processor (a.k.a. Apple Silicon, Mx), which is not compatible with the x86 architecture used by many other Linux and Windows machines. This ARM processor has no hardware support for quadruple-precision numbers that are used in FastChem. Consequently, FastChem will run only with double-precision on these computers, which will cause convergence issues at lower temperatures. Since this is a hardware limitation of the Apple Silicon chip, there is no way to change this behavior within FastChem.
+
 
 # Licence #
 
