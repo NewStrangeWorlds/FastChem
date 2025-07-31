@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Installation &#8212; FastChem 3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=6625fa76" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5bc47236" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=d636b35b"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
@@ -33,10 +33,11 @@
             
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> can be installed in two different ways: either using
-<code class="docutils literal notranslate"><span class="pre">CMake</span></code> or by calling a Python setup function <code class="docutils literal notranslate"><span class="pre">setup.py</span></code>. The former
+<p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> can be installed in three different ways: either using
+<code class="docutils literal notranslate"><span class="pre">CMake</span></code>, by calling a Python setup function <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> or by
+using the Python Package Index <code class="docutils literal notranslate"><span class="pre">PyPI</span></code>. The former
 will install the <code class="docutils literal notranslate"><span class="pre">C++</span></code> stand-alone executable and optionally the
-Python module, while the latter one will only provide the <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code>
+Python module, while the latter two will only provide the <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code>
 Python module. The Python module created by <code class="docutils literal notranslate"><span class="pre">CMake</span></code> will only be
 available locally in the <code class="docutils literal notranslate"><span class="pre">python</span></code> directory, while the one produced by
 <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> will be integrated in your standard Python library and,
@@ -44,10 +45,10 @@ thus, work as a normal Python package. Additionally, we also support a
 Python installation via <code class="docutils literal notranslate"><span class="pre">PyPI</span></code>, the Python Package Index.</p>
 <section id="obtaining-the-code">
 <h2>Obtaining the code<a class="headerlink" href="#obtaining-the-code" title="Permalink to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> is hosted on the Exoclime GitHub page:
-<a class="reference external" href="https://github.com/exoclime/fastchem">https://github.com/exoclime/fastchem</a>. If <code class="docutils literal notranslate"><span class="pre">git</span></code> is available on a
+<p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> is hosted on the NewStrangeWorlds GitHub page:
+<a class="reference external" href="https://github.com/newstrangeworlds/fastchem">https://github.com/newstrangeworlds/fastchem</a>. If <code class="docutils literal notranslate"><span class="pre">git</span></code> is available on a
 computer, the repository can be simply cloned with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/exoclime/fastchem
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/newstrangeworlds/fastchem
 </pre></div>
 </div>
 </section>
@@ -75,9 +76,13 @@ generates the makefiles. For some of its optional components
 </ul>
 </section>
 <section id="prerequisites-for-python-installation-via-setup-py-or-pypi">
-<h3>Prerequisites for Python installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> or <code class="docutils literal notranslate"><span class="pre">PyPi</span></code><a class="headerlink" href="#prerequisites-for-python-installation-via-setup-py-or-pypi" title="Permalink to this heading">¶</a></h3>
-<p>An installation of <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> with the <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> script
-or<code class="docutils literal notranslate"><span class="pre">PyPI</span></code> requires</p>
+<h3>Prerequisites for Python installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> or <code class="docutils literal notranslate"><span class="pre">PyPI</span></code><a class="headerlink" href="#prerequisites-for-python-installation-via-setup-py-or-pypi" title="Permalink to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">PyPI</span></code> repository of <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> includes binary wheels for
+many platforms, such as Linux, MacOS, and Windows and supports several
+different versions of Python. If no binary wheel for your system is
+available, <code class="docutils literal notranslate"><span class="pre">pip</span></code> will need to compile the package from source.</p>
+<p>For an installation of <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> from source with the <code class="docutils literal notranslate"><span class="pre">setup.py</span></code>
+script or <code class="docutils literal notranslate"><span class="pre">PyPI</span></code> requires</p>
 <ul class="simple">
 <li><p>a Python 3.x interpreter</p></li>
 <li><p>a <code class="docutils literal notranslate"><span class="pre">C++</span></code> compiler (e.g. <code class="docutils literal notranslate"><span class="pre">g++</span></code> or <code class="docutils literal notranslate"><span class="pre">Clang</span></code> on MacOS)</p></li>
@@ -112,7 +117,7 @@ compile the code successfully.</p>
 <p>For its Python interface, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> requires the <code class="docutils literal notranslate"><span class="pre">PyBind11</span></code> library
 that translates the Python calls into <code class="docutils literal notranslate"><span class="pre">C++</span></code>. While <code class="docutils literal notranslate"><span class="pre">PyBind11</span></code> can in
 theory be installed via <code class="docutils literal notranslate"><span class="pre">pip</span></code>, <code class="docutils literal notranslate"><span class="pre">conda</span></code>, or <code class="docutils literal notranslate"><span class="pre">brew</span></code> (on MacOS),
-<code class="docutils literal notranslate"><span class="pre">CMake</span></code> isn’t always able to properly locate the installed library.</p>
+<code class="docutils literal notranslate"><span class="pre">CMake</span></code> is not always able to properly locate the installed library.</p>
 <p>For the installation via <code class="docutils literal notranslate"><span class="pre">CMake</span></code>, we therefore chose to include
 <code class="docutils literal notranslate"><span class="pre">PyBind11</span></code> as a submodule in the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> repository. <code class="docutils literal notranslate"><span class="pre">CMake</span></code>
 will take header files and Python scripts provided by the submodule to
@@ -168,6 +173,13 @@ interface is used, <code class="docutils literal notranslate"><span class="pre">
 because the Python version requires different compiler options.</p>
 <section id="notes-on-macos">
 <h3>Notes on MacOS<a class="headerlink" href="#notes-on-macos" title="Permalink to this heading">¶</a></h3>
+<p>Newer Apple computers contain an ARM-based processor (a.k.a. Apple Silicon, Mx),
+which is not compatible with the x86 architecture used by many other Linux and Windows machines.
+This ARM processor has <strong>no</strong> hardware support for quadruple-precision numbers that
+are used in <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. Consequently, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will run only with double-precision on
+these computers, which will cause convergence issues at lower temperatures.
+Since this is a hardware limitation of the Apple Silicon chip, there is no way to
+change this behavior within <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> can be compiled and run on MacOS, but requires some
 libraries and apps that are not installed by default. This especially
 includes <code class="docutils literal notranslate"><span class="pre">CMake</span></code>. In order to compile <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> on MacOS, the the
@@ -224,6 +236,15 @@ resolve potential dependencies. It is important to note, though, that
 one still has to download the chemistry input data and other Python
 scripts from the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> repository in order to use the package
 properly.</div>
+</div>
+<div class="line-block">
+<div class="line">The <code class="docutils literal notranslate"><span class="pre">PyPI</span></code> repository of <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> includes binary wheels for
+most platforms, such as Linux, MacOS, and Windows and supports several
+different versions of Python. If no binary wheel for your system is
+available, <code class="docutils literal notranslate"><span class="pre">pip</span></code> will try to compile the package from source. This will
+require a working compiler and the necessary Python development headers.</div>
+</div>
+<div class="line-block">
 <div class="line">As an alternative, <code class="docutils literal notranslate"><span class="pre">pyFastChem</span></code> can also be directly installed from
 source via the <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> script located in the root directory of
 <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. The setup is started by</div>

@@ -480,13 +480,34 @@ be converted into units of g/mol.
 All subsequent columns contain the number densities (in
 cm\ :math:`^{-3}`) or the mixing ratios of all species, depending on the
 choice of output made in the config file. By default, elements will be
-placed in the beginning, followed by molecules and ions. Note that in
-its species data files, ``FastChem`` employs the modified Hill notation
+placed in the beginning, followed by molecules and ions. 
+
+Hill notation
+*************
+
+In its species data files, ``FastChem`` employs the modified Hill notation
 as used in the JANAF thermochemical tables (`Chase, 1986 <https://janaf.nist.gov/>`_)
-for the formulas of all
-non-element species. If, for example, you are looking for the abundance
-of carbon dioxide, you need to locate the ``C1O2`` column rather than
+for the formulas of all non-element species. If, for example, you are looking for the 
+abundance of carbon dioxide, you need to locate the ``C1O2`` column rather than
 ``CO2``, whereas ``NH3`` would be listed as ``H3N1``.
+
+There are special cases of isomers that have the same Hill notation. These are distinguished by 
+adding ``_1`` and ``_2`` after their Hill notation. Isomers included in the standard set
+of FastChem species and their corresponding Hill notations are:
+
+| ``HCN`` (``C1H1N1_1``) and ``HNC`` (``C1H1N1_2``), 
+| ``AlOH`` (``Al1H1O1_1``) and ``OAlH`` (``Al1H1O1_2``), as well as 
+| ``S2F2`` (``F2S2_1``) and ``FS2F`` (``F2S2_2``).
+
+Since version 3.1.3, ``FastChem`` now includes the API function 
+
+.. code:: c++
+
+  std::string FastChem.convertToHillNotation(std::string formula)
+
+This function automatically converts a given formula to the modified Hill notation used in the
+``FastChem`` species data and output files. It also treats the special isomer cases described above.
+
 
 Condensate species output
 -------------------------
@@ -504,6 +525,10 @@ pressure the total number of stable condensates that can be present is
 limited by the number of elements. Thus, most condensates will usually
 have a fictitious number density of 0 cm\ :math:`^{-3}`, which indicates that they are
 not present.
+
+In contrast to the gas-phase species, the condensate species are *not* given in the Hill notation but rather use
+their normal chemical formulas.
+
 
 Monitor file
 ------------

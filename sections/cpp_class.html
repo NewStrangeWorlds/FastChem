@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Detailed C++ object class description &#8212; FastChem 3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=6625fa76" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5bc47236" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=d636b35b"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
@@ -379,6 +379,26 @@ be overwritten.</p>
 </div>
 <blockquote>
 <div><p>Sets the abundances of all elements; the abundances are supplied as <code class="docutils literal notranslate"><span class="pre">std::vector&lt;double&gt;</span></code>, where the vector has to have a size of <code class="docutils literal notranslate"><span class="pre">FastChem.getElementNumber()</span></code>; if this is not the case, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will print an error message and leave the element abundances unchanged</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">convertToHillNotation</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">formula</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Converts a chemical formula to the Hill notation that is used for the gas-phase species in <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">H2O</span></code> would be returned as <code class="docutils literal notranslate"><span class="pre">H2O1</span></code>.
+The conversion can also treat formulas with brackets, for example, <code class="docutils literal notranslate"><span class="pre">Na(OH)2</span></code> or ions, such as <code class="docutils literal notranslate"><span class="pre">Fe+</span></code> or <code class="docutils literal notranslate"><span class="pre">Fe++</span></code>. The latter two would be returned as <code class="docutils literal notranslate"><span class="pre">Fe1+</span></code> and <code class="docutils literal notranslate"><span class="pre">Fe1++</span></code>, respectively.
+Higher ionsation stages are supported via <code class="docutils literal notranslate"><span class="pre">^</span></code>, even though they are currently not included in the standard <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> data files. For example, <code class="docutils literal notranslate"><span class="pre">Fe^3+</span></code> would be returned as <code class="docutils literal notranslate"><span class="pre">Fe1^3+</span></code>.</p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getGasSpeciesStoichiometry</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns a vector with the stoichiometric coefficients of a gas-phase species with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code>; array has a length of <code class="docutils literal notranslate"><span class="pre">getElementNumber()</span></code></p>
+</div></blockquote>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">getCondSpeciesStoichiometry</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">species_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Returns a vector with the stoichiometric coefficients of a condensed-phase species with index <code class="docutils literal notranslate"><span class="pre">species_index</span></code>; array has a length of <code class="docutils literal notranslate"><span class="pre">getElementNumber()</span></code></p>
 </div></blockquote>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">setVerboseLevel</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">level</span><span class="p">)</span>
 </pre></div>

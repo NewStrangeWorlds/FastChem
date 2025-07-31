@@ -2,10 +2,11 @@ Installation
 ============
 
 
-``FastChem`` can be installed in two different ways: either using
-``CMake`` or by calling a Python setup function ``setup.py``. The former
+``FastChem`` can be installed in three different ways: either using
+``CMake``, by calling a Python setup function ``setup.py`` or by 
+using the Python Package Index ``PyPI``. The former
 will install the ``C++`` stand-alone executable and optionally the
-Python module, while the latter one will only provide the ``pyFastChem``
+Python module, while the latter two will only provide the ``pyFastChem``
 Python module. The Python module created by ``CMake`` will only be
 available locally in the ``python`` directory, while the one produced by
 ``setup.py`` will be integrated in your standard Python library and,
@@ -15,13 +16,13 @@ Python installation via ``PyPI``, the Python Package Index.
 Obtaining the code
 ~~~~~~~~~~~~~~~~~~
 
-``FastChem`` is hosted on the Exoclime GitHub page:
-https://github.com/exoclime/fastchem. If ``git`` is available on a
+``FastChem`` is hosted on the NewStrangeWorlds GitHub page:
+https://github.com/newstrangeworlds/fastchem. If ``git`` is available on a
 computer, the repository can be simply cloned with
 
 .. code:: bash
 
-   git clone https://github.com/exoclime/fastchem
+   git clone https://github.com/newstrangeworlds/fastchem
 
 Prerequisites
 ~~~~~~~~~~~~~
@@ -50,11 +51,16 @@ generates the makefiles. For some of its optional components
 
 -  a Python 3.x interpreter (for the Python interface)
 
-Prerequisites for Python installation via ``setup.py`` or ``PyPi`` 
+Prerequisites for Python installation via ``setup.py`` or ``PyPI`` 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-An installation of ``pyFastChem`` with the ``setup.py`` script
-or\ ``PyPI`` requires
+The ``PyPI`` repository of ``pyFastChem`` includes binary wheels for 
+many platforms, such as Linux, MacOS, and Windows and supports several
+different versions of Python. If no binary wheel for your system is 
+available, ``pip`` will need to compile the package from source.
+
+For an installation of ``pyFastChem`` from source with the ``setup.py`` 
+script or ``PyPI`` requires
 
 -  a Python 3.x interpreter
 
@@ -98,7 +104,7 @@ PyBind11 Library
 For its Python interface, ``FastChem`` requires the ``PyBind11`` library
 that translates the Python calls into ``C++``. While ``PyBind11`` can in
 theory be installed via ``pip``, ``conda``, or ``brew`` (on MacOS),
-``CMake`` isn’t always able to properly locate the installed library.
+``CMake`` is not always able to properly locate the installed library.
 
 For the installation via ``CMake``, we therefore chose to include
 ``PyBind11`` as a submodule in the ``FastChem`` repository. ``CMake``
@@ -167,6 +173,15 @@ because the Python version requires different compiler options.
 Notes on MacOS
 ^^^^^^^^^^^^^^
 
+Newer Apple computers contain an ARM-based processor (a.k.a. Apple Silicon, Mx), 
+which is not compatible with the x86 architecture used by many other Linux and Windows machines.
+This ARM processor has **no** hardware support for quadruple-precision numbers that
+are used in ``FastChem``. Consequently, ``FastChem`` will run only with double-precision on
+these computers, which will cause convergence issues at lower temperatures.
+Since this is a hardware limitation of the Apple Silicon chip, there is no way to
+change this behavior within ``FastChem``.
+
+
 ``FastChem`` can be compiled and run on MacOS, but requires some
 libraries and apps that are not installed by default. This especially
 includes ``CMake``. In order to compile ``FastChem`` on MacOS, the the
@@ -233,6 +248,13 @@ by ``pip3`` in case ``pip`` is linked to Python 2.x.
   one still has to download the chemistry input data and other Python
   scripts from the ``FastChem`` repository in order to use the package
   properly.
+
+| The ``PyPI`` repository of ``pyFastChem`` includes binary wheels for 
+  most platforms, such as Linux, MacOS, and Windows and supports several
+  different versions of Python. If no binary wheel for your system is 
+  available, ``pip`` will try to compile the package from source. This will 
+  require a working compiler and the necessary Python development headers.
+
 | As an alternative, ``pyFastChem`` can also be directly installed from
   source via the ``setup.py`` script located in the root directory of
   ``FastChem``. The setup is started by
