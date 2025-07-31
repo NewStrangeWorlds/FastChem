@@ -83,9 +83,14 @@ class FastChem {
     double getElementWeight(const unsigned int species_index);
     double getCondSpeciesWeight(const unsigned int species_index);
 
+    std::vector<int> getGasSpeciesStoichiometry(const unsigned int species_index);
+    std::vector<int> getCondSpeciesStoichiometry(const unsigned int species_index);
+
     //functions to set internal variables during runtime
     //they will override any read-in values
     void setElementAbundances(std::vector<double> abundances);
+
+    std::string convertToHillNotation(const std::string& formula) const;
 
     void setVerboseLevel(const unsigned int level) { 
       if (level > 4) options.verbose_level = 4; else options.verbose_level = level;}

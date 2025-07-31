@@ -63,6 +63,11 @@ PYBIND11_MODULE(pyfastchem, m) {
         .def("getElementWeight", &fastchem::FastChem<long double>::getElementWeight)
         .def("getCondSpeciesWeight", &fastchem::FastChem<long double>::getCondSpeciesWeight)
 
+        .def("getGasSpeciesStoichiometry", &fastchem::FastChem<long double>::getGasSpeciesStoichiometry)
+        .def("getCondSpeciesStoichiometry", &fastchem::FastChem<long double>::getCondSpeciesStoichiometry)
+
+        .def("convertToHillNotation", &fastchem::FastChem<long double>::convertToHillNotation)
+
         .def("setVerboseLevel", &fastchem::FastChem<long double>::setVerboseLevel)
         
         .def("getElementAbundance", &fastchem::FastChem<long double>::getElementAbundance)
