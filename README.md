@@ -10,6 +10,11 @@ The code is written in object-oriented C++, including template programming that 
 Besides the actual FastChem model, we provide a C++ stand-alone version in the *model_src* folder that allows to calculate the equilibrium chemistry for a given temperature-pressure structure. This stand-alone version can be adapted further to perform also more sophisticated calculations. In addition to the C++ stand-alone version, we also provide the Python interface PyFastChem.
 
 
+# Notes on Apple-based computers #
+
+Newer Apple computers contain an ARM-based processor (a.k.a. Apple Silicon, Mx), which is not compatible with the x86 architecture used by many other Linux and Windows machines. This ARM processor has no hardware support for quadruple-precision numbers that are used in FastChem. Consequently, FastChem will run only with double precision on these computers, which will cause convergence issues at lower temperatures. Since this is a hardware limitation of the Apple Silicon chip, there is no way to change this behavior within FastChem.
+
+
 # PyFastChem #
 
 FastChem includes the Python interface, PyFastChem, that allows to run the C++ code as a normal Python module. PyFastChem is also available as a PyPy package and can easily be installed via pip. We provide several examples that show how to call FastChem from within a Python script, including the possibility to, for example, iterate over different metallicity values or C/O ratios or how to compute chemical compositions with condensation. The Python examples can be found in the *python* directory.  

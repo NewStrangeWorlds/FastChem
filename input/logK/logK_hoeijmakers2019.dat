@@ -1237,9 +1237,6 @@ C2- Carbon_Ion : C 2 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
 Ca1+ Calcium_Ion : Ca 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -7.1024198931164487e+04   2.2426084168072009e+00  -1.1861243662227025e+01   2.1170817987284374e-04  -2.3275060186835147e-08 
 
-Ca1- Calcium_ion : Ca 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
-  2.4912255657019540e+02  -2.3300288293151170e+00   1.5300527600561811e+01  -6.7960352864080735e-05   5.0882520198301422e-09
-
 Ca1H1O1+ Calcium_Hydroxide_Ion : Ca 1 H 1 O 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.3334683074305307e+04   2.0271023780114206e-01  -2.3530978660598919e+01   8.4745326634219631e-04  -6.5162012562664586e-08 
 
@@ -1485,3 +1482,556 @@ Zn1+ Zinc_Ion : Zn 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998
 
 Zn1- Zinc_Ion : Zn 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.7232196990282414e+03  -2.5092835574388204e+00   1.4281706067404460e+01   6.8019574853347975e-06  -6.6534372585404459e-10
+   
+Li1+ Lithium_ion : Li 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.2576509381802156e+04   2.4451250429257501e+00  -1.4589028608248972e+01   6.9118796248781737e-05  -9.9717500672411228e-09
+
+Li1- Lithium_ion : Li 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  7.1687371721395812e+03  -2.5237183470803513e+00   1.3666557520787970e+01   3.1806554048184711e-05  -5.0151955317274595e-09
+
+Li1++ Lithium_ion : Li 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -9.4034317268194316e+05   4.9544911670141820e+00  -2.8172621448480879e+01   5.8649580777159011e-05  -8.7103416105613391e-09
+
+Be1+ Beryllium_ion : Be 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.0819806061357107e+05   2.4482865346239127e+00  -1.3202125759956592e+01   4.8649450232988093e-05  -5.7205444608440152e-09
+
+Be1++ Beryllium_ion : Be 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.1952197966800275e+05   4.9692129832508538e+00  -2.8257791685758995e+01   3.6886121198833791e-05  -4.9079703046364553e-09
+
+B1+ Boron_ion : B 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -9.6280525066021219e+04   2.4990470841925938e+00  -1.6005910493556886e+01   7.6920457286791066e-07  -9.5943234011270749e-11
+
+B1- Boron_ion : B 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  3.2228345886554362e+03   -2.4864155779732555e+00   1.4540062955407310e+01  -1.5798508801981518e-05   3.0894719088854048e-09
+
+B1++ Boron_ion : B 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.1950388797077240e+05   4.9963228810046871e+00  -2.9515761912826484e+01   2.9784753551121743e-06  -3.1497191121399351e-10
+
+C1++ Carbon_ion : C 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -4.1359030474695057e+05   4.9844364778753940e+00  -3.0538640181096174e+01   1.6848094708120631e-05  -3.1641179165606854e-09
+
+N1++ Nitrogen_ion : N 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -5.1220991384884063e+05   5.2307845836344660e+00  -2.9655360563087626e+01  -1.0739858033261996e-04   6.0739656421378064e-09
+
+O1++ Oxygen_ion : O 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -5.6561099260487151e+05   5.2429220785353072e+00  -3.0129873738241113e+01  -1.2309564457906096e-04   8.1301140819734604e-09
+
+F1++ Fluorine_ion : F 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.0802893351029954e+05   4.7586260488784999e+00  -2.7080942686909978e+01   9.5384011619329895e-05  -5.7023773626533842e-09
+
+Ne1++ Neon_ion : Ne 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.2555667558375280e+05   5.3314506132727324e+00  -2.8837380878674590e+01  -8.0332480614957692e-05   3.0910430856493824e-09
+
+Na1++ Sodium_ion : Na 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.0836780803059367e+05   4.9942488703314671e+00  -2.7781623543831621e+01   1.5698487402099597e-04  -1.7859855978559154e-08
+
+Mg1++ Magnesium_ion : Mg 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.6321320034617849e+05   4.9672072557970086e+00  -2.8245837887767024e+01   3.9261326562841997e-05  -5.2159836767546316e-09
+
+Al1++ Aluminium_ion : Al 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.8790887543647335e+05   4.8836130860363314e+00  -2.8737656817641625e+01   6.3616458222791805e-05  -4.7085681743743812e-09
+
+Si1++ Silicon_ion : Si 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.8419429079555755e+05   4.7829673607695415e+00  -2.9102032931752298e+01   1.0088660731819744e-04  -1.0171223568321470e-08
+
+P1++ Phosphorus_ion : P 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.5102066861797142e+05   5.7020428158357124e+00  -3.3212855561075450e+01  -2.3542514687108581e-04   6.1507344888823788e-09
+
+S1++ Sulfur_ion : S 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.9100123443365534e+05   5.7895283180717509e+00  -3.4095961811643086e+01  -3.4875819612356098e-04   2.1603938804181742e-08
+
+Cl1++ Chlorine_ion : Cl 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -4.2686052896253695e+05   4.8435484105651243e+00  -2.7453822991600198e+01  -1.8154116847721344e-05   5.0866969425317027e-09
+
+Ar1++ Argon_ion : Ar 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -5.0347903414468316e+05   5.1653557230637279e+00  -2.7915321959039932e+01   5.7576541636523548e-05  -6.2912597352565387e-09
+
+K1++ Potassium_ion : K 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -4.1744808217124006e+05   4.8005694239291552e+00  -2.6609641978610199e+01   3.1875303922147038e-04  -3.6312615969553148e-08
+
+Ca1- Calcium_ion : Ca 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  2.4912255657019540e+02  -2.3300288293151170e+00   1.5300527600561811e+01  -6.7960352864080735e-05   5.0882520198301422e-09
+
+Ca1++ Calcium_ion : Ca 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.0873154610829218e+05   4.8260881619436873e+00  -2.7415122459744005e+01   2.2333770259097766e-04  -3.2819084052340480e-08
+
+Sc1+ Scandium_ion : Sc 1 e- -1 # Gordon & McBride, NASA/TP--1999-208523, 1999. 
+  -7.630457131024679e+04    1.939670870002992e+00   -1.029000744137492e+01    5.553202048467648e-04   -4.992972245981864e-08 
+
+Sc1- Scandium_ion : Sc 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  2.1789752695472071e+03  -2.3609976979799554e+00   1.3806217538036170e+01   2.3565290420670530e-05   5.0897105926917323e-10
+
+Sc1++ Scandium_ion : Sc 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.2468493438084709e+05   4.9299907934904370e+00  -2.8103832568129892e+01   1.5305656986037527e-04  -2.8431838640120309e-08
+
+Ti1++ Titanium_ion : Ti 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.3675599068633158e+05   5.0846962402423559e+00  -2.9028459836867707e+01  -1.6987077555477846e-05  -1.6199244046353709e-08
+
+V1++ Vanadium_ion : V 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.4840954619547140e+05   5.0400634974337875e+00  -2.8630700709560141e+01  -1.9052906767079913e-04   8.7029250926386016e-09
+
+Cr1++ Chromium_ion : Cr 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.6986707402718870e+05   5.7719433916588052e+00  -3.2585544881483123e+01  -3.5109026660707098e-04   5.2521513753717568e-09
+
+Mn1++ Manganese_ion : Mn 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.6777575622472749e+05   4.9138833015274939e+00  -2.7930820326787750e+01   1.0693950282706526e-04  -1.4990610285273007e-08
+
+Fe1++ Iron_ion : Fe 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.7954852417308133e+05   5.0191189868971522e+00  -2.8593765804953918e+01   1.3477114546678075e-05  -1.1551544134696959e-08
+
+Co1++ Cobalt_ion : Co 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.8967571487711865e+05   5.1424860352126078e+00  -2.9267694505747262e+01  -2.0239681543836156e-04   9.4802683478208405e-09
+
+Ni1++ Nickel_ion : Ni 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.9950700975862588e+05   4.6938184861914367e+00  -2.6979568865305524e+01   1.6088127143134307e-04  -1.1180223327954951e-08
+
+Cu1++ Copper_ion : Cu 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.2515172709238162e+05   4.9039991515339896e+00  -2.6849810681962413e+01   2.4825472741591374e-04  -2.9885371340373799e-08
+
+Zn1++ Zinc_ion : Zn 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.1748400802281807e+05   4.9966420491558345e+00  -2.8420853553529479e+01   3.7525808485860509e-06  -4.5090922952093249e-10
+
+Ga1+ Gallium_ion : Ga 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.9805298781775316e+04   1.6077403539147044e+00  -9.3208694364401516e+00   3.0154338667998749e-04  -1.6338846325391133e-08
+
+Ga1- Gallium_ion : Ga 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   5.0578174031550207e+03  -1.8914471473721053e+00   1.0061447395652729e+01  -2.0513028326189417e-04   1.4513109681412177e-08
+
+Ga1++ Gallium_ion : Ga 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.0778030856332171e+05   4.3312963996335769e+00  -2.4358886594497005e+01   1.7124593962788737e-04  -6.8103321326780789e-09
+
+Ge1+ Germanium_ion : Ge 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -9.1766342085350523e+04   1.4258264492255106e+00  -7.4836452266457369e+00   5.9632140330767591e-04  -4.2972093427839368e-08
+
+Ge1- Germanium_ion : Ge 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.4136454591015299e+04  -3.7474783279416171e+00   2.2988213660574402e+01   3.2203509715603650e-04  -9.5284894763463815e-09
+
+Ge1++ Germanium_ion : Ge 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.7675409625723318e+05   3.7227453455433137e+00  -2.0892986246307338e+01   3.7637433844589513e-04  -2.1323228626650276e-08
+
+As1+ Arsenic_ion : As 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.1325234176900011e+05   3.7561973741283849e+00  -2.3903434458693667e+01  -1.1675517629367766e-04  -8.8362268092391078e-09
+
+As1- Arsenic_ion : As 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   9.3340822552460759e+03  -2.5843511100315797e+00   1.4864947015884116e+01   2.3735488551980649e-04  -2.3650109937753245e-08
+
+As1++ Arsenic_ion : As 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.2984912199085433e+05   4.7327591188829494e+00  -2.7650635694881565e+01   4.7181196540570382e-04  -4.1772595473472835e-08
+
+Se1+ Selenium_ion : Se 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.1317789667970981e+05   2.5546451822190970e+00  -1.4666640824758352e+01  -2.1144242486914881e-04   1.8394303956137405e-08
+
+Se1- Selenium_ion : Se 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   2.3438960371113983e+04  -2.5240853167920565e+00   1.4201148955857573e+01  -8.1355456312457678e-05   6.4629518541483588e-09
+
+Se1++ Selenium_ion : Se 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.5903780584744288e+05   5.0626605360772636e+00  -3.0693598639180376e+01   4.4486381181838605e-04  -3.9871563158187000e-08
+
+Rb1+ Rubidium_ion : Rb 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -4.8546176357591066e+04   2.1970620315412939e+00  -1.3015191690190765e+01   2.9429803831488156e-04  -3.6707032557879069e-08
+
+Rb1- Rubidium_ion : Rb 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   5.6420957807683772e+03  -2.4719235062829741e+00   1.3370320847028095e+01  -4.9600855068357787e-05   9.6179594871561987e-09
+
+Rb1++ Rubidium_ion : Rb 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.6513224891502829e+05   4.8080200703764575e+00  -2.6605090048330155e+01   2.2845620924421786e-04  -2.9260388182831264e-08
+
+Sr1+ Strontium_ion : Sr 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.6145885254954119e+04   2.2453599808211471e+00  -1.1941027108537064e+01   2.5839649502694807e-04  -3.3805993172767239e-08
+
+Sr1- Strontium_ion : Sr 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   6.6279338972347125e+02  -1.9928760495150351e+00   1.2692029765142147e+01  -1.3705731600719483e-04   4.6289441904113050e-09
+
+Sr1++ Strontium_ion : Sr 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.9411614797417822e+05   4.7928349626218312e+00  -2.7222384033564946e+01   2.7169414306683009e-04  -4.1042790791772542e-08
+
+Y1+ Yttrium_ion : Y 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.1762764835589594e+04   4.1883611092882544e+00  -2.6417486761076034e+01  -4.3240531015799008e-04   7.8146259030316061e-09
+
+Y1- Yttrium_ion : Y 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   3.5567550957988724e+03  -2.6344096831445611e+00   1.5077072217140438e+01   4.5612362349110918e-04  -3.7249806281408231e-08
+
+Y1++ Yttrium_ion : Y 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.1419232224926766e+05   4.8433928343154555e+00  -2.7673141545294410e+01   2.5390088678128663e-04  -3.7930615129260282e-08
+
+Xe1+ Xenon_Ion : Xe 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
+  -1.407608604032029e+05    2.505373391965676e+00  -1.286412795922323e+01    -1.049702534617935e-05    2.381028722731171e-09
+
+Zr1+ Zirconium_ion : Zr 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.7013333427215286e+04   2.6279481237765019e+00  -1.4846421354321576e+01   3.7789269413487186e-05  -1.4043384331711200e-08
+
+Zr1- Zirconium_ion : Zr 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   5.0291012598063780e+03  -2.3503798549643138e+00   1.4282941862327979e+01  -1.9130068765768095e-04   8.7808206370413514e-09
+
+Zr1++ Zirconium_ion : Zr 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.2932587062759200e+05   5.1045675124939178e+00  -2.9141965239857662e+01  -1.2874250000970025e-04  -5.2813670996288133e-09
+
+Br1+ Bromine_Ion : Br 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
+  -1.369927193226892e+05    2.475157472144314e+00   -1.387621779504922e+01    5.713662488387752e-05   -2.468072455527506e-09
+
+Br1- Bromine_Ion : Br 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
+   3.908148819372403e+04   -2.368593692059047e+00    1.201600871637887e+01   -1.309319389477614e-04    7.480339767322931e-09
+
+Nb1+ Niobium_ion : Nb 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.8578350959903022e+04   2.6127630011187830e+00  -1.5808723486682180e+01   1.1239043181783455e-04  -1.0498448984054221e-08
+
+Nb1- Niobium_ion : Nb 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  1.0584979181969808e+04  -3.0663744538903752e+00   1.7042006198918159e+01  -8.2719392853128275e-05   2.0070411430572386e-08
+
+Nb1++ Niobium_ion : Nb 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.4455775301069519e+05   5.2111201094990856e+00  -3.0882347955717666e+01  -3.6204781112397671e-05  -5.4471938296953221e-09
+
+Mo1+ Molybdenum_ion : Mo 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -8.2307485427869688e+04   2.4894981768111446e+00  -1.4305079328733349e+01   6.2346233285323309e-06  -4.5269901221493613e-10
+
+Mo1- Molybdenum_ion : Mo 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   8.6203771456281411e+03  -2.9693259136406169e+00   1.6659689260731611e+01   8.5076528084360463e-04  -7.3172763368510885e-08
+
+Mo1++ Molybdenum_ion : Mo 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.6973105289879913e+05   6.3025780531086744e+00  -3.7294947222404979e+01  -2.7669265281877580e-04  -3.4479934845452793e-09
+
+Tc1+ Technetium_ion : Tc 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -8.4573461510335328e+04   2.2619010200612495e+00  -1.2356947484387915e+01  -5.2733703806330535e-05   7.0459868545516422e-09
+
+Tc1- Technetium_ion : Tc 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   6.4327921371578868e+03  -2.1373890398428403e+00   1.2693770724583807e+01  -3.4697719935318933e-04   2.5895433156479299e-08
+
+Tc1++ Technetium_ion : Tc 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.6152809832859089e+05   5.3677298251556751e+00  -3.0446509824520572e+01  -7.0023282407393459e-04   4.6500333016322910e-08
+
+Ru1+ Ruthenium_ion : Ru 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -8.5433782520644701e+04   2.4124686158553716e+00  -1.3756377029145618e+01   6.1522853360845109e-07  -3.0179373563182516e-09
+
+Ru1- Ruthenium_ion : Ru 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.2116614697218391e+04  -2.6777549758483730e+00   1.5186539440987223e+01   1.4088774432259785e-04  -1.5819835582083161e-08
+
+Ru1++ Ruthenium_ion : Ru 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.7988203119361156e+05   5.1572758757481774e+00  -2.9590993038872490e+01  -1.4273701341188969e-04   6.6984951792075280e-11
+
+Rh1+ Rhodium_ion : Rh 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -8.6602511522820612e+04   2.3826640467950662e+00  -1.3465712614391350e+01  -9.5518404470458702e-05   7.5882771642564212e-09
+
+Rh1- Rhodium_ion : Rh 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.3170540968475492e+04  -2.9811423055101933e+00   1.4992112326527488e+01   1.5875763705871618e-04   1.3038178082587095e-08
+
+Rh1++ Rhodium_ion : Rh 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.9637662630895380e+05   4.9714673736605581e+00  -2.8205943224706520e+01  -1.0557766065520033e-04   7.4484318230405471e-09
+
+Pd1+ Palladium_ion : Pd 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -9.6504038680492347e+04   3.4276000240258586e+00  -1.8372329012550384e+01  -6.8488226895026651e-04   2.2861468533923700e-08
+
+Pd1- Palladium_ion : Pd 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   6.6192383427024906e+03  -1.9019746756429012e+00   1.1296930787119006e+01  -5.7181405056024558e-04   1.2196573905320667e-08
+
+Pd1++ Palladium_ion : Pd 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.2214917596846871e+05   5.4253024775268983e+00  -2.8859092982189114e+01  -3.4069778973765580e-04   1.2325650461107426e-09
+
+Ag1+ Silver_ion : Ag 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -8.7919603329959384e+04   2.4943055175237023e+00  -1.4877632935691290e+01   5.1142610790223272e-06  -5.6357512676689452e-10
+
+Ag1- Silver_ion : Ag 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.5137777256416688e+04  -2.4998331562244438e+00   1.3526357120532925e+01  -1.8648509394267473e-07   2.2390509961208341e-11
+
+Ag1++ Silver_ion : Ag 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.3731225071349659e+05   4.9138818531283661e+00  -2.6830795162377928e+01   9.6217564216240830e-05  -3.8576362332578375e-09
+
+Cd1+ Cadmium_ion : Cd 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.0437063411102025e+05   2.4924930152172586e+00  -1.3479833825145214e+01   6.6967602399963575e-06  -7.3111023509354356e-10
+
+Cd1++ Cadmium_ion : Cd 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.0058238223613775e+05   4.9957888865518383e+00  -2.8415790984465847e+01   4.7986615790406550e-06  -5.9451085278950564e-10
+
+In1+ Indium_ion : In 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.7207640045016757e+04   2.4305589643713956e+00  -1.4211710182036274e+01  -2.8671525181657589e-04   2.4127345147436638e-08
+
+In1- Indium_ion : In 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   4.4942227987433735e+03  -2.3634804046389530e+00   1.2504615781586121e+01   2.7012481183390843e-04  -2.3073829228434447e-08
+
+In1++ Indium_ion : In 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.8612520424770878e+05   5.0861948613386581e+00  -2.8790861374307397e+01  -3.7735713191429994e-04   3.0749166112609748e-08
+
+Sn1+ Tin_ion : Sn 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -8.5506161929535563e+04   1.6361825135321986e+00  -7.5834242787030082e+00  -9.3940518319146760e-06   1.3289519993496103e-08
+
+Sn1- Tin_ion : Sn 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.2862510090380518e+04  -2.5489998650895980e+00   1.6287339847478826e+01  -6.7781214033974869e-04   6.5723708002779750e-08
+
+Sn1++ Tin_ion : Sn 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.5506398237689974e+05   4.9496830605236903e+00  -2.7768165412702036e+01  -6.4749047598543739e-04   5.3823993396123276e-08
+
+Sb1+ Antimony_ion : Sb 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -9.9999916550815149e+04   1.8613170543722664e+00  -1.1877238578640011e+01   8.9928903704547699e-04  -6.8352889543190527e-08
+
+Sb1- Antimony_ion : Sb 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.2142067860436795e+04  -2.5906591305478885e+00   1.4971199490146919e+01   1.2135841927257351e-04  -1.2053272513078164e-08
+
+Sb1++ Antimony_ion : Sb 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.9174121903861366e+05   4.8930499458822689e+00  -2.8497503253642083e+01   1.2072859624628513e-04  -9.3062435037603901e-09
+
+Te1+ Tellurium_ion : Te 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.0483581598267001e+05   1.6361775687938627e+00  -7.5833914684155612e+00  -9.3908864379118445e-06   1.3289275304886476e-08
+
+Te1- Tellurium_ion : Te 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   2.2882862334431389e+04  -2.4210799547671553e+00   1.3528496308496862e+01  -8.7251586442490200e-05   2.4396408472082625e-09
+
+Te1++ Tellurium_ion : Te 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.2044774418469600e+05   4.6598019320806978e+00  -2.8023283790214794e+01   3.7138751077499992e-04  -1.5384756495349328e-08
+
+Cs1+ Caesium_ion : Cs 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -4.5283155934609742e+04   2.0876906966477145e+00  -1.2343954001106162e+01   4.1853066770487297e-04  -5.5529236532182115e-08
+
+Cs1- Caesium_ion : Cs 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   5.3997869679613214e+03  -2.9311354442067072e+00   1.6173817477499700e+01   3.6351875035047393e-04  -4.8400122445903881e-09
+
+Cs1++ Caesium_ion : Cs 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.1395408258982748e+05   4.7550440325315337e+00  -2.6302887638166652e+01   3.1562879456033390e-04  -4.7180426458947637e-08
+
+Ba1+ Barium_ion : Ba 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.0511562558434031e+04   2.2300648416092743e+00  -1.2014295461701217e+01   4.6017990444949442e-04  -6.7988385681197508e-08
+
+Ba1- Barium_ion : Ba 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.7500817832076509e+03  -2.2332502834308450e+00   1.3653455621750055e+01   4.9252901522112038e-04  -7.1945855550024793e-08
+
+Ba1++ Barium_ion : Ba 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.7653355327799721e+05   5.1794981273311649e+00  -2.9603459153921225e+01  -3.8660588166528793e-05  -4.3836528875341224e-08
+
+La1+ Lanthanum_ion : La 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.4514825143596092e+04   3.3260880186713782e+00  -1.9273600092411751e+01  -4.7699586252914725e-04   1.8196392484051178e-08
+
+La1- Lanthanum_ion : La 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   6.3485869724147778e+03  -2.6548762151987533e+00   1.6056905759385447e+01   4.3802207811737931e-04  -3.1615173327985809e-08
+
+La1++ Lanthanum_ion : La 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.9307572786573906e+05   4.9758520765124477e+00  -2.8181653373026922e+01  -2.8881872896164402e-04   1.2854484709513058e-08
+
+Ce1+ Cerium_ion : Ce 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.4034190800668119e+04   3.1712640902815576e+00  -1.9140618620068210e+01  -1.0568224489351462e-04  -1.0199872340812318e-08
+
+Ce1- Cerium_ion : Ce 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   6.5489588451303598e+03  -2.9550350726312811e+00   1.7029230084196268e+01  -3.7016365639946759e-05   2.3833966470551749e-08
+
+Ce1++ Cerium_ion : Ce 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.9021760055990540e+05   4.6992224518548875e+00  -2.6731177870339952e+01  -1.0689215133685392e-04   1.3160490572540589e-09
+
+Pr1+ Praeseodymium_ion : Pr 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.3421746193661405e+04   3.1261890720646925e+00  -1.7981687899658912e+01  -2.7612042650472431e-04   3.5783316365414833e-09
+
+Pr1- Praeseodymium_ion : Pr 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.1224396158737110e+04  -2.0829433219815341e+00   1.1641342383870915e+01  -4.1251503562145686e-04   3.7749820384858022e-08
+
+Pr1++ Praeseodymium_ion : Pr 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.8584902284213057e+05   5.5820655018825365e+00  -3.1928673038298250e+01  -6.1362149295901883e-04   2.3525407921746300e-08
+
+Nd1+ Neodymium_ion : Nd 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.4038856383006212e+04   2.9752833726369312e+00  -1.7183729359998598e+01  -7.7206457200573088e-05  -1.3147623630164187e-08
+
+Nd1- Neodymium_ion : Nd 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   2.2301388376444604e+04  -2.1021721732210370e+00   1.1342066714345243e+01  -7.1396337806707024e-05  -3.7018647182583972e-08
+
+Nd1++ Neodymium_ion : Nd 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.8859059479249510e+05   5.2176115171575788e+00  -2.9818653635755915e+01  -1.0505056710464816e-04  -3.3999755972574908e-08
+
+Sm1+ Samarium_ion : Sm 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.5470084777392476e+04   2.2821603073640411e+00  -1.2689320495810749e+01   3.6360235788332164e-04  -3.9064990495374867e-08
+
+Sm1- Samarium_ion : Sm 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.7584137977496189e+03  -3.7492976593817211e+00   2.3211102123548077e+01   5.7704555538499787e-05   7.7035142318941452e-09
+
+Sm1++ Samarium_ion : Sm 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.9397423409874277e+05   4.8428410007705374e+00  -2.7537638623388993e+01   2.3797017037558213e-04  -4.2749946674547696e-08
+
+Eu1+ Europium_ion : Eu 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.5816771748250394e+04   2.3456888795091344e+00  -1.3284863251634746e+01   3.7527867805931903e-04  -4.4083291537069150e-08
+
+Eu1- Europium_ion : Eu 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.3880566906400809e+03  -1.8044017244799120e+00   1.0176023382023178e+01  -7.1810451484958999e-06   -5.8335911533434292e-09
+
+Eu1++ Europium_ion : Eu 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.9627685673823222e+05   4.7999128360719272e+00  -2.7274178696668265e+01   2.7952776815388702e-04  -4.5682264883071105e-08
+
+Gd1+ Gadolinium_ion : Gd 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.1373374032847525e+04   2.2769644194833210e+00  -1.3003536511393719e+01   4.3368402419015974e-04  -4.5468935442794762e-08
+
+Gd1- Gadolinium_ion : Gd 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.5468394325092586e+03  -2.9168680334308656e+00   1.7635776681696392e+01   3.8291466910378061e-04  -3.0726438728616981e-08
+
+Gd1++ Gadolinium_ion : Gd 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.1165016537395015e+05   4.9326537883766601e+00  -2.8358780676190172e+01   2.8318458827193948e-04  -4.3326611569574051e-08
+
+Tb1+ Terbium_ion : Tb 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.7998377630121817e+04   2.0108165126165463e+00  -1.2044936819006660e+01   5.3509776342242608e-04  -4.8958983124211657e-08
+
+Tb1- Terbium_ion : Tb 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.3480670230872020e+04  -3.0282959801428064e+00   1.7109193753475051e+01  -1.3348018318303079e-04   3.5413712064184487e-08
+
+Tb1++ Terbium_ion : Tb 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.0180451709898017e+05   4.2006601882398709e+00  -2.4060783082967010e+01   2.8024667762214432e-04  -1.3966938525009853e-08
+
+Dy1+ Dysprosium_ion : Dy 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.8794718768303908e+04   3.0146760317557275e+00  -1.7471809333863153e+01  -1.1578698020030091e-04  -1.1176569605921723e-08
+
+Dy1- Dysprosium_ion : Dy 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   4.0840863807012120e+03  -2.4932895754629434e+00   1.4136667149952700e+01  -2.9626508468628229e-05   7.6444359718687248e-10
+
+Dy1++ Dysprosium_ion : Dy 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.0433258957390979e+05   5.0416619802360323e+00  -2.8733036756226156e+01   4.6133727606630220e-05  -4.5625492180117246e-08
+
+Ho1+ Holium_ion : Ho 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.9771667578532753e+04   2.9962115499018105e+00  -1.7280311307991273e+01  -8.0206573549358016e-05  -2.6563492878995023e-08
+
+Ho1- Holium_ion : Ho 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   3.9060390544701249e+03  -2.6046324339542286e+00   1.4640653756305907e+01   1.0873720187162388e-04  -5.2764414375502201e-09
+
+Ho1++ Holium_ion : Ho 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.0680320219103989e+05   5.0152572249943326e+00  -2.8578709198748868e+01   6.7036201454359298e-05  -3.1484306747046370e-08
+
+Er1+ Erbium_ion : Er 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.0789443884471824e+04   3.0477840982176416e+00  -1.7396675800439482e+01  -2.3879297628731804e-04  -1.8367225798478928e-09
+
+Er1- Erbium_ion : Er 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   3.6829828552818894e+03  -2.1190103927601482e+00   1.1419135783707958e+01  -3.5187845180578990e-04   8.1408878090272674e-09
+
+Er1++ Erbium_ion : Er 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.0930033213594434e+05   5.0890745809477016e+00  -2.9024595838477929e+01  -3.9469508255273596e-06  -3.0001360280057005e-08
+
+Tm1+ Thulium_ion : Tm 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.1845757779080159e+04   2.4262548585117361e+00  -1.3225656903627568e+01   1.7046524311130218e-04  -2.7212420586283947e-08
+
+Tm1- Thulium_ion : Tm 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.1932797851642556e+04  -2.5657698982052133e+00   1.2514383807433152e+01   1.0950826244501949e-04  -2.1553813096074115e-08
+
+Tm1++ Thulium_ion : Tm 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.1163233495043125e+05   4.7825106813572660e+00  -2.7159462108048487e+01   2.8137745716650932e-04  -4.1661556067485507e-08
+
+Yb1+ Ytterbium_ion : Yb 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.2625844761831191e+04   2.2969511424257512e+00  -1.2250920031784171e+01   1.9176337505245918e-04  -2.2712565158408317e-08
+
+Yb1++ Ytterbium_ion : Yb 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.1389973042911160e+05   4.8337093230807762e+00  -2.7451142554534055e+01   1.9890372059261588e-04  -2.6428199724065059e-08
+
+Lu1+ Lutetium_ion : Lu 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -6.3001624963039234e+04   2.5409915475357736e+00  -1.5575986971595267e+01  -4.2791154251846960e-04   5.1992913562513763e-08
+
+Lu1- Lutetium_ion : Lu 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   3.9736304559979822e+03  -2.7568435083525298e+00   1.6005754284011939e+01   2.1079133624765561e-04  -5.9065246541165564e-09
+
+Lu1++ Lutetium_ion : Lu 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.2431083523151907e+05   4.8201276353811124e+00  -2.7893964930747558e+01  -9.5213868236510571e-05   1.8561246346982989e-08
+
+Hf1+ Hafnium_ion : Hf 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.9285921781466401e+04   2.1618907682140964e+00  -1.2292102575913058e+01   2.5268047472337788e-04  -1.7693119902522952e-08
+
+Hf1- Hafnium_ion : Hf 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   2.0623214779833938e+03  -2.5470605438640810e+00   1.4234206689674936e+01   1.3602777214629991e-04  -5.4841556116119214e-09
+
+Hf1++ Hafnium_ion : Hf 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.5207556054383353e+05   5.2925908232511087e+00  -3.0071344017254809e+01  -5.0241569291004909e-04   2.3038195696065183e-08
+
+Ta1+ Tantalum_ion : Ta 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -8.7446038475228226e+04   3.1588729218797380e+00  -1.8772876640010590e+01  -1.5542746270592902e-04  -1.2532179896202338e-09
+
+Ta1- Tantalum_ion : Ta 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   3.8479360718408561e+03  -2.0937695250392969e+00   9.9949874486938217e+00   3.2612808706321039e-04  -4.5360825482275565e-08
+
+Ta1++ Tantalum_ion : Ta 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.7556598027021176e+05   5.3396511918092049e+00  -3.0308187307742894e+01  -6.3844333094098624e-04   2.8522340029367878e-08
+
+W1+ Tungsten_ion : W 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -9.1500814027710774e+04   1.7764675039745372e+00  -8.5507679286809282e+00   8.4390876256084941e-05   7.3912072095972039e-09
+
+W1- Tungsten_ion : W 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   9.4321555036850914e+03  -2.4054018148966829e+00   1.6043699153892181e+01  -1.1890070205849094e-03   1.1065629362043989e-07
+
+W1++ Tungsten_ion : W 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.8134605439919233e+05   4.3828904909952007e+00  -2.4448328240782057e+01   7.1913764698784452e-05  1.4450501393290041e-08
+
+Re1+ Rhenium_ion : Re 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -9.0918788713131507e+04   2.4210654686876762e+00  -1.3595502231731961e+01   1.0702579230765376e-04  -1.8974991677227729e-08
+
+Re1- Rhenium_ion : Re 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   6.3915710158199965e+02  -2.9380583642152409e+00   1.7186432364854863e+01   5.6894403083262697e-04   -4.4664517776007750e-08
+
+Re1++ Rhenium_ion : Re 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.8354631379270618e+05   4.9452484769754710e+00  -2.8129038685552828e+01   8.9139610727534396e-05  -1.7144564118538296e-08
+
+Os1+ Osmium_ion : Os 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -9.7905555087753135e+04   2.5788768846169607e+00  -1.4592157223549840e+01  -9.1551186431894084e-05   2.2024611711524441e-09
+
+Os1- Osmium_ion : Os 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.2510712626547591e+04  -2.4873995493587455e+00   1.4235242564300382e+01   1.3935208699621725e-05  -5.2619968154810078e-09
+
+Os1++ Osmium_ion : Os 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.9519607559302245e+05   5.0191037662341902e+00  -2.8549654380236575e+01  -2.8821726683848648e-05  -4.0967982487711426e-09
+
+Ir1+ Iridium_ion : Ir 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.0400892737091858e+05   2.6697286815603141e+00  -1.5244349179118407e+01  -7.7128628164913583e-05   2.0598963651092637e-09
+
+Ir1- Iridium_ion : Ir 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.8291051529005654e+04  -1.5685478529010930e+00   8.2782507456278385e+00  -5.3963830937377795e-04   2.5016365627113149e-08
+
+Ir1++ Iridium_ion : Ir 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.0129925248247600e+05   5.2642804605388536e+00  -2.9970234861648819e+01  -3.5844365144405507e-04   1.3153387829604344e-08
+
+Pt1+ Platinum_ion : Pt 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.0421178848712699e+05   1.3207598773006273e+00  -7.0012881517497805e+00   5.5947562882271810e-04  -2.5258521187131423e-08
+
+Pt1- Platinum_ion : Pt 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  2.4556093655033845e+04  -3.1745911060982768e+00   1.7086795422537527e+01   1.5564943511992810e-04   1.0067828120162060e-09
+
+Pt1++ Platinum_ion : Pt 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.1947797223846981e+05   4.3328282759728163e+00  -2.4133340074307480e+01  1.8119469968091431e-04  -1.1862981869215197e-08
+
+Au1+ Gold_ion : Au 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.0700447123899753e+05   2.7076707163197344e+00  -1.6235891541291721e+01  -1.7011642251021949e-04   1.2768487921427383e-08
+
+Au1- Gold_ion : Au 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   2.6793261958978372e+04  -2.4921631250202676e+00   1.3462155791779232e+01   2.5080005903938234e-05  -1.2813890907153301e-08
+
+Au1++ Gold_ion : Au 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.4494734171697171e+05   5.0074197468391510e+00  -2.7405097065529706e+01   2.5544970944025509e-05  -1.2869739371255588e-08
+
+Hg1+ Mercury_ion : Hg 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -1.2112215907815669e+05   2.5001644076865852e+00  -1.3528395223875464e+01  -1.5137293504327895e-07   1.7196790754570370e-11
+
+Hg1++ Mercury_ion : Hg 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.3877663876943698e+05   4.9998565737576834e+00  -2.8440151449212546e+01   1.6158838357883708e-07  -1.9695552357154996e-11
+
+Tl1+ Thallium_ion : Tl 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.0855771054108423e+04   2.5942994626450275e+00  -1.5532140091440699e+01  -4.9798355874478174e-05  -5.2248515911986001e-09
+
+Tl1- Thallium_ion : Tl 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   4.3666839981539251e+03  -2.5387675749684719e+00   1.3782629503147731e+01   5.9926287003717682e-07   1.2670559179284410e-08
+
+Tl1++ Thallium_ion : Tl 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -3.0793196127477015e+05   5.0427477281640725e+00  -2.8711166528372278e+01  -1.9735427282277810e-05  -7.4248926788472216e-09
+
+Pb1+ Lead_ion : Pb 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -8.5999454262453321e+04   2.7355462328387703e+00  -1.5070825209913634e+01  -1.2998127245983433e-04  -9.0326623838760682e-09
+
+Pb1- Lead_ion : Pb 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   4.1601112559382536e+03  -2.3886589151883930e+00   1.4908462767745108e+01  -6.3958846493906816e-05  -1.2467172664982342e-08
+
+Pb1++ Lead_ion : Pb 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.6049211297414362e+05   5.0815156946435591e+00  -2.8966439715023014e+01  -2.0335136121570776e-05  -2.0095398509314211e-08
+
+Bi1+ Bismuth_ion : Bi 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -8.4529925301359704e+04   2.5696711198121864e+00  -1.6039519291091505e+01  -7.2161275015498780e-05   9.6007234159750287e-09
+
+Bi1- Bismuth_ion : Bi 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+   1.0932088403225884e+04  -2.5251234164502381e+00   1.4590621018427404e+01   3.3982206247485251e-05  -5.0994845259744974e-09
+
+Bi1++ Bismuth_ion : Bi 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.7822813762901031e+05   4.9790242045605932e+00  -2.9013853204776215e+01   3.2921114595984834e-05  -6.1846035180796443e-09
+
+Th1+ Thorium_ion : Th 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.3044742408347855e+04   2.9799420858451415e+00  -1.7673227310178532e+01  -2.1520275172275920e-05  -1.0870377552412905e-08
+
+Th1++ Thorium_ion : Th 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.0661106568175161e+05   5.3682415675671793e+00  -2.9586833431618647e+01  -2.7570844137111972e-04  -1.0653185373529746e-09
+
+U1+ Uranium_ion : U 1 e- -1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -7.1878990171890910e+04   2.5000000199482395e+00  -1.4482870232408375e+01  -1.2211360730882481e-11   9.1890321330802610e-16
+
+U1++ Uranium_ion : U 1 e- -2 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
+  -2.0649144666068928e+05   5.0000000000048281e+00  -2.8808736449019580e+01  -3.5351949991490057e-15   2.8916451813299671e-19
+
