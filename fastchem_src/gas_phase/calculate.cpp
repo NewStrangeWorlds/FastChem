@@ -39,7 +39,7 @@ bool GasPhase<double_type>::calculate(
 {
   for (auto & i : elements) i.number_density_maj = 0.0;
 
-
+  
   //starting values for contribution of minor species
   for (auto & i : elements) i.calcMinorSpeciesDensities(molecules);
 
@@ -87,7 +87,7 @@ bool GasPhase<double_type>::calculate(
     if (e_ != FASTCHEM_UNKNOWN_SPECIES) 
       calculateElectronDensities(elements[e_], number_density_old[e_], gas_density);
  
-
+    
     //check if n_j_min are small enough, if not use backup solver
     for (auto & i : elements)
       if ( (i.number_density_min + i.number_density_maj > i.phi * gas_density) && use_backup_solver == false)
@@ -107,7 +107,7 @@ bool GasPhase<double_type>::calculate(
     if (iter_step > 0)
     {
       converged = true;
-
+      
       for (size_t i=0; i<nb_species; ++i)
         if (std::fabs((species[i]->number_density - number_density_old[i])) > options.chem_accuracy*number_density_old[i]
              && species[i]->number_density/gas_density > 1.e-155)

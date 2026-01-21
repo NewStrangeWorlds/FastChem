@@ -18,23 +18,22 @@ project(fastchem CXX C)
 
 include(CMakeDependentOption)
 cmake_dependent_option(ONLY_LIBRARY "Compile FastChem library only" ON "FASTCHEM_ONLY_LIBRARY" OFF)
+cmake_dependent_option(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library only" ON "FASTCHEM_ONLY_PYTHON_LIBRARY" OFF)
 
 
 #some C++/C flags
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set(CMAKE_CXX_FLAGS "-Wall -pedantic -MMD")
 
 
 set(CMAKE_BUILD_TYPE Release)
 
-  
+
 #output directories
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-
 
 
 #define the source files   
@@ -80,7 +79,7 @@ set(SRC_PYTHON_WRAPPER
 find_package(OpenMP)  
 
 
-if (USE_PYTHON MATCHES ON)
+if ((USE_PYTHON MATCHES ON) AND (NOT ONLY_PYTHON_LIBRARY))
 
     include(FetchContent)
     FetchContent_Declare(
@@ -103,10 +102,11 @@ if (USE_PYTHON MATCHES ON)
   else()
     target_compile_options(fastchem_for_py PRIVATE "-O3" PRIVATE "-fPIC")
   endif()
-
+  
+  
   #find the python version
   find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-  
+    
   #compilation target for FastChem's Python wrapper
   pybind11_add_module(pyfastchem ${SRC_PYTHON_WRAPPER})
   
@@ -124,19 +124,37 @@ endif()
 
 
 
-#compilation target for FastChem
-add_library(fastchem_lib ${SRC_FASTCHEM})
+if (ONLY_PYTHON_LIBRARY MATCHES ON)
 
-if (OpenMP_FOUND)
-  target_compile_options(fastchem_lib PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3")
-else()
-  target_compile_options(fastchem_lib PRIVATE "-O3")
+  #compilation target for FastChem's Python library
+  add_library(fastchem_lib_for_py ${SRC_FASTCHEM})
+  
+  if (OpenMP_FOUND)
+    target_compile_options(fastchem_lib_for_py PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3" PRIVATE "-fPIC")
+  else()
+    target_compile_options(fastchem_lib_for_py PRIVATE "-O3" PRIVATE "-fPIC")
+  endif()
 endif()
+
+
+
+if (NOT ONLY_PYTHON_LIBRARY)
+
+  #compilation target for FastChem
+  add_library(fastchem_lib ${SRC_FASTCHEM})
+
+  if (OpenMP_FOUND)
+    target_compile_options(fastchem_lib PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3")
+  else()
+    target_compile_options(fastchem_lib PRIVATE "-O3")
+  endif()
+endif()
+
 
 file(MAKE_DIRECTORY "output")
 
 #in case we build the executable
-if (NOT ONLY_LIBRARY)
+if ((NOT ONLY_LIBRARY) AND (NOT ONLY_PYTHON_LIBRARY))
   #compilation target for FastChem's standalone main
   add_executable(fastchem ${SRC_MAIN})
 
