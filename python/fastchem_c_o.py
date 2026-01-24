@@ -20,18 +20,15 @@ output_dir = '../output'
 
 
 #the chemical species we want to plot later
-#note that the standard FastChem input files use the Hill notation
-plot_species = ['H2O1', 'C1O1', 'C1H4', 'C1O2', 'C2H2', 'C2H4', 'C1H1N1_1']
-#for the plot labels, we therefore use separate strings in the usual notation
-plot_species_labels = ['H2O', 'CO', 'CH4', 'CO2', 'C2H2', 'C2H4', 'HCN']
+plot_species = ['H2O', 'CO', 'CH4', 'CO2', 'C2H2', 'C2H4', 'HCN']
 
 
 #create a FastChem object
 #it needs the locations of the element abundance and equilibrium constants files
 #these locations have to be relative to the one this Python script is called from
 fastchem = pyfastchem.FastChem(
-  '../input/element_abundances/asplund_2009.dat', 
-  '../input/logK/logK.dat',
+  '../input/element_abundances/asplund_2021_extended.dat',
+  '../input/logK/logK_extended.dat',
   1)
 
 
@@ -111,6 +108,16 @@ else:
   print("  - element conservation: fail")
 
 
+
+#internally, FastChem uses the Hill notation for gas-phase species
+#we therefore have to convert the input species names first
+plot_species_hill = plot_species.copy()
+
+for i, species in enumerate(plot_species_hill):
+  plot_species_hill[i] = fastchem.convertToHillNotation(species)
+
+
+
 #total gas particle number density from the ideal gas law 
 gas_number_density = pressure*1e6 / (const.k_B.cgs * temperature)
 
@@ -179,11 +186,11 @@ plot_species_indices = []
 plot_species_symbols = []
 
 for i, species in enumerate(plot_species):
-  index = fastchem.getGasSpeciesIndex(species)
+  index = fastchem.getGasSpeciesIndex(plot_species_hill[i])
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices.append(index)
-    plot_species_symbols.append(plot_species_labels[i])
+    plot_species_symbols.append(plot_species[i])
   else:
     print("Species", species, "to plot not found in FastChem")
 

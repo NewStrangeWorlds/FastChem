@@ -15,7 +15,7 @@ new_cond_species_file = 'logK/logK_custom_condensates.dat'
 #In this example, we select a very small sample
 element_list = ['H', 'He', 'C', 'N', 'O']
 
-#The list above would not include ions. For ions, we have to add the e- expelicitly as an element
+#The list above would not include ions. For ions, we have to add the e- explicitly as an element:
 #element_list = ['e-', 'H', 'He', 'C', 'N', 'O']
 
 

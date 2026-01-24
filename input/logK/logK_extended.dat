@@ -1,5 +1,5 @@
 #logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:
-#includes elements with eps >= eps_Pb, see Kitzmann et al. (in prep.) for details.
+#includes elements with eps >= eps_Pb and lithium, see Kitzmann et al. (in prep.) for details.
 #fit coefficients calculateted from indicated data source. Last update 2024-11-21 js.
 Al1B1O2 Aluminum_Borate : Al 1 B 1 O 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    2.314582049881135e+05   -2.858657559885888e+00   -2.65064908580021e+01     1.022444591068543e-03   -5.870548901698095e-08
