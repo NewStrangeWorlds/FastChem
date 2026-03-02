@@ -43,23 +43,22 @@ namespace fastchem {
 //are included, and R = phi*n_gas - n_min - n_maj.
 //When use_all_molecules is true (alternative/backup mode), all molecules in the element's
 //molecule_list are used, and R = phi*n_gas - n_exc.
-template <class double_type>
-void GasPhaseSolver<double_type>::logSpaceResidual(
-  const Element<double_type>& species,
-  const std::vector<Element<double_type>>& elements,
-  const std::vector<Molecule<double_type>>& molecules,
-  const double_type gas_density,
-  const double_type y_j,
-  double_type& ln_P,
-  double_type& ln_dP,
-  double_type& R,
+void GasPhaseSolver::logSpaceResidual(
+  const Element& species,
+  const std::vector<Element>& elements,
+  const std::vector<Molecule>& molecules,
+  const double gas_density,
+  const double y_j,
+  double& ln_P,
+  double& ln_dP,
+  double& R,
   const bool use_all_molecules)
 {
   if (use_all_molecules)
   {
     //Alternative mode: R = phi*n_gas - n_exc
     //n_exc = phi * Sigma_{i: nu_ij=0} sigma_i * n_i (molecules not containing element j)
-    double_type n_exc = 0.0;
+    double n_exc = 0.0;
 
     for (size_t i = 0; i < molecules.size(); ++i)
       if (molecules[i].stoichiometric_vector[species.index] == 0)
@@ -77,9 +76,9 @@ void GasPhaseSolver<double_type>::logSpaceResidual(
   //Build the positive sum P(y_j) and its derivative dP/dy_j
   //P(y_j) = exp(y_j) + Sigma_i kappa_ij * exp(mac_i + Sigma_l nu_il * y_l)
   //dP/dy_j = exp(y_j) + Sigma_i nu_ij * kappa_ij * exp(mac_i + Sigma_l nu_il * y_l)
-  std::vector<double_type> log_terms;
-  std::vector<double_type> coeffs_P;
-  std::vector<double_type> coeffs_dP;
+  std::vector<double> log_terms;
+  std::vector<double> coeffs_P;
+  std::vector<double> coeffs_dP;
 
   //Free atom term
   log_terms.push_back(y_j);
@@ -96,7 +95,7 @@ void GasPhaseSolver<double_type>::logSpaceResidual(
       continue;
 
     //log(n_i) = mac_i + Sigma_l nu_il * y_l
-    double_type log_n = molecules[i].mass_action_constant;
+    double log_n = molecules[i].mass_action_constant;
 
     for (auto & l : molecules[i].element_indices)
     {
@@ -106,11 +105,11 @@ void GasPhaseSolver<double_type>::logSpaceResidual(
         log_n += molecules[i].stoichiometric_vector[l] * elements[l].log_number_density;
     }
 
-    const double_type kappa = nu_j + species.phi * molecules[i].sigma;
+    const double kappa = nu_j + species.phi * molecules[i].sigma;
 
     log_terms.push_back(log_n);
     coeffs_P.push_back(kappa);
-    coeffs_dP.push_back(static_cast<double_type>(nu_j) * kappa);
+    coeffs_dP.push_back(static_cast<double>(nu_j) * kappa);
   }
 
   //Compute ln(P) and ln(dP/dy) using logSumExp for numerical stability
@@ -122,20 +121,19 @@ void GasPhaseSolver<double_type>::logSpaceResidual(
 
 //Am coefficients for electron density computation
 //Uses log_number_density to avoid log(0) for underflowed densities
-template <class double_type>
-double_type GasPhaseSolver<double_type>::AmCoeffElectron(
-  const Element<double_type>& electron,
-  const std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules,
+double GasPhaseSolver::AmCoeffElectron(
+  const Element& electron,
+  const std::vector< Element >& elements,
+  const std::vector< Molecule >& molecules,
   const int order)
 {
-  double_type Am = 0.0;
+  double Am = 0.0;
 
   for (auto & i : electron.molecule_list)
   {
     if (molecules[i].stoichiometric_vector[electron.index] == order)
     {
-      double_type sum = 0;
+      double sum = 0;
 
       for (auto & j : molecules[i].element_indices)
       {
@@ -152,8 +150,6 @@ double_type GasPhaseSolver<double_type>::AmCoeffElectron(
 }
 
 
-template class GasPhaseSolver<double>;
-template class GasPhaseSolver<long double>;
 }
 
 

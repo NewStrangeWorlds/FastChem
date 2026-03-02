@@ -38,24 +38,23 @@ namespace fastchem {
 //and R (the required density). The Newton delta is computed as:
 //  delta = -(P - R) / dP = -exp(ln_P - ln_dP) + R * exp(-ln_dP)
 //This avoids overflow when mass action constants are huge (low T).
-template <class double_type>
-void GasPhaseSolver<double_type>::newtonSol(
-  Element<double_type>& species,
-  std::vector<Element<double_type>>& elements,
-  const std::vector<Molecule<double_type>>& molecules,
-  const double_type gas_density,
+void GasPhaseSolver::newtonSol(
+  Element& species,
+  std::vector<Element>& elements,
+  const std::vector<Molecule>& molecules,
+  const double gas_density,
   const bool use_alternative)
 {
-  const double_type max_step = 10.0;
+  const double max_step = 10.0;
 
   //Compute R: the required density from the element conservation equation
-  double_type R;
+  double R;
 
   if (use_alternative)
   {
     //Alternative mode: R = phi*n_gas - n_exc
     //n_exc = phi * Sigma_{i: nu_ij=0} sigma_i * n_i (molecules not containing element j)
-    double_type n_exc = 0.0;
+    double n_exc = 0.0;
 
     for (size_t i = 0; i < molecules.size(); ++i)
       if (molecules[i].stoichiometric_vector[species.index] == 0)
@@ -70,12 +69,12 @@ void GasPhaseSolver<double_type>::newtonSol(
     R = species.phi * gas_density - species.number_density_min - species.number_density_maj;
   }
 
-  double_type y;
+  double y;
 
   //Use the current log_number_density as initial guess if it's reasonable.
   //This avoids recomputing an initial guess that may be dominated by molecules
-  //with extreme mass action constants (near logK_limit) at low temperatures.
-  const bool have_previous = (species.log_number_density > static_cast<double_type>(LOG_DENSITY_FLOOR) + 1.0
+  //with extreme mass action constants at low temperatures.
+  const bool have_previous = (species.log_number_density > static_cast<double>(LOG_DENSITY_FLOOR) + 1.0
                               && species.log_number_density < std::log(gas_density) + 1.0);
 
   if (R > 0)
@@ -92,7 +91,7 @@ void GasPhaseSolver<double_type>::newtonSol(
       //  y <= (ln(R) - ln(kappa_i) - mac_i_other) / nu_j
       //The free atom term gives y <= ln(R).
       //Taking the minimum gives a starting point close to the root.
-      double_type ln_R = std::log(R);
+      double ln_R = std::log(R);
       y = ln_R;
 
       for (auto & i : species.molecule_list)
@@ -101,7 +100,7 @@ void GasPhaseSolver<double_type>::newtonSol(
         if (nu_j < 1) continue;
         if (!use_alternative && molecules[i].abundance != species.abundance) continue;
 
-        double_type mac_other = molecules[i].mass_action_constant;
+        double mac_other = molecules[i].mass_action_constant;
 
         for (auto & l : molecules[i].element_indices)
         {
@@ -109,15 +108,15 @@ void GasPhaseSolver<double_type>::newtonSol(
             mac_other += molecules[i].stoichiometric_vector[l] * elements[l].log_number_density;
         }
 
-        const double_type kappa = static_cast<double_type>(nu_j) + species.phi * molecules[i].sigma;
-        double_type y_upper = (ln_R - std::log(kappa) - mac_other) / static_cast<double_type>(nu_j);
+        const double kappa = static_cast<double>(nu_j) + species.phi * molecules[i].sigma;
+        double y_upper = (ln_R - std::log(kappa) - mac_other) / static_cast<double>(nu_j);
 
         if (y_upper < y) y = y_upper;
       }
 
       //Clamp to a reasonable range
-      if (y < static_cast<double_type>(LOG_DENSITY_FLOOR))
-        y = static_cast<double_type>(LOG_DENSITY_FLOOR);
+      if (y < static_cast<double>(LOG_DENSITY_FLOOR))
+        y = static_cast<double>(LOG_DENSITY_FLOOR);
     }
   }
   else
@@ -132,16 +131,16 @@ void GasPhaseSolver<double_type>::newtonSol(
 
   for (unsigned int mu = 0; mu < options.nb_max_newton_iter; ++mu)
   {
-    double_type ln_P, ln_dP, R_res;
+    double ln_P, ln_dP, R_res;
     logSpaceResidual(species, elements, molecules, gas_density, y, ln_P, ln_dP, R_res, use_alternative);
 
     //Compute delta = -(P - R) / dP_dy in a numerically stable way
     //delta = -exp(ln_P - ln_dP) + R * exp(-ln_dP)
     //The first term (P/dP) is always moderate (~1/nu for dominant species).
     //The second term (R/dP) vanishes when far from the root (P >> R).
-    double_type delta;
+    double delta;
 
-    if (ln_dP < static_cast<double_type>(LOG_DENSITY_FLOOR) + 100)
+    if (ln_dP < static_cast<double>(LOG_DENSITY_FLOOR) + 100)
     {
       //dP/dy is essentially zero — can't compute a meaningful step.
       //Use sign of (ln_P - ln(R)) to determine direction.
@@ -152,8 +151,8 @@ void GasPhaseSolver<double_type>::newtonSol(
     }
     else
     {
-      double_type P_over_dP = safeExp(ln_P - ln_dP);
-      double_type R_over_dP = R_res * safeExp(-ln_dP);
+      double P_over_dP = safeExp(ln_P - ln_dP);
+      double R_over_dP = R_res * safeExp(-ln_dP);
       delta = -(P_over_dP - R_over_dP);
     }
 
@@ -161,7 +160,7 @@ void GasPhaseSolver<double_type>::newtonSol(
     if (delta > max_step) delta = max_step;
     if (delta < -max_step) delta = -max_step;
 
-    double_type y_new = y + delta;
+    double y_new = y + delta;
 
     if (std::fabs(delta) < options.newton_err)
     {
@@ -212,16 +211,15 @@ void GasPhaseSolver<double_type>::newtonSol(
 
 //Newton's method for the electrons
 //Instead of element conservation, solves for charge balance
-template <class double_type>
-void GasPhaseSolver<double_type>::newtonSolElectron(
-  Element<double_type>& species,
-  std::vector<Element<double_type>>& elements,
-  const std::vector<Molecule<double_type>>& molecules,
-  const double_type gas_density)
+void GasPhaseSolver::newtonSolElectron(
+  Element& species,
+  std::vector<Element>& elements,
+  const std::vector<Molecule>& molecules,
+  const double gas_density)
 {
   //Calculation of the polynomial coefficients
-  std::vector<double_type> Aj_cation(order_cation+1, 0.0);
-  std::vector<double_type> Aj_anion(order_anion+1, 0.0);
+  std::vector<double> Aj_cation(order_cation+1, 0.0);
+  std::vector<double> Aj_anion(order_anion+1, 0.0);
 
   for (int k=1; k<order_cation+1; ++k)
     Aj_cation[k] = AmCoeffElectron(species, elements, molecules, -k);
@@ -232,15 +230,15 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
 
   //Newton's method
   bool converged = false;
-  double_type x = order_cation/(1.0 + order_cation) * gas_density; //Initial guess ensures monotonous convergence.
+  double x = order_cation/(1.0 + order_cation) * gas_density; //Initial guess ensures monotonous convergence.
 
 
   //one Newton step as lambda function
-  auto newton_step = [&] (const double_type &x)
+  auto newton_step = [&] (const double &x)
     {
       //Horner's method for the anions
-      double_type P_anion = Aj_anion[order_anion];
-      double_type P_prime_anion = order_anion*Aj_anion[order_anion];
+      double P_anion = Aj_anion[order_anion];
+      double P_prime_anion = order_anion*Aj_anion[order_anion];
 
       for (int k = order_anion-1; k >= 1; --k)
       {
@@ -249,8 +247,8 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
       }
 
       //The cations
-      double_type P_cation = 0.0;
-      double_type P_prime_cation = 0.0;
+      double P_cation = 0.0;
+      double P_prime_cation = 0.0;
 
       for (int k=1; k<order_cation+1; k++)
       {
@@ -258,8 +256,8 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
         P_prime_cation += -k * Aj_cation[k] * std::pow(x, -k-1);
       }
 
-      const double_type P_j = x  + x * P_anion + P_cation;  //this is the charge balance
-      const double_type P_j_prime = 1.0 + P_prime_cation + P_prime_anion; //derivative
+      const double P_j = x  + x * P_anion + P_cation;  //this is the charge balance
+      const double P_j_prime = 1.0 + P_prime_cation + P_prime_anion; //derivative
 
       return x - P_j/P_j_prime; //Newton step
     };
@@ -268,7 +266,7 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
   //Newton iteration
   for (unsigned int mu=0; mu<options.nb_max_newton_iter; ++mu)
   {
-    double_type x_new = newton_step(x);
+    double x_new = newton_step(x);
 
     if (std::fabs(x_new - x) <= options.newton_err * std::fabs(x_new))  //root found?
     {
@@ -289,12 +287,12 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
 
 
   // Test if root is in (max(0,x*(1-newton_err)),x*(1+newton_err))
-  const double_type x_lower = std::fmax(0., x * (1. - options.newton_err));
-  const double_type x_upper = x * (1. + options.newton_err);
+  const double x_lower = std::fmax(0., x * (1. - options.newton_err));
+  const double x_upper = x * (1. + options.newton_err);
 
 
-  double_type P_anion_lower = Aj_anion[order_anion];
-  double_type P_anion_upper = Aj_anion[order_anion];
+  double P_anion_lower = Aj_anion[order_anion];
+  double P_anion_upper = Aj_anion[order_anion];
 
   for (int k = order_anion-1; k >= 1; --k)
   {
@@ -302,8 +300,8 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
     P_anion_upper = Aj_anion[k] + x_upper * P_anion_upper;
   }
 
-  double_type P_cation_lower = 0.0;
-  double_type P_cation_upper = 0.0;
+  double P_cation_lower = 0.0;
+  double P_cation_upper = 0.0;
 
   for (int k=1; k<order_cation+1; k++)
   {
@@ -311,8 +309,8 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
     P_cation_upper += Aj_cation[k] * std::pow(x_upper, -k);
   }
 
-  const double_type P_j_lower = x_lower  + x_lower * P_anion_lower + P_cation_lower;
-  const double_type P_j_upper = x_upper  + x_upper * P_anion_upper + P_cation_upper;
+  const double P_j_lower = x_lower  + x_lower * P_anion_lower + P_cation_lower;
+  const double P_j_upper = x_upper  + x_upper * P_anion_upper + P_cation_upper;
 
 
   if (converged && x > 0 && P_j_lower*P_j_upper <= 0.)
@@ -325,7 +323,7 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
     species.number_density = x;
     //Use log(element_density_minlimit) as floor for electrons instead of LOG_DENSITY_FLOOR
     //to prevent cation contributions from blowing up via -nu_e * LOG_DENSITY_FLOOR
-    const double_type electron_log_floor = std::log(options.element_density_minlimit);
+    const double electron_log_floor = std::log(options.element_density_minlimit);
     species.log_number_density = (x > 0) ? std::log(x) : electron_log_floor;
   }
 
@@ -333,7 +331,7 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
   //in case something went wrong again, we try to use another backup
   if (x < 0 || !converged || P_j_lower*P_j_upper > 0.)
   {
-    const double_type init = std::log(std::fabs(x));
+    const double init = std::log(std::fabs(x));
     nelderMeadElectron(species, elements, molecules, init, 0.0);
 
     if (options.verbose_level >= 3)
@@ -344,6 +342,4 @@ void GasPhaseSolver<double_type>::newtonSolElectron(
 }
 
 
-template class GasPhaseSolver<double>;
-template class GasPhaseSolver<long double>;
 }

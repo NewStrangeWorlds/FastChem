@@ -35,8 +35,7 @@ namespace fastchem {
 
 
 
-template <class double_type>
-void GasPhase<double_type>::determineSolverOrder()
+void GasPhase::determineSolverOrder()
 {
   for (auto & i : elements)
     i.solver_order = determineSolverOrder(i);
@@ -46,8 +45,7 @@ void GasPhase<double_type>::determineSolverOrder()
 
 //Determine the solver order for an element
 //For the electrons this is the highest stage of ionisation
-template <class double_type>
-unsigned int GasPhase<double_type>::determineSolverOrder(const Element<double_type>& species)
+unsigned int GasPhase::determineSolverOrder(const Element& species)
 {
   unsigned int solver_order = 0;
 
@@ -71,8 +69,7 @@ unsigned int GasPhase<double_type>::determineSolverOrder(const Element<double_ty
 
 //Sort the elements according to their abundances
 //elements will later be calculated in descending order
-template <class double_type>
-void GasPhase<double_type>::determineElementCalculationOrder()
+void GasPhase::determineElementCalculationOrder()
 {
   //make sure that there is a unique abundance for each element in case they are initially identical
   for (auto & i : element_data.elements_wo_e)
@@ -81,14 +78,14 @@ void GasPhase<double_type>::determineElementCalculationOrder()
       if (i == j) continue;
   
       if (i->abundance == j->abundance)
-        j->abundance += std::numeric_limits<double_type>::epsilon()*j->abundance;
+        j->abundance += std::numeric_limits<double>::epsilon()*j->abundance;
     }
 
   //sort the element list according to their abundance
   std::sort(
     std::begin(element_data.elements_wo_e),
     std::end(element_data.elements_wo_e),
-    [&] (Element<double_type>* a, Element<double_type>* b) {
+    [&] (Element* a, Element* b) {
       return a->abundance > b->abundance;});
   
   element_calculation_order.assign(element_data.elements_wo_e.size(), 0);
@@ -99,6 +96,4 @@ void GasPhase<double_type>::determineElementCalculationOrder()
 
 
 
-template class GasPhase<double>;
-template class GasPhase<long double>;
 }

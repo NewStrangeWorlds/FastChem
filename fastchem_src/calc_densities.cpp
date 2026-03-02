@@ -35,8 +35,7 @@
 namespace fastchem {
 
 
-template <class double_type>
-unsigned int FastChem<double_type>::calcDensities(
+unsigned int FastChem::calcDensities(
   FastChemInput& input, FastChemOutput& output)
 {
   if (!is_initialised)
@@ -93,7 +92,7 @@ unsigned int FastChem<double_type>::calcDensities(
 
     omp_set_num_threads(nb_omp_threads);
 
-    std::vector<FastChem<double_type>> fastchems(nb_omp_threads, *this);
+    std::vector<FastChem> fastchems(nb_omp_threads, *this);
 
     #pragma omp parallel for schedule(dynamic, 1)
     for (unsigned int i=0; i<input.temperature.size(); i++)
@@ -180,8 +179,7 @@ unsigned int FastChem<double_type>::calcDensities(
 //Solve the chemistry for a single temperature and a single pressure
 //Note: this is a private function, that can not be accessed from outside of FastChem
 //This function will be called by any public calcDensity function
-template <class double_type>
-unsigned int FastChem<double_type>::calcDensity(
+unsigned int FastChem::calcDensity(
   const double temperature,
   const double pressure,
   const bool use_previous_solution,
@@ -191,10 +189,10 @@ unsigned int FastChem<double_type>::calcDensity(
   std::vector<unsigned int>& element_conserved,
   unsigned int& nb_chemistry_iterations)
 {
-  for (auto & i : gas_phase.molecules)  i.calcMassActionConstant(temperature, options.logK_limit);
+  for (auto & i : gas_phase.molecules)  i.calcMassActionConstant(temperature);
 
   //this value will be fixed.
-  double_type gas_density = pressure/(CONST_K * temperature);
+  double gas_density = pressure/(CONST_K * temperature);
 
 
   if (use_previous_solution == true)
@@ -203,7 +201,7 @@ unsigned int FastChem<double_type>::calcDensity(
    for (auto & i : gas_phase.species)
    {
      i->number_density *= gas_density;
-     i->log_number_density = (i->number_density > 0) ? std::log(i->number_density) : static_cast<double_type>(LOG_DENSITY_FLOOR);
+     i->log_number_density = (i->number_density > 0) ? std::log(i->number_density) : static_cast<double>(LOG_DENSITY_FLOOR);
    }
   }
   else
@@ -211,7 +209,7 @@ unsigned int FastChem<double_type>::calcDensity(
     element_data.init(options.element_density_minlimit);
 
     //for a fresh start set all species to the minimum value
-    const double_type log_min = std::log(options.element_density_minlimit);
+    const double log_min = std::log(options.element_density_minlimit);
     for (auto & i : gas_phase.species)
     {
       i->number_density = options.element_density_minlimit;
@@ -267,7 +265,7 @@ unsigned int FastChem<double_type>::calcDensity(
   for (auto & i : gas_phase.species)
   {
     i->number_density /= gas_density;
-    i->log_number_density = (i->number_density > 0) ? std::log(i->number_density) : static_cast<double_type>(LOG_DENSITY_FLOOR);
+    i->log_number_density = (i->number_density > 0) ? std::log(i->number_density) : static_cast<double>(LOG_DENSITY_FLOOR);
   }
 
 
@@ -279,8 +277,7 @@ unsigned int FastChem<double_type>::calcDensity(
 //calculates condensation using the rainout approximation, see Sect. 3.6 in Paper III
 //Note: this is a private function, that can not be accessed from outside of FastChem
 //This function will be called by any public calcDensity function
-template <class double_type>
-void FastChem<double_type>::rainoutCondensation(
+void FastChem::rainoutCondensation(
   FastChemInput& input, FastChemOutput& output)
 {
   std::vector<double> original_element_abundance = getElementAbundances();
@@ -346,8 +343,7 @@ void FastChem<double_type>::rainoutCondensation(
 //Solve the equilibrium condensation for a single temperature and a single pressure
 //Note: this is a private function, that can not be accessed from outside of FastChem
 //This function will be called by any public calcDensity function
-template <class double_type>
-unsigned int FastChem<double_type>::equilibriumCondensation(
+unsigned int FastChem::equilibriumCondensation(
   const double temperature,
   const double pressure,
   std::vector<double>& number_densities,
@@ -361,15 +357,15 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   unsigned int& nb_combined_iter)
 { 
 
-  for (auto & i : gas_phase.molecules) i.calcMassActionConstant(temperature, options.logK_limit);
+  for (auto & i : gas_phase.molecules) i.calcMassActionConstant(temperature);
   for (auto & i : condensed_phase.condensates) i.calcMassActionConstant(temperature);
 
   //this value will be fixed.
-  double_type gas_density = pressure/(CONST_K * temperature);
+  double gas_density = pressure/(CONST_K * temperature);
 
   //for a fresh start set all species to the minimum value
   {
-    const double_type log_min = std::log(options.element_density_minlimit);
+    const double log_min = std::log(options.element_density_minlimit);
     for (auto & i : gas_phase.species)
     {
       i->number_density = options.element_density_minlimit;
@@ -417,8 +413,8 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
     i.maxDensity(element_data.elements, total_element_density);
   }
 
-  std::vector<Condensate<double_type>*> condensates_act;
-  std::vector<Element<double_type>*> elements_cond;
+  std::vector<Condensate*> condensates_act;
+  std::vector<Element*> elements_cond;
 
   condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
   
@@ -434,7 +430,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   {
     options.chem_use_backup_solver = true;
 
-    std::vector<double_type> log_density_old(element_data.nb_elements, static_cast<double_type>(LOG_DENSITY_FLOOR));
+    std::vector<double> log_density_old(element_data.nb_elements, static_cast<double>(LOG_DENSITY_FLOOR));
 
     for (size_t i=0; i<element_data.nb_elements; ++i)
       log_density_old[i] = element_data.elements[i].log_number_density;
@@ -519,7 +515,7 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
       if (i.log_activity < -0.01) i.number_density = 0.0;
     
     //and run the gas phase calculation one last time
-    double_type phi_sum = 0;
+    double phi_sum = 0;
     nb_condensed_elements = 0;
 
     for (auto & i : element_data.elements)
@@ -607,8 +603,6 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
 
 
-template class FastChem<double>;
-template class FastChem<long double>;
 }
 
 

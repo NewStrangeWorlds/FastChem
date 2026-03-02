@@ -36,28 +36,27 @@ namespace fastchem {
 //Bisects on y in [LOG_DENSITY_FLOOR, ln(gas_density)] using the log-space residual.
 //The sign of F = P - R is determined by comparing ln_P with ln(R),
 //avoiding any conversion to linear space that could overflow.
-template <class double_type>
-bool GasPhaseSolver<double_type>::bisection(
-  Element<double_type>& species,
-  std::vector<Element<double_type>>& elements,
-  const std::vector<Molecule<double_type>>& molecules,
-  const double_type gas_density,
+bool GasPhaseSolver::bisection(
+  Element& species,
+  std::vector<Element>& elements,
+  const std::vector<Molecule>& molecules,
+  const double gas_density,
   const bool use_all_molecules)
 {
-  double_type y_lo = static_cast<double_type>(LOG_DENSITY_FLOOR);
-  double_type y_hi = std::log(gas_density);
+  double y_lo = static_cast<double>(LOG_DENSITY_FLOOR);
+  double y_hi = std::log(gas_density);
 
   bool converged = false;
 
   //Helper: compute the sign of F = P - R entirely in log-space
   //Returns +1 if P > R (y too large), -1 if P < R (y too small), 0 if equal
-  auto signF = [&](double_type y) -> int {
-    double_type ln_P, ln_dP, R;
+  auto signF = [&](double y) -> int {
+    double ln_P, ln_dP, R;
     logSpaceResidual(species, elements, molecules, gas_density, y, ln_P, ln_dP, R, use_all_molecules);
 
     if (R <= 0) return 1;  //P > 0 >= R, so F = P - R > 0
 
-    double_type ln_R = std::log(R);
+    double ln_R = std::log(R);
     if (ln_P > ln_R + 1e-12) return 1;
     if (ln_P < ln_R - 1e-12) return -1;
     return 0;
@@ -83,7 +82,7 @@ bool GasPhaseSolver<double_type>::bisection(
 
   for (unsigned int iter_step = 0; iter_step < options.nb_max_bisection_iter; ++iter_step)
   {
-    const double_type y_mid = 0.5 * (y_lo + y_hi);
+    const double y_mid = 0.5 * (y_lo + y_hi);
 
     int sign_mid = signF(y_mid);
 
@@ -123,6 +122,4 @@ bool GasPhaseSolver<double_type>::bisection(
 }
 
 
-template class GasPhaseSolver<double>;
-template class GasPhaseSolver<long double>;
 }

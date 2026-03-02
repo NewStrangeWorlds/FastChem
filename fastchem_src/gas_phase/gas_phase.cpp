@@ -31,10 +31,9 @@
 
 namespace fastchem {
 
-template <class double_type>
-GasPhase<double_type>::GasPhase(
-  FastChemOptions<double_type>& options_,
-  ElementData<double_type>& element_data_)
+GasPhase::GasPhase(
+  FastChemOptions& options_,
+  ElementData& element_data_)
     : options(options_)
     , element_data(element_data_)
     , elements(element_data.elements)
@@ -49,11 +48,10 @@ GasPhase<double_type>::GasPhase(
 
 
 
-template <class double_type>
-GasPhase<double_type>::GasPhase(
+GasPhase::GasPhase(
   const GasPhase &obj,
-  FastChemOptions<double_type>& options_,
-  ElementData<double_type>& element_data_)
+  FastChemOptions& options_,
+  ElementData& element_data_)
     : molecules(obj.molecules)
     , nb_molecules(obj.nb_molecules)
     , nb_elements(obj.nb_elements)
@@ -80,8 +78,7 @@ GasPhase<double_type>::GasPhase(
 
 
 
-template <class double_type>
-void GasPhase<double_type>::init()
+void GasPhase::init()
 {
   nb_species = nb_elements + nb_molecules;
 
@@ -187,8 +184,7 @@ void GasPhase<double_type>::init()
 
 
 //Reinitializes certain internal data after the element abundances were changed
-template <class double_type>
-void GasPhase<double_type>::reInitialise()
+void GasPhase::reInitialise()
 {
   //reset the calculation order
   element_calculation_order.resize(0);
@@ -208,8 +204,7 @@ void GasPhase<double_type>::reInitialise()
 
 
 //update the definition of the molecular abundances
-template <class double_type>
-void GasPhase<double_type>::setMoleculeAbundances()
+void GasPhase::setMoleculeAbundances()
 {
   for (auto & i : molecules)
   {
@@ -245,8 +240,7 @@ void GasPhase<double_type>::setMoleculeAbundances()
 
 
 //looks through the list of all species and tries to find duplicate entries
-template <class double_type>
-bool GasPhase<double_type>::checkForDuplicates()
+bool GasPhase::checkForDuplicates()
 {
   //make a copy of the species vector
   auto species_cp = species;
@@ -255,13 +249,13 @@ bool GasPhase<double_type>::checkForDuplicates()
   std::sort(
     species_cp.begin(), 
     species_cp.end(),
-    [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol > b->symbol;} );
+    [&](ChemicalSpecies* a, ChemicalSpecies* b) {return a->symbol > b->symbol;} );
   
   //try to find adjacent ones
   auto it = std::adjacent_find(
     species_cp.begin(), 
     species_cp.end(), 
-    [&](ChemicalSpecies<double_type>* a, ChemicalSpecies<double_type>* b) {return a->symbol == b->symbol;} );
+    [&](ChemicalSpecies* a, ChemicalSpecies* b) {return a->symbol == b->symbol;} );
   
   bool duplicate_exits = (it != species_cp.end());
 
@@ -273,8 +267,7 @@ bool GasPhase<double_type>::checkForDuplicates()
 
 
 
-template <class double_type>
-void GasPhase<double_type>::createMoleculeLists()
+void GasPhase::createMoleculeLists()
 {
   //reset the lists
   for (auto & i : elements)
@@ -342,7 +335,5 @@ void GasPhase<double_type>::createMoleculeLists()
 }
 
 
-template class GasPhase<double>;
-template class GasPhase<long double>;
 
 }

@@ -36,11 +36,10 @@ namespace fastchem {
 
 
 //Calculation of the electron density
-template <class double_type>
-void GasPhase<double_type>::calculateElectronDensities(
-  Element<double_type>& electron,
-  const double_type& old_number_density,
-  const double_type gas_density)
+void GasPhase::calculateElectronDensities(
+  Element& electron,
+  const double& old_number_density,
+  const double gas_density)
 {
   //Am I the electron? 
   if (electron.symbol != "e-") return;
@@ -48,7 +47,7 @@ void GasPhase<double_type>::calculateElectronDensities(
   //Electron log density floor: use log(element_density_minlimit) instead of LOG_DENSITY_FLOOR
   //because cations have negative electron stoichiometry (nu_e < 0), and -nu_e * LOG_DENSITY_FLOOR
   //would create astronomically large ion contributions in the element conservation equation.
-  const double_type electron_log_floor = std::log(options.element_density_minlimit);
+  const double electron_log_floor = std::log(options.element_density_minlimit);
 
   //no ions present
   if (electron.molecule_list.size() == 0)
@@ -91,27 +90,26 @@ void GasPhase<double_type>::calculateElectronDensities(
 
 //Calculation of the electron density for at most singly-ionised species
 //Uses the analytical solution from Paper 1, Appendix B
-template <class double_type>
-void GasPhase<double_type>::calculateSinglyIonElectrons(
-  Element<double_type>& electron, const double_type& old_number_density)
+void GasPhase::calculateSinglyIonElectrons(
+  Element& electron, const double& old_number_density)
 {
   const unsigned int index = electron.index;
 
   //Accumulate alpha and (1+beta) in log space to avoid underflow in sqrt(alpha/(1+beta))
   //log(0) = -inf for alpha; log(1) = 0 for (1+beta)
-  const double_type neg_inf = -std::numeric_limits<double_type>::infinity();
-  double_type log_alpha = neg_inf;
-  double_type log_one_plus_beta = 0.0;
+  const double neg_inf = -std::numeric_limits<double>::infinity();
+  double log_alpha = neg_inf;
+  double log_one_plus_beta = 0.0;
 
   for (auto & i : electron.molecule_list)
   {
-    double_type sum = 0;
+    double sum = 0;
 
     for (auto & j : molecules[i].element_indices)
       if (j != electron.index && molecules[i].stoichiometric_vector[j] != 0)
         sum += molecules[i].stoichiometric_vector[j] * elements[j].log_number_density;
 
-    double_type log_term = molecules[i].mass_action_constant + sum;
+    double log_term = molecules[i].mass_action_constant + sum;
 
     //the anions, Eq. (B3) in Paper 1
     if (molecules[i].stoichiometric_vector[index] == 1)
@@ -122,10 +120,10 @@ void GasPhase<double_type>::calculateSinglyIonElectrons(
 
   //Eq. (B2) in Paper 1: n_e = sqrt(alpha / (1 + beta))
   //In log space: log(n_e) = 0.5 * (log(alpha) - log(1 + beta))
-  const double_type electron_log_floor = std::log(options.element_density_minlimit);
+  const double electron_log_floor = std::log(options.element_density_minlimit);
 
-  double_type electron_density = 0.0;
-  double_type log_electron_density = electron_log_floor;
+  double electron_density = 0.0;
+  double log_electron_density = electron_log_floor;
 
   if (log_alpha > neg_inf)
   {
@@ -145,15 +143,14 @@ void GasPhase<double_type>::calculateSinglyIonElectrons(
 //First tries to estimate the electron density via Paper 1, Eq. (2.35).
 //In case that fails (electron density not sufficiently high enough), it switches to a 1D Newton's method.
 //See Sect. 2.4.3 for details.
-template <class double_type>
-void GasPhase<double_type>::calculateMultIonElectrons(
-  Element<double_type>& electron, const double_type& old_number_density, const double_type& gas_density)
+void GasPhase::calculateMultIonElectrons(
+  Element& electron, const double& old_number_density, const double& gas_density)
 {
   electron.number_density = 0.0;
 
 
-  double_type positive_ion_density = 0;
-  double_type negative_ion_density = 0;
+  double positive_ion_density = 0;
+  double negative_ion_density = 0;
 
   for (auto & i : electron.molecule_list)
     if (molecules[i].stoichiometric_vector[electron.index] > 0)
@@ -162,12 +159,12 @@ void GasPhase<double_type>::calculateMultIonElectrons(
       positive_ion_density -= molecules[i].stoichiometric_vector[e_] * molecules[i].number_density;
 
 
-  double_type electron_density = positive_ion_density - negative_ion_density;
+  double electron_density = positive_ion_density - negative_ion_density;
 
 
-  const double_type electron_log_floor = std::log(options.element_density_minlimit);
+  const double electron_log_floor = std::log(options.element_density_minlimit);
 
-  double_type delta = 0.9;
+  double delta = 0.9;
 
   if (electron_density > delta*positive_ion_density)
   {
@@ -184,8 +181,6 @@ void GasPhase<double_type>::calculateMultIonElectrons(
 
 
 
-template class GasPhase<double>;
-template class GasPhase<long double>;
 }
 
 

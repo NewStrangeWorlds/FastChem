@@ -36,12 +36,11 @@ namespace fastchem {
 
 //Selects the appropriate solver for each element
 //See Sect. 2.4.2 and Eq. (2.32)
-template <class double_type>
-void GasPhase<double_type>::calculateElementDensities(
-  Element<double_type>& species,
-  const double_type gas_density,
+void GasPhase::calculateElementDensities(
+  Element& species,
+  const double gas_density,
   bool use_backup_solver,
-  double_type& n_major)
+  double& n_major)
 {
   if (species.symbol == "e-") return; //electrons have their own, special solver
 
@@ -73,7 +72,7 @@ void GasPhase<double_type>::calculateElementDensities(
   if (species.epsilon == 0)
   {
     species.number_density = 0.0;
-    species.log_number_density = static_cast<double_type>(LOG_DENSITY_FLOOR);
+    species.log_number_density = static_cast<double>(LOG_DENSITY_FLOOR);
   }
 
   species.checkN(options.element_density_minlimit, gas_density);
@@ -85,16 +84,15 @@ void GasPhase<double_type>::calculateElementDensities(
 
 
 //Calculates the number density of species, based on previously computed element densities
-template <class double_type>
-double_type GasPhase<double_type>::calculateMoleculeDensities(
-  Element<double_type>& species, const double_type gas_density)
+double GasPhase::calculateMoleculeDensities(
+  Element& species, const double gas_density)
 {
-  double_type n_major = 0.0;
+  double n_major = 0.0;
   
   for (size_t ii=0; ii<species.major_molecules_inc.size(); ++ii)
   {
     const unsigned int i = species.major_molecules_inc[ii];
-    double_type sum = 0.0;
+    double sum = 0.0;
 
 
     for (size_t ll=0; ll<molecules[i].element_indices.size(); ++ll)
@@ -116,8 +114,7 @@ double_type GasPhase<double_type>::calculateMoleculeDensities(
 
 
 
-template <class double_type>
-double GasPhase<double_type>::totalElementDensity()
+double GasPhase::totalElementDensity()
 {
   double n_tot = 0.0;
 
@@ -141,8 +138,6 @@ double GasPhase<double_type>::totalElementDensity()
 
 
 
-template class GasPhase<double>;
-template class GasPhase<long double>;
 }
 
 

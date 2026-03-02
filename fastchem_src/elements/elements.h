@@ -31,14 +31,13 @@
 namespace fastchem {
 
 
-template <class double_type>
 class ElementData {
   public:
     ElementData(const std::string& abundance_file, const std::string& chemical_element_file);
     ElementData(const ElementData &obj);
 
-    std::vector<Element<double_type>> elements;
-    std::vector<Element<double_type>*> elements_wo_e;
+    std::vector<Element> elements;
+    std::vector<Element*> elements_wo_e;
 
     size_t nb_elements = 0;
     unsigned int e_ = FASTCHEM_UNKNOWN_SPECIES; //electron element index
@@ -48,7 +47,7 @@ class ElementData {
     unsigned int elementIndex(const std::string& symbol);
     void setAbundances(const std::vector<double>& abundances);
     void setRelativeAbundances();
-    void init(double_type initial_density);
+    void init(double initial_density);
   private:
     std::vector<ChemicalElementData> chemical_element_data;
     size_t nb_chemical_element_data = 0;

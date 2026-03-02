@@ -38,7 +38,6 @@ namespace fastchem {
 
 
 //FastChem class
-template <class double_type>
 class FastChem {
   public:
     FastChem(
@@ -95,16 +94,16 @@ class FastChem {
     void setVerboseLevel(const unsigned int level) { 
       if (level > 4) options.verbose_level = 4; else options.verbose_level = level;}
 
-    void setParameter(const std::string& parameter, const double_type param_value);
+    void setParameter(const std::string& parameter, const double param_value);
     void setParameter(const std::string& parameter, const bool param_value);
     void setParameter(const std::string& parameter, const unsigned int param_value);
 
   private:
-    FastChemOptions<double_type> options;
+    FastChemOptions options;
     
-    ElementData<double_type> element_data;
-    GasPhase<double_type> gas_phase;
-    CondensedPhase<double_type> condensed_phase;
+    ElementData element_data;
+    GasPhase gas_phase;
+    CondensedPhase condensed_phase;
 
     bool is_initialised = false;
     bool is_busy = false;

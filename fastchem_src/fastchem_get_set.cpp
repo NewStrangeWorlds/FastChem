@@ -38,13 +38,12 @@ namespace fastchem {
 
 //Query for a species index (both, elements and molecules) with a chemical symbol
 //Returns FASTCHEM_UNKNOWN_SPECIES if the species does not exist
-template <class double_type>
-unsigned int FastChem<double_type>::getGasSpeciesIndex(const std::string symbol)
+unsigned int FastChem::getGasSpeciesIndex(const std::string symbol)
 {
   auto it = std::find_if(
     gas_phase.species.begin(),
     gas_phase.species.end(),
-    [&] (const ChemicalSpecies<double_type>* a) {
+    [&] (const ChemicalSpecies* a) {
       return a->symbol == symbol;});
 
   if (it == gas_phase.species.end()) 
@@ -56,13 +55,12 @@ unsigned int FastChem<double_type>::getGasSpeciesIndex(const std::string symbol)
 
 //Query for a condensate species index with a chemical symbol
 //Returns FASTCHEM_UNKNOWN_SPECIES if the species does not exist
-template <class double_type>
-unsigned int FastChem<double_type>::getElementIndex(const std::string symbol)
+unsigned int FastChem::getElementIndex(const std::string symbol)
 {
   auto it = std::find_if(
     element_data.elements.begin(),
     element_data.elements.end(),
-    [&] (const Element<double_type> a) {
+    [&] (const Element a) {
       return a.symbol == symbol;});
 
   if (it == element_data.elements.end()) 
@@ -74,13 +72,12 @@ unsigned int FastChem<double_type>::getElementIndex(const std::string symbol)
 
 //Query for a condensate species index with a chemical symbol
 //Returns FASTCHEM_UNKNOWN_SPECIES if the species does not exist
-template <class double_type>
-unsigned int FastChem<double_type>::getCondSpeciesIndex(const std::string symbol)
+unsigned int FastChem::getCondSpeciesIndex(const std::string symbol)
 {
   auto it = std::find_if(
     condensed_phase.condensates.begin(),
     condensed_phase.condensates.end(),
-    [&] (const Condensate<double_type> a) {
+    [&] (const Condensate a) {
       return a.symbol == symbol;});
 
   if (it == condensed_phase.condensates.end()) 
@@ -93,8 +90,7 @@ unsigned int FastChem<double_type>::getCondSpeciesIndex(const std::string symbol
 
 //Query for a species name with its index
 //Returns empty string in case the species does not exist
-template <class double_type>
-std::string FastChem<double_type>::getGasSpeciesName(const unsigned int species_index)
+std::string FastChem::getGasSpeciesName(const unsigned int species_index)
 {
   if (species_index < gas_phase.nb_species)
     return gas_phase.species[species_index]->name;
@@ -105,8 +101,7 @@ std::string FastChem<double_type>::getGasSpeciesName(const unsigned int species_
 
 //Query for a species name with its index
 //Returns empty string in case the species does not exist
-template <class double_type>
-std::string FastChem<double_type>::getElementName(const unsigned int species_index)
+std::string FastChem::getElementName(const unsigned int species_index)
 {
   if (species_index < element_data.nb_elements)
     return element_data.elements[species_index].name;
@@ -117,8 +112,7 @@ std::string FastChem<double_type>::getElementName(const unsigned int species_ind
 
 //Query for a species name with its index
 //Returns empty string in case the species does not exist
-template <class double_type>
-std::string FastChem<double_type>::getCondSpeciesName(const unsigned int species_index)
+std::string FastChem::getCondSpeciesName(const unsigned int species_index)
 {
   if (species_index < condensed_phase.nb_condensates)
     return condensed_phase.condensates[species_index].name;
@@ -131,8 +125,7 @@ std::string FastChem<double_type>::getCondSpeciesName(const unsigned int species
 
 //Query for a species symbol with its index
 //Returns empty string in case the species does not exist
-template <class double_type>
-std::string FastChem<double_type>::getGasSpeciesSymbol(const unsigned int species_index)
+std::string FastChem::getGasSpeciesSymbol(const unsigned int species_index)
 {
 
   if (species_index < gas_phase.nb_species)
@@ -145,8 +138,7 @@ std::string FastChem<double_type>::getGasSpeciesSymbol(const unsigned int specie
 
 //Query for a species symbol with its index
 //Returns empty string in case the species does not exist
-template <class double_type>
-std::string FastChem<double_type>::getElementSymbol(const unsigned int species_index)
+std::string FastChem::getElementSymbol(const unsigned int species_index)
 {
 
   if (species_index < element_data.nb_elements)
@@ -159,8 +151,7 @@ std::string FastChem<double_type>::getElementSymbol(const unsigned int species_i
 
 //Query for a species symbol with its index
 //Returns empty string in case the species does not exist
-template <class double_type>
-std::string FastChem<double_type>::getCondSpeciesSymbol(const unsigned int species_index)
+std::string FastChem::getCondSpeciesSymbol(const unsigned int species_index)
 {
 
   if (species_index < condensed_phase.nb_condensates)
@@ -173,8 +164,7 @@ std::string FastChem<double_type>::getCondSpeciesSymbol(const unsigned int speci
 
 //Query for a the molecular weight of a species with its index
 //Returns 0 in case the species does not exist
-template <class double_type>
-double FastChem<double_type>::getGasSpeciesWeight(const unsigned int species_index)
+double FastChem::getGasSpeciesWeight(const unsigned int species_index)
 {
   if (species_index < gas_phase.nb_species)
     return gas_phase.species[species_index]->weight;
@@ -185,8 +175,7 @@ double FastChem<double_type>::getGasSpeciesWeight(const unsigned int species_ind
 
 //Query for a the weight of a species with its index
 //Returns 0 in case the species does not exist
-template <class double_type>
-double FastChem<double_type>::getElementWeight(const unsigned int species_index)
+double FastChem::getElementWeight(const unsigned int species_index)
 {
   if (species_index < element_data.nb_elements)
     return element_data.elements[species_index].weight;
@@ -197,8 +186,7 @@ double FastChem<double_type>::getElementWeight(const unsigned int species_index)
 
 //Query for a the weight of a species with its index
 //Returns 0 in case the species does not exist
-template <class double_type>
-double FastChem<double_type>::getCondSpeciesWeight(const unsigned int species_index)
+double FastChem::getCondSpeciesWeight(const unsigned int species_index)
 {
   if (species_index < condensed_phase.nb_condensates)
     return condensed_phase.condensates[species_index].weight;
@@ -208,8 +196,7 @@ double FastChem<double_type>::getCondSpeciesWeight(const unsigned int species_in
 
 
 //Get the element abundance for a specific element
-template <class double_type>
-double FastChem<double_type>::getElementAbundance(const unsigned int species_index)
+double FastChem::getElementAbundance(const unsigned int species_index)
 {
   if (species_index < element_data.nb_elements)
     return element_data.elements[species_index].abundance;
@@ -220,8 +207,7 @@ double FastChem<double_type>::getElementAbundance(const unsigned int species_ind
 
 
 //Get the element abundandes for all elements
-template <class double_type>
-std::vector<double> FastChem<double_type>::getElementAbundances()
+std::vector<double> FastChem::getElementAbundances()
 {
   std::vector<double> abundances(element_data.nb_elements, 0.0);
 
@@ -233,8 +219,7 @@ std::vector<double> FastChem<double_type>::getElementAbundances()
 
 
 //Set the element abundances for all elements
-template <class double_type>
-void FastChem<double_type>::setElementAbundances(std::vector<double> abundances)
+void FastChem::setElementAbundances(std::vector<double> abundances)
 {
   element_data.setAbundances(abundances);
 
@@ -243,8 +228,7 @@ void FastChem<double_type>::setElementAbundances(std::vector<double> abundances)
 
 
 
-template <class double_type>
-std::vector<int> FastChem<double_type>::getGasSpeciesStoichiometry(const unsigned int species_index)
+std::vector<int> FastChem::getGasSpeciesStoichiometry(const unsigned int species_index)
 {
   if (species_index < gas_phase.nb_elements)
   {
@@ -262,8 +246,7 @@ std::vector<int> FastChem<double_type>::getGasSpeciesStoichiometry(const unsigne
 
 
 
-template <class double_type>
-std::vector<int> FastChem<double_type>::getCondSpeciesStoichiometry(const unsigned int species_index)
+std::vector<int> FastChem::getCondSpeciesStoichiometry(const unsigned int species_index)
 {
   if (species_index < condensed_phase.nb_condensates)
     return condensed_phase.condensates[species_index].stoichiometric_vector;
@@ -388,8 +371,7 @@ std::pair<std::map<std::string, int>, std::string> parseFormulaWithCharge(
 
 
 
-template <class double_type>
-std::string FastChem<double_type>::convertToHillNotation(const std::string& formula) const
+std::string FastChem::convertToHillNotation(const std::string& formula) const
 {
   if (formula.empty())
     return "";
@@ -478,8 +460,7 @@ std::string FastChem<double_type>::convertToHillNotation(const std::string& form
 
 
 //Set an internal FastChem parameter (for double values)
-template <class double_type>
-void FastChem<double_type>::setParameter(const std::string& parameter, const double_type value)
+void FastChem::setParameter(const std::string& parameter, const double value)
 {
   auto param = options.resolveParameter(parameter);
 
@@ -517,10 +498,6 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const dou
       options.molecule_density_minlimit = std::pow(10.0, value);
       break;
 
-    case ParameterFloat::logK_limit:
-      options.logK_limit = value;
-      break;
-
     default:
       std::cout << "Unknown parameter \"" << parameter << "\"  with a floatint-point value!\n";
       break;
@@ -530,8 +507,7 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const dou
 
 
 //Set an internal FastChem parameter (for boolean values)
-template <class double_type>
-void FastChem<double_type>::setParameter(const std::string& parameter, const bool value)
+void FastChem::setParameter(const std::string& parameter, const bool value)
 {
   auto param = options.resolveParameterBool(parameter);
 
@@ -566,8 +542,7 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const boo
 
 
 //Set an internal FastChem parameter (for integer values)
-template <class double_type>
-void FastChem<double_type>::setParameter(const std::string& parameter, const unsigned int value)
+void FastChem::setParameter(const std::string& parameter, const unsigned int value)
 {
   auto param = options.resolveParameterInt(parameter);
 
@@ -609,6 +584,4 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const uns
 
 
 
-template class FastChem<double>;
-template class FastChem<long double>;
 }

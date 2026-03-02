@@ -35,48 +35,48 @@ PYBIND11_MODULE(pyfastchem, m) {
         .def_readwrite("nb_cond_iterations", &fastchem::FastChemOutput::nb_cond_iterations)
         .def_readwrite("nb_iterations", &fastchem::FastChemOutput::nb_iterations);
 
-    py::class_<fastchem::FastChem<long double>>(m, "FastChem")
+    py::class_<fastchem::FastChem>(m, "FastChem")
         .def(py::init<const std::string &, const unsigned int>())
         .def(py::init<const std::string &, const std::string &, const unsigned int>())
         .def(py::init<const std::string &, const std::string &, const std::string &, const unsigned int>())
 
-        .def("calcDensities", &fastchem::FastChem<long double>::calcDensities)
+        .def("calcDensities", &fastchem::FastChem::calcDensities)
         
-        .def("getGasSpeciesNumber", &fastchem::FastChem<long double>::getGasSpeciesNumber)
-        .def("getElementNumber", &fastchem::FastChem<long double>::getElementNumber)
-        .def("getMoleculeNumber", &fastchem::FastChem<long double>::getMoleculeNumber)
-        .def("getCondSpeciesNumber", &fastchem::FastChem<long double>::getCondSpeciesNumber)
+        .def("getGasSpeciesNumber", &fastchem::FastChem::getGasSpeciesNumber)
+        .def("getElementNumber", &fastchem::FastChem::getElementNumber)
+        .def("getMoleculeNumber", &fastchem::FastChem::getMoleculeNumber)
+        .def("getCondSpeciesNumber", &fastchem::FastChem::getCondSpeciesNumber)
         
-        .def("getGasSpeciesIndex", &fastchem::FastChem<long double>::getGasSpeciesIndex)
-        .def("getGasSpeciesName", &fastchem::FastChem<long double>::getGasSpeciesName)
-        .def("getGasSpeciesSymbol", &fastchem::FastChem<long double>::getGasSpeciesSymbol)
+        .def("getGasSpeciesIndex", &fastchem::FastChem::getGasSpeciesIndex)
+        .def("getGasSpeciesName", &fastchem::FastChem::getGasSpeciesName)
+        .def("getGasSpeciesSymbol", &fastchem::FastChem::getGasSpeciesSymbol)
 
-        .def("getElementIndex", &fastchem::FastChem<long double>::getElementIndex)
-        .def("getElementName", &fastchem::FastChem<long double>::getElementName)
-        .def("getElementSymbol", &fastchem::FastChem<long double>::getElementSymbol)
+        .def("getElementIndex", &fastchem::FastChem::getElementIndex)
+        .def("getElementName", &fastchem::FastChem::getElementName)
+        .def("getElementSymbol", &fastchem::FastChem::getElementSymbol)
         
-        .def("getCondSpeciesIndex", &fastchem::FastChem<long double>::getCondSpeciesIndex)
-        .def("getCondSpeciesName", &fastchem::FastChem<long double>::getCondSpeciesName)
-        .def("getCondSpeciesSymbol", &fastchem::FastChem<long double>::getCondSpeciesSymbol)
+        .def("getCondSpeciesIndex", &fastchem::FastChem::getCondSpeciesIndex)
+        .def("getCondSpeciesName", &fastchem::FastChem::getCondSpeciesName)
+        .def("getCondSpeciesSymbol", &fastchem::FastChem::getCondSpeciesSymbol)
 
-        .def("getGasSpeciesWeight", &fastchem::FastChem<long double>::getGasSpeciesWeight)
-        .def("getElementWeight", &fastchem::FastChem<long double>::getElementWeight)
-        .def("getCondSpeciesWeight", &fastchem::FastChem<long double>::getCondSpeciesWeight)
+        .def("getGasSpeciesWeight", &fastchem::FastChem::getGasSpeciesWeight)
+        .def("getElementWeight", &fastchem::FastChem::getElementWeight)
+        .def("getCondSpeciesWeight", &fastchem::FastChem::getCondSpeciesWeight)
 
-        .def("getGasSpeciesStoichiometry", &fastchem::FastChem<long double>::getGasSpeciesStoichiometry)
-        .def("getCondSpeciesStoichiometry", &fastchem::FastChem<long double>::getCondSpeciesStoichiometry)
+        .def("getGasSpeciesStoichiometry", &fastchem::FastChem::getGasSpeciesStoichiometry)
+        .def("getCondSpeciesStoichiometry", &fastchem::FastChem::getCondSpeciesStoichiometry)
 
-        .def("convertToHillNotation", &fastchem::FastChem<long double>::convertToHillNotation)
+        .def("convertToHillNotation", &fastchem::FastChem::convertToHillNotation)
 
-        .def("setVerboseLevel", &fastchem::FastChem<long double>::setVerboseLevel)
+        .def("setVerboseLevel", &fastchem::FastChem::setVerboseLevel)
         
-        .def("getElementAbundance", &fastchem::FastChem<long double>::getElementAbundance)
-        .def("getElementAbundances", &fastchem::FastChem<long double>::getElementAbundances)
-        .def("setElementAbundances", &fastchem::FastChem<long double>::setElementAbundances)
+        .def("getElementAbundance", &fastchem::FastChem::getElementAbundance)
+        .def("getElementAbundances", &fastchem::FastChem::getElementAbundances)
+        .def("setElementAbundances", &fastchem::FastChem::setElementAbundances)
 
-        .def("setParameter", static_cast<void (fastchem::FastChem<long double>::*)(const std::string&, const unsigned int)>(&fastchem::FastChem<long double>::setParameter))
-        .def("setParameter", static_cast<void (fastchem::FastChem<long double>::*)(const std::string&, const bool)>(&fastchem::FastChem<long double>::setParameter))
-        .def("setParameter", static_cast<void (fastchem::FastChem<long double>::*)(const std::string&, const long double)>(&fastchem::FastChem<long double>::setParameter));
+        .def("setParameter", static_cast<void (fastchem::FastChem::*)(const std::string&, const unsigned int)>(&fastchem::FastChem::setParameter))
+        .def("setParameter", static_cast<void (fastchem::FastChem::*)(const std::string&, const bool)>(&fastchem::FastChem::setParameter))
+        .def("setParameter", static_cast<void (fastchem::FastChem::*)(const std::string&, const double)>(&fastchem::FastChem::setParameter));
 
         m.attr("FASTCHEM_UNKNOWN_SPECIES") = py::cast(fastchem::FASTCHEM_UNKNOWN_SPECIES);
         m.attr("FASTCHEM_SUCCESS") = py::cast(fastchem::FASTCHEM_SUCCESS);

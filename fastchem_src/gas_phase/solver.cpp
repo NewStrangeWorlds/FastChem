@@ -35,12 +35,11 @@ namespace fastchem {
 
 //This is the backup solver for the standard analytic FastChem solvers
 //Currently configured to use a 1D Newton solver, that employs Eq. (2.34)
-template <class double_type>
-void GasPhaseSolver<double_type>::backupSol(
-  Element<double_type>& species,
-  std::vector<Element<double_type>>& elements,
-  const std::vector<Molecule<double_type>>& molecules, 
-  const double_type gas_density)
+void GasPhaseSolver::backupSol(
+  Element& species,
+  std::vector<Element>& elements,
+  const std::vector<Molecule>& molecules, 
+  const double gas_density)
 {
 
   newtonSol(species, elements, molecules, gas_density, true);
@@ -48,8 +47,6 @@ void GasPhaseSolver<double_type>::backupSol(
 }
 
 
-template class GasPhaseSolver<double>;
-template class GasPhaseSolver<long double>;
 }
 
 

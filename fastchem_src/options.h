@@ -39,8 +39,7 @@ enum class ParameterFloat {
     newton_err,
     cond_accuracy,
     element_minlimit,
-    molecule_minlimit,
-    logK_limit
+    molecule_minlimit
 };
 
 
@@ -66,7 +65,6 @@ enum class ParameterBool {
 };
 
 
-template <class double_type>
 struct FastChemOptions{
   FastChemOptions(
     const std::string& parameter_file,
@@ -102,12 +100,11 @@ struct FastChemOptions{
   double cond_accuracy = 1e-5;
   double element_conserve_accuracy = 1e-4;
 
-  double_type element_density_minlimit = 1e-155; //smallest allowed particle number densities
-  double_type molecule_density_minlimit = 1e-155;
+  double element_density_minlimit = 1e-155; //smallest allowed particle number densities
+  double molecule_density_minlimit = 1e-155;
 
   unsigned int verbose_level = 1;
 
-  double_type logK_limit = 1e10;
   bool cond_use_data_validity_limits = true;
 
   bool chem_use_backup_solver = false;

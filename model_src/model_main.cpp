@@ -55,14 +55,14 @@ int main(int argc, char *argv[])
 
 
   //create a FastChem object and set the read-in values from the config file
-  fastchem::FastChem<double> fastchem(
+  fastchem::FastChem fastchem(
     config.element_abundance_file,
     config.species_data_file,
     config.cond_species_data_file,
     config.verbose_level);
 
   //we could also create a FastChem object using a separate parameter file
-  //fastchem::FastChem<long double> fastchem("input/parameters.dat", config.verbose_level);
+  //fastchem::FastChem fastchem("input/parameters.dat", config.verbose_level);
 
 
   //set the FastChem parameters from the config file

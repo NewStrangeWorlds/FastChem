@@ -34,8 +34,7 @@ namespace fastchem {
 
 
 //Read the FastChem parameter file
-template <class double_type>
-bool FastChemOptions<double_type>::readParameterFile(const std::string& model_parameter_file)
+bool FastChemOptions::readParameterFile(const std::string& model_parameter_file)
 {
   bool initialization_status = false;
 
@@ -191,6 +190,4 @@ bool FastChemOptions<double_type>::readParameterFile(const std::string& model_pa
 }
 
 
-template struct FastChemOptions<double>;
-template struct FastChemOptions<long double>;
 }

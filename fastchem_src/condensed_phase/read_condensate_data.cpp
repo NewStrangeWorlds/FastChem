@@ -35,8 +35,7 @@
 namespace fastchem {
 
 
-template <class double_type>
-bool CondensedPhase<double_type>::readCondensateData(const std::string& species_data_file)
+bool CondensedPhase::readCondensateData(const std::string& species_data_file)
 {
   std::fstream file(species_data_file.c_str(), std::ios::in);
 
@@ -104,7 +103,7 @@ bool CondensedPhase<double_type>::readCondensateData(const std::string& species_
       fit_coeff_limits.push_back(fit_coeff_limit);
 
 
-    std::vector<std::vector<double_type>> fit_coeff(fit_coeff_limits.size(), std::vector<double_type>{});
+    std::vector<std::vector<double>> fit_coeff(fit_coeff_limits.size(), std::vector<double>{});
 
     for (size_t i=0; i<fit_coeff_limits.size(); ++i)
     {
@@ -133,17 +132,16 @@ bool CondensedPhase<double_type>::readCondensateData(const std::string& species_
 
 
 //Add a condensate to the system and update all of its elements
-template <class double_type>
-void CondensedPhase<double_type>::addCondensate(
+void CondensedPhase::addCondensate(
   const std::string name,
   const std::string symbol,
   const std::vector<std::string> species_elements,
   const std::vector<int> stoichiometric_coeff,
   const std::string phase, 
   const std::vector<double>& fit_coeff_limits,
-  const std::vector<std::vector<double_type>>& fit_coeff)
+  const std::vector<std::vector<double>>& fit_coeff)
 {
-  Condensate<double_type> species;
+  Condensate species;
 
   species.name = name;
   species.symbol = symbol;
@@ -201,6 +199,4 @@ void CondensedPhase<double_type>::addCondensate(
 
 
 
-template class CondensedPhase<double>;
-template class CondensedPhase<long double>;
 }

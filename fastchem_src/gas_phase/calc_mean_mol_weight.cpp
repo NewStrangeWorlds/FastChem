@@ -29,8 +29,7 @@ namespace fastchem {
 
 //Calculate the mean molecular weight of the converged network
 //See Paper I, Eq. (2.10)
-template <class double_type>
-double GasPhase<double_type>::meanMolecularWeight(const double gas_density)
+double GasPhase::meanMolecularWeight(const double gas_density)
 {
   double mean_molecular_weight = 0.0;
 
@@ -43,6 +42,4 @@ double GasPhase<double_type>::meanMolecularWeight(const double gas_density)
 
 
 
-template class GasPhase<double>;
-template class GasPhase<long double>;
 }

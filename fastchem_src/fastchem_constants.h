@@ -53,10 +53,9 @@ constexpr double LOG_DENSITY_FLOOR = -1e8;
 
 
 //Clamped exponential: returns 0 for very negative arguments, clamps at max representable value
-template <class double_type>
-inline double_type safeExp(double_type x)
+inline double safeExp(double x)
 {
-  const double_type max_arg = std::log(std::numeric_limits<double_type>::max()) * 0.99;
+  const double max_arg = std::log(std::numeric_limits<double>::max()) * 0.99;
 
   if (x < -max_arg) return 0.0;
   if (x > max_arg) x = max_arg;
@@ -67,32 +66,31 @@ inline double_type safeExp(double_type x)
 
 //Stable computation of ln(sum_k coeffs[k] * exp(log_args[k]))
 //Uses the log-sum-exp shift trick to avoid overflow/underflow
-template <class double_type>
-inline double_type logSumExp(
-  const std::vector<double_type>& log_args,
-  const std::vector<double_type>& coeffs)
+inline double logSumExp(
+  const std::vector<double>& log_args,
+  const std::vector<double>& coeffs)
 {
-  if (log_args.empty()) return static_cast<double_type>(LOG_DENSITY_FLOOR);
+  if (log_args.empty()) return static_cast<double>(LOG_DENSITY_FLOOR);
 
-  double_type x_max = static_cast<double_type>(LOG_DENSITY_FLOOR);
+  double x_max = static_cast<double>(LOG_DENSITY_FLOOR);
 
   for (size_t k = 0; k < log_args.size(); ++k)
     if (log_args[k] > x_max) x_max = log_args[k];
 
-  if (x_max <= static_cast<double_type>(LOG_DENSITY_FLOOR))
-    return static_cast<double_type>(LOG_DENSITY_FLOOR);
+  if (x_max <= static_cast<double>(LOG_DENSITY_FLOOR))
+    return static_cast<double>(LOG_DENSITY_FLOOR);
 
-  double_type sum = 0.0;
+  double sum = 0.0;
 
   for (size_t k = 0; k < log_args.size(); ++k)
   {
-    double_type shifted = log_args[k] - x_max;
+    double shifted = log_args[k] - x_max;
 
     if (shifted > -700)
       sum += coeffs[k] * std::exp(shifted);
   }
 
-  if (sum <= 0.0) return static_cast<double_type>(LOG_DENSITY_FLOOR);
+  if (sum <= 0.0) return static_cast<double>(LOG_DENSITY_FLOOR);
 
   return x_max + std::log(sum);
 }
@@ -100,8 +98,7 @@ inline double_type logSumExp(
 
 //Stable computation of log(exp(a) + exp(b)) without overflow/underflow
 //The exp argument is always <= 0, so log1p argument is always in [0, 1]
-template <class double_type>
-inline double_type logAddExp(double_type a, double_type b)
+inline double logAddExp(double a, double b)
 {
   if (a > b) return a + std::log1p(std::exp(b - a));
   else       return b + std::log1p(std::exp(a - b));

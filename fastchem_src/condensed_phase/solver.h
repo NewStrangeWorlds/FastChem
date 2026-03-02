@@ -33,11 +33,9 @@
 
 namespace Eigen {
 
-template <class double_type>
-using MatrixXdt = Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>;
+using MatrixXdt = Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
 
-template <class double_type>
-using VectorXdt = Matrix<double_type, Eigen::Dynamic, 1>;
+using VectorXdt = Matrix<double, Eigen::Dynamic, 1>;
 }
 
 
@@ -45,126 +43,125 @@ namespace fastchem {
 
 
 //Solver class
-template <class double_type>
 class CondPhaseSolver{
   public:
-    CondPhaseSolver(FastChemOptions<double_type>& options_)
+    CondPhaseSolver(FastChemOptions& options_)
       : options(options_)
       {}
 
     bool newtonStep(
-      const std::vector<Condensate<double_type>*>& condensates,
+      const std::vector<Condensate*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const double_type total_element_density,
-      const std::vector<double_type>& cond_densities,
-      const std::vector<double_type>& element_densities,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& log_cond_densities,
-      const std::vector<double_type>& log_activity_corr,
-      Eigen::VectorXdt<double_type>& result,
-      Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function);
+      const std::vector<Element*>& elements,
+      const std::vector<Molecule>& molecules,
+      const double total_element_density,
+      const std::vector<double>& cond_densities,
+      const std::vector<double>& element_densities,
+      const std::vector<double>& activity_corr,
+      const std::vector<double>& log_cond_densities,
+      const std::vector<double>& log_activity_corr,
+      Eigen::VectorXdt& result,
+      Eigen::VectorXdt& scaling_factors,
+      double& objective_function);
 
     bool newtonStepFull(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const double_type total_element_density,
-      const std::vector<double_type>& cond_densities,
-      const std::vector<double_type>& element_densities,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& log_cond_densities,
-      const std::vector<double_type>& log_activity_corr,
-      Eigen::VectorXdt<double_type>& result,
-      Eigen::VectorXdt<double_type>& scaling_factors,
-      double_type& objective_function);
+      const std::vector<Condensate*>& condensates,
+      const std::vector<Element*>& elements,
+      const std::vector<Molecule>& molecules,
+      const double total_element_density,
+      const std::vector<double>& cond_densities,
+      const std::vector<double>& element_densities,
+      const std::vector<double>& activity_corr,
+      const std::vector<double>& log_cond_densities,
+      const std::vector<double>& log_activity_corr,
+      Eigen::VectorXdt& result,
+      Eigen::VectorXdt& scaling_factors,
+      double& objective_function);
 
-    double_type assembleRightHandSide(
-      const std::vector<Condensate<double_type>*>& condensates,
+    double assembleRightHandSide(
+      const std::vector<Condensate*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector<double_type>& log_number_densities,
-      const std::vector<double_type>& log_activity_corr,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      Eigen::VectorXdt<double_type>& rhs);
+      const std::vector<double>& activity_corr,
+      const std::vector<double>& number_denities,
+      const std::vector<double>& log_number_densities,
+      const std::vector<double>& log_activity_corr,
+      const std::vector< Element* >& elements,
+      const std::vector< Molecule >& molecules,
+      const double total_element_density,
+      const Eigen::VectorXdt& scaling_factors,
+      Eigen::VectorXdt& rhs);
 
-    double_type assembleRightHandSideFull(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector<double_type>& log_number_densities,
-      const std::vector<double_type>& log_activity_corr,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      Eigen::VectorXdt<double_type>& rhs);
+    double assembleRightHandSideFull(
+      const std::vector<Condensate*>& condensates,
+      const std::vector<double>& activity_corr,
+      const std::vector<double>& number_denities,
+      const std::vector<double>& log_number_densities,
+      const std::vector<double>& log_activity_corr,
+      const std::vector< Element* >& elements,
+      const std::vector< Molecule >& molecules,
+      const double total_element_density,
+      const Eigen::VectorXdt& scaling_factors,
+      Eigen::VectorXdt& rhs);
 
     void resetLM();
-    void adaptLM(const double_type objective_function);
+    void adaptLM(const double objective_function);
 
-    double_type backtrackStep(
-      const double_type objective_function_0,
-      const double_type objective_function_prev,
-      const double_type objective_function_2prev,
-      const double_type lambda_prev,
-      const double_type lambda_2prev);
+    double backtrackStep(
+      const double objective_function_0,
+      const double objective_function_prev,
+      const double objective_function_2prev,
+      const double lambda_prev,
+      const double lambda_2prev);
 
-    double_type objectiveFunction(
-      const std::vector<Condensate<double_type>*>& condensates,
+    double objectiveFunction(
+      const std::vector<Condensate*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector<double_type>& log_number_densities,
-      const std::vector<double_type>& log_activity_corr,
-      const std::vector< Element<double_type>* >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density,
-      const Eigen::VectorXdt<double_type>& scaling_factors);
+      const std::vector<double>& activity_corr,
+      const std::vector<double>& number_denities,
+      const std::vector<double>& log_number_densities,
+      const std::vector<double>& log_activity_corr,
+      const std::vector< Element* >& elements,
+      const std::vector< Molecule >& molecules,
+      const double total_element_density,
+      const Eigen::VectorXdt& scaling_factors);
   private:
-    FastChemOptions<double_type>& options;
+    FastChemOptions& options;
 
-    double_type lm_mu = 0.01;
-    double_type lm_objective_prev = 0;
+    double lm_mu = 0.01;
+    double lm_objective_prev = 0;
     bool lm_has_prev_objective = false;
 
-     Eigen::MatrixXdt<double_type> assemblePerturbedHessian(
-      const Eigen::MatrixXdt<double_type>& jacobian,
-      const double_type perturbation);
+     Eigen::MatrixXdt assemblePerturbedHessian(
+      const Eigen::MatrixXdt& jacobian,
+      const double perturbation);
 
     bool solveSystem(
-      const Eigen::MatrixXdt<double_type>& jacobian,
-      const Eigen::VectorXdt<double_type>& rhs,
-      Eigen::VectorXdt<double_type>& result);
+      const Eigen::MatrixXdt& jacobian,
+      const Eigen::VectorXdt& rhs,
+      Eigen::VectorXdt& result);
 
-    Eigen::VectorXdt<double_type> assembleJacobian(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
+    Eigen::VectorXdt assembleJacobian(
+      const std::vector<Condensate*>& condensates,
+      const std::vector<double>& activity_corr,
+      const std::vector<double>& number_denities,
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const double_type total_element_density,
-      Eigen::MatrixXdt<double_type>& jacobian);
+      const std::vector<Element*>& elements,
+      const std::vector<Molecule>& molecules,
+      const double total_element_density,
+      Eigen::MatrixXdt& jacobian);
 
-    Eigen::VectorXdt<double_type> assembleJacobianFull(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr,
-      const std::vector<double_type>& number_denities,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const double_type total_element_density,
-      Eigen::MatrixXdt<double_type>& jacobian);
+    Eigen::VectorXdt assembleJacobianFull(
+      const std::vector<Condensate*>& condensates,
+      const std::vector<double>& activity_corr,
+      const std::vector<double>& number_denities,
+      const std::vector<Element*>& elements,
+      const std::vector<Molecule>& molecules,
+      const double total_element_density,
+      Eigen::MatrixXdt& jacobian);
 };
 
 

@@ -34,8 +34,7 @@
 namespace fastchem {
 
 
-template <class double_type>
-ElementData<double_type>::ElementData(const std::string& abundance_file, const std::string& chemical_element_file)
+ElementData::ElementData(const std::string& abundance_file, const std::string& chemical_element_file)
 {
   if (readElementList(chemical_element_file) == false || readElementAbundances(abundance_file) == false)
     is_initialised = false;
@@ -56,8 +55,7 @@ ElementData<double_type>::ElementData(const std::string& abundance_file, const s
 
 
 
-template <class double_type>
-ElementData<double_type>::ElementData(const ElementData &obj)
+ElementData::ElementData(const ElementData &obj)
   : elements(obj.elements)
   , nb_elements(obj.nb_elements)
   , e_(obj.e_)
@@ -73,13 +71,12 @@ ElementData<double_type>::ElementData(const ElementData &obj)
 
 
 
-template <class double_type>
-void ElementData<double_type>::init(double_type initial_density)
+void ElementData::init(double initial_density)
 {
   for (auto & i : elements)
   {
     i.number_density = initial_density;
-    i.log_number_density = (initial_density > 0) ? std::log(initial_density) : static_cast<double_type>(LOG_DENSITY_FLOOR);
+    i.log_number_density = (initial_density > 0) ? std::log(initial_density) : static_cast<double>(LOG_DENSITY_FLOOR);
     i.degree_of_condensation = 0;
     i.phi = i.epsilon;
     i.fixed_by_condensation = false;
@@ -90,10 +87,9 @@ void ElementData<double_type>::init(double_type initial_density)
 
 
 //Add a new atom to the system
-template <class double_type>
-void ElementData<double_type>::add(const std::string& symbol)
+void ElementData::add(const std::string& symbol)
 {
-  Element<double_type> element;
+  Element element;
 
   element.symbol = symbol;
   element.element_data_index = chemicalElementIndex(symbol);
@@ -117,8 +113,7 @@ void ElementData<double_type>::add(const std::string& symbol)
 
 
 //Set the element abundances for all elements
-template <class double_type>
-void ElementData<double_type>::setAbundances(const std::vector<double>& abundances)
+void ElementData::setAbundances(const std::vector<double>& abundances)
 {
   if (abundances.size() != nb_elements)
   {
@@ -138,10 +133,9 @@ void ElementData<double_type>::setAbundances(const std::vector<double>& abundanc
 
 
 
-template <class double_type>
-void ElementData<double_type>::setRelativeAbundances()
+void ElementData::setRelativeAbundances()
 {
-  double_type phi_tot = 0;
+  double phi_tot = 0;
 
   for (auto & i : elements)
   {
@@ -156,8 +150,7 @@ void ElementData<double_type>::setRelativeAbundances()
 
 
 //Set an element abundance that was found in the input file
-template <class double_type>
-void ElementData<double_type>::setAbundance(
+void ElementData::setAbundance(
   const std::string& symbol, const double abundance)
 {
   unsigned int index = chemicalElementIndex(symbol);
@@ -174,13 +167,12 @@ void ElementData<double_type>::setAbundance(
 
 //Query for a element's index with a chemical symbol
 //Returns FASTCHEM_UNKNOWN_SPECIES if the element does not exist
-template <class double_type>
-unsigned int ElementData<double_type>::elementIndex(const std::string& symbol)
+unsigned int ElementData::elementIndex(const std::string& symbol)
 {
   auto it = std::find_if(
     elements.begin(),
     elements.end(),
-    [&](const Element<double_type>& a) { return a.symbol == symbol;});
+    [&](const Element& a) { return a.symbol == symbol;});
 
   if (it == elements.end()) 
     return FASTCHEM_UNKNOWN_SPECIES;
@@ -192,8 +184,7 @@ unsigned int ElementData<double_type>::elementIndex(const std::string& symbol)
 
 //Query for a basic chemical element index with a chemical symbol
 //Returns FASTCHEM_UNKNOWN_SPECIES if the element does not exist
-template <class double_type>
-unsigned int ElementData<double_type>::chemicalElementIndex(const std::string& symbol)
+unsigned int ElementData::chemicalElementIndex(const std::string& symbol)
 {
   unsigned int index = FASTCHEM_UNKNOWN_SPECIES;
 
@@ -209,6 +200,4 @@ unsigned int ElementData<double_type>::chemicalElementIndex(const std::string& s
 
 
 
-template class ElementData<double>;
-template class ElementData<long double>;
 } 

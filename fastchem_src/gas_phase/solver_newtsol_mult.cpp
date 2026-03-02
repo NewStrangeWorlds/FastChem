@@ -33,13 +33,12 @@
 
 namespace fastchem {
 
-template <class double_type>
-void GasPhaseSolver<double_type>::selectNewtonElements(
-  std::vector<Element<double_type>>& elements,
-  const std::vector<Molecule<double_type>>& molecules,
-  const std::vector<double_type>& number_density_old,
+void GasPhaseSolver::selectNewtonElements(
+  std::vector<Element>& elements,
+  const std::vector<Molecule>& molecules,
+  const std::vector<double>& number_density_old,
   const double gas_density,
-  std::vector<Element<double_type>*>& newton_elements)
+  std::vector<Element*>& newton_elements)
 {
   std::vector<int> select_elements(elements.size(), 0);
 
@@ -58,9 +57,9 @@ void GasPhaseSolver<double_type>::selectNewtonElements(
     size_t j = i + elements.size();
 
     if (std::fabs((molecules[i].number_density - number_density_old[j])) > options.chem_accuracy*number_density_old[j]
-            && molecules[i].log_number_density > static_cast<double_type>(LOG_DENSITY_FLOOR) + 1)
+            && molecules[i].log_number_density > static_cast<double>(LOG_DENSITY_FLOOR) + 1)
     {
-      double_type max_abundance = 0;
+      double max_abundance = 0;
       size_t max_index = 0;
 
       for (auto & e : molecules[i].element_indices)
@@ -87,12 +86,11 @@ void GasPhaseSolver<double_type>::selectNewtonElements(
 }
 
 
-template <class double_type>
-Eigen::VectorXdt<double_type> GasPhaseSolver<double_type>::assembleJacobian(
-  const std::vector<Element<double_type>*>& species,
-  const std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules,
-  Eigen::MatrixXdt<double_type>& jacobian)
+Eigen::VectorXdt GasPhaseSolver::assembleJacobian(
+  const std::vector<Element*>& species,
+  const std::vector< Element >& elements,
+  const std::vector< Molecule >& molecules,
+  Eigen::MatrixXdt& jacobian)
 {
   const size_t nb_newton_species = species.size();
 
@@ -113,7 +111,7 @@ Eigen::VectorXdt<double_type> GasPhaseSolver<double_type>::assembleJacobian(
   }
 
 
-  Eigen::VectorXdt<double_type> scaling_factors = jacobian.rowwise().maxCoeff();
+  Eigen::VectorXdt scaling_factors = jacobian.rowwise().maxCoeff();
 
   // for (auto i=0; i<jacobian.rows(); ++i)
   // {
@@ -125,14 +123,13 @@ Eigen::VectorXdt<double_type> GasPhaseSolver<double_type>::assembleJacobian(
 }
 
 
-template <class double_type>
-void GasPhaseSolver<double_type>::assembleRightHandSide(
-  const std::vector<Element<double_type>*>& species,
-  const std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules,
+void GasPhaseSolver::assembleRightHandSide(
+  const std::vector<Element*>& species,
+  const std::vector< Element >& elements,
+  const std::vector< Molecule >& molecules,
   const double total_element_density,
-  const Eigen::VectorXdt<double_type>& scaling_factors,
-  Eigen::VectorXdt<double_type>& rhs)
+  const Eigen::VectorXdt& scaling_factors,
+  Eigen::VectorXdt& rhs)
 {
   const size_t nb_newton_species = species.size();
 
@@ -152,17 +149,16 @@ void GasPhaseSolver<double_type>::assembleRightHandSide(
 
 
 
-template <class double_type>
-void GasPhaseSolver<double_type>::newtonSolMult(
-  std::vector<Element<double_type>*>& species,
-  std::vector<Element<double_type>>& elements,
-  const std::vector<Molecule<double_type>>& molecules, 
-  const double_type gas_density)
+void GasPhaseSolver::newtonSolMult(
+  std::vector<Element*>& species,
+  std::vector<Element>& elements,
+  const std::vector<Molecule>& molecules, 
+  const double gas_density)
 {
-  Eigen::MatrixXdt<double_type> jacobian;
-  Eigen::VectorXdt<double_type> rhs;
+  Eigen::MatrixXdt jacobian;
+  Eigen::VectorXdt rhs;
 
-  Eigen::VectorXdt<double_type> scaling_factors = assembleJacobian(
+  Eigen::VectorXdt scaling_factors = assembleJacobian(
     species,
     elements,
     molecules,
@@ -177,13 +173,13 @@ void GasPhaseSolver<double_type>::newtonSolMult(
     rhs);
 
 
-  Eigen::PartialPivLU<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
+  Eigen::PartialPivLU<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> solver;
   solver.compute(jacobian);
-  Eigen::VectorXdt<double_type> result = solver.solve(rhs);
+  Eigen::VectorXdt result = solver.solve(rhs);
 
-  Eigen::VectorXdt<double_type> result_scaled = result;
+  Eigen::VectorXdt result_scaled = result;
 
-  double_type max_value = result_scaled.cwiseAbs().maxCoeff();
+  double max_value = result_scaled.cwiseAbs().maxCoeff();
 
   if (max_value > 2.0)
     result_scaled *= 2.0/max_value;
@@ -196,6 +192,4 @@ void GasPhaseSolver<double_type>::newtonSolMult(
 }
 
 
-template class GasPhaseSolver<double>;
-template class GasPhaseSolver<long double>;
 }

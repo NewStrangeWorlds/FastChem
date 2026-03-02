@@ -30,27 +30,15 @@
 namespace fastchem {
 
 
-template <class double_type>
-void FastChemOptions<double_type>::init()
+void FastChemOptions::init()
 {
-  //init accuracy limit based on the numerical precision
-  if (std::numeric_limits<double_type>::max_exponent10 > 1000)
-  {
-    element_density_minlimit = 1e-512L;
-    molecule_density_minlimit = 1e-512L;
-  }
-  else
-  {
-    element_density_minlimit = 1e-255;
-    molecule_density_minlimit = 1e-255;
-  }
-
+  element_density_minlimit = 1e-255;
+  molecule_density_minlimit = 1e-255;
 }
 
 
 
-template <class double_type>
-ParameterFloat FastChemOptions<double_type>::resolveParameter(
+ParameterFloat FastChemOptions::resolveParameter(
   const std::string& parameter)
 {
   static const std::map<std::string, ParameterFloat> parameter_strings = 
@@ -62,8 +50,7 @@ ParameterFloat FastChemOptions<double_type>::resolveParameter(
     { std::string("accuracyCond"), ParameterFloat::cond_accuracy },
     { std::string("accuracyNewton"), ParameterFloat::newton_err },
     { std::string("minDensityExponentElement"), ParameterFloat::element_minlimit },
-    { std::string("minDensityExponentMolecules"), ParameterFloat::molecule_minlimit },
-    { std::string("maxLogK"), ParameterFloat::logK_limit }
+    { std::string("minDensityExponentMolecules"), ParameterFloat::molecule_minlimit }
   };
 
   auto itr = parameter_strings.find(parameter);
@@ -76,8 +63,7 @@ ParameterFloat FastChemOptions<double_type>::resolveParameter(
 
 
 
-template <class double_type>
-ParameterBool FastChemOptions<double_type>::resolveParameterBool(
+ParameterBool FastChemOptions::resolveParameterBool(
   const std::string& parameter)
 {
   static const std::map<std::string, ParameterBool> parameter_strings = 
@@ -99,8 +85,7 @@ ParameterBool FastChemOptions<double_type>::resolveParameterBool(
 
 
 
-template <class double_type>
-ParameterInt FastChemOptions<double_type>::resolveParameterInt(
+ParameterInt FastChemOptions::resolveParameterInt(
   const std::string& parameter)
 {
   static const std::map<std::string, ParameterInt> parameter_strings = 
@@ -123,6 +108,4 @@ ParameterInt FastChemOptions<double_type>::resolveParameterInt(
 }
 
 
-template class FastChemOptions<double>;
-template class FastChemOptions<long double>;
 }

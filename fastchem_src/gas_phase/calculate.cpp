@@ -33,8 +33,7 @@ namespace fastchem {
 
 
 //This is the main FastChem iteration for the gas phase
-template <class double_type>
-bool GasPhase<double_type>::calculate(
+bool GasPhase::calculate(
   const double temperature_gas, const double gas_density, unsigned int& nb_iterations)
 {
   for (auto & i : elements) i.number_density_maj = 0.0;
@@ -43,8 +42,8 @@ bool GasPhase<double_type>::calculate(
   //starting values for contribution of minor species
   for (auto & i : elements) i.calcMinorSpeciesDensities(molecules);
 
-  std::vector<double_type> number_density_old(nb_species, 0.0);
-  std::vector<double_type> log_density_old(nb_species, static_cast<double_type>(LOG_DENSITY_FLOOR));
+  std::vector<double> number_density_old(nb_species, 0.0);
+  std::vector<double> log_density_old(nb_species, static_cast<double>(LOG_DENSITY_FLOOR));
 
   for (size_t i=0; i<nb_species; ++i)
   {
@@ -61,7 +60,7 @@ bool GasPhase<double_type>::calculate(
 
   for (iter_step=0; iter_step<max_iter; ++iter_step)
   {
-    double_type n_maj = 0.0;
+    double n_maj = 0.0;
 
     //check if n_j_min are small enough, if not use backup solver
     for (auto & i : elements)
@@ -114,7 +113,7 @@ bool GasPhase<double_type>::calculate(
 
       for (size_t i=0; i<nb_species; ++i)
         if (std::fabs(species[i]->log_number_density - log_density_old[i]) > options.chem_accuracy
-             && species[i]->log_number_density > static_cast<double_type>(LOG_DENSITY_FLOOR) + 1.0)
+             && species[i]->log_number_density > static_cast<double>(LOG_DENSITY_FLOOR) + 1.0)
         {
           converged = false;
           break;
@@ -151,7 +150,7 @@ bool GasPhase<double_type>::calculate(
       if (options.verbose_level >= 4)
         std::cout << "Standard FastChem iteration failed. Switching to multi-dimensional Newton. " << "\n";
 
-      std::vector<Element<double_type>*> newton_elements;
+      std::vector<Element*> newton_elements;
 
       solver.selectNewtonElements(
         elements,
@@ -206,7 +205,5 @@ bool GasPhase<double_type>::calculate(
 
 
 
-template class GasPhase<double>;
-template class GasPhase<long double>;
 
 } 
