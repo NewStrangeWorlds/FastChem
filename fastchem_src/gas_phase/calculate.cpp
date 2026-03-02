@@ -43,11 +43,14 @@ bool GasPhase<double_type>::calculate(
   //starting values for contribution of minor species
   for (auto & i : elements) i.calcMinorSpeciesDensities(molecules);
 
-
   std::vector<double_type> number_density_old(nb_species, 0.0);
+  std::vector<double_type> log_density_old(nb_species, static_cast<double_type>(LOG_DENSITY_FLOOR));
 
   for (size_t i=0; i<nb_species; ++i)
+  {
     number_density_old[i] = species[i]->number_density;
+    log_density_old[i] = species[i]->log_number_density;
+  }
 
 
   bool converged = false;
@@ -103,21 +106,16 @@ bool GasPhase<double_type>::calculate(
       }
 
 
-    //convergence check
+    //convergence check in log-space: |y_new - y_old| is the relative change |dn/n|
+    //Skip species at the density floor (effectively zero)
     if (iter_step > 0)
     {
       converged = true;
-      
+
       for (size_t i=0; i<nb_species; ++i)
-        if (std::fabs((species[i]->number_density - number_density_old[i])) > options.chem_accuracy*number_density_old[i]
-             && species[i]->number_density/gas_density > 1.e-155)
-        { 
-          // std::cout << iter_step << "\t" << species[i]->symbol << "\t" 
-          //           << std::fabs((species[i]->number_density - number_density_old[i]))/number_density_old[i] << "\t" 
-          //           << options.chem_accuracy*number_density_old[i] << "\t" 
-          //           << species[i]->number_density << "\t" 
-          //           <<  number_density_old[i] << "\t" 
-          //           << use_backup_solver << "\n";
+        if (std::fabs(species[i]->log_number_density - log_density_old[i]) > options.chem_accuracy
+             && species[i]->log_number_density > static_cast<double_type>(LOG_DENSITY_FLOOR) + 1.0)
+        {
           converged = false;
           break;
         }
@@ -127,11 +125,12 @@ bool GasPhase<double_type>::calculate(
     //sanity check
     for (auto & e : elements)
     {
-      if (std::isnan(e.number_density) || std::isinf(e.number_density))
+      if (std::isnan(e.number_density) || std::isinf(e.number_density)
+          || std::isnan(e.log_number_density))
       {
         if (options.verbose_level >= 4)
-          std::cout << "Encountered NaN or Inf number density for element " 
-                    << e.symbol 
+          std::cout << "Encountered NaN or Inf number density for element "
+                    << e.symbol
                     << ". Stopping calculation.\n";
 
         nb_iterations = iter_step;
@@ -193,7 +192,10 @@ bool GasPhase<double_type>::calculate(
 
 
     for (size_t i=0; i<nb_species; ++i)
+    {
       number_density_old[i] = species[i]->number_density;
+      log_density_old[i] = species[i]->log_number_density;
+    }
   }
   
 

@@ -77,7 +77,7 @@ void Condensate<double_type>::calcActivity(
   log_activity = mass_action_constant;
 
   for (auto & i : element_indices)
-    log_activity += std::log(elements[i].number_density) * stoichiometric_vector[elements[i].index];
+    log_activity += elements[i].log_number_density * stoichiometric_vector[elements[i].index];
 
   if (log_activity < -10.0) log_activity = -10.0;
 }
@@ -97,7 +97,12 @@ double_type Condensate<double_type>::calcActivity(
   double_type log_activity = mass_action_constant;
 
   for (auto & i : element_indices)
-    log_activity += std::log(elem_number_densities[elements[i].index]) * stoichiometric_vector[elements[i].index];
+  {
+    const double_type log_dens = (elem_number_densities[elements[i].index] > 0)
+      ? std::log(elem_number_densities[elements[i].index])
+      : static_cast<double_type>(LOG_DENSITY_FLOOR);
+    log_activity += log_dens * stoichiometric_vector[elements[i].index];
+  }
 
   if (log_activity < -10.0) log_activity = -10.0;
 

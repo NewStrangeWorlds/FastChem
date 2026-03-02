@@ -62,6 +62,8 @@ class CondPhaseSolver{
       const std::vector<double_type>& cond_densities,
       const std::vector<double_type>& element_densities,
       const std::vector<double_type>& activity_corr,
+      const std::vector<double_type>& log_cond_densities,
+      const std::vector<double_type>& log_activity_corr,
       Eigen::VectorXdt<double_type>& result,
       Eigen::VectorXdt<double_type>& scaling_factors,
       double_type& objective_function);
@@ -74,6 +76,8 @@ class CondPhaseSolver{
       const std::vector<double_type>& cond_densities,
       const std::vector<double_type>& element_densities,
       const std::vector<double_type>& activity_corr,
+      const std::vector<double_type>& log_cond_densities,
+      const std::vector<double_type>& log_activity_corr,
       Eigen::VectorXdt<double_type>& result,
       Eigen::VectorXdt<double_type>& scaling_factors,
       double_type& objective_function);
@@ -84,9 +88,11 @@ class CondPhaseSolver{
       const std::vector<unsigned int>& condensates_rem,
       const std::vector<double_type>& activity_corr,
       const std::vector<double_type>& number_denities,
+      const std::vector<double_type>& log_number_densities,
+      const std::vector<double_type>& log_activity_corr,
       const std::vector< Element<double_type>* >& elements,
       const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density, 
+      const double_type total_element_density,
       const Eigen::VectorXdt<double_type>& scaling_factors,
       Eigen::VectorXdt<double_type>& rhs);
 
@@ -94,11 +100,16 @@ class CondPhaseSolver{
       const std::vector<Condensate<double_type>*>& condensates,
       const std::vector<double_type>& activity_corr,
       const std::vector<double_type>& number_denities,
+      const std::vector<double_type>& log_number_densities,
+      const std::vector<double_type>& log_activity_corr,
       const std::vector< Element<double_type>* >& elements,
       const std::vector< Molecule<double_type> >& molecules,
       const double_type total_element_density,
       const Eigen::VectorXdt<double_type>& scaling_factors,
       Eigen::VectorXdt<double_type>& rhs);
+
+    void resetLM();
+    void adaptLM(const double_type objective_function);
 
     double_type backtrackStep(
       const double_type objective_function_0,
@@ -113,12 +124,18 @@ class CondPhaseSolver{
       const std::vector<unsigned int>& condensates_rem,
       const std::vector<double_type>& activity_corr,
       const std::vector<double_type>& number_denities,
+      const std::vector<double_type>& log_number_densities,
+      const std::vector<double_type>& log_activity_corr,
       const std::vector< Element<double_type>* >& elements,
       const std::vector< Molecule<double_type> >& molecules,
-      const double_type total_element_density, 
+      const double_type total_element_density,
       const Eigen::VectorXdt<double_type>& scaling_factors);
   private:
     FastChemOptions<double_type>& options;
+
+    double_type lm_mu = 0.01;
+    double_type lm_objective_prev = 0;
+    bool lm_has_prev_objective = false;
 
      Eigen::MatrixXdt<double_type> assemblePerturbedHessian(
       const Eigen::MatrixXdt<double_type>& jacobian,

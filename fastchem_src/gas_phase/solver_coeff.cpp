@@ -33,184 +33,100 @@
 namespace fastchem {
 
 
+//Log-space residual for the element conservation equation.
+//Returns ln_P = ln(P(y_j)), ln_dP = ln(dP/dy_j), and R,
+//where P is the positive-definite sum of free-atom and molecule contributions
+//and R is the required density.
+//The caller computes the Newton step from these without overflow:
+//  delta = -(P - R) / dP = -exp(ln_P - ln_dP) + R * exp(-ln_dP)
+//When use_all_molecules is false (standard mode), only major molecules (same abundance)
+//are included, and R = phi*n_gas - n_min - n_maj.
+//When use_all_molecules is true (alternative/backup mode), all molecules in the element's
+//molecule_list are used, and R = phi*n_gas - n_exc.
 template <class double_type>
-double_type GasPhaseSolver<double_type>::A0Coeff(
-  const Element<double_type>& species, const double_type gas_density)
+void GasPhaseSolver<double_type>::logSpaceResidual(
+  const Element<double_type>& species,
+  const std::vector<Element<double_type>>& elements,
+  const std::vector<Molecule<double_type>>& molecules,
+  const double_type gas_density,
+  const double_type y_j,
+  double_type& ln_P,
+  double_type& ln_dP,
+  double_type& R,
+  const bool use_all_molecules)
 {
-  double_type A0 = 0.0;
+  if (use_all_molecules)
+  {
+    //Alternative mode: R = phi*n_gas - n_exc
+    //n_exc = phi * Sigma_{i: nu_ij=0} sigma_i * n_i (molecules not containing element j)
+    double_type n_exc = 0.0;
 
-  if (options.use_scaling_factor)
-    A0 = std::exp(-species.solver_scaling_factor) * (species.number_density_maj + species.number_density_min - gas_density * species.phi);
+    for (size_t i = 0; i < molecules.size(); ++i)
+      if (molecules[i].stoichiometric_vector[species.index] == 0)
+        n_exc += molecules[i].sigma * molecules[i].number_density;
+
+    n_exc *= species.phi;
+    R = species.phi * gas_density - n_exc;
+  }
   else
-    //calculation of coefficient A_j0, see Eq. (2.27)
-    A0 = species.number_density_maj + species.number_density_min - gas_density * species.phi;
-
-  return A0;
-}
-
-
-template <class double_type>
-double_type GasPhaseSolver<double_type>::A1Coeff(
-  const Element<double_type>& species,
-  const std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules)
-{
-  //calculation of coefficient A_1, see Eq. (2.28)
-  double_type A1 = 0.0;
-
-  for(auto & i : species.molecule_list)
   {
-    if (molecules[i].stoichiometric_vector[species.index] == 1 && molecules[i].abundance == species.abundance)
-    {
-      double_type sum = 0;
-      
-      for (auto & j : molecules[i].element_indices)
-      {
-        if (j != species.index && molecules[i].stoichiometric_vector[j] != 0)
-          sum += molecules[i].stoichiometric_vector[j] * std::log(elements[j].number_density);
-      }
-
-      const double_type kappa = 1.0 + species.phi * molecules[i].sigma;
-      
-      A1 += std::exp(molecules[i].mass_action_constant + sum - species.solver_scaling_factor) * kappa;
-    }
+    //Standard mode: R = phi*n_gas - n_min - n_maj
+    R = species.phi * gas_density - species.number_density_min - species.number_density_maj;
   }
 
+  //Build the positive sum P(y_j) and its derivative dP/dy_j
+  //P(y_j) = exp(y_j) + Sigma_i kappa_ij * exp(mac_i + Sigma_l nu_il * y_l)
+  //dP/dy_j = exp(y_j) + Sigma_i nu_ij * kappa_ij * exp(mac_i + Sigma_l nu_il * y_l)
+  std::vector<double_type> log_terms;
+  std::vector<double_type> coeffs_P;
+  std::vector<double_type> coeffs_dP;
 
-  if (options.use_scaling_factor)
-    A1 += std::exp(-species.solver_scaling_factor);
-  else
-    A1 += 1.0;
-
-
-  return A1;
-}
-
-
-
-template <class double_type>
-double_type GasPhaseSolver<double_type>::A2Coeff(
-  const Element<double_type>& species,
-  const std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules)
-{
-  double_type A2 = 0.0;
+  //Free atom term
+  log_terms.push_back(y_j);
+  coeffs_P.push_back(1.0);
+  coeffs_dP.push_back(1.0);
 
   for (auto & i : species.molecule_list)
   {
-    if (molecules[i].stoichiometric_vector[species.index] == 2 && molecules[i].abundance == species.abundance)
-    {
-      double_type sum = 0;
-      
-      for (auto & j : molecules[i].element_indices)
-      {
-        if (j != species.index && molecules[i].stoichiometric_vector[j] != 0)
-          sum += molecules[i].stoichiometric_vector[j] * std::log(elements[j].number_density);
-      }
+    const int nu_j = molecules[i].stoichiometric_vector[species.index];
 
-      const double_type kappa = 2.0 + species.phi * molecules[i].sigma; 
-      
-      A2 += std::exp(molecules[i].mass_action_constant + sum - species.solver_scaling_factor) * kappa;
+    if (nu_j < 1) continue;
+
+    if (!use_all_molecules && molecules[i].abundance != species.abundance)
+      continue;
+
+    //log(n_i) = mac_i + Sigma_l nu_il * y_l
+    double_type log_n = molecules[i].mass_action_constant;
+
+    for (auto & l : molecules[i].element_indices)
+    {
+      if (l == species.index)
+        log_n += molecules[i].stoichiometric_vector[l] * y_j;
+      else if (molecules[i].stoichiometric_vector[l] != 0)
+        log_n += molecules[i].stoichiometric_vector[l] * elements[l].log_number_density;
     }
+
+    const double_type kappa = nu_j + species.phi * molecules[i].sigma;
+
+    log_terms.push_back(log_n);
+    coeffs_P.push_back(kappa);
+    coeffs_dP.push_back(static_cast<double_type>(nu_j) * kappa);
   }
-  
-  
-  return A2;
+
+  //Compute ln(P) and ln(dP/dy) using logSumExp for numerical stability
+  ln_P = logSumExp(log_terms, coeffs_P);
+  ln_dP = logSumExp(log_terms, coeffs_dP);
 }
 
 
 
-template <class double_type>
-double_type GasPhaseSolver<double_type>::AmCoeff(
-  const Element<double_type>& species,
-  const std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules, 
-  const unsigned int order)
-{
-  double_type Am = 0.0;
-
-  for (auto & i : species.molecule_list)
-  {
-    if (molecules[i].stoichiometric_vector[species.index] == int(order) && molecules[i].abundance == species.abundance)
-    {
-      double_type sum = 0;
-
-      for (auto & j : molecules[i].element_indices)
-      {
-        if (j != species.index && molecules[i].stoichiometric_vector[j] != 0)
-          sum += molecules[i].stoichiometric_vector[j] * std::log(elements[j].number_density);
-      }
-
-      const double_type kappa = order + species.phi * molecules[i].sigma; 
-      
-      Am += std::exp(molecules[i].mass_action_constant + sum - species.solver_scaling_factor) * kappa;
-    }
-  }
-  
-
-  if (order == 1)
-  {
-    if (options.use_scaling_factor)
-      Am += std::exp(-species.solver_scaling_factor);
-    else
-      Am += 1.0;
-  }
-
-  return Am;
-}
-
-
-
-//Alternative description of the Am coefficients
-//Takes the full law of mass action into account, i.e. doesn't stop at minor species as the regular calculation
-template <class double_type>
-double_type GasPhaseSolver<double_type>::AmCoeffAlt(
-  const Element<double_type>& species,
-  const std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules, 
-  const unsigned int order)
-{
-  double_type Am = 0.0;
-
-  for (auto & i : species.molecule_list)
-  {
-    if (molecules[i].stoichiometric_vector[species.index] == int(order))
-    {
-      double_type sum = 0;
-      
-      for (auto & j : molecules[i].element_indices)
-      {
-        if (j != species.index && molecules[i].stoichiometric_vector[j] != 0)
-          sum += molecules[i].stoichiometric_vector[j] * std::log(elements[j].number_density);
-      }
-
-      const double_type kappa = order + species.phi * molecules[i].sigma; 
-      
-      Am += std::exp(molecules[i].mass_action_constant + sum - species.solver_scaling_factor) * kappa;
-    }
-  }
-
-
-  if (order == 1) 
-  {
-    if (options.use_scaling_factor)
-      Am += std::exp(-species.solver_scaling_factor);
-    else
-      Am += 1.0;
-  }
-
-  return Am;
-}
-
-
-
-//Alternative description of the Am coefficients
-//Takes the full law of mass action into account, i.e. doesn't stop at minor species as the regular calculation
+//Am coefficients for electron density computation
+//Uses log_number_density to avoid log(0) for underflowed densities
 template <class double_type>
 double_type GasPhaseSolver<double_type>::AmCoeffElectron(
   const Element<double_type>& electron,
   const std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules, 
+  const std::vector< Molecule<double_type> >& molecules,
   const int order)
 {
   double_type Am = 0.0;
@@ -220,14 +136,14 @@ double_type GasPhaseSolver<double_type>::AmCoeffElectron(
     if (molecules[i].stoichiometric_vector[electron.index] == order)
     {
       double_type sum = 0;
-      
+
       for (auto & j : molecules[i].element_indices)
       {
         if (j != electron.index && molecules[i].stoichiometric_vector[j] != 0)
-          sum += molecules[i].stoichiometric_vector[j] * std::log(elements[j].number_density);
+          sum += molecules[i].stoichiometric_vector[j] * elements[j].log_number_density;
       }
-      
-      Am += std::exp(molecules[i].mass_action_constant + sum) * order;
+
+      Am += safeExp(molecules[i].mass_action_constant + sum) * order;
     }
   }
 
@@ -239,6 +155,5 @@ double_type GasPhaseSolver<double_type>::AmCoeffElectron(
 template class GasPhaseSolver<double>;
 template class GasPhaseSolver<long double>;
 }
-
 
 

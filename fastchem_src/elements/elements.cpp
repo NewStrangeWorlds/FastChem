@@ -22,6 +22,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 #include "elements.h"
 
@@ -78,6 +79,7 @@ void ElementData<double_type>::init(double_type initial_density)
   for (auto & i : elements)
   {
     i.number_density = initial_density;
+    i.log_number_density = (initial_density > 0) ? std::log(initial_density) : static_cast<double_type>(LOG_DENSITY_FLOOR);
     i.degree_of_condensation = 0;
     i.phi = i.epsilon;
     i.fixed_by_condensation = false;

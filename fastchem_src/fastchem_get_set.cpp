@@ -521,10 +521,6 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const dou
       options.logK_limit = value;
       break;
 
-    case ParameterFloat::additional_scaling_factor:
-      options.additional_scaling_factor = value;
-      break;
-  
     default:
       std::cout << "Unknown parameter \"" << parameter << "\"  with a floatint-point value!\n";
       break;
@@ -541,10 +537,6 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const boo
 
   switch (param)
   {
-    case ParameterBool::cond_solve_full_system:
-      options.cond_solve_full_matrix = value;
-      break;
-
     case ParameterBool::cond_reduce_system_size:
       options.cond_reduce_system_size = value;
       break;
@@ -557,14 +549,14 @@ void FastChem<double_type>::setParameter(const std::string& parameter, const boo
       options.cond_use_svd = value;
       break;
 
-    case ParameterBool::use_scaling_factor:
-      options.use_scaling_factor = value;
-      break;
-
-     case ParameterBool::cond_use_data_validity_limits:
+    case ParameterBool::cond_use_data_validity_limits:
       options.cond_use_data_validity_limits = value;
       break;
-  
+
+    case ParameterBool::cond_use_lm:
+      options.cond_use_lm = value;
+      break;
+
     default:
       std::cout << "Unknown parameter \"" << parameter << "\"  with a boolean value!\n";
       break;

@@ -200,18 +200,30 @@ unsigned int FastChem<double_type>::calcDensity(
   if (use_previous_solution == true)
   {
    //if we use the previous solution, convert the stored mixing ratios to number densities
-   for (auto & i : gas_phase.species)  i->number_density *= gas_density;
+   for (auto & i : gas_phase.species)
+   {
+     i->number_density *= gas_density;
+     i->log_number_density = (i->number_density > 0) ? std::log(i->number_density) : static_cast<double_type>(LOG_DENSITY_FLOOR);
+   }
   }
   else
-  { 
+  {
     element_data.init(options.element_density_minlimit);
 
     //for a fresh start set all species to the minimum value
-    for (auto & i : gas_phase.species) i->number_density = options.element_density_minlimit;
-    
+    const double_type log_min = std::log(options.element_density_minlimit);
+    for (auto & i : gas_phase.species)
+    {
+      i->number_density = options.element_density_minlimit;
+      i->log_number_density = log_min;
+    }
+
     //set the initial electron density to 1 (for stability reasons)
     if (element_data.e_ != FASTCHEM_UNKNOWN_SPECIES)
+    {
       element_data.elements[element_data.e_].number_density = 1.0;
+      element_data.elements[element_data.e_].log_number_density = 0.0;
+    }
   }
 
 
@@ -252,7 +264,11 @@ unsigned int FastChem<double_type>::calcDensity(
 
 
   //store the mixing ratios in case we want to use them in the future
-  for (auto & i : gas_phase.species) i->number_density /= gas_density;
+  for (auto & i : gas_phase.species)
+  {
+    i->number_density /= gas_density;
+    i->log_number_density = (i->number_density > 0) ? std::log(i->number_density) : static_cast<double_type>(LOG_DENSITY_FLOOR);
+  }
 
 
   return return_state;
@@ -352,11 +368,21 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   double_type gas_density = pressure/(CONST_K * temperature);
 
   //for a fresh start set all species to the minimum value
-  for (auto & i : gas_phase.species) i->number_density = options.element_density_minlimit;
-    
+  {
+    const double_type log_min = std::log(options.element_density_minlimit);
+    for (auto & i : gas_phase.species)
+    {
+      i->number_density = options.element_density_minlimit;
+      i->log_number_density = log_min;
+    }
+  }
+
   //set the initial electron density to 1 (for stability reasons)
   if (element_data.e_ != FASTCHEM_UNKNOWN_SPECIES)
+  {
     element_data.elements[element_data.e_].number_density = 1.0;
+    element_data.elements[element_data.e_].log_number_density = 0.0;
+  }
 
   element_data.init(options.element_density_minlimit);
 
@@ -408,10 +434,10 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
   {
     options.chem_use_backup_solver = true;
 
-    std::vector<double_type> number_density_old(element_data.nb_elements, 0.0);
+    std::vector<double_type> log_density_old(element_data.nb_elements, static_cast<double_type>(LOG_DENSITY_FLOOR));
 
     for (size_t i=0; i<element_data.nb_elements; ++i)
-      number_density_old[i] = element_data.elements[i].number_density;
+      log_density_old[i] = element_data.elements[i].log_number_density;
 
     //run the equilibrium condensation and gas phase iteration
     for (nb_combined_iter=0; nb_combined_iter<options.nb_chem_cond_iter; ++nb_combined_iter)
@@ -470,10 +496,10 @@ unsigned int FastChem<double_type>::equilibriumCondensation(
 
       for (auto & i : element_data.elements)
       {
-        if (std::fabs((i.number_density - number_density_old[i.index])) > options.chem_accuracy*number_density_old[i.index])
+        if (std::fabs(i.log_number_density - log_density_old[i.index]) > options.chem_accuracy)
           combined_converged = false;
 
-        number_density_old[i.index] = i.number_density;
+        log_density_old[i.index] = i.log_number_density;
       }
 
       if (combined_converged && cond_converged) break;

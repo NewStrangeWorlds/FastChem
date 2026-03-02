@@ -44,7 +44,7 @@ void Molecule<double_type>::calcMassActionConstant(const double temperature, con
   const double_type pressure_scaling = 1.0e-6 * CONST_K * temperature;
   mass_action_constant = log_K - sigma * std::log(pressure_scaling);
 
-  if (mass_action_constant > logK_limit) mass_action_constant = logK_limit;
+  //if (mass_action_constant > logK_limit) mass_action_constant = logK_limit;
 }
 
 
@@ -54,21 +54,34 @@ template <class double_type>
 void Molecule<double_type>::checkN(
   const double_type& min_limit, const double_type& gas_density)
 {
-  if (this->number_density < min_limit) this->number_density = min_limit;
+  if (this->log_number_density < static_cast<double_type>(LOG_DENSITY_FLOOR))
+    this->log_number_density = static_cast<double_type>(LOG_DENSITY_FLOOR);
 
-  if (this->number_density > gas_density) this->number_density = gas_density;
+  const double_type log_gas = std::log(gas_density);
+
+  if (this->log_number_density > log_gas)
+    this->log_number_density = log_gas;
+
+  this->number_density = safeExp(this->log_number_density);
+}
+
+
+//Compute log(n_i) = mac + sum_l nu_il * y_l (pure log-space arithmetic)
+template <class double_type>
+void Molecule<double_type>::calcLogNumberDensity(const std::vector< Element<double_type> >& elements)
+{
+  this->log_number_density = mass_action_constant;
+
+  for (auto i : element_indices)
+    this->log_number_density += stoichiometric_vector[i] * elements[i].log_number_density;
 }
 
 
 template <class double_type>
 void Molecule<double_type>::calcNumberDensity(const std::vector< Element<double_type> >& elements)
 {
-  this->number_density = mass_action_constant;
-
-  for (auto i : element_indices)
-    this->number_density += stoichiometric_vector[i] * std::log(elements[i].number_density);
-
-  this->number_density = std::exp(this->number_density);
+  calcLogNumberDensity(elements);
+  this->number_density = safeExp(this->log_number_density);
 }
 
 

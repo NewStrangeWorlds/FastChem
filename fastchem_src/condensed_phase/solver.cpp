@@ -47,6 +47,8 @@ bool CondPhaseSolver<double_type>::newtonStep(
   const std::vector<double_type>& cond_densities,
   const std::vector<double_type>& element_densities,
   const std::vector<double_type>& activity_corr,
+  const std::vector<double_type>& log_cond_densities,
+  const std::vector<double_type>& log_activity_corr,
   Eigen::VectorXdt<double_type>& result,
   Eigen::VectorXdt<double_type>& scaling_factors,
   double_type& objective_function)
@@ -70,6 +72,8 @@ bool CondPhaseSolver<double_type>::newtonStep(
     condensates_rem,
     activity_corr,
     cond_densities,
+    log_cond_densities,
+    log_activity_corr,
     elements,
     molecules,
     total_element_density,
@@ -79,7 +83,7 @@ bool CondPhaseSolver<double_type>::newtonStep(
 
   const bool jacobian_is_invertible = solveSystem(jacobian, rhs, result);
 
-  return jacobian_is_invertible; 
+  return jacobian_is_invertible;
 }
 
 
@@ -93,6 +97,8 @@ bool CondPhaseSolver<double_type>::newtonStepFull(
   const std::vector<double_type>& cond_densities,
   const std::vector<double_type>& element_densities,
   const std::vector<double_type>& activity_corr,
+  const std::vector<double_type>& log_cond_densities,
+  const std::vector<double_type>& log_activity_corr,
   Eigen::VectorXdt<double_type>& result,
   Eigen::VectorXdt<double_type>& scaling_factors,
   double_type& objective_function)
@@ -106,12 +112,14 @@ bool CondPhaseSolver<double_type>::newtonStepFull(
     molecules,
     total_element_density,
     jacobian);
-  
+
   Eigen::VectorXdt<double_type> rhs;
   objective_function= assembleRightHandSideFull(
     condensates,
     activity_corr,
     cond_densities,
+    log_cond_densities,
+    log_activity_corr,
     elements,
     molecules,
     total_element_density,
@@ -120,8 +128,8 @@ bool CondPhaseSolver<double_type>::newtonStepFull(
 
 
   const bool jacobian_is_invertible = solveSystem(jacobian, rhs, result);
- 
-  return jacobian_is_invertible; 
+
+  return jacobian_is_invertible;
 }
 
 
@@ -182,7 +190,10 @@ Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleJacobian(
   }
 
 
-  Eigen::VectorXdt<double_type> scaling_factors = jacobian.rowwise().maxCoeff();
+  Eigen::VectorXdt<double_type> scaling_factors = jacobian.cwiseAbs().rowwise().maxCoeff();
+
+  for (auto i = 0; i < scaling_factors.rows(); ++i)
+    if (scaling_factors(i) == 0.0) scaling_factors(i) = 1.0;
 
   for (auto i=0; i<jacobian.rows(); ++i)
   {
@@ -243,7 +254,10 @@ Eigen::VectorXdt<double_type> CondPhaseSolver<double_type>::assembleJacobianFull
   }
 
 
-  Eigen::VectorXdt<double_type> scaling_factors = jacobian.rowwise().maxCoeff();
+  Eigen::VectorXdt<double_type> scaling_factors = jacobian.cwiseAbs().rowwise().maxCoeff();
+
+  for (auto i = 0; i < scaling_factors.rows(); ++i)
+    if (scaling_factors(i) == 0.0) scaling_factors(i) = 1.0;
 
   for (auto i=0; i<jacobian.rows(); ++i)
   {
@@ -263,6 +277,8 @@ double_type CondPhaseSolver<double_type>::assembleRightHandSide(
       const std::vector<unsigned int>& condensates_rem,
       const std::vector<double_type>& activity_corr,
       const std::vector<double_type>& number_densities,
+      const std::vector<double_type>& log_number_densities,
+      const std::vector<double_type>& log_activity_corr,
       const std::vector< Element<double_type>* >& elements,
       const std::vector< Molecule<double_type> >& molecules,
       const double_type total_element_density,
@@ -274,30 +290,30 @@ double_type CondPhaseSolver<double_type>::assembleRightHandSide(
   rhs.setZero(elements.size() + nb_cond_jac);
 
   for (size_t i=0; i<nb_cond_jac; ++i)
-  { 
+  {
     const int index = condensates_jac[i];
 
     rhs(i) = - condensates[index]->log_activity - activity_corr[index]
-            * (1.0 + condensates[index]->log_tau - std::log(number_densities[index]) 
-            - std::log(activity_corr[index]));
+            * (1.0 + condensates[index]->log_tau - log_number_densities[index]
+            - log_activity_corr[index]);
   }
 
 
   for (size_t i=0; i<elements.size(); ++i)
-  { 
+  {
     rhs(i+nb_cond_jac) = total_element_density * elements[i]->epsilon - elements[i]->number_density;
-    
+
     for (auto j : elements[i]->molecule_list)
       rhs(i+nb_cond_jac) -= molecules[j].stoichiometric_vector[elements[i]->index] * molecules[j].number_density;
-    
+
     for (size_t j=0; j<condensates.size(); ++j)
       rhs(i+nb_cond_jac) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j];
 
     for (auto j : condensates_rem)
-        rhs(i+nb_cond_jac) -= 
+        rhs(i+nb_cond_jac) -=
           condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j]
-          * (condensates[j]->log_activity/activity_corr[j] 
-          + condensates[j]->log_tau - std::log(number_densities[j]) -  std::log(activity_corr[j]) + 1.0);
+          * (condensates[j]->log_activity/activity_corr[j]
+          + condensates[j]->log_tau - log_number_densities[j] - log_activity_corr[j] + 1.0);
   }
 
 
@@ -317,6 +333,8 @@ double_type CondPhaseSolver<double_type>::assembleRightHandSideFull(
   const std::vector<Condensate<double_type>*>& condensates,
   const std::vector<double_type>& activity_corr,
   const std::vector<double_type>& number_densities,
+  const std::vector<double_type>& log_number_densities,
+  const std::vector<double_type>& log_activity_corr,
   const std::vector< Element<double_type>* >& elements,
   const std::vector< Molecule<double_type> >& molecules,
   const double_type total_element_density,
@@ -329,8 +347,8 @@ double_type CondPhaseSolver<double_type>::assembleRightHandSideFull(
   rhs.setZero(nb_elements + 2*nb_cond);
 
   for (size_t i=0; i<nb_cond; ++i)
-  { 
-    rhs(i) = condensates[i]->log_tau - std::log(activity_corr[i]) - std::log(number_densities[i]); 
+  {
+    rhs(i) = condensates[i]->log_tau - log_activity_corr[i] - log_number_densities[i];
     rhs(i+nb_cond) = - condensates[i]->log_activity - activity_corr[i];
   }
 
@@ -376,12 +394,70 @@ Eigen::MatrixXdt<double_type> CondPhaseSolver<double_type>::assemblePerturbedHes
 
 
 
-template <class double_type> 
+template <class double_type>
 bool CondPhaseSolver<double_type>::solveSystem(
   const Eigen::MatrixXdt<double_type>& jacobian,
   const Eigen::VectorXdt<double_type>& rhs,
   Eigen::VectorXdt<double_type>& result)
 {
+  if (options.cond_use_lm)
+  {
+    bool needs_clamping = false;
+
+    for (auto i = 0; i < jacobian.rows(); ++i)
+    {
+      if (std::abs(jacobian(i,i)) < lm_mu)
+      {
+        needs_clamping = true;
+        break;
+      }
+    }
+
+    if (!needs_clamping)
+    {
+      Eigen::PartialPivLU<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> solver;
+      solver.compute(jacobian);
+      result = solver.solve(rhs);
+      return true;
+    }
+
+    if (options.verbose_level >= 3)
+      std::cout << "FastChem: Jacobian near-singular, clamping diagonal (mu=" << lm_mu << ")\n";
+
+    Eigen::MatrixXdt<double_type> J_reg = jacobian;
+
+    for (auto i = 0; i < J_reg.rows(); ++i)
+    {
+      if (std::abs(J_reg(i,i)) < lm_mu)
+        J_reg(i,i) = (J_reg(i,i) >= 0) ? lm_mu : -lm_mu;
+    }
+
+    Eigen::PartialPivLU<Eigen::Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>> lm_solver;
+    lm_solver.compute(J_reg);
+    result = lm_solver.solve(rhs);
+
+    // If the clamped system still produced NaN/inf, fall back to the minimum-norm
+    // SVD solution, which is always finite and bounded for any near-singular matrix.
+    bool result_bad = false;
+    for (int i = 0; i < result.rows(); ++i)
+    {
+      if (!std::isfinite(static_cast<double>(result(i))))
+      {
+        result_bad = true;
+        break;
+      }
+    }
+
+    if (result_bad)
+    {
+      if (options.verbose_level >= 3)
+        std::cout << "FastChem: PartialPivLU on clamped Jacobian produced NaN/inf, switching to SVD\n";
+
+      result = jacobian.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(rhs);
+    }
+
+    return false;
+  }
 
   if (!options.cond_use_full_pivot)
   {
@@ -397,12 +473,12 @@ bool CondPhaseSolver<double_type>::solveSystem(
   result = solver.solve(rhs);
 
   if (!solver.isInvertible())
-  { 
+  {
     if (options.verbose_level >= 3)
       std::cout << "FastChem warning: Jacobian is (almost) singular! ";
 
     if (options.cond_use_svd)
-    { 
+    {
       if (options.verbose_level >= 3)
         std::cout << "Switching to Singular Value Decomposition.\n";
 
@@ -412,18 +488,19 @@ bool CondPhaseSolver<double_type>::solveSystem(
     else
     {
       if (options.verbose_level >= 3)
-        std::cout << "Switching to perturbed Hessian approximation.\n";
+        std::cout << "Switching to diagonal clamping fallback.\n";
 
-      const double_type perturbation = std::numeric_limits<double_type>::epsilon() * 10;
+      Eigen::MatrixXdt<double_type> J_reg = jacobian;
+      const double_type min_diag = 0.01;
 
-      Eigen::MatrixXdt<double_type> hessian = assemblePerturbedHessian(
-        jacobian,
-        perturbation);
+      for (auto i = 0; i < J_reg.rows(); ++i)
+      {
+        if (std::abs(J_reg(i,i)) < min_diag)
+          J_reg(i,i) = (J_reg(i,i) >= 0) ? min_diag : -min_diag;
+      }
 
-      solver.compute(hessian);
-      Eigen::VectorXdt<double_type> rhs_pertubed = jacobian.transpose()*rhs;
-
-      result = solver.solve(rhs_pertubed);
+      solver.compute(J_reg);
+      result = solver.solve(rhs);
     }
 
     return false;
@@ -434,7 +511,36 @@ bool CondPhaseSolver<double_type>::solveSystem(
 
 
 
-template <class double_type> 
+template <class double_type>
+void CondPhaseSolver<double_type>::resetLM()
+{
+  lm_mu = 0.01;
+  lm_objective_prev = 0;
+  lm_has_prev_objective = false;
+}
+
+
+template <class double_type>
+void CondPhaseSolver<double_type>::adaptLM(const double_type objective_function)
+{
+  if (lm_has_prev_objective)
+  {
+    if (objective_function < lm_objective_prev)
+      lm_mu *= 0.5;
+    else
+      lm_mu *= 2.0;
+
+    if (lm_mu < 1e-4) lm_mu = 1e-4;
+    if (lm_mu > 0.5) lm_mu = 0.5;
+  }
+
+  lm_objective_prev = objective_function;
+  lm_has_prev_objective = true;
+}
+
+
+
+template <class double_type>
 double_type CondPhaseSolver<double_type>::backtrackStep(
   const double_type objective_function_0,
   const double_type objective_function_prev,
@@ -480,27 +586,31 @@ double_type CondPhaseSolver<double_type>::backtrackStep(
 
 
 
-template <class double_type> 
+template <class double_type>
 double_type CondPhaseSolver<double_type>::objectiveFunction(
   const std::vector<Condensate<double_type>*>& condensates,
   const std::vector<unsigned int>& condensates_jac,
   const std::vector<unsigned int>& condensates_rem,
   const std::vector<double_type>& activity_corr,
   const std::vector<double_type>& number_denities,
+  const std::vector<double_type>& log_number_densities,
+  const std::vector<double_type>& log_activity_corr,
   const std::vector< Element<double_type>* >& elements,
   const std::vector< Molecule<double_type> >& molecules,
-  const double_type total_element_density, 
+  const double_type total_element_density,
   const Eigen::VectorXdt<double_type>& scaling_factors)
 {
   double_type objective_function = 0;
 
-  if (options.cond_solve_full_matrix)
+  if (options.cond_reduce_system_size == false)
   {
     Eigen::VectorXdt<double_type> rhs;
     objective_function = assembleRightHandSideFull(
       condensates,
       activity_corr,
       number_denities,
+      log_number_densities,
+      log_activity_corr,
       elements,
       molecules,
       total_element_density,
@@ -516,6 +626,8 @@ double_type CondPhaseSolver<double_type>::objectiveFunction(
       condensates_rem,
       activity_corr,
       number_denities,
+      log_number_densities,
+      log_activity_corr,
       elements,
       molecules,
       total_element_density,

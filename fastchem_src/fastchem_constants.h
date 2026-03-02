@@ -23,6 +23,8 @@
 
 #include <string>
 #include <vector>
+#include <cmath>
+#include <limits>
 
 namespace fastchem {
 
@@ -44,6 +46,66 @@ const std::vector<std::string> FASTCHEM_MSG =
 //Physical constants
 constexpr double CONST_K = 1.380649e-16;    //Boltzmann's constant in erg K-1
 constexpr double CONST_AMU = 1.66055e-24;   //Atomic mass unit in g
+
+
+//Log-space utilities for numerical stability
+constexpr double LOG_DENSITY_FLOOR = -1e8;
+
+
+//Clamped exponential: returns 0 for very negative arguments, clamps at max representable value
+template <class double_type>
+inline double_type safeExp(double_type x)
+{
+  const double_type max_arg = std::log(std::numeric_limits<double_type>::max()) * 0.99;
+
+  if (x < -max_arg) return 0.0;
+  if (x > max_arg) x = max_arg;
+
+  return std::exp(x);
+}
+
+
+//Stable computation of ln(sum_k coeffs[k] * exp(log_args[k]))
+//Uses the log-sum-exp shift trick to avoid overflow/underflow
+template <class double_type>
+inline double_type logSumExp(
+  const std::vector<double_type>& log_args,
+  const std::vector<double_type>& coeffs)
+{
+  if (log_args.empty()) return static_cast<double_type>(LOG_DENSITY_FLOOR);
+
+  double_type x_max = static_cast<double_type>(LOG_DENSITY_FLOOR);
+
+  for (size_t k = 0; k < log_args.size(); ++k)
+    if (log_args[k] > x_max) x_max = log_args[k];
+
+  if (x_max <= static_cast<double_type>(LOG_DENSITY_FLOOR))
+    return static_cast<double_type>(LOG_DENSITY_FLOOR);
+
+  double_type sum = 0.0;
+
+  for (size_t k = 0; k < log_args.size(); ++k)
+  {
+    double_type shifted = log_args[k] - x_max;
+
+    if (shifted > -700)
+      sum += coeffs[k] * std::exp(shifted);
+  }
+
+  if (sum <= 0.0) return static_cast<double_type>(LOG_DENSITY_FLOOR);
+
+  return x_max + std::log(sum);
+}
+
+
+//Stable computation of log(exp(a) + exp(b)) without overflow/underflow
+//The exp argument is always <= 0, so log1p argument is always in [0, 1]
+template <class double_type>
+inline double_type logAddExp(double_type a, double_type b)
+{
+  if (a > b) return a + std::log1p(std::exp(b - a));
+  else       return b + std::log1p(std::exp(a - b));
+}
 
 
 }

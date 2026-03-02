@@ -214,7 +214,10 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
 
   }//optimisation is finished
 
-  species.number_density = std::exp(x[x1]);
+  //Use log(element_density_minlimit) as floor for electron log density
+  const double_type electron_log_floor = std::log(options.element_density_minlimit);
+  species.log_number_density = std::max(x[x1], electron_log_floor);
+  species.number_density = safeExp(species.log_number_density);
 
   if (!converged && options.verbose_level >= 3)
     std::cout << "Nelder-Mead iteration limit reached, result may not be optimal." << "\t" << x[x1] << "\n";

@@ -38,82 +38,172 @@ template <class double_type>
 void GasPhaseSolver<double_type>::intertSol(
   Element<double_type>& species,
   std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules, 
+  const std::vector< Molecule<double_type> >& molecules,
   const double_type gas_density)
 {
+  double_type n = species.phi * gas_density - species.number_density_min - species.number_density_maj;
 
-  species.number_density = species.phi * gas_density - species.number_density_min - species.number_density_maj;
-
+  if (n > 0)
+  {
+    species.log_number_density = std::log(n);
+    species.number_density = n;
+  }
+  else
+  {
+    species.log_number_density = static_cast<double_type>(LOG_DENSITY_FLOOR);
+    species.number_density = 0.0;
+  }
 }
 
 
-//Analytic solution for linear equation, see Paper I, Sect. 2.4.2 and Eq. (2.32)
+//Analytic solution for linear equation in log-space
+//See Paper I, Sect. 2.4.2 and Eq. (2.32)
+//Computes y = ln(R) - ln(A1) where R = phi*n_gas - n_min - n_maj
+//and ln(A1) is computed via logSumExp for numerical stability
 template <class double_type>
 void GasPhaseSolver<double_type>::linSol(
   Element<double_type>& species,
   std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules, 
+  const std::vector< Molecule<double_type> >& molecules,
   const double_type gas_density)
 {
-  if (species.solver_scaling_factor > 700.0 && options.verbose_level >= 3)
-    std::cout << "FastChem: WARNING: Underflow in LinSol for element " << species.symbol << "\n";
+  double_type R = species.phi * gas_density - species.number_density_min - species.number_density_maj;
 
+  if (R <= 0)
+  {
+    species.log_number_density = static_cast<double_type>(LOG_DENSITY_FLOOR);
+    species.number_density = 0.0;
+    return;
+  }
 
-  //calculation of coefficient A_j1, see Paper I, Eq. (2.28)
-  const double_type A1 = A1Coeff(species, elements, molecules);
+  //Build ln(A1) = logSumExp of molecule terms + free-atom term
+  //A1 = 1 + Sigma_i kappa_i * exp(mac_i + Sigma_{l!=j} nu_il * y_l)
+  std::vector<double_type> log_terms;
+  std::vector<double_type> coeffs;
 
+  //Free atom contribution: exp(0) * 1 = 1
+  log_terms.push_back(0.0);
+  coeffs.push_back(1.0);
 
-  //calculation of coefficient A_j0, see Paper I, Eq. (2.27)
-  const double_type A0 = A0Coeff(species, gas_density);
+  for (auto & i : species.molecule_list)
+  {
+    if (molecules[i].stoichiometric_vector[species.index] != 1) continue;
+    if (molecules[i].abundance != species.abundance) continue;
 
+    double_type log_term = molecules[i].mass_action_constant;
 
-  //calculation of n_j, Paper I, Eq. (2.32)
-  species.number_density = -A0/A1;
+    for (auto & l : molecules[i].element_indices)
+    {
+      if (l != species.index && molecules[i].stoichiometric_vector[l] != 0)
+        log_term += molecules[i].stoichiometric_vector[l] * elements[l].log_number_density;
+    }
+
+    const double_type kappa = 1.0 + species.phi * molecules[i].sigma;
+
+    log_terms.push_back(log_term);
+    coeffs.push_back(kappa);
+  }
+
+  double_type ln_A1 = logSumExp(log_terms, coeffs);
+
+  species.log_number_density = std::log(R) - ln_A1;
+  species.number_density = safeExp(species.log_number_density);
 }
 
 
-//Analytic solution for quadratic equation, see Paper I, Sect. 2.4.2 and Eq. (2.32)
+//Analytic solution for quadratic equation in log-space
+//See Paper I, Sect. 2.4.2 and Eq. (2.32)
+//Computes A0 + A1*n + A2*n^2 = 0 entirely in log-space
+//Falls back to linSol if A2 underflows
 template <class double_type>
 void GasPhaseSolver<double_type>::quadSol(
   Element<double_type>& species,
   std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules, 
+  const std::vector< Molecule<double_type> >& molecules,
   const double_type gas_density)
 {
-  if (species.solver_scaling_factor > 700.0 && options.verbose_level >= 3)
-    std::cout << "FastChem: WARNING: Underflow in QuadSol for element " << species.symbol << "\n";
+  double_type R = species.phi * gas_density - species.number_density_min - species.number_density_maj;
 
-
-  //calculation of coefficient A_j2, see Eq. (2.29)
-  const double_type A2 = A2Coeff(species, elements, molecules);
-
-  if (A2<1.e-4900L)
+  if (R <= 0)
   {
-    if (options.verbose_level >= 3) std::cout << "FastChem: Underflow in QuadSol for species " <<  species.symbol << " : switching to LinSol.\n";
-
-    linSol(species, elements, molecules, gas_density);
-
+    species.log_number_density = static_cast<double_type>(LOG_DENSITY_FLOOR);
+    species.number_density = 0.0;
     return;
   }
 
-  
-  //calculation of coefficient A_j1, see Paper I, Eq. (2.28)
-  const double_type A1 = A1Coeff(species, elements, molecules);
+  //Compute ln(A1) and ln(A2) via logSumExp
+  std::vector<double_type> log_terms_A1, coeffs_A1;
+  std::vector<double_type> log_terms_A2, coeffs_A2;
 
-  //calculation of coefficient A_j0, see Paper I, Eq. (2.27)
-  const double_type A0 = A0Coeff(species, gas_density);
-  
+  //Free atom contribution to A1
+  log_terms_A1.push_back(0.0);
+  coeffs_A1.push_back(1.0);
 
-  //calculation of n_j, Paper I, Eq. (2.32)
-  const double_type Qj = -0.5 * (A1 + std::sqrt(A1*A1 - 4.*A2*A0));
-    
-  species.number_density = A0/Qj;
+  for (auto & i : species.molecule_list)
+  {
+    if (molecules[i].abundance != species.abundance) continue;
+
+    const int nu_j = molecules[i].stoichiometric_vector[species.index];
+
+    if (nu_j != 1 && nu_j != 2) continue;
+
+    double_type log_term = molecules[i].mass_action_constant;
+
+    for (auto & l : molecules[i].element_indices)
+    {
+      if (l != species.index && molecules[i].stoichiometric_vector[l] != 0)
+        log_term += molecules[i].stoichiometric_vector[l] * elements[l].log_number_density;
+    }
+
+    const double_type kappa = nu_j + species.phi * molecules[i].sigma;
+
+    if (nu_j == 1)
+    {
+      log_terms_A1.push_back(log_term);
+      coeffs_A1.push_back(kappa);
+    }
+    else
+    {
+      log_terms_A2.push_back(log_term);
+      coeffs_A2.push_back(kappa);
+    }
+  }
+
+  double_type ln_A1 = logSumExp(log_terms_A1, coeffs_A1);
+  double_type ln_A2 = logSumExp(log_terms_A2, coeffs_A2);
+
+  //If A2 underflows, fall back to linSol
+  if (ln_A2 <= static_cast<double_type>(LOG_DENSITY_FLOOR))
+  {
+    if (options.verbose_level >= 3)
+      std::cout << "FastChem: Underflow in QuadSol for species "
+                << species.symbol << " : switching to LinSol.\n";
+
+    linSol(species, elements, molecules, gas_density);
+    return;
+  }
+
+  double_type ln_R = std::log(R);
+
+  //discriminant = A1^2 + 4*A2*R (always positive)
+  std::vector<double_type> disc_log = {2.0 * ln_A1, std::log(4.0) + ln_A2 + ln_R};
+  std::vector<double_type> disc_coeff = {1.0, 1.0};
+  double_type ln_disc = logSumExp(disc_log, disc_coeff);
+
+  //Q = -0.5 * (A1 + sqrt(disc))
+  //ln|Q| = ln(0.5) + logSumExp([ln_A1, 0.5*ln_disc], [1, 1])
+  std::vector<double_type> q_log = {ln_A1, 0.5 * ln_disc};
+  std::vector<double_type> q_coeff = {1.0, 1.0};
+  double_type ln_Q = std::log(0.5) + logSumExp(q_log, q_coeff);
+
+  //n = R / |Q|, so y = ln(R) - ln|Q|
+  species.log_number_density = ln_R - ln_Q;
+  species.number_density = safeExp(species.log_number_density);
 }
 
 
 template class GasPhaseSolver<double>;
 template class GasPhaseSolver<long double>;
 }
-
 
 

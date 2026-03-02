@@ -49,13 +49,6 @@ void GasPhase<double_type>::calculateElementDensities(
 
   if (species.fixed_by_condensation == false && species.epsilon > 0)
   {
-    //calculate the scaling factor if required
-    if (options.use_scaling_factor)
-      species.calcSolverScalingFactor(elements, molecules, options.additional_scaling_factor);
-    else
-      species.solver_scaling_factor = 0.0;
-
-
     //in case the usual FastChem iterations failed to converge, we switch to a backup
     if (use_backup_solver)
     {
@@ -78,7 +71,10 @@ void GasPhase<double_type>::calculateElementDensities(
   }
 
   if (species.epsilon == 0)
+  {
     species.number_density = 0.0;
+    species.log_number_density = static_cast<double_type>(LOG_DENSITY_FLOOR);
+  }
 
   species.checkN(options.element_density_minlimit, gas_density);
 
@@ -102,13 +98,14 @@ double_type GasPhase<double_type>::calculateMoleculeDensities(
 
 
     for (size_t ll=0; ll<molecules[i].element_indices.size(); ++ll)
-    {
+    { 
       const unsigned int l = molecules[i].element_indices[ll];
-
-      sum += molecules[i].stoichiometric_vector[l] * std::log(elements[l].number_density);
+      
+      sum += molecules[i].stoichiometric_vector[l] * elements[l].log_number_density;
     }
     
-    molecules[i].number_density = std::exp(sum + molecules[i].mass_action_constant);
+    molecules[i].log_number_density = sum + molecules[i].mass_action_constant;
+    molecules[i].number_density = safeExp(molecules[i].log_number_density);
     molecules[i].checkN(options.molecule_density_minlimit, gas_density);
     
     n_major += molecules[i].number_density * molecules[i].sigma;

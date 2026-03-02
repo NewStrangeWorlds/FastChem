@@ -38,7 +38,6 @@ enum class ParameterFloat {
     element_conserve_accuracy,
     newton_err,
     cond_accuracy,
-    additional_scaling_factor,
     element_minlimit,
     molecule_minlimit,
     logK_limit
@@ -59,12 +58,11 @@ enum class ParameterInt {
 
 enum class ParameterBool {
     invalid_parameter,
-    cond_solve_full_system,
     cond_reduce_system_size,
     cond_use_full_pivot,
     cond_use_svd,
-    use_scaling_factor,
-    cond_use_data_validity_limits
+    cond_use_data_validity_limits,
+    cond_use_lm
 };
 
 
@@ -109,9 +107,6 @@ struct FastChemOptions{
 
   unsigned int verbose_level = 1;
 
-  bool use_scaling_factor = false;
-  double additional_scaling_factor = 0.0;
-
   double_type logK_limit = 1e10;
   bool cond_use_data_validity_limits = true;
 
@@ -119,8 +114,8 @@ struct FastChemOptions{
 
   bool cond_use_svd = false;
   bool cond_use_full_pivot = false;
-  bool cond_solve_full_matrix = false;
   bool cond_reduce_system_size = true;
+  bool cond_use_lm = true;
   double cond_iter_change_limit = 5;
   double cond_tau = 1e-15;
 

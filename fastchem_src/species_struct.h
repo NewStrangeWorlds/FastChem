@@ -64,6 +64,7 @@ struct ChemicalSpecies
 
   double_type abundance = 0.0;
   double_type number_density = 0.0;
+  double_type log_number_density = LOG_DENSITY_FLOOR;
 };
 
 
@@ -92,7 +93,6 @@ struct Element : public ChemicalSpecies<double_type>
   unsigned int element_conserved = 0;              //check if element is conserved during calculation, for electrons this is charge conservation
 
   double_type epsilon = 0.0;
-  double_type solver_scaling_factor = 0.0;
   double_type number_density_maj = 0.0;
   double_type number_density_min = 0.0;
 
@@ -105,10 +105,6 @@ struct Element : public ChemicalSpecies<double_type>
     const std::vector< Molecule<double_type> > &molecules);
   void calcEpsilon(
     const std::vector< Element<double_type> > &elements);
-  void calcSolverScalingFactor(
-    const std::vector<Element<double_type>> &elements, 
-    const std::vector<Molecule<double_type>> &molecules, 
-    const double additional_scaling_factor);
   void checkN(
     const double_type& min_limit, const double_type& gas_density);
   bool checkElementConservation(
@@ -143,6 +139,7 @@ struct Molecule : public ChemicalSpecies<double_type>
   double_type sum = 0.0;
 
   void calcMassActionConstant(const double temperature, const double_type limit_logK);
+  void calcLogNumberDensity(const std::vector< Element<double_type> >& elements);
   void calcNumberDensity(const std::vector< Element<double_type> >& elements);
   void checkN(const double_type& min_limit, const double_type& gas_density);
 };

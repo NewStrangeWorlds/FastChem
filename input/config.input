@@ -2,7 +2,7 @@
 input/example_p_t_structures/Late_M-dwarf.dat
 
 #Chemistry calculation type (gas phase only = g, equilibrium condensation = ce, rainout condensation = cr)
-g
+ce
 
 #Chemistry output file
 output/chemistry.dat output/condensates.dat

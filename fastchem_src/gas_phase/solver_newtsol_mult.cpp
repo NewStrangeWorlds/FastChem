@@ -58,7 +58,7 @@ void GasPhaseSolver<double_type>::selectNewtonElements(
     size_t j = i + elements.size();
 
     if (std::fabs((molecules[i].number_density - number_density_old[j])) > options.chem_accuracy*number_density_old[j]
-            && molecules[i].number_density/gas_density > 1.e-155)
+            && molecules[i].log_number_density > static_cast<double_type>(LOG_DENSITY_FLOOR) + 1)
     {
       double_type max_abundance = 0;
       size_t max_index = 0;
@@ -189,7 +189,10 @@ void GasPhaseSolver<double_type>::newtonSolMult(
     result_scaled *= 2.0/max_value;
 
   for (size_t i=0; i<species.size(); ++i)
-    species[i]->number_density = species[i]->number_density * std::exp(result_scaled[i]);
+  {
+    species[i]->log_number_density += result_scaled[i];
+    species[i]->number_density = safeExp(species[i]->log_number_density);
+  }
 }
 
 

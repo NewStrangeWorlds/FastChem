@@ -101,11 +101,13 @@ class GasPhaseSolver{
       const double_type initial_solution,
       const double gas_density);
 
-  
+
     bool bisection(
       Element<double_type>& species,
-      std::vector<double_type>& Aj,
-      const double gas_density);
+      std::vector<Element<double_type>>& elements,
+      const std::vector<Molecule<double_type>>& molecules,
+      const double_type gas_density,
+      const bool use_all_molecules);
 
     void backupSol(
       Element<double_type>& species,
@@ -119,26 +121,16 @@ class GasPhaseSolver{
   private:
     FastChemOptions<double_type>& options;
     
-    double_type A0Coeff(
-      const Element<double_type>& species, const double_type gas_density);
-    double_type A1Coeff(
-      const Element<double_type>& species,
-      const std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules);
-    double_type A2Coeff(
-      const Element<double_type>& species,
-      const std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules);
-    double_type AmCoeff(
-      const Element<double_type>& species,
-      const std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules, 
-      const unsigned int order);
-    double_type AmCoeffAlt(
+    void logSpaceResidual(
       const Element<double_type>& species,
       const std::vector<Element<double_type>>& elements,
       const std::vector<Molecule<double_type>>& molecules,
-      const unsigned int order);
+      const double_type gas_density,
+      const double_type y_j,
+      double_type& ln_P,
+      double_type& ln_dP,
+      double_type& R,
+      const bool use_all_molecules);
 
     Eigen::VectorXdt<double_type> assembleJacobian(
       const std::vector<Element<double_type>*>& species,

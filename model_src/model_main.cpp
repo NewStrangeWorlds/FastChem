@@ -55,20 +55,20 @@ int main(int argc, char *argv[])
 
 
   //create a FastChem object and set the read-in values from the config file
-  fastchem::FastChem<long double> fastchem(
-    config.element_abundance_file, 
-    config.species_data_file, 
+  fastchem::FastChem<double> fastchem(
+    config.element_abundance_file,
+    config.species_data_file,
     config.cond_species_data_file,
     config.verbose_level);
 
   //we could also create a FastChem object using a separate parameter file
-  //fastchem::FastChem<long double> fastchem("input/parameters.dat", config.verbose_level); 
+  //fastchem::FastChem<long double> fastchem("input/parameters.dat", config.verbose_level);
 
 
   //set the FastChem parameters from the config file
-  fastchem.setParameter(std::string("accuracyChem"), (long double) config.chemistry_accuracy);
-  fastchem.setParameter(std::string("accuracyElementConservation"), (long double) config.element_conservation_accuracy);
-  fastchem.setParameter(std::string("accuracyNewton"), (long double) config.newton_error);
+  fastchem.setParameter(std::string("accuracyChem"), (double) config.chemistry_accuracy);
+  fastchem.setParameter(std::string("accuracyElementConservation"), (double) config.element_conservation_accuracy);
+  fastchem.setParameter(std::string("accuracyNewton"), (double) config.newton_error);
   fastchem.setParameter(std::string("nbIterationsChem"), config.nb_chemistry_iterations);
   fastchem.setParameter(std::string("nbIterationsNewton"), config.nb_newton_iterations);
   fastchem.setParameter(std::string("nbIterationsNelderMead"), config.nb_nelder_mead_iterations);
@@ -117,6 +117,9 @@ int main(int argc, char *argv[])
   input.equilibrium_condensation = config.calc_condensation;
   input.rainout_condensation = config.rainout_condensation;
 
+  // for (int i=0; i<100; ++i)
+  //   fastchem.calcDensities(input, output);
+  
   unsigned int fastchem_flag = fastchem.calcDensities(input, output);
 
   
