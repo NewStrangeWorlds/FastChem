@@ -66,15 +66,15 @@ int main(int argc, char *argv[])
 
 
   //set the FastChem parameters from the config file
-  fastchem.setParameter(std::string("accuracyChem"), (double) config.chemistry_accuracy);
-  fastchem.setParameter(std::string("accuracyElementConservation"), (double) config.element_conservation_accuracy);
-  fastchem.setParameter(std::string("accuracyNewton"), (double) config.newton_error);
-  fastchem.setParameter(std::string("nbIterationsChem"), config.nb_chemistry_iterations);
-  fastchem.setParameter(std::string("nbIterationsNewton"), config.nb_newton_iterations);
-  fastchem.setParameter(std::string("nbIterationsNelderMead"), config.nb_nelder_mead_iterations);
-  fastchem.setParameter(std::string("nbIterationsBisection"), config.nb_bisection_iterations);
-
-
+  if (!fastchem.setParameter(std::string("accuracyChem"), (double) config.chemistry_accuracy)) return 1;
+  if (!fastchem.setParameter(std::string("accuracyElementConservation"), (double) config.element_conservation_accuracy)) return 1;
+  if (!fastchem.setParameter(std::string("accuracyNewton"), (double) config.newton_error)) return 1;
+  if (!fastchem.setParameter(std::string("nbIterationsChem"), config.nb_chemistry_iterations)) return 1;
+  if (!fastchem.setParameter(std::string("nbIterationsNewton"), config.nb_newton_iterations)) return 1;
+  if (!fastchem.setParameter(std::string("nbIterationsNelderMead"), config.nb_nelder_mead_iterations)) return 1;
+  if (!fastchem.setParameter(std::string("nbIterationsBisection"), config.nb_bisection_iterations)) return 1;
+  
+  //fastchem.setParameter(std::string("condUseLM"), true);
   //read in the temperature-pressure structure
   std::vector<double> temperature;
   std::vector<double> pressure;

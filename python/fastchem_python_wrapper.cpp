@@ -74,9 +74,9 @@ PYBIND11_MODULE(pyfastchem, m) {
         .def("getElementAbundances", &fastchem::FastChem::getElementAbundances)
         .def("setElementAbundances", &fastchem::FastChem::setElementAbundances)
 
-        .def("setParameter", static_cast<void (fastchem::FastChem::*)(const std::string&, const unsigned int)>(&fastchem::FastChem::setParameter))
-        .def("setParameter", static_cast<void (fastchem::FastChem::*)(const std::string&, const bool)>(&fastchem::FastChem::setParameter))
-        .def("setParameter", static_cast<void (fastchem::FastChem::*)(const std::string&, const double)>(&fastchem::FastChem::setParameter));
+        .def("setParameter", static_cast<bool (fastchem::FastChem::*)(const std::string&, const unsigned int)>(&fastchem::FastChem::setParameter))
+        .def("setParameter", static_cast<bool (fastchem::FastChem::*)(const std::string&, const bool)>(&fastchem::FastChem::setParameter))
+        .def("setParameter", static_cast<bool (fastchem::FastChem::*)(const std::string&, const double)>(&fastchem::FastChem::setParameter));
 
         m.attr("FASTCHEM_UNKNOWN_SPECIES") = py::cast(fastchem::FASTCHEM_UNKNOWN_SPECIES);
         m.attr("FASTCHEM_SUCCESS") = py::cast(fastchem::FASTCHEM_SUCCESS);

@@ -51,16 +51,26 @@ constexpr double CONST_AMU = 1.66055e-24;   //Atomic mass unit in g
 //Log-space utilities for numerical stability
 constexpr double LOG_DENSITY_FLOOR = -1e8;
 
+//Threshold for condensate stability: condensates with log_activity above this are considered stable
+constexpr double LOG_ACTIVITY_THRESHOLD = -0.01;
+
 
 //Clamped exponential: returns 0 for very negative arguments, clamps at max representable value
 inline double safeExp(double x)
 {
-  const double max_arg = std::log(std::numeric_limits<double>::max()) * 0.99;
+  static const double max_arg = std::log(std::numeric_limits<double>::max()) * 0.99;
 
   if (x < -max_arg) return 0.0;
   if (x > max_arg) x = max_arg;
 
   return std::exp(x);
+}
+
+
+//Safe logarithm: returns LOG_DENSITY_FLOOR for non-positive arguments
+inline double safeLog(double x)
+{
+  return (x > 0.0) ? std::log(x) : static_cast<double>(LOG_DENSITY_FLOOR);
 }
 
 

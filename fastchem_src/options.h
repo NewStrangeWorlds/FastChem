@@ -51,14 +51,14 @@ enum class ParameterInt {
     nb_max_bisection_iter,
     nb_max_newton_iter,
     nb_max_neldermead_iter,
-    nb_switch_to_newton
+    nb_switch_to_newton,
+    nb_switch_to_joint
 };
 
 
 enum class ParameterBool {
     invalid_parameter,
     cond_reduce_system_size,
-    cond_use_full_pivot,
     cond_use_svd,
     cond_use_data_validity_limits,
     cond_use_lm
@@ -92,8 +92,9 @@ struct FastChemOptions{
   unsigned int nb_max_newton_iter = 3000;
   unsigned int nb_max_neldermead_iter = 3000;
   unsigned int nb_max_cond_iter = 3000;
-  unsigned int nb_chem_cond_iter = 3000;
+  unsigned int nb_max_comb_iter = 30000;
   unsigned int nb_switch_to_newton = 400;
+  unsigned int nb_switch_to_joint = 1000;
 
   double chem_accuracy = 1e-5;
   double newton_err = 1e-5;
@@ -110,7 +111,6 @@ struct FastChemOptions{
   bool chem_use_backup_solver = false;
 
   bool cond_use_svd = false;
-  bool cond_use_full_pivot = false;
   bool cond_reduce_system_size = true;
   bool cond_use_lm = true;
   double cond_iter_change_limit = 5;

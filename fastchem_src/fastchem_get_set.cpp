@@ -224,6 +224,8 @@ void FastChem::setElementAbundances(std::vector<double> abundances)
   element_data.setAbundances(abundances);
 
   gas_phase.reInitialise();
+
+  thread_copies_.clear();
 }
 
 
@@ -460,8 +462,10 @@ std::string FastChem::convertToHillNotation(const std::string& formula) const
 
 
 //Set an internal FastChem parameter (for double values)
-void FastChem::setParameter(const std::string& parameter, const double value)
+bool FastChem::setParameter(const std::string& parameter, const double value)
 {
+  thread_copies_.clear();
+
   auto param = options.resolveParameter(parameter);
 
   switch (param)
@@ -500,25 +504,24 @@ void FastChem::setParameter(const std::string& parameter, const double value)
 
     default:
       std::cout << "Unknown parameter \"" << parameter << "\"  with a floatint-point value!\n";
-      break;
+      return false;
   }
-
+  
+  return true;
 }
 
 
 //Set an internal FastChem parameter (for boolean values)
-void FastChem::setParameter(const std::string& parameter, const bool value)
+bool FastChem::setParameter(const std::string& parameter, const bool value)
 {
+  thread_copies_.clear();
+
   auto param = options.resolveParameterBool(parameter);
 
   switch (param)
   {
     case ParameterBool::cond_reduce_system_size:
       options.cond_reduce_system_size = value;
-      break;
-
-    case ParameterBool::cond_use_full_pivot:
-      options.cond_use_full_pivot = value;
       break;
 
     case ParameterBool::cond_use_svd:
@@ -535,15 +538,19 @@ void FastChem::setParameter(const std::string& parameter, const bool value)
 
     default:
       std::cout << "Unknown parameter \"" << parameter << "\"  with a boolean value!\n";
-      break;
+      return false;
   }
+
+  return true;
 }
 
 
 
 //Set an internal FastChem parameter (for integer values)
-void FastChem::setParameter(const std::string& parameter, const unsigned int value)
+bool FastChem::setParameter(const std::string& parameter, const unsigned int value)
 {
+  thread_copies_.clear();
+
   auto param = options.resolveParameterInt(parameter);
 
   switch (param)
@@ -553,7 +560,7 @@ void FastChem::setParameter(const std::string& parameter, const unsigned int val
       break;
 
     case ParameterInt::nb_max_comb_iter:
-      options.nb_chem_cond_iter = value;
+      options.nb_max_comb_iter = value;
       break;
 
     case ParameterInt::nb_max_cond_iter:
@@ -575,11 +582,17 @@ void FastChem::setParameter(const std::string& parameter, const unsigned int val
     case ParameterInt::nb_switch_to_newton:
       options.nb_switch_to_newton = value;
       break;
-  
+
+    case ParameterInt::nb_switch_to_joint:
+      options.nb_switch_to_joint = value;
+      break;
+
     default:
       std::cout << "Unknown parameter \"" << parameter << "\"  with an integer value!\n";
-      break;
+      return false;
   }
+  
+  return true;
 }
 
 

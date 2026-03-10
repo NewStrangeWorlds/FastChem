@@ -37,11 +37,11 @@ void GasPhaseSolver::selectNewtonElements(
   std::vector<Element>& elements,
   const std::vector<Molecule>& molecules,
   const std::vector<double>& number_density_old,
-  const double gas_density,
+  const double total_element_density,
   std::vector<Element*>& newton_elements)
 {
   std::vector<int> select_elements(elements.size(), 0);
-
+  
   for (size_t i=0; i<elements.size(); ++i)
   {
     if (std::fabs((elements[i].number_density - number_density_old[i])) > options.chem_accuracy*number_density_old[i])
@@ -50,39 +50,36 @@ void GasPhaseSolver::selectNewtonElements(
         select_elements[i] = 1;
     }
   }
-
-
+  
   for (size_t i=0; i<molecules.size(); ++i)
   {
     size_t j = i + elements.size();
-
+  
     if (std::fabs((molecules[i].number_density - number_density_old[j])) > options.chem_accuracy*number_density_old[j]
-            && molecules[i].log_number_density > static_cast<double>(LOG_DENSITY_FLOOR) + 1)
+          && molecules[i].log_number_density > static_cast<double>(LOG_DENSITY_FLOOR) + 1)
     {
       double max_abundance = 0;
       size_t max_index = 0;
-
+  
       for (auto & e : molecules[i].element_indices)
       {
         if (elements[e].symbol == "e-" || elements[e].fixed_by_condensation) continue;
-
+  
         if (elements[e].abundance > max_abundance)
         {
           max_index = e;
           max_abundance = elements[e].abundance;
         }
       }
-
+  
       select_elements[max_index] = 1;
     }
   }
 
-
   for (size_t i=0; i<elements.size(); ++i)
-  {
+  { //if (!elements[i].fixed_by_condensation) select_elements[i] = 1;
     if (select_elements[i] == 1) newton_elements.push_back(&elements[i]);
   }
-
 }
 
 
@@ -96,28 +93,41 @@ Eigen::VectorXdt GasPhaseSolver::assembleJacobian(
 
   jacobian.setZero(nb_newton_species, nb_newton_species);
 
+  //Build global-element-index -> local-Newton-species-index map
+  const size_t total_nb_elements = molecules.empty()
+    ? 0 : molecules[0].stoichiometric_vector.size();
+  std::vector<int> global_to_local(total_nb_elements, -1);
+  for (size_t j=0; j<nb_newton_species; ++j)
+    global_to_local[species[j]->index] = static_cast<int>(j);
+
   for (size_t i=0; i<nb_newton_species; ++i)
   {
     jacobian(i,i) = species[i]->number_density;
 
-    for (size_t j=0; j<nb_newton_species; ++j)
+    for (auto l : species[i]->molecule_list)
     {
-      for (auto l : species[i]->molecule_list)
-         jacobian(i,j) += 
-           molecules[l].stoichiometric_vector[species[i]->index] 
-           * molecules[l].stoichiometric_vector[species[j]->index] 
-           * molecules[l].number_density;
+      const double n_l = molecules[l].number_density;
+      if (n_l == 0.0) continue;
+      const double scaled = static_cast<double>(
+        molecules[l].stoichiometric_vector[species[i]->index]) * n_l;
+
+      for (auto k_global : molecules[l].element_indices)
+      {
+        const int j = global_to_local[k_global];
+        if (j < 0) continue;
+        jacobian(i, j) += scaled * molecules[l].stoichiometric_vector[k_global];
+      }
     }
   }
 
 
-  Eigen::VectorXdt scaling_factors = jacobian.rowwise().maxCoeff();
+  Eigen::VectorXdt scaling_factors = jacobian.cwiseAbs().rowwise().maxCoeff();
 
-  // for (auto i=0; i<jacobian.rows(); ++i)
-  // {
-  //   for (auto j=0; j<jacobian.rows(); ++j)
-  //     jacobian(i,j) /= scaling_factors(i);
-  // }
+  for (auto i = 0; i < scaling_factors.rows(); ++i)
+    if (scaling_factors(i) == 0.0) scaling_factors(i) = 1.0;
+
+  for (int j = 0; j < jacobian.cols(); ++j)
+    jacobian.col(j).array() /= scaling_factors.array();
 
   return scaling_factors;
 }
@@ -143,8 +153,7 @@ void GasPhaseSolver::assembleRightHandSide(
       rhs(i) -= molecules[j].stoichiometric_vector[species[i]->index] * molecules[j].number_density;
   }
 
-  // for (auto i=0; i<rhs.rows(); ++i)
-  //   rhs(i) /= scaling_factors(i);
+  rhs.array() /= scaling_factors.array();
 }
 
 
@@ -153,7 +162,7 @@ void GasPhaseSolver::newtonSolMult(
   std::vector<Element*>& species,
   std::vector<Element>& elements,
   const std::vector<Molecule>& molecules, 
-  const double gas_density)
+  const double total_element_density)
 {
   Eigen::MatrixXdt jacobian;
   Eigen::VectorXdt rhs;
@@ -168,7 +177,7 @@ void GasPhaseSolver::newtonSolMult(
     species,
     elements,
     molecules,
-    gas_density,
+    total_element_density,
     scaling_factors,
     rhs);
 
@@ -185,7 +194,7 @@ void GasPhaseSolver::newtonSolMult(
     result_scaled *= 2.0/max_value;
 
   for (size_t i=0; i<species.size(); ++i)
-  {
+  { 
     species[i]->log_number_density += result_scaled[i];
     species[i]->number_density = safeExp(species[i]->log_number_density);
   }

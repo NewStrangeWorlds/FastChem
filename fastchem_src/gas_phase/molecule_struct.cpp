@@ -48,15 +48,13 @@ void Molecule::calcMassActionConstant(const double temperature)
 
 //Check for the number density of molecules
 void Molecule::checkN(
-  const double& min_limit, const double& gas_density)
+  const double& min_limit, const double log_gas_density)
 {
   if (this->log_number_density < static_cast<double>(LOG_DENSITY_FLOOR))
     this->log_number_density = static_cast<double>(LOG_DENSITY_FLOOR);
 
-  const double log_gas = std::log(gas_density);
-
-  if (this->log_number_density > log_gas)
-    this->log_number_density = log_gas;
+  if (this->log_number_density > log_gas_density)
+    this->log_number_density = log_gas_density;
 
   this->number_density = safeExp(this->log_number_density);
 }

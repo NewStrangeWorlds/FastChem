@@ -50,7 +50,7 @@ class GasPhaseSolver{
       : options(options_)
       {}
 
-    void intertSol(
+    void inertSol(
       Element& species,
       std::vector<Element>& elements,
       const std::vector<Molecule>& molecules, 
@@ -117,7 +117,13 @@ class GasPhaseSolver{
    
   private:
     FastChemOptions& options;
-    
+
+    //Scratch buffers for logSpaceResidual, linSol, quadSol — allocated once, reused across calls
+    std::vector<double> scratch_log_terms_;   // first log-term vector
+    std::vector<double> scratch_log_terms_2_; // second log-term vector (quadSol A2)
+    std::vector<double> scratch_coeffs_P_;    // first coefficient vector
+    std::vector<double> scratch_coeffs_dP_;   // third / second-pair coefficient vector (quadSol A2)
+
     void logSpaceResidual(
       const Element& species,
       const std::vector<Element>& elements,

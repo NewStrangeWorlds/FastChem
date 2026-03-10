@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
+#include <iomanip>
+
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -90,22 +92,26 @@ unsigned int FastChem::calcDensities(
       nb_omp_threads = input.temperature.size();
 
 
-    omp_set_num_threads(nb_omp_threads);
+    if (thread_copies_.size() != nb_omp_threads)
+    {
+      thread_copies_.clear();
+      thread_copies_.reserve(nb_omp_threads);
+      for (unsigned int j = 0; j < nb_omp_threads; ++j)
+        thread_copies_.emplace_back(*this);
+    }
 
-    std::vector<FastChem> fastchems(nb_omp_threads, *this);
-
-    #pragma omp parallel for schedule(dynamic, 1)
+    #pragma omp parallel for schedule(dynamic, 1) num_threads(nb_omp_threads)
     for (unsigned int i=0; i<input.temperature.size(); i++)
     { //std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
       if (!input.equilibrium_condensation)
       {
-        output.fastchem_flag[i] = 
-        fastchems[omp_get_thread_num()].calcDensity(
-          input.temperature[i], 
+        output.fastchem_flag[i] =
+        thread_copies_[omp_get_thread_num()].calcDensity(
+          input.temperature[i],
           input.pressure[i]*1e6,
-          false, 
+          false,
           output.number_densities[i],
-          output.total_element_density[i], 
+          output.total_element_density[i],
           output.mean_molecular_weight[i],
           output.element_conserved[i],
           output.nb_chemistry_iterations[i]);
@@ -115,8 +121,8 @@ unsigned int FastChem::calcDensities(
       }
       else
       {
-        output.fastchem_flag[i] = 
-        fastchems[omp_get_thread_num()].equilibriumCondensation(
+        output.fastchem_flag[i] =
+        thread_copies_[omp_get_thread_num()].equilibriumCondensation(
           input.temperature[i],
           input.pressure[i]*1e6,
           output.number_densities[i],
@@ -201,7 +207,7 @@ unsigned int FastChem::calcDensity(
    for (auto & i : gas_phase.species)
    {
      i->number_density *= gas_density;
-     i->log_number_density = (i->number_density > 0) ? std::log(i->number_density) : static_cast<double>(LOG_DENSITY_FLOOR);
+     i->log_number_density = safeLog(i->number_density);
    }
   }
   else
@@ -219,15 +225,17 @@ unsigned int FastChem::calcDensity(
     //set the initial electron density to 1 (for stability reasons)
     if (element_data.e_ != FASTCHEM_UNKNOWN_SPECIES)
     {
-      element_data.elements[element_data.e_].number_density = 1.0;
-      element_data.elements[element_data.e_].log_number_density = 0.0;
+      element_data.elements[element_data.e_].number_density = options.element_density_minlimit; //1.0;
+      element_data.elements[element_data.e_].log_number_density = log_min; //0.0;
     }
   }
 
 
   //call the main FastChem solver  
   bool fastchem_converged = gas_phase.calculate(
-    temperature, gas_density, nb_chemistry_iterations);
+    temperature, 
+    gas_density, 
+    nb_chemistry_iterations);
 
 
   if (!fastchem_converged && options.verbose_level >= 1) 
@@ -265,7 +273,7 @@ unsigned int FastChem::calcDensity(
   for (auto & i : gas_phase.species)
   {
     i->number_density /= gas_density;
-    i->log_number_density = (i->number_density > 0) ? std::log(i->number_density) : static_cast<double>(LOG_DENSITY_FLOOR);
+    i->log_number_density = safeLog(i->number_density);
   }
 
 
@@ -339,6 +347,18 @@ void FastChem::rainoutCondensation(
 }
 
 
+void FastChem::updatePhi(double total_element_density)
+{
+  double phi_sum = 0;
+  for (auto & i : element_data.elements)
+  {
+    i.calcDegreeOfCondensation(condensed_phase.condensates, total_element_density);
+    phi_sum += i.phi;
+  }
+  for (auto & i : element_data.elements)
+    i.normalisePhi(phi_sum);
+}
+
 
 //Solve the equilibrium condensation for a single temperature and a single pressure
 //Note: this is a private function, that can not be accessed from outside of FastChem
@@ -398,13 +418,14 @@ unsigned int FastChem::equilibriumCondensation(
 
   //call the main FastChem solver  
   bool fastchem_converged = gas_phase.calculate(
-    temperature, gas_density, nb_iter);
+    temperature, 
+    gas_density, 
+    nb_iter);
 
   nb_chem_iter += nb_iter;
 
 
   total_element_density = gas_phase.totalElementDensity();
-
 
   //search for potential condensates
   for (auto & i : condensed_phase.condensates)
@@ -435,9 +456,20 @@ unsigned int FastChem::equilibriumCondensation(
     for (size_t i=0; i<element_data.nb_elements; ++i)
       log_density_old[i] = element_data.elements[i].log_number_density;
 
+    //Early termination tracking for divergence and stagnation
+    double prev_max_change = std::numeric_limits<double>::max();
+    unsigned int nb_growing = 0;
+    const unsigned int max_growing = 100;
+
+    double checkpoint_max_change = std::numeric_limits<double>::max();
+    unsigned int nb_stagnant_checkpoints = 0;
+    const unsigned int checkpoint_interval = 500;
+    const unsigned int max_stagnant_checkpoints = 2;
+
     //run the equilibrium condensation and gas phase iteration
-    for (nb_combined_iter=0; nb_combined_iter<options.nb_chem_cond_iter; ++nb_combined_iter)
+    for (nb_combined_iter=0; nb_combined_iter<options.nb_max_comb_iter; ++nb_combined_iter)
     {
+      double total_element_density_old = total_element_density;
       condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
 
       for (auto & i : condensates_act)
@@ -446,59 +478,122 @@ unsigned int FastChem::equilibriumCondensation(
         i->maxDensity(element_data.elements, total_element_density);
       }
 
-      cond_converged = condensed_phase.calculate(
-        condensates_act,
-        elements_cond,
-        temperature,
-        gas_density,
-        total_element_density,
-        gas_phase.molecules,
-        nb_iter);
-
-      nb_cond_iter += nb_iter;
-
-      //gas_phase.reInitialise();
-
-      for (auto & e : element_data.elements)
+      if (nb_combined_iter >= options.nb_switch_to_joint && condensates_act.size() > 0)
       {
-        bool is_condensed = false;
+        // Joint Newton step: couples gas-phase element densities and condensate densities
+        jointNewtonStep(condensates_act, temperature, gas_density, total_element_density);
 
-        for (auto & c : e.condensate_list)
+        // Recompute activities for convergence check
+        for (auto & i : condensed_phase.condensates)
+          i.calcActivity(temperature, element_data.elements, options.cond_use_data_validity_limits);
+      }
+      else
+      {
+        cond_converged = condensed_phase.calculate(
+          condensates_act,
+          elements_cond,
+          temperature,
+          gas_density,
+          total_element_density,
+          gas_phase.molecules,
+          nb_iter);
+
+        nb_cond_iter += nb_iter;
+
+        for (auto & e : element_data.elements)
         {
-          if (condensed_phase.condensates[c].log_activity > -0.01)
+          bool is_condensed = false;
+
+          for (auto & c : e.condensate_list)
           {
-            is_condensed = true;
-            break;
+            if (condensed_phase.condensates[c].log_activity > LOG_ACTIVITY_THRESHOLD)
+            {
+              is_condensed = true;
+              break;
+            }
           }
+
+          if (!is_condensed)
+            e.fixed_by_condensation = false;
         }
-        
-        if (!is_condensed)
-          e.fixed_by_condensation = false;
+
+        //Recompute phi values after the condensed phase has updated condensate densities,
+        //so that the gas-phase solver below uses the current condensate state.
+        updatePhi(total_element_density);
+
+        double total_element_density_cond = condensed_phase.totalElementDensity();
+
+        fastchem_converged = gas_phase.calculate(
+          temperature,
+          gas_density,
+          nb_iter);
+
+        nb_chem_iter += nb_iter;
+
+        total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
+
+        for (auto & i : condensed_phase.condensates)
+          i.calcActivity(temperature, element_data.elements, options.cond_use_data_validity_limits);
       }
 
-      fastchem_converged = gas_phase.calculate(
-        temperature,
-        gas_density,
-        nb_iter);
-   
-      nb_chem_iter += nb_iter;
-
-      total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
-
+      //sanity check for the condensate activities
       for (auto & i : condensed_phase.condensates)
-        i.calcActivity(temperature, element_data.elements, options.cond_use_data_validity_limits);
+        if (i.log_activity > 0.001)
+        { 
+          cond_converged = false;
+        }
 
       combined_converged = true;
 
+      double rel_total_delta = std::fabs(total_element_density - total_element_density_old)/total_element_density_old;
+
+      if (rel_total_delta > options.chem_accuracy)
+        combined_converged = false;
+
+      double max_change = 0;
       for (auto & i : element_data.elements)
       {
-        if (std::fabs(i.log_number_density - log_density_old[i.index]) > options.chem_accuracy)
+        double change = std::fabs(i.log_number_density - log_density_old[i.index]);
+        if (change > max_change) max_change = change;
+        if (change > options.chem_accuracy)
           combined_converged = false;
-
         log_density_old[i.index] = i.log_number_density;
       }
 
       if (combined_converged && cond_converged) break;
+
+      //Divergence detection: max_change growing for too many consecutive iterations
+      if (max_change > prev_max_change)
+        nb_growing++;
+      else
+        nb_growing = 0;
+      prev_max_change = max_change;
+
+      if (nb_growing >= max_growing)
+      {
+        if (options.verbose_level >= 2)
+          std::cout << "  Combined iteration diverging at iter " << nb_combined_iter
+                    << " (max_change=" << max_change << " growing for " << nb_growing << " iters)\n";
+        break;
+      }
+
+      //Stagnation detection: no improvement over checkpoint intervals
+      if (nb_combined_iter > 0 && nb_combined_iter % checkpoint_interval == 0)
+      {
+        if (max_change >= checkpoint_max_change)
+          nb_stagnant_checkpoints++;
+        else
+          nb_stagnant_checkpoints = 0;
+        checkpoint_max_change = max_change;
+
+        if (nb_stagnant_checkpoints >= max_stagnant_checkpoints)
+        {
+          if (options.verbose_level >= 2)
+            std::cout << "  Combined iteration stagnant at iter " << nb_combined_iter
+                      << " (max_change=" << max_change << " for " << nb_stagnant_checkpoints << " checkpoints)\n";
+          break;
+        }
+      }
     }
 
 
@@ -509,29 +604,27 @@ unsigned int FastChem::equilibriumCondensation(
         cond_converged = false;
       }
 
-    //remove condensates that are not present 
+    //remove condensates that are not present
     //i.e. those with an activity smaller than 1
     for (auto & i : condensed_phase.condensates)
-      if (i.log_activity < -0.01) i.number_density = 0.0;
+      if (i.log_activity < LOG_ACTIVITY_THRESHOLD) i.number_density = 0.0;
+
+    //recompute total_element_density after zeroing so that the subsequent phi
+    //computation is consistent with the condensate densities actually present
+    total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
+    double total_element_density_cond = condensed_phase.totalElementDensity();
     
     //and run the gas phase calculation one last time
-    double phi_sum = 0;
-    nb_condensed_elements = 0;
+    updatePhi(total_element_density);
 
+    nb_condensed_elements = 0;
     for (auto & i : element_data.elements)
     {
-      i.calcDegreeOfCondensation(condensed_phase.condensates, total_element_density);
-      
-      if (i.degree_of_condensation == 0) 
+      if (i.degree_of_condensation == 0)
         i.fixed_by_condensation = false;
       else
         nb_condensed_elements++;
-
-      phi_sum += i.phi;
     }
-
-    for (auto & i : element_data.elements)
-      i.normalisePhi(phi_sum);
 
     fastchem_converged = gas_phase.calculate(
       temperature,

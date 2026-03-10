@@ -21,6 +21,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cmath>
+#include <algorithm>
 
 #include "condensed_phase.h"
 

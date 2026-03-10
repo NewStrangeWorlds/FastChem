@@ -40,19 +40,20 @@ void GasPhase::calculateElementDensities(
   Element& species,
   const double gas_density,
   bool use_backup_solver,
-  double& n_major)
+  double& n_major,
+  const double log_gas_density)
 {
   if (species.symbol == "e-") return; //electrons have their own, special solver
 
   species.number_density_maj = n_major * species.phi;
-
+  
   if (species.fixed_by_condensation == false && species.epsilon > 0)
   {
     //in case the usual FastChem iterations failed to converge, we switch to a backup
     if (use_backup_solver)
     {
       if (species.solver_order == 0 && (species.minor_molecules.size() == 0 || species.molecule_list.size() == 0))
-        solver.intertSol(species, elements, molecules, gas_density);
+        solver.inertSol(species, elements, molecules, gas_density);
       else
         solver.backupSol(species, elements, molecules, gas_density);
     }
@@ -61,7 +62,7 @@ void GasPhase::calculateElementDensities(
       //selection of the solver for each element, see Eq. (2.32)
       switch (species.solver_order)
       {
-        case 0 : solver.intertSol(species, elements, molecules, gas_density); break;
+        case 0 : solver.inertSol(species, elements, molecules, gas_density); break;
         case 1 : solver.linSol(species, elements, molecules, gas_density); break;
         case 2 : solver.quadSol(species, elements, molecules, gas_density); break;
         default : solver.newtonSol(species, elements, molecules, gas_density, false);
@@ -75,9 +76,9 @@ void GasPhase::calculateElementDensities(
     species.log_number_density = static_cast<double>(LOG_DENSITY_FLOOR);
   }
 
-  species.checkN(options.element_density_minlimit, gas_density);
+  species.checkN(options.element_density_minlimit, log_gas_density);
 
-  n_major += calculateMoleculeDensities(species, gas_density);;
+  n_major += calculateMoleculeDensities(species, log_gas_density);
 }
 
 
@@ -85,10 +86,10 @@ void GasPhase::calculateElementDensities(
 
 //Calculates the number density of species, based on previously computed element densities
 double GasPhase::calculateMoleculeDensities(
-  Element& species, const double gas_density)
+  Element& species, const double log_gas_density)
 {
   double n_major = 0.0;
-  
+
   for (size_t ii=0; ii<species.major_molecules_inc.size(); ++ii)
   {
     const unsigned int i = species.major_molecules_inc[ii];
@@ -96,20 +97,40 @@ double GasPhase::calculateMoleculeDensities(
 
 
     for (size_t ll=0; ll<molecules[i].element_indices.size(); ++ll)
-    { 
+    {
       const unsigned int l = molecules[i].element_indices[ll];
-      
+
       sum += molecules[i].stoichiometric_vector[l] * elements[l].log_number_density;
     }
-    
+
     molecules[i].log_number_density = sum + molecules[i].mass_action_constant;
     molecules[i].number_density = safeExp(molecules[i].log_number_density);
-    molecules[i].checkN(options.molecule_density_minlimit, gas_density);
-    
+    molecules[i].checkN(options.molecule_density_minlimit, log_gas_density);
+
     n_major += molecules[i].number_density * molecules[i].sigma;
   }
 
   return n_major;
+}
+
+
+//Calculates the number density of species, based on previously computed element densities
+void GasPhase::updateMoleculeDensities()
+{
+  for (size_t i=0; i<nb_molecules; ++i)
+  {
+    double sum = 0.0;
+
+    for (size_t ll=0; ll<molecules[i].element_indices.size(); ++ll)
+    {
+      const unsigned int l = molecules[i].element_indices[ll];
+
+      sum += molecules[i].stoichiometric_vector[l] * elements[l].log_number_density;
+    }
+
+    molecules[i].log_number_density = sum + molecules[i].mass_action_constant;
+    molecules[i].number_density = safeExp(molecules[i].log_number_density);
+  }
 }
 
 

@@ -104,7 +104,7 @@ struct Element : public ChemicalSpecies
   void calcEpsilon(
     const std::vector< Element > &elements);
   void checkN(
-    const double& min_limit, const double& gas_density);
+    const double& min_limit, const double log_gas_density);
   bool checkElementConservation(
     const std::vector<Molecule>& molecules,
     const std::vector< Condensate >& condensates,
@@ -138,7 +138,7 @@ struct Molecule : public ChemicalSpecies
   void calcMassActionConstant(const double temperature);
   void calcLogNumberDensity(const std::vector< Element >& elements);
   void calcNumberDensity(const std::vector< Element >& elements);
-  void checkN(const double& min_limit, const double& gas_density);
+  void checkN(const double& min_limit, const double log_gas_density);
 };
 
 

@@ -52,7 +52,6 @@ bool CondPhaseSolver::newtonStep(
   Eigen::VectorXdt& scaling_factors,
   double& objective_function)
 {
-  Eigen::MatrixXdt jacobian;
   scaling_factors = assembleJacobian(
     condensates,
     activity_corr,
@@ -62,9 +61,8 @@ bool CondPhaseSolver::newtonStep(
     elements,
     molecules,
     total_element_density,
-    jacobian);
+    scratch_jacobian_);
 
-  Eigen::VectorXdt rhs;
   objective_function = assembleRightHandSide(
     condensates,
     condensates_jac,
@@ -77,10 +75,10 @@ bool CondPhaseSolver::newtonStep(
     molecules,
     total_element_density,
     scaling_factors,
-    rhs);
+    scratch_rhs_);
 
 
-  const bool jacobian_is_invertible = solveSystem(jacobian, rhs, result);
+  const bool jacobian_is_invertible = solveSystem(scratch_jacobian_, scratch_rhs_, result);
 
   return jacobian_is_invertible;
 }
@@ -101,7 +99,6 @@ bool CondPhaseSolver::newtonStepFull(
   Eigen::VectorXdt& scaling_factors,
   double& objective_function)
 {
-  Eigen::MatrixXdt jacobian;
   scaling_factors = assembleJacobianFull(
     condensates,
     activity_corr,
@@ -109,10 +106,9 @@ bool CondPhaseSolver::newtonStepFull(
     elements,
     molecules,
     total_element_density,
-    jacobian);
+    scratch_jacobian_);
 
-  Eigen::VectorXdt rhs;
-  objective_function= assembleRightHandSideFull(
+  objective_function = assembleRightHandSideFull(
     condensates,
     activity_corr,
     cond_densities,
@@ -122,10 +118,10 @@ bool CondPhaseSolver::newtonStepFull(
     molecules,
     total_element_density,
     scaling_factors,
-    rhs);
+    scratch_rhs_);
 
 
-  const bool jacobian_is_invertible = solveSystem(jacobian, rhs, result);
+  const bool jacobian_is_invertible = solveSystem(scratch_jacobian_, scratch_rhs_, result);
 
   return jacobian_is_invertible;
 }
@@ -165,24 +161,49 @@ Eigen::VectorXdt CondPhaseSolver::assembleJacobian(
   }
 
 
+  //Build a global-element-index -> local-element-index map for fast molecule loop
+  //Molecules' stoichiometric_vector is indexed by global element index; we only
+  //want contributions from the nb_elements local (condensate) elements.
+  const size_t total_nb_elements = molecules.empty()
+    ? 0 : molecules[0].stoichiometric_vector.size();
+  std::vector<int> global_to_local(total_nb_elements, -1);
+  for (size_t j=0; j<nb_elements; ++j)
+    global_to_local[elements[j]->index] = static_cast<int>(j);
+
   for (size_t i=0; i<nb_elements; ++i)
   {
-    jacobian(i+nb_condensates,i+nb_condensates) = elements[i]->number_density;
+    jacobian(i+nb_condensates, i+nb_condensates) = elements[i]->number_density;
 
-    for (size_t j=0; j<nb_elements; ++j)
+    //Molecule contributions: iterate molecules once per (i, molecule),
+    //then only over molecule's non-zero element pairs — avoids O(nb_elem^2 * mol) loop
+    for (auto l : elements[i]->molecule_list)
     {
-      for (auto l : elements[i]->molecule_list)
-         jacobian(i+nb_condensates,j+nb_condensates) += 
-           molecules[l].stoichiometric_vector[elements[i]->index] 
-           * molecules[l].stoichiometric_vector[elements[j]->index] 
-           * molecules[l].number_density;
+      const double n_l = molecules[l].number_density;
+      if (n_l == 0.0) continue;
+      const double scaled = static_cast<double>(
+        molecules[l].stoichiometric_vector[elements[i]->index]) * n_l;
 
-      for (auto l : condensates_rem)
-        if (number_densities[l] > 0)
-          jacobian(i+nb_condensates,j+nb_condensates) += 
-            condensates[l]->stoichiometric_vector[elements[i]->index] 
-            * condensates[l]->stoichiometric_vector[elements[j]->index] 
-            * number_densities[l] / activity_corr[l];
+      for (auto k_global : molecules[l].element_indices)
+      {
+        const int j = global_to_local[k_global];
+        if (j < 0) continue;
+        jacobian(i+nb_condensates, j+nb_condensates) +=
+          scaled * molecules[l].stoichiometric_vector[k_global];
+      }
+    }
+
+    //Removed-condensate contributions to element-element block
+    for (auto l : condensates_rem)
+    {
+      if (number_densities[l] == 0.0 || activity_corr[l] == 0.0) continue;
+      const int nu_il = condensates[l]->stoichiometric_vector[elements[i]->index];
+      if (nu_il == 0) continue;
+      const double factor =
+        static_cast<double>(nu_il) * number_densities[l] / activity_corr[l];
+
+      for (size_t j=0; j<nb_elements; ++j)
+        jacobian(i+nb_condensates, j+nb_condensates) +=
+          factor * condensates[l]->stoichiometric_vector[elements[j]->index];
     }
   }
 
@@ -192,11 +213,9 @@ Eigen::VectorXdt CondPhaseSolver::assembleJacobian(
   for (auto i = 0; i < scaling_factors.rows(); ++i)
     if (scaling_factors(i) == 0.0) scaling_factors(i) = 1.0;
 
-  for (auto i=0; i<jacobian.rows(); ++i)
-  {
-    for (auto j=0; j<jacobian.rows(); ++j)
-      jacobian(i,j) /= scaling_factors(i);
-  }
+  //Vectorized row scaling: divide each column element-wise by scaling_factors
+  for (int j = 0; j < jacobian.cols(); ++j)
+    jacobian.col(j).array() /= scaling_factors.array();
 
   return scaling_factors;
 }
@@ -235,17 +254,31 @@ Eigen::VectorXdt CondPhaseSolver::assembleJacobianFull(
   }
 
 
+  //Build global->local element index map (same approach as assembleJacobian)
+  const size_t total_nb_elements_full = molecules.empty()
+    ? 0 : molecules[0].stoichiometric_vector.size();
+  std::vector<int> global_to_local(total_nb_elements_full, -1);
+  for (size_t j=0; j<nb_elements; ++j)
+    global_to_local[elements[j]->index] = static_cast<int>(j);
+
   for (size_t i=0; i<nb_elements; ++i)
   {
-    jacobian(i+2*nb_condensates,i+2*nb_condensates) = elements[i]->number_density;
+    jacobian(i+2*nb_condensates, i+2*nb_condensates) = elements[i]->number_density;
 
-    for (size_t j=0; j<nb_elements; ++j)
+    for (auto l : elements[i]->molecule_list)
     {
-      for (auto l : elements[i]->molecule_list)
-         jacobian(i+2*nb_condensates,j+2*nb_condensates) += 
-           molecules[l].stoichiometric_vector[elements[i]->index] 
-           * molecules[l].stoichiometric_vector[elements[j]->index] 
-           * molecules[l].number_density;
+      const double n_l = molecules[l].number_density;
+      if (n_l == 0.0) continue;
+      const double scaled = static_cast<double>(
+        molecules[l].stoichiometric_vector[elements[i]->index]) * n_l;
+
+      for (auto k_global : molecules[l].element_indices)
+      {
+        const int j = global_to_local[k_global];
+        if (j < 0) continue;
+        jacobian(i+2*nb_condensates, j+2*nb_condensates) +=
+          scaled * molecules[l].stoichiometric_vector[k_global];
+      }
     }
   }
 
@@ -255,11 +288,9 @@ Eigen::VectorXdt CondPhaseSolver::assembleJacobianFull(
   for (auto i = 0; i < scaling_factors.rows(); ++i)
     if (scaling_factors(i) == 0.0) scaling_factors(i) = 1.0;
 
-  for (auto i=0; i<jacobian.rows(); ++i)
-  {
-    for (auto j=0; j<jacobian.rows(); ++j)
-      jacobian(i,j) /= scaling_factors(i);
-  }
+  //Vectorized row scaling
+  for (int j = 0; j < jacobian.cols(); ++j)
+    jacobian.col(j).array() /= scaling_factors.array();
 
   return scaling_factors;
 }
@@ -303,18 +334,20 @@ double CondPhaseSolver::assembleRightHandSide(
 
     for (size_t j=0; j<condensates.size(); ++j)
       rhs(i+nb_cond_jac) -= condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j];
-
+    
     for (auto j : condensates_rem)
-        rhs(i+nb_cond_jac) -=
-          condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j]
-          * (condensates[j]->log_activity/activity_corr[j]
-          + condensates[j]->log_tau - log_number_densities[j] - log_activity_corr[j] + 1.0);
+    {
+      if (activity_corr[j] == 0.0) continue;
+      rhs(i+nb_cond_jac) -=
+        condensates[j]->stoichiometric_vector[elements[i]->index] * number_densities[j]
+        * (condensates[j]->log_activity/activity_corr[j]
+        + condensates[j]->log_tau - log_number_densities[j] - log_activity_corr[j] + 1.0);
+    }
+    
   }
 
 
-  for (auto i=0; i<rhs.rows(); ++i)
-    rhs(i) /= scaling_factors(i);
-
+  rhs.array() /= scaling_factors.array();
 
   const double objective_function = 0.5*rhs.transpose()*rhs;
 
@@ -359,9 +392,7 @@ double CondPhaseSolver::assembleRightHandSideFull(
   }
 
 
-  for (auto i=0; i<rhs.rows(); ++i)
-    rhs(i) /= scaling_factors(i);
-
+  rhs.array() /= scaling_factors.array();
 
   const double objective_function = 0.5*rhs.transpose()*rhs;
 
@@ -376,10 +407,14 @@ Eigen::MatrixXdt CondPhaseSolver::assemblePerturbedHessian(
 {
   Eigen::MatrixXdt hessian = jacobian.transpose()*jacobian;
 
-  const double norm = hessian.template lpNorm<1>();
+  //Scale regularisation by the largest diagonal entry of J^T J.
+  //Using the max-diagonal avoids the 1-norm (max column sum) which can be
+  //O(n) × larger and causes over-regularisation when some columns are
+  //near-zero (e.g. activity_corr ≈ 0 for condensates at the density floor).
+  const double scale = hessian.diagonal().cwiseAbs().maxCoeff();
 
   for (auto i=0; i<hessian.rows(); ++i)
-    hessian(i,i) += perturbation * norm; 
+    hessian(i,i) += perturbation * scale;
 
   return hessian;
 }
@@ -394,64 +429,44 @@ bool CondPhaseSolver::solveSystem(
 {
   if (options.cond_use_lm)
   {
-    bool needs_clamping = false;
+    //Standard Newton via PartialPivLU (fast path).
+    //The Jacobian is already row-scaled by assembleJacobian, so PartialPivLU
+    //with partial pivoting handles the typical case where activity_corr → 0
+    //for formed condensates (near-zero diagonal) without any regularisation.
+    Eigen::PartialPivLU<Eigen::MatrixXdt> solver;
+    solver.compute(jacobian);
+    result = solver.solve(rhs);
 
-    for (auto i = 0; i < jacobian.rows(); ++i)
-    {
-      if (std::abs(jacobian(i,i)) < lm_mu)
-      {
-        needs_clamping = true;
-        break;
-      }
-    }
-
-    if (!needs_clamping)
-    {
-      Eigen::PartialPivLU<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> solver;
-      solver.compute(jacobian);
-      result = solver.solve(rhs);
+    if (result.allFinite())
       return true;
-    }
 
+    //Newton gave a non-finite result: the Jacobian is (nearly) rank-deficient.
+    //This occurs when safeExp clips activity_corr to exactly 0.0 for highly
+    //condensed species, making the condensate-row diagonal exactly zero and
+    //leaving PartialPivLU with a zero pivot.
+    //
+    //Fall back to the Levenberg-Marquardt normal equations:
+    //  (J^T J + mu * max_diag(J^T J) * I) * delta = J^T * rhs
+    //
+    //Since the Jacobian is already row-scaled by assembleJacobian (all rows
+    //have max |entry| ≈ 1), J^T J has well-balanced columns and max_diag
+    //scaling provides appropriate relative regularisation.  The resulting
+    //normal-equations matrix is symmetric PD regardless of J's rank, so
+    //PartialPivLU on it always succeeds and gives a finite descent direction.
     if (options.verbose_level >= 3)
-      std::cout << "FastChem: Jacobian near-singular, clamping diagonal (mu=" << lm_mu << ")\n";
+      std::cout << "FastChem: condensed-phase Newton non-finite, using LM"
+                << " (mu=" << lm_mu << ")\n";
 
-    Eigen::MatrixXdt J_reg = jacobian;
-
-    for (auto i = 0; i < J_reg.rows(); ++i)
-    {
-      if (std::abs(J_reg(i,i)) < lm_mu)
-        J_reg(i,i) = (J_reg(i,i) >= 0) ? lm_mu : -lm_mu;
-    }
-
-    Eigen::PartialPivLU<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> lm_solver;
-    lm_solver.compute(J_reg);
-    result = lm_solver.solve(rhs);
-
-    // If the clamped system still produced NaN/inf, fall back to the minimum-norm
-    // SVD solution, which is always finite and bounded for any near-singular matrix.
-    bool result_bad = false;
-    for (int i = 0; i < result.rows(); ++i)
-    {
-      if (!std::isfinite(static_cast<double>(result(i))))
-      {
-        result_bad = true;
-        break;
-      }
-    }
-
-    if (result_bad)
-    {
-      if (options.verbose_level >= 3)
-        std::cout << "FastChem: PartialPivLU on clamped Jacobian produced NaN/inf, switching to SVD\n";
-
-      result = jacobian.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(rhs);
-    }
+    Eigen::MatrixXdt hessian = assemblePerturbedHessian(jacobian, lm_mu);
+    Eigen::VectorXdt rhs_ne = jacobian.transpose() * rhs;
+    Eigen::PartialPivLU<Eigen::MatrixXdt> lm_solver;
+    lm_solver.compute(hessian);
+    result = lm_solver.solve(rhs_ne);
 
     return false;
   }
 
-  if (!options.cond_use_full_pivot)
+  if (options.cond_reduce_system_size)
   {
     Eigen::PartialPivLU<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> solver;
     solver.compute(jacobian);
@@ -580,7 +595,7 @@ double CondPhaseSolver::objectiveFunction(
   const std::vector<unsigned int>& condensates_jac,
   const std::vector<unsigned int>& condensates_rem,
   const std::vector<double>& activity_corr,
-  const std::vector<double>& number_denities,
+  const std::vector<double>& number_densities,
   const std::vector<double>& log_number_densities,
   const std::vector<double>& log_activity_corr,
   const std::vector< Element* >& elements,
@@ -592,35 +607,33 @@ double CondPhaseSolver::objectiveFunction(
 
   if (options.cond_reduce_system_size == false)
   {
-    Eigen::VectorXdt rhs;
     objective_function = assembleRightHandSideFull(
       condensates,
       activity_corr,
-      number_denities,
+      number_densities,
       log_number_densities,
       log_activity_corr,
       elements,
       molecules,
       total_element_density,
       scaling_factors,
-      rhs);
+      scratch_rhs_);
   }
   else
   {
-    Eigen::VectorXdt rhs;
     objective_function = assembleRightHandSide(
       condensates,
       condensates_jac,
       condensates_rem,
       activity_corr,
-      number_denities,
+      number_densities,
       log_number_densities,
       log_activity_corr,
       elements,
       molecules,
       total_element_density,
       scaling_factors,
-      rhs);
+      scratch_rhs_);
   }
 
   return objective_function;

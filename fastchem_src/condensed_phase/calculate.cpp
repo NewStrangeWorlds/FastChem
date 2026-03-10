@@ -46,6 +46,7 @@ bool CondensedPhase::calculate(
 {
   if (condensates_act.size() == 0) return true;
 
+  double N_total = total_element_density;
 
   double tau = options.cond_tau;
 
@@ -91,7 +92,7 @@ bool CondensedPhase::calculate(
     if (condensates_act[i]->number_density == 0.0) condensates_act[i]->number_density = 1e-20;
 
     log_cond_dens_old[i] = std::log(condensates_act[i]->number_density);
-    log_activity_corr_old[i] = std::log(condensates_act[i]->activity_correction);
+    log_activity_corr_old[i] = safeLog(condensates_act[i]->activity_correction);
   }
 
   bool cond_converged = false;
@@ -100,7 +101,7 @@ bool CondensedPhase::calculate(
 
   if (options.cond_use_lm)
     solver.resetLM();
-
+  
   for (nb_iterations=0; nb_iterations<options.nb_max_cond_iter; ++nb_iterations)
   {
     double objective_function_0 = 0;
@@ -131,7 +132,7 @@ bool CondensedPhase::calculate(
         condensates_act,
         elements_cond,
         molecules,
-        total_element_density,
+        N_total,
         cond_dens_linear,
         elem_dens_linear,
         activity_corr_linear,
@@ -168,13 +169,32 @@ bool CondensedPhase::calculate(
         condensates_jac,
         condensates_rem);
 
+      //Enforce Phase Rule: at most as many active condensates as elements.
+      //Excess condensates (lowest log_activity) are moved to the remainder set
+      //to limit the Newton system size (and thus SVD cost) when many condensates
+      //are simultaneously near their stability threshold.
+      // if (condensates_jac.size() > elements_cond.size())
+      // {
+      //   std::sort(condensates_jac.begin(), condensates_jac.end(),
+      //     [&](unsigned int a, unsigned int b) {
+      //       return condensates_act[a]->log_activity < condensates_act[b]->log_activity;
+      //     });
+      //   while (condensates_jac.size() > elements_cond.size())
+      //   {
+      //     condensates_rem.push_back(condensates_jac.front());
+      //     condensates_jac.erase(condensates_jac.begin());
+      //   }
+      //   std::sort(condensates_jac.begin(), condensates_jac.end());
+      //   std::sort(condensates_rem.begin(), condensates_rem.end());
+      // }
+
       system_invertible = solver.newtonStep(
         condensates_act,
         condensates_jac,
         condensates_rem,
         elements_cond,
         molecules,
-        total_element_density,
+        N_total,
         cond_dens_linear,
         elem_dens_linear,
         activity_corr_linear,
@@ -219,16 +239,6 @@ bool CondensedPhase::calculate(
     for (auto & i : molecules)
       i.calcNumberDensity(elements);
 
-    // Note: backtracking is not used with LM because the Armijo condition's
-    // directional derivative assumes a pure Newton direction.
-    // The LM adaptive mu provides its own step-size control.
-
-    // {
-    // std::cout << "iter: " << nb_iterations << "  " << objective_function_0 << "\n";
-    // for (size_t i=0; i<condensates_act.size(); ++i)
-    //   std::cout <<i << "  " << condensates_act[i]->symbol << "\t" << log_cond_dens_old[i] << "\t" << log_cond_dens_new[i] << "\t" << log_activity_corr_old[i] << "\t" << log_activity_corr_new[i] << "\t" << condensates_act[i]->log_activity << "\t" << condensates_act[i]->tau << "\n";
-    // } if (nb_iterations == 126) exit(0);
-
     log_elem_dens_old = log_elem_dens_new;
     log_cond_dens_old = log_cond_dens_new;
     log_activity_corr_old = log_activity_corr_new;
@@ -238,8 +248,8 @@ bool CondensedPhase::calculate(
 
     cond_converged = max_delta < options.cond_accuracy
       && (system_invertible || options.cond_use_lm)
-      && objective_function_0 < 0.001;
-
+      && objective_function_0 < 0.001; //options.cond_accuracy; //0.001;
+    
     if (cond_converged) break;
   }
 
@@ -249,18 +259,6 @@ bool CondensedPhase::calculate(
     condensates_act[i]->number_density = safeExp(log_cond_dens_new[i]);
     condensates_act[i]->activity_correction = safeExp(log_activity_corr_new[i]);
   }
-
-
-  double phi_sum = 0;
-
-  for (auto & i : elements)
-  {
-    i.calcDegreeOfCondensation(condensates, total_element_density);
-    phi_sum += i.phi;
-  }
-
-  for (auto & i : elements)
-    i.normalisePhi(phi_sum);
 
   return cond_converged;
 }
@@ -292,6 +290,8 @@ double CondensedPhase::correctValues(
     const unsigned int index = condensates_rem[i];
 
     const double activity_corr_lin = safeExp(log_activity_corr_old[index]);
+
+    if (activity_corr_lin == 0.0) continue;
 
     delta_n_cond[index] = condensates[index]->log_activity/activity_corr_lin
       + condensates[index]->log_tau

@@ -53,10 +53,13 @@ class GasPhase {
     bool is_initialised = false;
 
     bool calculate(
-      const double temperature_gas, const double gas_density, unsigned int& nb_iterations);
+      const double temperature_gas, 
+      const double gas_density, 
+      unsigned int& nb_iterations);
 
     double meanMolecularWeight(const double gas_density);
     double totalElementDensity();
+    void updateMoleculeDensities();
 
     void reInitialise();
   private:
@@ -92,9 +95,10 @@ class GasPhase {
       Element& species,
       const double gas_density,
       bool use_backup_solver,
-      double& n_major);
+      double& n_major,
+      const double log_gas_density);
     double calculateMoleculeDensities(
-      Element& species, const double gas_density);
+      Element& species, const double log_gas_density);
 
     void calculateElectronDensities(
       Element& species,

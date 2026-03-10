@@ -34,13 +34,17 @@ namespace fastchem {
 
 //This is the main FastChem iteration for the gas phase
 bool GasPhase::calculate(
-  const double temperature_gas, const double gas_density, unsigned int& nb_iterations)
+  const double temperature_gas, 
+  const double gas_density, 
+  unsigned int& nb_iterations)
 {
   for (auto & i : elements) i.number_density_maj = 0.0;
 
   
   //starting values for contribution of minor species
   for (auto & i : elements) i.calcMinorSpeciesDensities(molecules);
+
+  const double log_gas_density = std::log(gas_density);
 
   std::vector<double> number_density_old(nb_species, 0.0);
   std::vector<double> log_density_old(nb_species, static_cast<double>(LOG_DENSITY_FLOOR));
@@ -78,7 +82,7 @@ bool GasPhase::calculate(
 
     //calculate the element densities in their respective order
     for (auto it = element_calculation_order.begin(); it<element_calculation_order.end(); it++)
-      calculateElementDensities(elements[*it], gas_density, use_backup_solver, n_maj);
+      calculateElementDensities(elements[*it], gas_density, use_backup_solver, n_maj, log_gas_density);
 
 
     //calculate the molecule densities
@@ -119,8 +123,7 @@ bool GasPhase::calculate(
           break;
         }
     }
-
-
+    
     //sanity check
     for (auto & e : elements)
     {
@@ -138,20 +141,18 @@ bool GasPhase::calculate(
       }
     }
 
-
     if (converged)
       break;
-
 
     //switch to multi-dimensional Newton solver if the system
     //hasn't converged yet
     if (iter_step > options.nb_switch_to_newton)
-    {
+    { 
       if (options.verbose_level >= 4)
         std::cout << "Standard FastChem iteration failed. Switching to multi-dimensional Newton. " << "\n";
 
       std::vector<Element*> newton_elements;
-
+      
       solver.selectNewtonElements(
         elements,
         molecules,
@@ -170,18 +171,17 @@ bool GasPhase::calculate(
           total_element_density);
 
         //update densities
-        for (auto & e : elements) 
-          calculateMoleculeDensities(e, gas_density);
+        for (auto & e : elements)
+          calculateMoleculeDensities(e, log_gas_density);
 
         for (auto & e : elements) 
           e.calcMinorSpeciesDensities(molecules);
       }
-
     }
 
 
     //in case the standard FastChem iteration doesn't converge, switch to the backup solver
-    if (iter_step == 390 && !converged && use_backup_solver == false)
+    if (iter_step == 0.975*options.nb_switch_to_newton && !converged && use_backup_solver == false)
     {
       if (options.verbose_level >= 4)
         std::cout << "Standard FastChem iteration failed. Switching to backup. " << "\n";

@@ -56,7 +56,7 @@ void Element::calcEpsilon(const std::vector< Element > &elements)
 
 //Check for the number density of elements
 void Element::checkN(
-  const double& min_limit, const double& gas_density)
+  const double& min_limit, const double log_gas_density)
 {
   if (!this->fixed_by_condensation)
   {
@@ -64,10 +64,8 @@ void Element::checkN(
       this->log_number_density = static_cast<double>(LOG_DENSITY_FLOOR);
   }
 
-  const double log_gas = std::log(gas_density);
-
-  if (this->log_number_density > log_gas)
-    this->log_number_density = log_gas;
+  if (this->log_number_density > log_gas_density)
+    this->log_number_density = log_gas_density;
 
   this->number_density = safeExp(this->log_number_density);
 }
@@ -103,8 +101,9 @@ bool Element::checkChargeConservation(
       negative_charge += molecules[i].stoichiometric_vector[index] * molecules[i].number_density;
   }
   
-  if (std::fabs(positive_charge - negative_charge)/std::sqrt(positive_charge*negative_charge) < accuracy 
-    || (positive_charge == 0 && negative_charge == 0))
+  double max_charge = std::max(positive_charge, negative_charge);
+
+  if (max_charge == 0 || std::fabs(positive_charge - negative_charge) / max_charge < accuracy)
     charge_conserved = true;
   else
     charge_conserved = false;
@@ -151,6 +150,13 @@ bool Element::checkElementConservation(
     element_conserved = 1;
   else
     element_conserved = 0;
+
+  // std::cout << "El " << this->symbol << " nd " << this->number_density 
+  //           << " sg " << sum_gas << " sd " << sum_cond
+  //           << " sum_total = " << sum_total 
+  //           << " total_eps " << total_density*epsilon
+  //           << " tot " << total_density << " eps " << epsilon
+  //           << " conserved: " << element_conserved << "\n";
 
   return element_conserved;
 }

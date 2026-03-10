@@ -44,7 +44,7 @@ void GasPhaseSolver::newtonSol(
   const std::vector<Molecule>& molecules,
   const double gas_density,
   const bool use_alternative)
-{
+{ 
   const double max_step = 10.0;
 
   //Compute R: the required density from the element conservation equation

@@ -47,7 +47,7 @@ class CondensedPhase {
     void selectActiveCondensates(
       std::vector<Condensate*>& condensates_act,
       std::vector<Element*>& elements_cond);
-    
+
     size_t nb_condensates = 0;
     size_t nb_elements = 0;
 

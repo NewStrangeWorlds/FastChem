@@ -76,14 +76,14 @@ void GasPhaseSolver::logSpaceResidual(
   //Build the positive sum P(y_j) and its derivative dP/dy_j
   //P(y_j) = exp(y_j) + Sigma_i kappa_ij * exp(mac_i + Sigma_l nu_il * y_l)
   //dP/dy_j = exp(y_j) + Sigma_i nu_ij * kappa_ij * exp(mac_i + Sigma_l nu_il * y_l)
-  std::vector<double> log_terms;
-  std::vector<double> coeffs_P;
-  std::vector<double> coeffs_dP;
+  scratch_log_terms_.clear();
+  scratch_coeffs_P_.clear();
+  scratch_coeffs_dP_.clear();
 
   //Free atom term
-  log_terms.push_back(y_j);
-  coeffs_P.push_back(1.0);
-  coeffs_dP.push_back(1.0);
+  scratch_log_terms_.push_back(y_j);
+  scratch_coeffs_P_.push_back(1.0);
+  scratch_coeffs_dP_.push_back(1.0);
 
   for (auto & i : species.molecule_list)
   {
@@ -107,14 +107,14 @@ void GasPhaseSolver::logSpaceResidual(
 
     const double kappa = nu_j + species.phi * molecules[i].sigma;
 
-    log_terms.push_back(log_n);
-    coeffs_P.push_back(kappa);
-    coeffs_dP.push_back(static_cast<double>(nu_j) * kappa);
+    scratch_log_terms_.push_back(log_n);
+    scratch_coeffs_P_.push_back(kappa);
+    scratch_coeffs_dP_.push_back(static_cast<double>(nu_j) * kappa);
   }
 
   //Compute ln(P) and ln(dP/dy) using logSumExp for numerical stability
-  ln_P = logSumExp(log_terms, coeffs_P);
-  ln_dP = logSumExp(log_terms, coeffs_dP);
+  ln_P = logSumExp(scratch_log_terms_, scratch_coeffs_P_);
+  ln_dP = logSumExp(scratch_log_terms_, scratch_coeffs_dP_);
 }
 
 

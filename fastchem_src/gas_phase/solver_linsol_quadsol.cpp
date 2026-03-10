@@ -34,7 +34,7 @@ namespace fastchem {
 
 //Solver for an element that is not part of other species
 //See Paper I, Eq. (2.32)
-void GasPhaseSolver::intertSol(
+void GasPhaseSolver::inertSol(
   Element& species,
   std::vector< Element >& elements,
   const std::vector< Molecule >& molecules,
@@ -76,12 +76,12 @@ void GasPhaseSolver::linSol(
 
   //Build ln(A1) = logSumExp of molecule terms + free-atom term
   //A1 = 1 + Sigma_i kappa_i * exp(mac_i + Sigma_{l!=j} nu_il * y_l)
-  std::vector<double> log_terms;
-  std::vector<double> coeffs;
+  scratch_log_terms_.clear();
+  scratch_coeffs_P_.clear();
 
   //Free atom contribution: exp(0) * 1 = 1
-  log_terms.push_back(0.0);
-  coeffs.push_back(1.0);
+  scratch_log_terms_.push_back(0.0);
+  scratch_coeffs_P_.push_back(1.0);
 
   for (auto & i : species.molecule_list)
   {
@@ -98,11 +98,11 @@ void GasPhaseSolver::linSol(
 
     const double kappa = 1.0 + species.phi * molecules[i].sigma;
 
-    log_terms.push_back(log_term);
-    coeffs.push_back(kappa);
+    scratch_log_terms_.push_back(log_term);
+    scratch_coeffs_P_.push_back(kappa);
   }
 
-  double ln_A1 = logSumExp(log_terms, coeffs);
+  double ln_A1 = logSumExp(scratch_log_terms_, scratch_coeffs_P_);
 
   species.log_number_density = std::log(R) - ln_A1;
   species.number_density = safeExp(species.log_number_density);
@@ -129,12 +129,14 @@ void GasPhaseSolver::quadSol(
   }
 
   //Compute ln(A1) and ln(A2) via logSumExp
-  std::vector<double> log_terms_A1, coeffs_A1;
-  std::vector<double> log_terms_A2, coeffs_A2;
+  scratch_log_terms_.clear();
+  scratch_coeffs_P_.clear();
+  scratch_log_terms_2_.clear();
+  scratch_coeffs_dP_.clear();
 
   //Free atom contribution to A1
-  log_terms_A1.push_back(0.0);
-  coeffs_A1.push_back(1.0);
+  scratch_log_terms_.push_back(0.0);
+  scratch_coeffs_P_.push_back(1.0);
 
   for (auto & i : species.molecule_list)
   {
@@ -156,18 +158,18 @@ void GasPhaseSolver::quadSol(
 
     if (nu_j == 1)
     {
-      log_terms_A1.push_back(log_term);
-      coeffs_A1.push_back(kappa);
+      scratch_log_terms_.push_back(log_term);
+      scratch_coeffs_P_.push_back(kappa);
     }
     else
     {
-      log_terms_A2.push_back(log_term);
-      coeffs_A2.push_back(kappa);
+      scratch_log_terms_2_.push_back(log_term);
+      scratch_coeffs_dP_.push_back(kappa);
     }
   }
 
-  double ln_A1 = logSumExp(log_terms_A1, coeffs_A1);
-  double ln_A2 = logSumExp(log_terms_A2, coeffs_A2);
+  double ln_A1 = logSumExp(scratch_log_terms_, scratch_coeffs_P_);
+  double ln_A2 = logSumExp(scratch_log_terms_2_, scratch_coeffs_dP_);
 
   //If A2 underflows, fall back to linSol
   if (ln_A2 <= static_cast<double>(LOG_DENSITY_FLOOR))

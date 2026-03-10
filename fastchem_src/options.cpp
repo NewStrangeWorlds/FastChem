@@ -32,8 +32,8 @@ namespace fastchem {
 
 void FastChemOptions::init()
 {
-  element_density_minlimit = 1e-255;
-  molecule_density_minlimit = 1e-255;
+  element_density_minlimit = 1e-155;
+  molecule_density_minlimit = 1e-155;
 }
 
 
@@ -69,7 +69,6 @@ ParameterBool FastChemOptions::resolveParameterBool(
   static const std::map<std::string, ParameterBool> parameter_strings = 
   {
     { std::string("condReduceSystemSize"), ParameterBool::cond_reduce_system_size },
-    { std::string("condUseFullPivot"), ParameterBool::cond_use_full_pivot },
     { std::string("condUseSVD"), ParameterBool::cond_use_svd },
     { std::string("useCondDataValidityLimit"), ParameterBool::cond_use_data_validity_limits },
     { std::string("condUseLM"), ParameterBool::cond_use_lm }
@@ -96,7 +95,8 @@ ParameterInt FastChemOptions::resolveParameterInt(
     { std::string("nbIterationsChem"), ParameterInt::nb_max_fastchem_iter },
     { std::string("nbIterationsNelderMead"), ParameterInt::nb_max_neldermead_iter },
     { std::string("nbIterationsNewton"), ParameterInt::nb_max_newton_iter },
-    { std::string("nbSwitchToNewton"), ParameterInt::nb_switch_to_newton }
+    { std::string("nbSwitchToNewton"), ParameterInt::nb_switch_to_newton },
+    { std::string("nbSwitchToJoint"), ParameterInt::nb_switch_to_joint }
   };
 
   auto itr = parameter_strings.find(parameter);

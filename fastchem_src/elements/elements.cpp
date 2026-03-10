@@ -76,7 +76,7 @@ void ElementData::init(double initial_density)
   for (auto & i : elements)
   {
     i.number_density = initial_density;
-    i.log_number_density = (initial_density > 0) ? std::log(initial_density) : static_cast<double>(LOG_DENSITY_FLOOR);
+    i.log_number_density = safeLog(initial_density);
     i.degree_of_condensation = 0;
     i.phi = i.epsilon;
     i.fixed_by_condensation = false;

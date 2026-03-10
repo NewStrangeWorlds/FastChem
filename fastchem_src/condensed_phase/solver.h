@@ -84,7 +84,7 @@ class CondPhaseSolver{
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
       const std::vector<double>& activity_corr,
-      const std::vector<double>& number_denities,
+      const std::vector<double>& number_densities,
       const std::vector<double>& log_number_densities,
       const std::vector<double>& log_activity_corr,
       const std::vector< Element* >& elements,
@@ -96,7 +96,7 @@ class CondPhaseSolver{
     double assembleRightHandSideFull(
       const std::vector<Condensate*>& condensates,
       const std::vector<double>& activity_corr,
-      const std::vector<double>& number_denities,
+      const std::vector<double>& number_densities,
       const std::vector<double>& log_number_densities,
       const std::vector<double>& log_activity_corr,
       const std::vector< Element* >& elements,
@@ -120,7 +120,7 @@ class CondPhaseSolver{
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
       const std::vector<double>& activity_corr,
-      const std::vector<double>& number_denities,
+      const std::vector<double>& number_densities,
       const std::vector<double>& log_number_densities,
       const std::vector<double>& log_activity_corr,
       const std::vector< Element* >& elements,
@@ -129,6 +129,10 @@ class CondPhaseSolver{
       const Eigen::VectorXdt& scaling_factors);
   private:
     FastChemOptions& options;
+
+    //Scratch Eigen objects — pre-allocated once, reused across Newton iterations
+    Eigen::MatrixXdt scratch_jacobian_;
+    Eigen::VectorXdt scratch_rhs_;
 
     double lm_mu = 0.01;
     double lm_objective_prev = 0;
@@ -146,7 +150,7 @@ class CondPhaseSolver{
     Eigen::VectorXdt assembleJacobian(
       const std::vector<Condensate*>& condensates,
       const std::vector<double>& activity_corr,
-      const std::vector<double>& number_denities,
+      const std::vector<double>& number_densities,
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
       const std::vector<Element*>& elements,
@@ -157,7 +161,7 @@ class CondPhaseSolver{
     Eigen::VectorXdt assembleJacobianFull(
       const std::vector<Condensate*>& condensates,
       const std::vector<double>& activity_corr,
-      const std::vector<double>& number_denities,
+      const std::vector<double>& number_densities,
       const std::vector<Element*>& elements,
       const std::vector<Molecule>& molecules,
       const double total_element_density,

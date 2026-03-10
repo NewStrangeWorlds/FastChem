@@ -94,9 +94,9 @@ class FastChem {
     void setVerboseLevel(const unsigned int level) { 
       if (level > 4) options.verbose_level = 4; else options.verbose_level = level;}
 
-    void setParameter(const std::string& parameter, const double param_value);
-    void setParameter(const std::string& parameter, const bool param_value);
-    void setParameter(const std::string& parameter, const unsigned int param_value);
+    [[nodiscard]] bool setParameter(const std::string& parameter, const double param_value);
+    [[nodiscard]] bool setParameter(const std::string& parameter, const bool param_value);
+    [[nodiscard]] bool setParameter(const std::string& parameter, const unsigned int param_value);
 
   private:
     FastChemOptions options;
@@ -107,6 +107,8 @@ class FastChem {
 
     bool is_initialised = false;
     bool is_busy = false;
+
+    std::vector<FastChem> thread_copies_;
 
     //Initialisation functions
     void init();
@@ -136,6 +138,14 @@ class FastChem {
       unsigned int& nb_combined_iter);
 
     void rainoutCondensation(FastChemInput& input, FastChemOutput& output);
+
+    void jointNewtonStep(
+      const std::vector<Condensate*>& condensates_act,
+      const double temperature,
+      const double gas_density,
+      double& total_element_density);
+
+    void updatePhi(double total_element_density);
 };
 
 

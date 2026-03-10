@@ -95,9 +95,7 @@ double Condensate::calcActivity(
 
   for (auto & i : element_indices)
   {
-    const double log_dens = (elem_number_densities[elements[i].index] > 0)
-      ? std::log(elem_number_densities[elements[i].index])
-      : static_cast<double>(LOG_DENSITY_FLOOR);
+    const double log_dens = safeLog(elem_number_densities[elements[i].index]);
     log_activity += log_dens * stoichiometric_vector[elements[i].index];
   }
 

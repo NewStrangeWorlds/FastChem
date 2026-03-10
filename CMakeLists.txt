@@ -11,6 +11,7 @@
 cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
 
 OPTION(USE_PYTHON "Compile FastChem's Python Wrapper" OFF)
+OPTION(USE_MARCH_NATIVE "Enable -march=native for the native library and executable" ON)
 
 
 project(fastchem CXX C)
@@ -22,12 +23,14 @@ cmake_dependent_option(ONLY_PYTHON_LIBRARY "Compile FastChem's Python Library on
 
 
 #some C++/C flags
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-Wall -pedantic -MMD")
+set(CMAKE_CXX_FLAGS "-Wall -pedantic")
 
 
-set(CMAKE_BUILD_TYPE Release)
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
 
 
 #output directories
@@ -36,10 +39,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 
 
-#define the source files   
+#define the source files
 set(SRC_FASTCHEM
   fastchem_src/options.cpp
   fastchem_src/calc_densities.cpp
+  fastchem_src/solver_joint.cpp
   fastchem_src/fastchem.cpp
   fastchem_src/fastchem_get_set.cpp
   fastchem_src/options_read_files.cpp
@@ -66,17 +70,17 @@ set(SRC_FASTCHEM
   fastchem_src/condensed_phase/solver.cpp
   fastchem_src/condensed_phase/condensate_struct.cpp
   fastchem_src/condensed_phase/read_condensate_data.cpp)
-  
+
 
 set(SRC_MAIN
   model_src/model_main.cpp)
 
-  
+
 set(SRC_PYTHON_WRAPPER
   python/fastchem_python_wrapper.cpp)
 
 #check for OpenMP
-find_package(OpenMP)  
+find_package(OpenMP)
 
 
 if ((USE_PYTHON MATCHES ON) AND (NOT ONLY_PYTHON_LIBRARY))
@@ -88,38 +92,32 @@ if ((USE_PYTHON MATCHES ON) AND (NOT ONLY_PYTHON_LIBRARY))
         GIT_TAG        97976c16fb7652f7faf02d76756666ef87adbe7d
     )
 
-    FetchContent_GetProperties(pybind11)
-    if(NOT pybind11_POPULATED)
-        FetchContent_Populate(pybind11)
-        add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
-    endif()
+    FetchContent_MakeAvailable(pybind11)
 
   #compilation target for FastChem's Python library
   add_library(fastchem_for_py ${SRC_FASTCHEM})
-  
+
+  target_compile_options(fastchem_for_py PRIVATE "-O3" "-fPIC")
   if (OpenMP_FOUND)
-    target_compile_options(fastchem_for_py PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3" PRIVATE "-fPIC")
-  else()
-    target_compile_options(fastchem_for_py PRIVATE "-O3" PRIVATE "-fPIC")
+    target_link_libraries(fastchem_for_py PRIVATE OpenMP::OpenMP_CXX)
   endif()
-  
-  
+
+
   #find the python version
   find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-    
+
   #compilation target for FastChem's Python wrapper
   pybind11_add_module(pyfastchem ${SRC_PYTHON_WRAPPER})
-  
+
   #find_package(pybind11 REQUIRED)
-  
+
   set_target_properties(pyfastchem PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python")
-  
+
+  #target_link_libraries(pyfastchem PRIVATE fastchem_for_py OpenMP::OpenMP_CXX pybind11::module)
+  target_link_libraries(pyfastchem PRIVATE fastchem_for_py pybind11::module)
   if (OpenMP_FOUND)
     target_link_libraries(pyfastchem PRIVATE OpenMP::OpenMP_CXX)
   endif()
-  
-  #target_link_libraries(pyfastchem PRIVATE fastchem_for_py OpenMP::OpenMP_CXX pybind11::module)
-  target_link_libraries(pyfastchem PRIVATE fastchem_for_py pybind11::module)
 endif()
 
 
@@ -128,11 +126,10 @@ if (ONLY_PYTHON_LIBRARY MATCHES ON)
 
   #compilation target for FastChem's Python library
   add_library(fastchem_lib_for_py ${SRC_FASTCHEM})
-  
+
+  target_compile_options(fastchem_lib_for_py PRIVATE "-O3" "-fPIC")
   if (OpenMP_FOUND)
-    target_compile_options(fastchem_lib_for_py PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3" PRIVATE "-fPIC")
-  else()
-    target_compile_options(fastchem_lib_for_py PRIVATE "-O3" PRIVATE "-fPIC")
+    target_link_libraries(fastchem_lib_for_py PRIVATE OpenMP::OpenMP_CXX)
   endif()
 endif()
 
@@ -143,10 +140,16 @@ if (NOT ONLY_PYTHON_LIBRARY)
   #compilation target for FastChem
   add_library(fastchem_lib ${SRC_FASTCHEM})
 
-  if (OpenMP_FOUND)
-    target_compile_options(fastchem_lib PRIVATE "${OpenMP_CXX_FLAGS}" PRIVATE "-O3")
+  if (USE_MARCH_NATIVE)
+    # EIGEN_DONT_VECTORIZE suppresses Eigen's explicit AVX/AVX-512 SIMD intrinsics,
+    # which trigger an overaligned allocator/deallocator mismatch on CPUs with AVX-512.
+    # The compiler still auto-vectorizes all code (including Eigen's scalar loops) with AVX.
+    target_compile_options(fastchem_lib PRIVATE "-O3")
   else()
     target_compile_options(fastchem_lib PRIVATE "-O3")
+  endif()
+  if (OpenMP_FOUND)
+    target_link_libraries(fastchem_lib PRIVATE OpenMP::OpenMP_CXX)
   endif()
 endif()
 
@@ -159,9 +162,8 @@ if ((NOT ONLY_LIBRARY) AND (NOT ONLY_PYTHON_LIBRARY))
   add_executable(fastchem ${SRC_MAIN})
 
   #link files for the final FastChem executable code
-  if (OpenMP_FOUND)
-    target_link_libraries(fastchem PRIVATE fastchem_lib OpenMP::OpenMP_CXX)
-  endif()
-
   target_link_libraries(fastchem PRIVATE fastchem_lib)
+  if (OpenMP_FOUND)
+    target_link_libraries(fastchem PRIVATE OpenMP::OpenMP_CXX)
+  endif()
 endif()
