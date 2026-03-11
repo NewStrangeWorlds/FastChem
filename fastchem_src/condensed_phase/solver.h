@@ -143,7 +143,7 @@ class CondPhaseSolver{
       const double perturbation);
 
     bool solveSystem(
-      const Eigen::MatrixXdt& jacobian,
+      Eigen::MatrixXdt& jacobian,
       const Eigen::VectorXdt& rhs,
       Eigen::VectorXdt& result,
       const size_t nb_condensate_rows);

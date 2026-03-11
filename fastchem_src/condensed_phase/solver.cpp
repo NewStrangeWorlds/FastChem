@@ -425,7 +425,7 @@ Eigen::MatrixXdt CondPhaseSolver::assemblePerturbedHessian(
 
 
 bool CondPhaseSolver::solveSystem(
-  const Eigen::MatrixXdt& jacobian,
+  Eigen::MatrixXdt& jacobian,
   const Eigen::VectorXdt& rhs,
   Eigen::VectorXdt& result,
   const size_t nb_condensate_rows)
@@ -468,17 +468,24 @@ bool CondPhaseSolver::solveSystem(
       //condensates). This is normal and the system is still full-rank — the
       //stoichiometric off-diagonals carry the constraint. Diagonal clamping
       //preserves the Newton direction with minimal perturbation.
-      Eigen::MatrixXdt J_reg = jacobian;
+      //Clamp in-place and restore after solving to avoid a full matrix copy.
+      std::vector<std::pair<int, double>> saved_diags;
 
-      for (auto i = 0; i < J_reg.rows(); ++i)
+      for (auto i = 0; i < jacobian.rows(); ++i)
       {
-        if (std::abs(J_reg(i,i)) < diag_threshold)
-          J_reg(i,i) = (J_reg(i,i) >= 0) ? diag_threshold : -diag_threshold;
+        if (std::abs(jacobian(i,i)) < diag_threshold)
+        {
+          saved_diags.push_back({i, jacobian(i,i)});
+          jacobian(i,i) = (jacobian(i,i) >= 0) ? diag_threshold : -diag_threshold;
+        }
       }
 
       Eigen::PartialPivLU<Eigen::MatrixXdt> clamp_solver;
-      clamp_solver.compute(J_reg);
+      clamp_solver.compute(jacobian);
       result = clamp_solver.solve(rhs);
+
+      for (auto& [idx, val] : saved_diags)
+        jacobian(idx, idx) = val;
 
       if (result.allFinite())
         return false;
