@@ -145,7 +145,8 @@ class CondPhaseSolver{
     bool solveSystem(
       const Eigen::MatrixXdt& jacobian,
       const Eigen::VectorXdt& rhs,
-      Eigen::VectorXdt& result);
+      Eigen::VectorXdt& result,
+      const size_t nb_condensate_rows);
 
     Eigen::VectorXdt assembleJacobian(
       const std::vector<Condensate*>& condensates,

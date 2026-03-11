@@ -78,7 +78,8 @@ bool CondPhaseSolver::newtonStep(
     scratch_rhs_);
 
 
-  const bool jacobian_is_invertible = solveSystem(scratch_jacobian_, scratch_rhs_, result);
+  const bool jacobian_is_invertible = solveSystem(
+    scratch_jacobian_, scratch_rhs_, result, condensates_jac.size());
 
   return jacobian_is_invertible;
 }
@@ -121,7 +122,8 @@ bool CondPhaseSolver::newtonStepFull(
     scratch_rhs_);
 
 
-  const bool jacobian_is_invertible = solveSystem(scratch_jacobian_, scratch_rhs_, result);
+  const bool jacobian_is_invertible = solveSystem(
+    scratch_jacobian_, scratch_rhs_, result, 2 * condensates.size());
 
   return jacobian_is_invertible;
 }
@@ -425,36 +427,83 @@ Eigen::MatrixXdt CondPhaseSolver::assemblePerturbedHessian(
 bool CondPhaseSolver::solveSystem(
   const Eigen::MatrixXdt& jacobian,
   const Eigen::VectorXdt& rhs,
-  Eigen::VectorXdt& result)
+  Eigen::VectorXdt& result,
+  const size_t nb_condensate_rows)
 {
   if (options.cond_use_lm)
   {
-    //Standard Newton via PartialPivLU (fast path).
-    //The Jacobian is already row-scaled by assembleJacobian, so PartialPivLU
-    //with partial pivoting handles the typical case where activity_corr → 0
-    //for formed condensates (near-zero diagonal) without any regularisation.
-    Eigen::PartialPivLU<Eigen::MatrixXdt> solver;
-    solver.compute(jacobian);
-    result = solver.solve(rhs);
+    //Check if any diagonal is small relative to the row scale.
+    //The Jacobian is already row-scaled (max |entry| ≈ 1 per row), so
+    //|J(i,i)| < threshold means the diagonal is much smaller than the row's
+    //dominant entries — indicating potential ill-conditioning.
+    //Use a fixed threshold (not adaptive lm_mu) to avoid misclassification
+    //when lm_mu adapts down to very small values.
+    const double diag_threshold = 0.01;
+    bool has_small_cond_diag = false;
+    bool has_small_elem_diag = false;
 
-    if (result.allFinite())
+    for (auto i = 0; i < jacobian.rows(); ++i)
+    {
+      if (std::abs(jacobian(i,i)) < diag_threshold)
+      {
+        if (static_cast<size_t>(i) < nb_condensate_rows)
+          has_small_cond_diag = true;
+        else
+          has_small_elem_diag = true;
+      }
+    }
+
+    if (!has_small_cond_diag && !has_small_elem_diag)
+    {
+      //Well-conditioned: standard Newton via PartialPivLU (fast path).
+      Eigen::PartialPivLU<Eigen::MatrixXdt> solver;
+      solver.compute(jacobian);
+      result = solver.solve(rhs);
       return true;
+    }
 
-    //Newton gave a non-finite result: the Jacobian is (nearly) rank-deficient.
-    //This occurs when safeExp clips activity_corr to exactly 0.0 for highly
-    //condensed species, making the condensate-row diagonal exactly zero and
-    //leaving PartialPivLU with a zero pivot.
-    //
-    //Fall back to the Levenberg-Marquardt normal equations:
+    if (!has_small_elem_diag)
+    {
+      //Only condensate diagonals are small (activity_corr → 0 for formed
+      //condensates). This is normal and the system is still full-rank — the
+      //stoichiometric off-diagonals carry the constraint. Diagonal clamping
+      //preserves the Newton direction with minimal perturbation.
+      Eigen::MatrixXdt J_reg = jacobian;
+
+      for (auto i = 0; i < J_reg.rows(); ++i)
+      {
+        if (std::abs(J_reg(i,i)) < diag_threshold)
+          J_reg(i,i) = (J_reg(i,i) >= 0) ? diag_threshold : -diag_threshold;
+      }
+
+      Eigen::PartialPivLU<Eigen::MatrixXdt> clamp_solver;
+      clamp_solver.compute(J_reg);
+      result = clamp_solver.solve(rhs);
+
+      if (result.allFinite())
+        return false;
+    }
+
+    //Element diagonals are also small (fully condensed elements → n_j ≈ 0).
+    //PartialPivLU with partial pivoting still handles most iterations fine
+    //because pivoting moves the small diagonal. Only fall back to LM when
+    //PartialPivLU actually produces non-finite results (genuine rank deficiency).
+    {
+      Eigen::PartialPivLU<Eigen::MatrixXdt> solver;
+      solver.compute(jacobian);
+      result = solver.solve(rhs);
+
+      if (result.allFinite())
+        return true;
+    }
+
+    //PartialPivLU gave non-finite: genuinely rank-deficient. Fall back to
+    //LM normal equations:
     //  (J^T J + mu * max_diag(J^T J) * I) * delta = J^T * rhs
-    //
-    //Since the Jacobian is already row-scaled by assembleJacobian (all rows
-    //have max |entry| ≈ 1), J^T J has well-balanced columns and max_diag
-    //scaling provides appropriate relative regularisation.  The resulting
-    //normal-equations matrix is symmetric PD regardless of J's rank, so
-    //PartialPivLU on it always succeeds and gives a finite descent direction.
+    //The resulting matrix is symmetric PD regardless of J's rank, so
+    //PartialPivLU always succeeds and gives a finite descent direction.
     if (options.verbose_level >= 3)
-      std::cout << "FastChem: condensed-phase Newton non-finite, using LM"
+      std::cout << "FastChem: using LM normal equations"
                 << " (mu=" << lm_mu << ")\n";
 
     Eigen::MatrixXdt hessian = assemblePerturbedHessian(jacobian, lm_mu);
@@ -465,7 +514,7 @@ bool CondPhaseSolver::solveSystem(
 
     return false;
   }
-
+  
   if (options.cond_reduce_system_size)
   {
     Eigen::PartialPivLU<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> solver;
