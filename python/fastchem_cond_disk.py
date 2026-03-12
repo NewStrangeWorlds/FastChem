@@ -14,9 +14,9 @@ from astropy import constants as const
 data = np.atleast_2d(np.loadtxt("../input/example_p_t_structures/protoplanetary_disk.dat"))
 
 #and extract temperature and pressure values
-temperature = data[:,1]
-pressure = data[:,0]
-distance = data[:,2]
+temperature = data[0:200,1]
+pressure = data[0:200,0]
+distance = data[0:200,2]
 
 
 #define the directory for the output
@@ -24,27 +24,24 @@ distance = data[:,2]
 output_dir = '../output'
 
 
-#the chemical species we want to plot later
-#note that the standard FastChem input files use the Hill notation
-plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'Fe1H1']
-#for the plot labels, we therefore use separate strings in the usual notation
-plot_species_labels = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
+#the gas-phase species we want to plot later
+plot_species = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
 
-#the default condensate data doesn't use the Hill notation
+#the condensates we want to plot later
 plot_species_cond = ['MgSiO3(s,l)', 'Mg2SiO4(s,l)', 'H2O(s,l)', 'CH4(s,l)']
 
 
 #create a FastChem object
 fastchem = pyfastchem.FastChem(
-  '../input/element_abundances/asplund_2009.dat', 
-  '../input/logK/logK_wo_ions.dat', 
+  '../input/element_abundances/asplund_2021.dat',
+  '../input/logK/logK.dat',
   '../input/logK/logK_condensates.dat',
   1)
 
 
 
 #for this calculation, we need to change some of FastChem's internal parameters
-fastchem.setParameter('condSolveFullSystem', np.bool_(True))
+fastchem.setBoolParameter('condSolveFullSystem', True)
 fastchem.setParameter('minDensityExponentElement', -3000.0)
 fastchem.setParameter('maxLogK', 10000.0)
 
@@ -71,6 +68,14 @@ if np.amin(output_data.element_conserved[:]) == 1:
   print("  - element conservation: ok")
 else:
   print("  - element conservation: fail")
+
+
+#internally, FastChem uses the Hill notation for gas-phase species
+#we therefore have to convert the input species names first
+plot_species_hill = plot_species.copy()
+
+for i, species in enumerate(plot_species_hill):
+  plot_species_hill[i] = fastchem.convertToHillNotation(species)
 
 
 #convert the output into a numpy array
@@ -156,11 +161,11 @@ plot_species_indices = []
 plot_species_symbols = []
 
 for i, species in enumerate(plot_species):
-  index = fastchem.getGasSpeciesIndex(species)
+  index = fastchem.getGasSpeciesIndex(plot_species_hill[i])
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices.append(index)
-    plot_species_symbols.append(plot_species_labels[i])
+    plot_species_symbols.append(plot_species[i])
   else:
     print("Species", species, "to plot not found in FastChem")
 

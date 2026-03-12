@@ -1,6 +1,8 @@
 This folder contains some example Python scripts that showcases some use cases for FastChem's Python module pyFastChem.
 The following scripts are available:
 
+fastchem_api_examples.py  Shows the use of some FastChem API functions.
+
 fastchem.py               A basic example that shows how FastChem is initialised and run.
 
 fastchem_metallicity.py   An example that shows how the element abundances are changed on the fly.
