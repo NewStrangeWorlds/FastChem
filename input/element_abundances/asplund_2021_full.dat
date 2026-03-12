@@ -1,4 +1,4 @@
-#Solar element abundances based on Asplund et al. (2020), A&A, 653, A141
+#Solar photospheric element abundances  (Asplund et al., A&A, 653, A141, 2021)
 e-  0.00
 Al  6.43
 Ar  6.38
@@ -34,6 +34,8 @@ Sc  3.14
 Ga  3.02
 As  2.30
 Se  3.34
+Br  2.54
+Kr  3.12
 Rb  2.32
 Sr  2.83
 Y   2.21
@@ -49,6 +51,7 @@ In  0.80
 Sn  2.02
 Sb  1.01
 Te  2.18
+Xe  2.22
 Cs  1.08
 Ba  2.27
 La  1.11

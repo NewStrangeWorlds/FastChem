@@ -1,6 +1,6 @@
 #logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:
-#includes elements with eps >= eps_Ge
-#fit coefficients calculateted from indicated data source. Last update 2019-04-10 js.
+#includes elements with eps >= eps_Pb and lithium, see Kitzmann et al. (in prep.) for details.
+#fit coefficients calculateted from indicated data source. Last update 2024-11-21 js.
 Al1Cl1 Aluminum_Chloride : Al 1 Cl 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    6.0172641222860926e+04  -9.8218922907517481e-01  -5.8077521648508537e+00   1.6577446947976804e-04  -6.1119306479155187e-09 
 
@@ -43,17 +43,17 @@ Al1F4Na1 Sodium_Tetrafluoroaluminate : Al 1 F 4 Na 1 # Chase, M. et al., JANAF t
 Al1H1 Aluminum_Hydride : Al 1 H 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.4288744515521750e+04  -1.5185524761152891e+00  -1.1479373519522369e+00   3.8381928291243705e-04  -1.8763244995576486e-08 
 
-Al1H1O1_1 Aluminum_Hydride_Oxide : Al 1 H 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
+Al1H1O1_oalh Aluminum_Hydride_Oxide : Al 1 H 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    9.1273575865216830e+04  -2.6141885663695916e+00  -1.0574777608423801e+01   9.3562687552234403e-04  -5.3055409693359885e-08 
 
-Al1H1O1_2 Aluminum_Hydroxide : Al 1 H 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
+Al1H1O1_aloh Aluminum_Hydroxide : Al 1 H 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.1664344266189750e+05  -3.4964435845299704e+00  -4.4650609359193822e+00   1.0691213808636801e-03  -5.5777575277095849e-08 
 
 Al1H1O2 Aluminum_Hydroxide_Oxide : Al 1 H 1 O 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.8038562975143458e+05  -3.4280291233514504e+00  -1.9842314369273481e+01   1.0873737978756848e-03  -5.8544759406836487e-08 
 
-Al1N1 Aluminum_Nitride : Al 1 N 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   3.3380450348611506e+04  -9.1201886728153170e-01  -4.8463730031653540e+00   1.9791088570828702e-04  -1.1104636083760199e-08 
+Al1N1 Aluminum_Nitride : Al 1 N 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   4.410348694536437e+04   -9.59999078968173e-01    -4.519743912749064e+00    2.117382787777161e-04   -1.297814697575901e-08
 
 Al1O1 Aluminum_Oxide : Al 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    6.1107679536380107e+04  -1.7901954345095135e+00  -1.3597144382142687e+00   7.6861459791821574e-04  -3.9315005996280890e-08 
@@ -82,8 +82,8 @@ Al2O2 Aluminum_Oxide : Al 2 O 2 # Chase, M. et al., JANAF thermochemical tables,
 C1Al1 Aluminum_Carbide : C 1 Al 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    4.2703735781273979e+04  -9.0170801136068235e-01  -6.1124252513432111e+00   1.8936519783881167e-04  -1.1699289612717052e-08 
 
-C1Cl1 Chloromethylidyne : C 1 Cl 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   4.0086066218924505e+04  -1.2126492262638351e+00  -3.9829745448007543e+00   2.5608719773122929e-04  -1.3775370645162121e-08 
+C1Cl1 Chloromethylidyne : C 1 Cl 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   4.724870772026224e+04   -1.844700915207032e+00   -1.038533041348366e-01    4.933919387038492e-04   -2.690119325226208e-08
 
 C1Cl1F1O1 Carbonic_Chloride_Fluoride_Oxide : C 1 Cl 1 F 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.9093780849067637e+05  -3.2270526909646264e+00  -2.3571685192187033e+01   1.1184854970522351e-03  -6.3903910113892400e-08 
@@ -160,10 +160,10 @@ C1H1F1O1 Formyl_Fluoride : C 1 H 1 F 1 O 1 # Chase, M. et al., JANAF thermochemi
 C1H1F3 Trifluoromethane : C 1 H 1 F 3 # Chase, M. et al., JANAF thermochemical tables, 1998.
    2.2368929203016960e+05  -5.6226861606049852e+00  -2.3263454751261634e+01   2.0487307565586477e-03  -1.1240010497630916e-07 
 
-C1H1N1_1 Hydrogen_Cyanide_HCN : C 1 H 1 N 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
+C1H1N1_hcn Hydrogen_Cyanide_HCN : C 1 H 1 N 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.5220770936532610e+05  -3.2044022899036122e+00  -6.2670328370286370e+00   9.8433301098929671e-04  -5.1782570298829157e-08 
 
-C1H1N1_2 Hydrogen_Isocyanide_HNC : C 1 H 1 N 1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database [...] , 2018.
+C1H1N1_hnc Hydrogen_Isocyanide_HNC : C 1 H 1 N 1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database [...] , 2023.
    1.453839706728254e+05   -2.938196985615019e+00   -7.380414445068316e+00    8.66421612553809e-04    -4.695937733428566e-08
 
 C1H1N1O1 Hydrogen_Isocyanate : C 1 H 1 N 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
@@ -232,8 +232,8 @@ C1O1S1 Carbon_Oxide_Sulfide : C 1 O 1 S 1 # Chase, M. et al., JANAF thermochemic
 C1O2 Carbon_Dioxide : C 1 O 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.9284060511825030e+05  -2.7725941201250066e+00  -1.4374508628203330e+01   9.5527761423722102e-04  -5.3273135070236439e-08 
 
-C1P1 Carbon_Phosphide : C 1 P 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   6.9831354117784926e+04  -1.2724361160171895e+00  -4.4282986849775625e+00   3.4288133670785925e-04  -2.8640990696677679e-08 
+C1P1 Carbon_Phosphide : C 1 P 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   6.133690120705073e+04   -1.593135110806402e+00   -2.30843211835973e+00     5.439446441141666e-04   -3.115705706675767e-08
 
 C1S1 Carbon_Sulfide : C 1 S 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    8.5442260249528306e+04  -1.4934232200640167e+00  -4.2664344834095118e+00   3.6693522377266585e-04  -2.3411223782798427e-08 
@@ -385,8 +385,8 @@ Ca1F1 Calcium_Fluoride : Ca 1 F 1 # Chase, M. et al., JANAF thermochemical table
 Ca1F2 Calcium_Fluoride : Ca 1 F 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.3443968087267844e+05  -1.6388365168772907e+00  -1.3368396336920341e+01   6.0847700929606008e-04  -5.5717816682880917e-08 
 
-Ca1H1 Calcium_hydride : Ca 1 H 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
-   2.650557385250938e+04   -1.576203422360421e+00    2.035085616687119e+00    5.603100444474086e-04   -4.345679721254188e-08
+Ca1H1 Calcium_Hydride : Ca 1 H 1 # McBride, B.J. et al., NASA/TP-2002-211556, 2002.
+   1.95715276373127e+04   -1.699824879843105e+00   2.811131554842247e+00   6.987179916669605e-04   -5.885796768901125e-08
 
 Ca1H1O1 Calcium_Hydroxide : Ca 1 H 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.0031800247760808e+05  -2.2486659076276965e+00  -8.9565267634409338e+00   7.9931737140792603e-04  -5.9143015706948803e-08 
@@ -439,6 +439,9 @@ Cl1F5S1 Sulfur_Chloride_Fluoride : Cl 1 F 5 S 1 # Chase, M. et al., JANAF thermo
 Cl1Fe1 Iron_Chloride : Cl 1 Fe 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.4094796997219601e+04  -1.1068935525349701e+00  -3.4562282015017445e+00   3.1558318740160241e-04  -2.7943137956042138e-08 
 
+Cl1Ge1 Germanium_Chloride : Cl 1 Ge 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   4.65734769688148e+04    -1.780028752133908e+00    1.045533980028116e+00    4.376624336938476e-04   -2.503618958925806e-08
+
 Cl1H1 Hydrogen_Chloride : Cl 1 H 1 # Shenyavskaya E.A. and Yungman, V.S., J. Phys. Chem. Ref. Data 33, 923-957, 2004.
    5.130008027572514e+04   -2.129523313500731e+00    2.864667493302545e+00    4.422891370438266e-04   -1.832024303251958e-08
 
@@ -459,6 +462,12 @@ Cl1K1 Potassium_Chloride : Cl 1 K 1 # Chase, M. et al., JANAF thermochemical tab
 
 Cl1Mg1 Magnesium_Chloride : Cl 1 Mg 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.7225832800897319e+04  -1.0485288072095358e+00  -2.7916997329034530e+00   2.3526081934775733e-04  -1.4213249015952065e-08 
+
+Cl1Mn1 Magnesium_Monochloride : Cl 1 Mn 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   4.030413303193266e+04   -1.120149603332757e+00   -3.000954996755224e+00    2.994717001738758e-04   -2.67182035693223e-08
+
+Cl1N1 Nitrogen_Monochloride : Cl 1 N 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   3.980456480247117e+04   -1.280269258939867e+00   -3.041631680236213e+00    2.908274259309977e-04   -1.367389705126664e-08
 
 Cl1N1O1 Nitrosyl_Chloride : Cl 1 N 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    9.4616519465409525e+04  -2.3060844621341516e+00  -1.1306193993951410e+01   6.5832004822831414e-04  -3.3249238461996385e-08 
@@ -498,6 +507,9 @@ Cl1Si1 Clorosilylidyne : Cl 1 Si 1 # Chase, M. et al., JANAF thermochemical tabl
 
 Cl1Ti1 Titanium_Chloride : Cl 1 Ti 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.2964968654775192e+04  -4.1512176420988567e-01  -9.1879019673017410e+00   2.5130313798439607e-04  -3.1305054366153641e-08 
+
+Cl1Zn1 Zinc_Monochloride : Cl 1 Zn 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   2.716407226785487e+04   -9.33932372931714e-01    -3.777352497328503e+00    1.405722594901393e-04   -5.095022937817534e-09
 
 Cl2 Chlorine : Cl 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    2.8796574589138902e+04  -1.3735381302932410e+00  -3.8763693141526119e+00   2.8570933158130613e-04  -1.0767044070904553e-08 
@@ -607,6 +619,9 @@ Cl6Fe2 Iron_Chloride : Cl 6 Fe 2 # Chase, M. et al., JANAF thermochemical tables
 Co1F2 Cobalt_Fluoride : Co 1 F 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.1274700785428176e+05  -2.0360282607474574e+00  -1.3006460526878072e+01   3.8333498107490094e-04  -2.0061275428539645e-08 
 
+Co1H1 Cobalt_Monohydride : Co 1 H 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   2.888793968037429e+04   -1.992745958301211e+00   1.402602985999478e+00     2.789210328286132e-04   -1.402811974432159e-08
+
 Cr1H1 Chromium_hydride : Cr 1 H 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
    2.250241642326867e+04   -1.339993974941812e+00   -6.817855156596314e-01    2.732708618298449e-04   -1.840639345958405e-08
 
@@ -621,6 +636,9 @@ Cr1O2 Chromium_Oxide : Cr 1 O 2 # Chase, M. et al., JANAF thermochemical tables,
 
 Cr1O3 Chromium_Oxide : Cr 1 O 3 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.7256700497923268e+05  -2.1735376538579771e+00  -3.3623272129178531e+01   8.9689329845821231e-04  -7.5641404409651833e-08 
+
+Cr1S1 Chromium_Sulfide : Cr 1 S 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   3.957517833131286e+04   -9.36869223830545e-01   -7.237239088168336e+00     1.911101871541292e-04   -3.047661828263684e-08
 
 Cu1F1 Copper_Fluoride : Cu 1 F 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.1449193338870384e+04  -9.2531942088690755e-01  -5.9216435713877900e+00   2.1747302523707213e-04  -1.9497415795795953e-08 
@@ -643,6 +661,9 @@ Cu2 Copper : Cu 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
 F1Fe1 Iron_Fluoride : F 1 Fe 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.3443928116737763e+04  -1.4694946792675978e+00  -2.4722562646406914e+00   3.7813777926776204e-04  -3.1517016662957794e-08 
 
+F1Ge1 Germanium_Fluoride : F 1 Ge 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   6.256495659313398e+04   -1.842262870196605e+00   7.061639534097333e-01     4.948017633545132e-04   -2.751941921681615e-08
+
 F1H1 Hydrogen_Fluoride : F 1 H 1 # Shenyavskaya E.A. and Yungman, V.S., J. Phys. Chem. Ref. Data 33, 923-957, 2004.
    6.806394671642161e+04   -1.996085063630141e+00    1.209177450406970e+00    3.311210126028281e-04   -1.130375630091848e-08
 
@@ -661,6 +682,9 @@ F1K1 Potassium_Fluoride : F 1 K 1 # Chase, M. et al., JANAF thermochemical table
 F1Mg1 Magnesium_Fluoride : F 1 Mg 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.5458075349945429e+04  -1.0888104100502858e+00  -3.3536073093201821e+00   2.7643149356532115e-04  -1.7205090974923974e-08 
 
+F1Mn1 Monomanganese_Monofluoride : F 1 Mn 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   5.322860650348402e+04   -1.16557236048769e+00   -3.46828325278229e+00      3.59191853633599e-04    -2.979107950968764e-08
+
 F1N1 Fluoroimidogen : F 1 N 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.6133105586485784e+04  -1.3490257849094860e+00  -2.9486830784476297e+00   3.4726690253149284e-04  -1.9676053723468897e-08 
 
@@ -675,6 +699,9 @@ F1N1O3 Fluorine_Nitrate : F 1 N 1 O 3 # Chase, M. et al., JANAF thermochemical t
 
 F1Na1 Sodium_Fluoride : F 1 Na 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.7144523375820419e+04  -9.7510548097207561e-01  -5.0940503958142926e+00   2.5759943439609967e-04  -1.6555523275771583e-08 
+
+F1Ni1 Nickel_Monofluoride : F 1 Ni 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   5.113703611721952e+04   -1.648495415003506e+00  -3.157262842350906e+00     2.925933169196163e-04   -1.46797632266387e-08
 
 F1O1 Oxygen_Fluoride : F 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    2.6119649865992829e+04  -1.3403289219563774e+00  -3.7957298548713538e+00   3.4523222260749581e-04  -1.7990259170561946e-08 
@@ -702,6 +729,9 @@ F1Si1 Fluorosilylidyne : F 1 Si 1 # Chase, M. et al., JANAF thermochemical table
 
 F1Ti1 Titanium_Fluoride : F 1 Ti 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    7.4576948560543882e+04  -4.1387795118080817e-01  -9.9567934510043870e+00   2.7039738512502076e-04  -3.3815662185997273e-08 
+
+F1Zn1 Zinc_Monofluoride : F 1 Zn 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   4.347411837890332e+04   -9.88316360685066e-01   -4.087406181227573e+00     1.95743053535386e-04    -9.78884052694435e-09
 
 F2 Fluorine : F 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.8741812111277148e+04  -1.4938935256423775e+00  -4.2206863557316865e+00   4.8449443206780712e-04  -3.3491818452424803e-08 
@@ -757,10 +787,10 @@ F2P1 Phosphorus_Fluoride : F 2 P 1 # Chase, M. et al., JANAF thermochemical tabl
 F2S1 Sulfur_Fluoride : F 2 S 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    8.7649260963925641e+04  -2.0395794329335217e+00  -1.4405038450863003e+01   5.6378533864938352e-04  -3.4135983279409064e-08 
 
-F2S2_1 Difluorodisulfane : F 2 S 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
+F2S2_fs2f Difluorodisulfane : F 2 S 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.2583546906509543e+05  -1.9359285204823209e+00  -3.1127288538644962e+01   7.1616011323274997e-04  -4.5205391267194613e-08 
 
-F2S2_2 Thiothionyl_Fluoride : F 2 S 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
+F2S2_ssf2 Thiothionyl_Fluoride : F 2 S 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.3361259346052899e+05  -2.1437240184923780e+00  -2.9984010719690559e+01   7.9257077046954172e-04  -4.9527141783000856e-08 
 
 F2Si1 Difluorosilylene : F 2 Si 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
@@ -853,6 +883,15 @@ Fe1O1 Iron_Oxide : Fe 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 199
 Fe1S1 Iron_Sulfide : Fe 1 S 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.8348450390698650e+04  -1.4833581947387415e+00  -2.0294951257712910e+00   3.7319394104259190e-04  -2.9027277492704889e-08 
 
+Ge1H1 Germanium_Hydride : Ge 1 H 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   3.102520141560689e+04   -2.987936962464099e+00   1.079970377729077e+01     8.22405423474692e-04    -3.863298700282389e-08
+
+Ge1O1 Germanium_Oxide : Ge 1 O 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   7.8959842889165e+04     -2.536758513048432e+00   3.776311052347082e+00     6.880549111391737e-04   -3.769056684387148e-08
+
+Ge1S1 Germanium_Sulphide : Ge 1 S 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   6.367990059552683e+04   -2.445828332395251e+00   3.787220984311199e+00     6.720254907796175e-04   -3.974434021443395e-08
+
 H1K1 Potassium_Hydride : H 1 K 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    2.1827075449376836e+04  -1.2149973046779152e+00  -1.4420742793037675e+00   4.1396887307375632e-04  -3.1576095617094040e-08 
 
@@ -868,7 +907,7 @@ H1Mg1O1 Magnesium_Hydroxide : H 1 Mg 1 O 1 # Chase, M. et al., JANAF thermochemi
 H1Mn1 Manganese_hydride : H 1 Mn 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
    3.020564099888976e+04   -1.656831090354667e+00    1.758045183878509e+00    5.376917959971666e-04   -3.215863902649741e-08
 
-H1N1 Imidogen : H 1 N 1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database [...] , 2018.
+H1N1 Imidogen : H 1 N 1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database [...] , 2023.
    3.938222744888985e+04   -1.850068162418047e+00    1.786919111980069e+00    3.544598287733667e-04   -1.24001708125282e-08
 
 H1N1O1 Nitrosyl_Hydride : H 1 N 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
@@ -909,6 +948,9 @@ H1Si1 Silylidyne : H 1 Si 1 # Chase, M. et al., JANAF thermochemical tables, 199
 
 H1Ti1 Titanium_hydride : H 1 Ti 1 # Burrows, A., et al., 2005, ApJ, 624, 988-1002.
    2.587140205410298e+04    1.225720562886976e+00   -2.073272194742807e+01   -3.787980063373411e-04    3.358471532668671e-09
+
+H1Zn1 Zinc_Monohydride : H 1 Zn 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   9.8654790676563e+03     -1.692634108362314e+00   2.361819571359041e+00     5.669977416911012e-04   -2.758175549834985e-08
 
 H2 Hydrogen : H 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.1909637142380554e+04  -1.8011701211306956e+00   8.7224583233705744e-02   2.5613890164973008e-04  -5.3540255367406060e-09 
@@ -973,17 +1015,17 @@ K2O4S1 Potassium_Sulfate : K 2 O 4 S 1 # Chase, M. et al., JANAF thermochemical 
 Mg1N1 Magnesium_Nitride : Mg 1 N 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.9583373296261118e+04  -9.3535148939788826e-01  -3.2110896282639487e+00   2.4478811011328927e-04  -1.7335301335868756e-08 
 
-Mg1O1 Magnesium_Oxide : Mg 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   4.1091507455097759e+04   4.8094008513906772e-01  -1.5761066181411252e+01   2.7585776830477832e-04  -3.4864425349542009e-08 
+Mg1O1 Magnesium_Oxide : Mg 1 O 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   3.049082244895509e+04    4.831975204632877e-03   -1.248713697573555e+01    5.092429306421585e-04   -5.101565647777937e-08
 
-Mg1S1 Magnesium_Sulfide : Mg 1 S 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   3.4134036039990191e+04   1.1224701408028182e+00  -1.9230570302264368e+01  -9.6990289320329770e-05  -1.1968386478527812e-08 
+Mg1S1 Magnesium_Sulphide : Mg 1 S 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   2.598990392378881e+04   -1.053198195587614e+00   -4.139493629107691e+00    2.633613011123272e-04   -1.644532149400082e-08
 
 Mg2 Magnesium : Mg 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    2.9515292013985828e+02  -1.5421407287108639e+00   3.8183585995251983e+00  -7.9325873744638480e-04   9.6053530217249111e-08 
 
-Mn1O1 Manganise_Monoxide : Mn 1 O 1 # Tsuji, T., Astron. & Astrophys. 23, 411-431, 1973.
-   5.015945457316461e+04    2.707755743548679e+00   -3.194643408493614e+01   -1.632789589080316e-03    8.6681049078358e-08
+Mn1O1 Manganese_Oxide : Mn 1 O 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   4.323342678711232e+04   -1.213759566356122e+00   -3.884359197709333e+00    3.76315309571533e-04    -3.08703397847116e-08
 
 Mn1S1 Manganese_Sulfide : Mn 1 S 1 # Tsuji, T., Astron. & Astrophys. 23, 411-431, 1973.
    3.659767242517097e+04    2.843204843215844e+00   -3.242658432779739e+01   -1.725063541986708e-03    9.16702262411433e-08
@@ -1009,8 +1051,8 @@ N1Si1 Silicon_Nitride : N 1 Si 1 # Chase, M. et al., JANAF thermochemical tables
 N1Si2 Silicon_Nitride : N 1 Si 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.1716522483013118e+05  -8.6867125340569373e-01  -2.2665257340393509e+01   2.8512527327101411e-04  -2.2587396058092930e-08 
 
-N1Ti1 Titanium_Nitride : N 1 Ti 1 # Tsuji, T., Astron. & Astrophys. 23, 411-431, 1973.
-   5.897124611189165e+04    4.331748232077572e+00   -4.464432572262064e+01   -2.34649338832968e-03     1.231024763947706e-07
+N1Ti1 Titanium_Nitride : N 1 Ti 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   5.719582574368879e+04   -1.101519626309123e+00   -6.185503939303679e+00    2.625774462447985e-04   -3.584773736821771e-08
 
 N1V1 Vanadium_Nitride : N 1 V 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.5560377905100642e+04  -1.5038410293336142e+00  -2.5124817949691760e+00   3.1217959025048314e-04  -2.0723106618926373e-08 
@@ -1042,13 +1084,13 @@ Na2 Sodium : Na 2 # Chase, M. et al., JANAF thermochemical tables, 1998.
 Na2O4S1 Sodium_Sulfate : Na 2 O 4 S 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.0289487736494199e+05  -3.0624959508683105e+00  -7.4455307351940064e+01   1.7868252264386375e-03  -1.1515484521054165e-07 
 
-Ni1O1 : Ni 1 O 1 # Tsuji, T., Astron. & Astrophys. 23, 411-431, 1973.
-   4.934503768542845e+04   -2.931035916300681e-01   -1.096582771938455e+01   -3.975231365136914e-04    2.578387926407946e-08
+Ni1O1 Nickel_Monoxide : Ni 1 O 1 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
+   4.37810730801237e+04    -1.386091707620235e+00   -5.30910056718572e+00     1.7319858809665e-04     -4.442694654947718e-09
 
 Ni1S1 Nickel_Sulfide : Ni 1 S 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    4.1806628204192042e+04  -1.1212072517099472e+00  -4.5880504899399739e+00   2.8036160550878181e-04  -1.8429237404078098e-08 
 
-O1P1 Posphorus_Oxide : O 1 P 1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database [...] , 2018.  
+O1P1 Posphorus_Oxide : O 1 P 1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database [...] , 2023.  
    7.1031246968968900e+04  -1.3358859425815710e+00  -3.5662712760140660e+00   4.0218813313759840e-04  -3.3323553503800090e-08
 
 O1S1 Sulfur_Oxide : O 1 S 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
@@ -1344,6 +1386,12 @@ Fe1+ Iron_Ion : Fe 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998
 
 Fe1- Iron_Ion : Fe 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.9944317404168514e+03  -2.3044098864280338e+00   1.2827582863287560e+01  -3.3848809238414511e-05  -1.0365296101185036e-08 
+
+Ge1+ Germanium_Ion : Ge 1 e- -1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
+  -9.1766342085350523e+04   1.4258264492255106e+00 -7.4836452266457369e+00    5.9632140330767591e-04  -4.2972093427839368e-08
+
+Ge1- Germanium_Ion : Ge 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
+   1.4136454591015299e+04  -3.7474783279416171e+00  2.2988213660574402e+01    3.2203509715603650e-04  -9.5284894763463815e-09
 
 H1+ Hydrogen_Ion : H 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -1.5781252265890539e+05   2.4992447354491105e+00  -1.4909391712601973e+01   4.2674331157677159e-07  -2.7731753320513089e-11 

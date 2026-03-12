@@ -380,22 +380,22 @@ std::string FastChem::convertToHillNotation(const std::string& formula) const
   
   //first, we treat some special isomer cases
   if (formula == "AlOH")
-    return "Al1H1O1_1";
+    return "Al1H1O1_aloh";
 
   if (formula == "OAlH")
-    return "Al1H1O1_2";
+    return "Al1H1O1_oalh";
 
   if (formula == "HCN")
-    return "C1H1N1_1";
+    return "C1H1N1_hcn";
 
   if (formula == "HNC")
-    return "C1H1N1_2";
+    return "C1H1N1_hnc";
   
   if (formula == "FS2F")
-    return "F2S2_1";
+    return "F2S2_fs2f";
 
   if (formula == "SSF2" || formula == "S2F2")
-    return "F2S2_2";
+    return "F2S2_ssf2";
 
 
   auto parsed_formula = parseFormulaWithCharge(formula);
