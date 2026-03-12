@@ -76,6 +76,7 @@ PYBIND11_MODULE(pyfastchem, m) {
 
         .def("setParameter", static_cast<bool (fastchem::FastChem::*)(const std::string&, const unsigned int)>(&fastchem::FastChem::setParameter))
         .def("setParameter", static_cast<bool (fastchem::FastChem::*)(const std::string&, const bool)>(&fastchem::FastChem::setParameter))
+        .def("setBoolParameter", static_cast<void (fastchem::FastChem<long double>::*)(const std::string&, const bool)>(&fastchem::FastChem<long double>::setParameter))
         .def("setParameter", static_cast<bool (fastchem::FastChem::*)(const std::string&, const double)>(&fastchem::FastChem::setParameter));
 
         m.attr("FASTCHEM_UNKNOWN_SPECIES") = py::cast(fastchem::FASTCHEM_UNKNOWN_SPECIES);

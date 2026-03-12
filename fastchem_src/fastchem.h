@@ -87,7 +87,7 @@ class FastChem {
 
     //functions to set internal variables during runtime
     //they will override any read-in values
-    void setElementAbundances(std::vector<double> abundances);
+    void setElementAbundances(const std::vector<double>& abundances);
 
     std::string convertToHillNotation(const std::string& formula) const;
 

@@ -89,14 +89,6 @@ class CondensedPhase {
       std::vector<unsigned int>& condensates_jac,
       std::vector<unsigned int>& condensates_rem);
 
-    void selectJacobianCondensates2(
-      const std::vector<Condensate*>& condensates,
-      const std::vector<double>& number_density_cond,
-      const std::vector<double>& activity_corr,
-      std::vector<unsigned int>& condensates_jac,
-      std::vector<unsigned int>& condensates_rem,
-      Eigen::MatrixXdt& jacobian);
-
     double correctValues(
       const Eigen::VectorXdt& result,
       const std::vector<Condensate*>& condensates,
@@ -121,25 +113,6 @@ class CondensedPhase {
       const std::vector<Element*>& elements,
       const std::vector<double>& log_elem_dens_old,
       std::vector<double>& log_elem_dens_new);
-
-    double newtonBacktrack(
-      const double objective_function_0,
-      const Eigen::VectorXdt& result,
-      const Eigen::VectorXdt& scaling_factors,
-      const std::vector<Condensate*>& condensates,
-      const std::vector<unsigned int>& condensates_jac,
-      const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double>& log_activity_corr_old,
-      std::vector<double>& log_activity_corr_new,
-      const std::vector<double>& log_cond_dens_old,
-      std::vector<double>& log_cond_dens_new,
-      const std::vector<Element*>& elements,
-      const std::vector<double>& log_elem_dens_old,
-      std::vector<double>& log_elem_dens_new,
-      std::vector<Molecule>& molecules,
-      const double total_element_density,
-      const double temperature,
-      const double max_change);
 };
 
 

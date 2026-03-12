@@ -75,6 +75,8 @@ int main(int argc, char *argv[])
   if (!fastchem.setParameter(std::string("nbIterationsBisection"), config.nb_bisection_iterations)) return 1;
   
   //fastchem.setParameter(std::string("condUseLM"), false);
+  unsigned int nb_switch_to_newton = 300;
+  fastchem.setParameter(std::string("nbSwitchToNewton"), nb_switch_to_newton);
   //read in the temperature-pressure structure
   std::vector<double> temperature;
   std::vector<double> pressure;
@@ -116,9 +118,6 @@ int main(int argc, char *argv[])
   input.pressure = pressure;
   input.equilibrium_condensation = config.calc_condensation;
   input.rainout_condensation = config.rainout_condensation;
-
-  // for (int i=0; i<100; ++i)
-  //   fastchem.calcDensities(input, output);
   
   unsigned int fastchem_flag = fastchem.calcDensities(input, output);
 

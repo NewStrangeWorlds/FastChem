@@ -161,22 +161,7 @@ void GasPhase::init()
     return;
   }
 
-
-  /*std::fstream file("nu.dat", std::ios::out);
-  
-  for (auto & i : molecules)
-  {
-    for (auto & j : i.stoichiometric_vector)
-      file << j << "\t";
-    
-    file << "\n";
-  }
-
-  file.close();*/
-
-
   e_ = element_data.elementIndex("e-");
-
 
   is_initialised = true;
 }

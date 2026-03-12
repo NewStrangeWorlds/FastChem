@@ -512,17 +512,15 @@ unsigned int FastChem::equilibriumCondensation(
               break;
             }
           }
-
+          
           if (!is_condensed)
             e.fixed_by_condensation = false;
         }
-
+        
         //Recompute phi values after the condensed phase has updated condensate densities,
         //so that the gas-phase solver below uses the current condensate state.
         updatePhi(total_element_density);
-
-        double total_element_density_cond = condensed_phase.totalElementDensity();
-
+        
         fastchem_converged = gas_phase.calculate(
           temperature,
           gas_density,
@@ -612,7 +610,6 @@ unsigned int FastChem::equilibriumCondensation(
     //recompute total_element_density after zeroing so that the subsequent phi
     //computation is consistent with the condensate densities actually present
     total_element_density = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
-    double total_element_density_cond = condensed_phase.totalElementDensity();
     
     //and run the gas phase calculation one last time
     updatePhi(total_element_density);

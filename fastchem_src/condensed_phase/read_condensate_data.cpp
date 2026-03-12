@@ -185,6 +185,9 @@ void CondensedPhase::addCondensate(
       phase_state = PhaseState::solid;
     }
 
+    for (auto & j : species.element_indices)
+      species.weight += elements[j].weight * std::fabs(species.stoichiometric_vector[j]);
+
     species.phase = phase_state;
 
     condensates.push_back(species);

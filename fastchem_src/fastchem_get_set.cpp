@@ -219,7 +219,7 @@ std::vector<double> FastChem::getElementAbundances()
 
 
 //Set the element abundances for all elements
-void FastChem::setElementAbundances(std::vector<double> abundances)
+void FastChem::setElementAbundances(const std::vector<double>& abundances)
 {
   element_data.setAbundances(abundances);
 
