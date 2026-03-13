@@ -27,6 +27,8 @@ The easiest way to install FastChem is via pip:
 pip install pyfastchem
 ```
 
+On most platforms, this will download a pre-compiled package, so no compiler is needed.
+
 ### Building from source (C++)
 
 ```bash
@@ -48,26 +50,26 @@ make -j
 FastChem includes the Python interface PyFastChem that allows running the C++ code as a normal Python module. We provide several examples that show how to call FastChem from within a Python script, including iterating over different metallicity values or C/O ratios, and computing chemical compositions with condensation. The Python examples can be found in the *python* directory.
 
 
-## User Guide
-
-FastChem comes with a user guide available at: https://newstrangeworlds.github.io/FastChem/
-
-It describes the installation and usage of FastChem and covers both the C++ stand-alone version and the Python interface. The manual also contains detailed information on the internal interface functions that the FastChem object class and its Python interface provide.
-
-
 ## Notes on Apple Silicon
 
 Previous versions of FastChem relied on long double (quadruple) precision for convergence at low temperatures. Since Apple Silicon (Mx) processors have no hardware support for quadruple-precision arithmetic, this caused convergence issues on these machines. The current version of FastChem has been redesigned to work fully in double precision, resolving this limitation.
 
 ### OpenMP on macOS
 
-Apple's default compiler (Apple Clang) does not ship with OpenMP support. To enable OpenMP parallelisation on macOS, install `libomp` via Homebrew:
+FastChem automatically runs multiple calculations in parallel using OpenMP. Apple's default compiler (Apple Clang) does not ship with OpenMP support. To enable OpenMP parallelisation on macOS, install `libomp` via Homebrew:
 
 ```bash
 brew install libomp
 ```
 
 CMake and the Python build system (`setup.py`) will automatically detect and use it.
+
+
+## User Guide
+
+FastChem comes with a user guide available at: https://newstrangeworlds.github.io/FastChem/
+
+It describes the installation and usage of FastChem and covers both the C++ stand-alone version and the Python interface. The manual also contains detailed information on the internal interface functions that the FastChem object class and its Python interface provide.
 
 
 ## References
