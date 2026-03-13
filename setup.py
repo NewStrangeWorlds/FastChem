@@ -2,12 +2,10 @@ from glob import glob
 import os
 import sys
 import subprocess
-from setuptools import setup, Extension
+from setuptools import setup
 import tempfile
 from pybind11.setup_helpers import Pybind11Extension, build_ext
-from distutils.dir_util import mkpath
-from distutils.errors import CCompilerError
-from distutils import sysconfig
+from setuptools._distutils.errors import CCompilerError
 
 
 __version__ = "3.1.3"
@@ -36,7 +34,7 @@ class custom_build_ext(build_ext):
 
   #Compile a test program to determine if C++ compiler supports OpenMP
   def check_openmp_support(self):
-    mkpath(self.build_temp)
+    os.makedirs(self.build_temp, exist_ok=True)
 
     #Determine platform-specific OpenMP flags
     if sys.platform == "darwin":
@@ -121,7 +119,7 @@ ext_modules = [
            glob("fastchem_src/condensed_phase/*.cpp") +
            glob("python/fastchem_python_wrapper.cpp")),
     define_macros = [('_SETUP_PY', '1')],
-    cxx_std = 11,
+    cxx_std = 17,
     language ='c++',
   ),
 ]
@@ -131,6 +129,7 @@ setup(
   name        = "pyfastchem",
   description = "FastChem, an ultra-fast equilibrium chemistry",
   long_description=__read__('README.md'),
+  long_description_content_type="text/markdown",
   author      = "Daniel Kitzmann, Joachim Stock, Brett Morris",
   license     = "GPL 3.0",
   url         = "https://github.com/NewStrangeWorlds/FastChem",

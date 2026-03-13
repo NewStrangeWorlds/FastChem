@@ -11,7 +11,6 @@
 cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
 
 OPTION(USE_PYTHON "Compile FastChem's Python Wrapper" OFF)
-OPTION(USE_MARCH_NATIVE "Enable -march=native for the native library and executable" ON)
 
 
 project(fastchem CXX C)
@@ -34,9 +33,9 @@ endif()
 
 
 #output directories
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR})
 
 
 #define the source files
@@ -89,7 +88,7 @@ if ((USE_PYTHON MATCHES ON) AND (NOT ONLY_PYTHON_LIBRARY))
     FetchContent_Declare(
         pybind11
         GIT_REPOSITORY https://github.com/pybind/pybind11
-        GIT_TAG        97976c16fb7652f7faf02d76756666ef87adbe7d
+        GIT_TAG        v2.12.0
     )
 
     FetchContent_MakeAvailable(pybind11)
@@ -111,7 +110,7 @@ if ((USE_PYTHON MATCHES ON) AND (NOT ONLY_PYTHON_LIBRARY))
 
   #find_package(pybind11 REQUIRED)
 
-  set_target_properties(pyfastchem PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python")
+  set_target_properties(pyfastchem PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/python")
 
   #target_link_libraries(pyfastchem PRIVATE fastchem_for_py OpenMP::OpenMP_CXX pybind11::module)
   target_link_libraries(pyfastchem PRIVATE fastchem_for_py pybind11::module)
@@ -140,14 +139,7 @@ if (NOT ONLY_PYTHON_LIBRARY)
   #compilation target for FastChem
   add_library(fastchem_lib ${SRC_FASTCHEM})
 
-  if (USE_MARCH_NATIVE)
-    # EIGEN_DONT_VECTORIZE suppresses Eigen's explicit AVX/AVX-512 SIMD intrinsics,
-    # which trigger an overaligned allocator/deallocator mismatch on CPUs with AVX-512.
-    # The compiler still auto-vectorizes all code (including Eigen's scalar loops) with AVX.
-    target_compile_options(fastchem_lib PRIVATE "-O3")
-  else()
-    target_compile_options(fastchem_lib PRIVATE "-O3")
-  endif()
+  target_compile_options(fastchem_lib PRIVATE "-O3")
   if (OpenMP_FOUND)
     target_link_libraries(fastchem_lib PRIVATE OpenMP::OpenMP_CXX)
   endif()

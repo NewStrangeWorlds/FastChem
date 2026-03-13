@@ -24,13 +24,10 @@ distance = data[:,2]
 output_dir = '../output'
 
 
-#the chemical species we want to plot later
-#note that the standard FastChem input files use the Hill notation
-plot_species = ['H2O1', 'C1O2', 'C1O1', 'C1H4', 'H3N1', 'Fe1H1']
-#for the plot labels, we therefore use separate strings in the usual notation
-plot_species_labels = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
+#the gas-phase species we want to plot later
+plot_species = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
 
-#the default condensate data doesn't use the Hill notation
+#the condensate we want to plot
 plot_species_cond = ['MgSiO3(s,l)', 'Mg2SiO4(s,l)', 'H2O(s,l)', 'CH4(s,l)']
 
 
@@ -41,12 +38,6 @@ fastchem = pyfastchem.FastChem(
   '../input/logK/logK_condensates.dat',
   1)
 
-
-
-#for this calculation, we need to change some of FastChem's internal parameters
-fastchem.setParameter('condSolveFullSystem', np.bool_(True))
-fastchem.setParameter('minDensityExponentElement', -3000.0)
-fastchem.setParameter('maxLogK', 10000.0)
 
 
 #create the input and output structures for FastChem
@@ -150,17 +141,24 @@ saveCondOutput(output_dir + '/condensates.dat',
 #                     fastchem)
 
 
+#internally, FastChem uses the Hill notation for gas-phase species
+#we therefore have to convert the input species names first
+plot_species_hill = plot_species.copy()
+
+for i, species in enumerate(plot_species_hill):
+  plot_species_hill[i] = fastchem.convertToHillNotation(species)
 
 #check the gas-phase species we want to plot and get their indices from FastChem
 plot_species_indices = []
 plot_species_symbols = []
 
+#check the gas-phase species we want to plot and get their indices from FastChem
 for i, species in enumerate(plot_species):
-  index = fastchem.getGasSpeciesIndex(species)
+  index = fastchem.getGasSpeciesIndex(plot_species_hill[i])
 
   if index != pyfastchem.FASTCHEM_UNKNOWN_SPECIES:
     plot_species_indices.append(index)
-    plot_species_symbols.append(plot_species_labels[i])
+    plot_species_symbols.append(plot_species[i])
   else:
     print("Species", species, "to plot not found in FastChem")
 
