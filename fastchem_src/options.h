@@ -100,9 +100,14 @@ struct FastChemOptions{
   double newton_err = 1e-5;
   double cond_accuracy = 1e-5;
   double element_conserve_accuracy = 1e-4;
-
-  double element_density_minlimit = 1e-155; //smallest allowed particle number densities
+  
+  //smallest allowed particle number densities
+  double element_density_minlimit = 1e-155; 
   double molecule_density_minlimit = 1e-155;
+  //condensates with a max_number_density below this are skipped in the Newton solver 
+  //(number_density set to 0) to avoid Jacobian ill-conditioning from near-depleted trace 
+  //elements after rainout
+  double condensate_density_threshhold = 1e-100; 
 
   unsigned int verbose_level = 1;
 

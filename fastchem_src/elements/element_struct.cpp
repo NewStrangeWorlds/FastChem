@@ -151,7 +151,7 @@ bool Element::checkElementConservation(
   else
     element_conserved = 0;
 
-  // std::cout << "El " << this->symbol << " nd " << this->number_density 
+  // std::cout << "El " << this->symbol << " nd " << this->number_density << "  " << this->log_number_density 
   //           << " sg " << sum_gas << " sd " << sum_cond
   //           << " sum_total = " << sum_total 
   //           << " total_eps " << total_density*epsilon

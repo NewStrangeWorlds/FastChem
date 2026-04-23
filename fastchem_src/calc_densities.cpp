@@ -102,7 +102,7 @@ unsigned int FastChem::calcDensities(
 
     #pragma omp parallel for schedule(dynamic, 1) num_threads(nb_omp_threads)
     for (unsigned int i=0; i<input.temperature.size(); i++)
-    { //std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
+    { std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
       if (!input.equilibrium_condensation)
       {
         output.fastchem_flag[i] =
@@ -225,8 +225,8 @@ unsigned int FastChem::calcDensity(
     //set the initial electron density to 1 (for stability reasons)
     if (element_data.e_ != FASTCHEM_UNKNOWN_SPECIES)
     {
-      element_data.elements[element_data.e_].number_density = options.element_density_minlimit; //1.0;
-      element_data.elements[element_data.e_].log_number_density = log_min; //0.0;
+      element_data.elements[element_data.e_].number_density = 1.0;
+      element_data.elements[element_data.e_].log_number_density = 0.0;
     }
   }
 
@@ -310,7 +310,7 @@ void FastChem::rainoutCondensation(
       output.nb_cond_iterations[i],
       output.nb_iterations[i]);
 
-    //if the calculation at a point fails, 
+    //if the calculation at a point fails,
     //we stop the entire calculation along the p-T structure
     if (output.fastchem_flag[i] != FASTCHEM_SUCCESS)
       break;
@@ -349,12 +349,20 @@ void FastChem::rainoutCondensation(
 
 void FastChem::updatePhi(double total_element_density)
 {
+  //Guard against invalid total (can occur if Newton diverged and produced NaN)
+  if (!std::isfinite(total_element_density) || total_element_density <= 0)
+    return;
+
   double phi_sum = 0;
   for (auto & i : element_data.elements)
   {
     i.calcDegreeOfCondensation(condensed_phase.condensates, total_element_density);
     phi_sum += i.phi;
   }
+
+  if (!std::isfinite(phi_sum) || phi_sum <= 0)
+    return;
+
   for (auto & i : element_data.elements)
     i.normalisePhi(phi_sum);
 }
@@ -438,7 +446,7 @@ unsigned int FastChem::equilibriumCondensation(
   std::vector<Element*> elements_cond;
 
   condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
-  
+
 
   bool cond_converged = false;
   bool combined_converged = false;
@@ -446,6 +454,15 @@ unsigned int FastChem::equilibriumCondensation(
   bool chem_backup_solver_default = options.chem_use_backup_solver;
   size_t nb_condensed_elements = 0;
 
+  if (options.verbose_level >= 4 && condensates_act.size() > 0)
+  {
+    std::cout << "  T=" << temperature << " Initial active condensates: " << condensates_act.size() << "\n";
+    for (auto & c : condensates_act)
+      std::cout << "    " << c->symbol << "  log_act=" << c->log_activity << "\n";
+    for (auto & e : elements_cond)
+      std::cout << "    elem " << e->symbol << "  eps=" << e->epsilon << "  n=" << e->number_density << "\n";
+    std::cout << "  total_element_density=" << total_element_density << "\n";
+  }
 
   if (condensates_act.size() > 0)
   {
@@ -535,9 +552,12 @@ unsigned int FastChem::equilibriumCondensation(
       }
 
       //sanity check for the condensate activities
+      //Skip condensates with negligible max density (trace elements after rainout):
+      //these are handled separately in selectActiveCondensates and their activity
+      //is not a reliable convergence indicator.
       for (auto & i : condensed_phase.condensates)
-        if (i.log_activity > 0.001)
-        { 
+        if (i.log_activity > 0.001 && i.max_number_density >= options.condensate_density_threshhold)
+        {
           cond_converged = false;
         }
 
@@ -597,15 +617,18 @@ unsigned int FastChem::equilibriumCondensation(
 
     //sanity check for the condensate activities
     for (auto & i : condensed_phase.condensates)
-      if (i.log_activity > 0.001)
-      { 
+      if (i.log_activity > 0.001 && i.max_number_density >= 1.0e-100)
+      {
         cond_converged = false;
       }
 
     //remove condensates that are not present
     //i.e. those with an activity smaller than 1
+    //Exception: trace condensates (max_number_density < 1e-100) keep their
+    //density so that updatePhi correctly reflects their degree of condensation
     for (auto & i : condensed_phase.condensates)
-      if (i.log_activity < LOG_ACTIVITY_THRESHOLD) i.number_density = 0.0;
+      if (i.log_activity < LOG_ACTIVITY_THRESHOLD && i.max_number_density >= 1.0e-100)
+        i.number_density = 0.0;
 
     //recompute total_element_density after zeroing so that the subsequent phi
     //computation is consistent with the condensate densities actually present
@@ -641,8 +664,22 @@ unsigned int FastChem::equilibriumCondensation(
   if (!fastchem_converged && options.verbose_level >= 1) 
     std::cout << "Convergence problem in FastChem: Reached maximum number of chemistry iterations :(\n";
 
-  if (!cond_converged&& options.verbose_level >= 1) 
+  if (!cond_converged && options.verbose_level >= 1)
+  {
     std::cout << "Convergence problem in FastChem: Equilibrium condensation calculation failed :(\n";
+    std::cout << "  T=" << temperature << " P=" << gas_density << "\n";
+    std::cout << "  Active condensates with log_activity > 0.001:\n";
+    for (auto & i : condensed_phase.condensates)
+      if (i.log_activity > 0.001)
+        std::cout << "    " << i.symbol << "  log_act=" << i.log_activity
+                  << "  n=" << i.number_density << "\n";
+    std::cout << "  Elements involved:\n";
+    for (auto & i : element_data.elements)
+      if (i.symbol != "e-" && i.epsilon > 0)
+        std::cout << "    " << i.symbol << "  eps=" << i.epsilon
+                  << "  phi=" << i.phi << "  n=" << i.number_density
+                  << "  DOC=" << i.degree_of_condensation << "\n";
+  }
 
   if (!combined_converged && options.verbose_level >= 1) 
     std::cout << "Convergence problem in FastChem: Combined gas-phase & equilibrium condensation calculation failed :(\n";

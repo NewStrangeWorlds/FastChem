@@ -12,7 +12,7 @@
 
 FastChem is an equilibrium chemistry code that calculates the chemical composition of the gas and condensed phase for given temperatures and pressures. The calculation of the gas phase is based on a semi-analytic approach, described in detail in [Stock et al. (2018)](#references) and [Stock et al. (2022)](#references). FastChem Cond (version 3) adds condensation to the code, computing chemical compositions using equilibrium condensation or the rainout approximation commonly used in the field of exoplanets and brown dwarfs, as described in [Kitzmann, Stock & Patzer (2024)](#references). The current version FastChem 4 resolved convergence issues in both gas phase and condensate calculations and added a wide range of new elements and chemical species.
 
-The code is written in object-oriented C++. The current version uses log-based element densities as primary variables, which avoids numerical underflow and allows FastChem to converge at temperatures as low as 1 K (without ions). Overall, the model has been successfully tested for temperatures from 1 K to 6000 K and pressures from 1e-13 bar to 1000 bar for solar element abundances.
+The code is written in object-oriented C++. The current version uses log-based element densities as primary variables, which avoids numerical underflow and allows FastChem to converge at temperatures as low as 1 K (without ions). Overall, the model has been successfully tested for temperatures from 100 K to 6000 K and pressures from 1e-13 bar to 1000 bar for solar element abundances.
 
 Besides the actual FastChem model, we provide a C++ stand-alone version in the *model_src* folder that allows to calculate the equilibrium chemistry for a given temperature-pressure structure. In addition, we provide the Python interface PyFastChem.
 
@@ -52,7 +52,7 @@ FastChem includes the Python interface PyFastChem that allows running the C++ co
 
 ## Notes on Apple Silicon
 
-Previous versions of FastChem relied on long double (quadruple) precision for convergence at low temperatures. Since Apple Silicon (Mx) processors have no hardware support for quadruple-precision arithmetic, this caused convergence issues on these machines. The current version of FastChem has been redesigned to work fully in double precision, resolving this limitation.
+Previous versions of FastChem relied on long double (quadruple) precision for convergence at low temperatures. Since Apple Silicon (Mx) processors have no hardware support for quadruple-precision arithmetic, this caused convergence issues on these machines. **The current version of FastChem has been redesigned to work fully in double precision, resolving this limitation.**
 
 ### OpenMP on macOS
 
