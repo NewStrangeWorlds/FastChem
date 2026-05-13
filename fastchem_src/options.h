@@ -39,7 +39,8 @@ enum class ParameterFloat {
     newton_err,
     cond_accuracy,
     element_minlimit,
-    molecule_minlimit
+    molecule_minlimit,
+    cond_trace_density_threshold
 };
 
 

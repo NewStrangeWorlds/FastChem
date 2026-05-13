@@ -502,6 +502,10 @@ bool FastChem::setParameter(const std::string& parameter, const double value)
       options.molecule_density_minlimit = std::pow(10.0, value);
       break;
 
+    case ParameterFloat::cond_trace_density_threshold:
+      options.condensate_density_threshhold = value;
+      break;
+
     default:
       std::cout << "Unknown parameter \"" << parameter << "\"  with a floatint-point value!\n";
       return false;
