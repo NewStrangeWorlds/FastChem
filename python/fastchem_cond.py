@@ -52,7 +52,7 @@ input_data.pressure = pressure
 input_data.equilibrium_condensation = True
 
 #this would turn on the rainout condensation approach
-#input_data.rainout_condensation = True
+input_data.rainout_condensation = True
 
 
 #run FastChem on the entire p-T structure

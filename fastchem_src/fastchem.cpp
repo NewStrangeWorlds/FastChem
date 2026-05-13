@@ -31,8 +31,7 @@ namespace fastchem {
 
 //Constructor for the FastChem class
 //Requires: parameter file path and the initial verbose level that is used while reading the input files
-template <class double_type>
-FastChem<double_type>::FastChem(
+FastChem::FastChem(
   const std::string& model_parameter_file, const unsigned int verbose_level_start)
     : options(model_parameter_file, verbose_level_start)
     , element_data(options.element_abundances_file, options.chemical_element_file)
@@ -75,8 +74,7 @@ FastChem<double_type>::FastChem(
 //Constructor for the FastChem class
 //Requires: file paths for element abundance and species data files 
 //          and the initial verbose level that is used while reading the input files
-template <class double_type>
-FastChem<double_type>::FastChem(
+FastChem::FastChem(
   const std::string& element_abundances_file,
   const std::string& species_data_file,
   const std::string& cond_species_data_file,
@@ -115,8 +113,7 @@ FastChem<double_type>::FastChem(
 //This version only initiales the gas phase
 //Requires: file paths for element abundance and species data files 
 //          and the initial verbose level that is used while reading the input files
-template <class double_type>
-FastChem<double_type>::FastChem(
+FastChem::FastChem(
   const std::string& element_abundances_file,
   const std::string& species_data_file,
   const unsigned int verbose_level_start) 
@@ -148,8 +145,7 @@ FastChem<double_type>::FastChem(
 
 
 
-template <class double_type>
-void FastChem<double_type>::init()
+void FastChem::init()
 {
 
 }
@@ -157,8 +153,7 @@ void FastChem<double_type>::init()
 
 
 //the copy constructor
-template <class double_type>
-FastChem<double_type>::FastChem(const FastChem &obj)
+FastChem::FastChem(const FastChem &obj)
   : options(obj.options)
   , element_data(obj.element_data)
   , gas_phase(obj.gas_phase, options, element_data)
@@ -168,6 +163,4 @@ FastChem<double_type>::FastChem(const FastChem &obj)
 }
 
 
-template class FastChem<double>;
-template class FastChem<long double>;
 }

@@ -30,8 +30,7 @@
 namespace fastchem {
 
 
-template <class double_type>
-void Condensate<double_type>::calcMassActionConstant(const double temperature)
+void Condensate::calcMassActionConstant(const double temperature)
 {
   size_t set_index = 0;
 
@@ -45,27 +44,26 @@ void Condensate<double_type>::calcMassActionConstant(const double temperature)
   if (fit_coeff_limits.back() < temperature) 
     set_index = fit_coeff_limits.size()-1;
 
-  double_type log_K = fit_coeff[set_index][0]/temperature
+  double log_K = fit_coeff[set_index][0]/temperature
                     + fit_coeff[set_index][1]*std::log(temperature)
                     + fit_coeff[set_index][2]
                     + fit_coeff[set_index][3]*temperature
                     + fit_coeff[set_index][4]*temperature * temperature;
 
-  double_type sigma = 0;
+  double sigma = 0;
 
   for (auto & i : stoichiometric_vector)
     sigma += i;
 
-  const double_type pressure_scaling = 1.0e6 / (CONST_K * temperature);
+  const double pressure_scaling = 1.0e6 / (CONST_K * temperature);
   mass_action_constant = log_K - sigma * std::log(pressure_scaling);
 }
 
 
 
-template <class double_type>
-void Condensate<double_type>::calcActivity(
+void Condensate::calcActivity(
   const double temperature,
-  const std::vector<Element<double_type>>& elements,
+  const std::vector<Element>& elements,
   const bool use_data_validity_limits)
 {
   if (use_data_validity_limits && temperature > fit_coeff_limits.back())
@@ -77,27 +75,29 @@ void Condensate<double_type>::calcActivity(
   log_activity = mass_action_constant;
 
   for (auto & i : element_indices)
-    log_activity += std::log(elements[i].number_density) * stoichiometric_vector[elements[i].index];
+    log_activity += elements[i].log_number_density * stoichiometric_vector[elements[i].index];
 
   if (log_activity < -10.0) log_activity = -10.0;
 }
 
 
 
-template <class double_type>
-double_type Condensate<double_type>::calcActivity(
+double Condensate::calcActivity(
   const double temperature, 
-  const std::vector<Element<double_type>>& elements,
-  const std::vector<double_type> elem_number_densities,
+  const std::vector<Element>& elements,
+  const std::vector<double> elem_number_densities,
   const bool use_data_validity_limits)
 {
   if (use_data_validity_limits && temperature > fit_coeff_limits.back())
     return -10.0;
 
-  double_type log_activity = mass_action_constant;
+  double log_activity = mass_action_constant;
 
   for (auto & i : element_indices)
-    log_activity += std::log(elem_number_densities[elements[i].index]) * stoichiometric_vector[elements[i].index];
+  {
+    const double log_dens = safeLog(elem_number_densities[elements[i].index]);
+    log_activity += log_dens * stoichiometric_vector[elements[i].index];
+  }
 
   if (log_activity < -10.0) log_activity = -10.0;
 
@@ -107,13 +107,12 @@ double_type Condensate<double_type>::calcActivity(
 
 
 //the reference element is the one with the smallest abundance in the condensate
-template <class double_type>
-void Condensate<double_type>::findReferenceElement(
-  const std::vector<Element<double_type>>& elements)
+void Condensate::findReferenceElement(
+  const std::vector<Element>& elements)
 {
   reference_element = element_indices[0];
   
-  double_type smallest_abundance = 
+  double smallest_abundance = 
     elements[element_indices[0]].abundance/stoichiometric_vector[element_indices[0]];
 
   for (auto & i : element_indices)
@@ -127,9 +126,8 @@ void Condensate<double_type>::findReferenceElement(
 
 
 //degree of condensation for the condensate
-template <class double_type>
-void Condensate<double_type>::degreeOfCondensation(
-  const std::vector<Element<double_type>>& elements, const double_type total_element_density)
+void Condensate::degreeOfCondensation(
+  const std::vector<Element>& elements, const double total_element_density)
 {
   if (reference_element == FASTCHEM_UNKNOWN_SPECIES)
     findReferenceElement(elements);
@@ -141,23 +139,20 @@ void Condensate<double_type>::degreeOfCondensation(
 
 //maximum condensate density
 //see Eq. 13 in Paper III
-template <class double_type>
-void Condensate<double_type>::maxDensity(
-  const std::vector< Element<double_type> >& elements, double_type total_number_density)
+void Condensate::maxDensity(
+  const std::vector< Element >& elements, double total_number_density)
 {
   max_number_density = elements[element_indices[0]].epsilon 
     * total_number_density/stoichiometric_vector[element_indices[0]];
 
   for (auto & i : element_indices)
   { 
-    const double_type max_density = elements[i].epsilon * total_number_density/stoichiometric_vector[i];
+    const double max_density = elements[i].epsilon * total_number_density/stoichiometric_vector[i];
 
     if (max_density < max_number_density) max_number_density = max_density;
   }
 }
 
 
-template struct Condensate<double>;
-template struct Condensate<long double>;
 
 }

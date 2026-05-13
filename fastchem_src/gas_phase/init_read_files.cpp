@@ -35,8 +35,7 @@ namespace fastchem {
 
 
 //Read the chemical elements file
-template <class double_type>
-bool GasPhase<double_type>::readSpeciesData(const std::string& file_path)
+bool GasPhase::readSpeciesData(const std::string& file_path)
 { 
   std::fstream file(file_path.c_str(), std::ios::in);
 
@@ -96,7 +95,7 @@ bool GasPhase<double_type>::readSpeciesData(const std::string& file_path)
 
     std::istringstream ma_input(line);
 
-    std::vector<double_type> mass_action_coeff;
+    std::vector<double> mass_action_coeff;
 
 
     double ma_coefficient;
@@ -123,16 +122,15 @@ bool GasPhase<double_type>::readSpeciesData(const std::string& file_path)
 
 
 //Add a molecule to the system and update all of its elements
-template <class double_type>
-void GasPhase<double_type>::addMolecule(
+void GasPhase::addMolecule(
   const std::string& name,
   const std::string& symbol,
   const std::vector<std::string>& species_elements,
   const std::vector<int>& stoichiometric_coeff,
-  const std::vector<double_type>& mass_action_coeff,
+  const std::vector<double>& mass_action_coeff,
   const int charge)
 {
-  Molecule<double_type> species;
+  Molecule species;
 
   species.name = name;
   species.symbol = symbol;
@@ -186,7 +184,5 @@ void GasPhase<double_type>::addMolecule(
 
 
 
-template class GasPhase<double>;
-template class GasPhase<long double>;
 
 } 

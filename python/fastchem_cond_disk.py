@@ -27,7 +27,7 @@ output_dir = '../output'
 #the gas-phase species we want to plot later
 plot_species = ['H2O', 'CO2', 'CO', 'CH4', 'NH3', 'FeH']
 
-#the condensates we want to plot later
+#the condensate we want to plot
 plot_species_cond = ['MgSiO3(s,l)', 'Mg2SiO4(s,l)', 'H2O(s,l)', 'CH4(s,l)']
 
 
@@ -38,12 +38,6 @@ fastchem = pyfastchem.FastChem(
   '../input/logK/logK_condensates.dat',
   1)
 
-
-
-#for this calculation, we need to change some of FastChem's internal parameters
-fastchem.setBoolParameter('condSolveFullSystem', True)
-fastchem.setParameter('minDensityExponentElement', -3000.0)
-fastchem.setParameter('maxLogK', 10000.0)
 
 
 #create the input and output structures for FastChem
@@ -155,11 +149,18 @@ saveCondOutput(output_dir + '/condensates.dat',
 #                     fastchem)
 
 
+#internally, FastChem uses the Hill notation for gas-phase species
+#we therefore have to convert the input species names first
+plot_species_hill = plot_species.copy()
+
+for i, species in enumerate(plot_species_hill):
+  plot_species_hill[i] = fastchem.convertToHillNotation(species)
 
 #check the gas-phase species we want to plot and get their indices from FastChem
 plot_species_indices = []
 plot_species_symbols = []
 
+#check the gas-phase species we want to plot and get their indices from FastChem
 for i, species in enumerate(plot_species):
   index = fastchem.getGasSpeciesIndex(plot_species_hill[i])
 

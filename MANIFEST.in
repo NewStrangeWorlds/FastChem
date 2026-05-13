@@ -1,5 +1,4 @@
-recursive-include fastchem_src/condensed_phase *.h 
-recursive-include fastchem_src/elements *.h
-recursive-include fastchem_src/gas_phase *.h 
-recursive-include fastchem_src *.h 
+recursive-include fastchem_src *.h
+recursive-include fastchem_src *.cpp
+include python/*.cpp
 recursive-include _ext *

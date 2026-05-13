@@ -32,73 +32,94 @@
 namespace fastchem {
 
 
-//Bisection method in one dimension
-template <class double_type>
-bool GasPhaseSolver<double_type>::bisection(
-  Element<double_type>& species, std::vector<double_type>& Aj, const double gas_density)
+//Bisection method in log-space
+//Bisects on y in [LOG_DENSITY_FLOOR, ln(gas_density)] using the log-space residual.
+//The sign of F = P - R is determined by comparing ln_P with ln(R),
+//avoiding any conversion to linear space that could overflow.
+bool GasPhaseSolver::bisection(
+  Element& species,
+  std::vector<Element>& elements,
+  const std::vector<Molecule>& molecules,
+  const double gas_density,
+  const bool use_all_molecules)
 {
-  const unsigned int order = Aj.size() - 1;
+  double y_lo = static_cast<double>(LOG_DENSITY_FLOOR);
+  double y_hi = std::log(gas_density);
 
-  
-  auto bisection_function = [&] (const double_type &x)
-    {
-      double_type f_j = Aj[order]; //Horner scheme
-
-      for (int k = order-1; k >= 1; --k)
-        f_j = Aj[k] + x * f_j;
-
-      f_j = Aj[0] + x * f_j;
-
-
-      return -f_j;
-    };
-
-
-  //initial density interval
-  std::vector<double_type> x(2, 0.0);
-
-  x[1] = gas_density;
-  x[0] = options.element_density_minlimit;
-
-  unsigned int nb_iterations = options.nb_max_bisection_iter;
   bool converged = false;
 
+  //Helper: compute the sign of F = P - R entirely in log-space
+  //Returns +1 if P > R (y too large), -1 if P < R (y too small), 0 if equal
+  auto signF = [&](double y) -> int {
+    double ln_P, ln_dP, R;
+    logSpaceResidual(species, elements, molecules, gas_density, y, ln_P, ln_dP, R, use_all_molecules);
 
-  for (unsigned int iter_step = 0; iter_step < nb_iterations; ++iter_step)
-  { 
-    const double_type x_n = (x[1] - x[0]) * 0.5 + x[0];
+    if (R <= 0) return 1;  //P > 0 >= R, so F = P - R > 0
 
-    const double_type f_n = bisection_function(x_n);
+    double ln_R = std::log(R);
+    if (ln_P > ln_R + 1e-12) return 1;
+    if (ln_P < ln_R - 1e-12) return -1;
+    return 0;
+  };
 
-    if (f_n < 0)
-      x[1] = x_n;
-    else
-      x[0] = x_n;
+  int sign_lo = signF(y_lo);
+  int sign_hi = signF(y_hi);
 
-    //Convergence test. We need to be a little more accurate than the required accuracy.
-    //Otherwise FastChem doesn't converge to the desired accuracy.
-    if ( std::fabs(x[0] - x[1])/x[1] < options.chem_accuracy * 1e-3 )
+  //Check that the root is bracketed
+  if (sign_lo * sign_hi > 0)
+  {
+    //Root not bracketed, use midpoint as best guess
+    species.log_number_density = 0.5 * (y_lo + y_hi);
+    species.number_density = safeExp(species.log_number_density);
+
+    if (options.verbose_level >= 3)
+      std::cout << "FastChem: WARNING: Bisection root not bracketed for "
+                << species.symbol << "\n";
+
+    return false;
+  }
+
+
+  for (unsigned int iter_step = 0; iter_step < options.nb_max_bisection_iter; ++iter_step)
+  {
+    const double y_mid = 0.5 * (y_lo + y_hi);
+
+    int sign_mid = signF(y_mid);
+
+    if (sign_mid == 0)
     {
+      y_lo = y_mid;
+      y_hi = y_mid;
       converged = true;
       break;
     }
 
+    if (sign_mid * sign_lo < 0)
+      y_hi = y_mid;
+    else
+      y_lo = y_mid;
+
+    //Convergence test
+    if (std::fabs(y_hi - y_lo) < options.chem_accuracy * 1e-3)
+    {
+      converged = true;
+      break;
+    }
   }
 
 
-  //species.number_density = std::exp(x[0]);
-  species.number_density = x[0];
+  species.log_number_density = 0.5 * (y_lo + y_hi);
+  species.number_density = safeExp(species.log_number_density);
 
 
   if (!converged && options.verbose_level >= 3)
-    std::cout << "Bisection iteration limit reached, result may not be optimal." << "\t" << x[0] << "\t" << x[1]
-              << "\t" << std::fabs(std::exp(x[0]) - std::exp(x[1]))/std::exp(x[1]) << "\t" << options.chem_accuracy * 1e-3  << "\n";
+    std::cout << "Bisection iteration limit reached, result may not be optimal."
+              << "\t" << y_lo << "\t" << y_hi
+              << "\t" << std::fabs(y_hi - y_lo) << "\t" << options.chem_accuracy * 1e-3  << "\n";
 
 
   return converged;
 }
 
 
-template class GasPhaseSolver<double>;
-template class GasPhaseSolver<long double>;
 }

@@ -34,11 +34,9 @@
 
 namespace Eigen {
 
-template <class double_type>
-using MatrixXdt = Matrix<double_type, Eigen::Dynamic, Eigen::Dynamic>;
+using MatrixXdt = Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
 
-template <class double_type>
-using VectorXdt = Matrix<double_type, Eigen::Dynamic, 1>;
+using VectorXdt = Matrix<double, Eigen::Dynamic, 1>;
 }
 
 
@@ -46,118 +44,115 @@ namespace fastchem {
 
 
 //Solver class
-template <class double_type>
 class GasPhaseSolver{
   public:
-    GasPhaseSolver(FastChemOptions<double_type>& options_)
+    GasPhaseSolver(FastChemOptions& options_)
       : options(options_)
       {}
 
-    void intertSol(
-      Element<double_type>& species,
-      std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules, 
-      const double_type gas_density);
+    void inertSol(
+      Element& species,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules, 
+      const double gas_density);
     void linSol(
-      Element<double_type>& species,
-      std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules, 
-      const double_type gas_density);
+      Element& species,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules, 
+      const double gas_density);
     void quadSol(
-      Element<double_type>& species,
-      std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules, 
-      const double_type gas_density);
+      Element& species,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules, 
+      const double gas_density);
     void newtonSol(
-      Element<double_type>& species,
-      std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules, 
-      const double_type gas_density,
+      Element& species,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules, 
+      const double gas_density,
       const bool use_alternative);
 
     void selectNewtonElements(
-      std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const std::vector<double_type>& old_number_densities,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules,
+      const std::vector<double>& old_number_densities,
       const double gas_density,
-      std::vector<Element<double_type>*>& newton_elements);
+      std::vector<Element*>& newton_elements);
 
     void newtonSolMult(
-      std::vector<Element<double_type>*>& species,
-      std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules, 
-      const double_type gas_density);
+      std::vector<Element*>& species,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules, 
+      const double gas_density);
 
     void newtonSolElectron(
-      Element<double_type>& species,
-      std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const double_type gas_density);
+      Element& species,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules,
+      const double gas_density);
 
     bool nelderMeadElectron(
-      Element<double_type>& electron,
-      std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules, 
-      const double_type initial_solution,
+      Element& electron,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules, 
+      const double initial_solution,
       const double gas_density);
 
-  
+
     bool bisection(
-      Element<double_type>& species,
-      std::vector<double_type>& Aj,
-      const double gas_density);
+      Element& species,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules,
+      const double gas_density,
+      const bool use_all_molecules);
 
     void backupSol(
-      Element<double_type>& species,
-      std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules, 
-      const double_type gas_density);
+      Element& species,
+      std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules, 
+      const double gas_density);
 
     int order_cation = -999;
     int order_anion = -999;
    
   private:
-    FastChemOptions<double_type>& options;
-    
-    double_type A0Coeff(
-      const Element<double_type>& species, const double_type gas_density);
-    double_type A1Coeff(
-      const Element<double_type>& species,
-      const std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules);
-    double_type A2Coeff(
-      const Element<double_type>& species,
-      const std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules);
-    double_type AmCoeff(
-      const Element<double_type>& species,
-      const std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules, 
-      const unsigned int order);
-    double_type AmCoeffAlt(
-      const Element<double_type>& species,
-      const std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
-      const unsigned int order);
+    FastChemOptions& options;
 
-    Eigen::VectorXdt<double_type> assembleJacobian(
-      const std::vector<Element<double_type>*>& species,
-      const std::vector< Element<double_type> >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
-      Eigen::MatrixXdt<double_type>& jacobian);
+    //Scratch buffers for logSpaceResidual, linSol, quadSol — allocated once, reused across calls
+    std::vector<double> scratch_log_terms_;   // first log-term vector
+    std::vector<double> scratch_log_terms_2_; // second log-term vector (quadSol A2)
+    std::vector<double> scratch_coeffs_P_;    // first coefficient vector
+    std::vector<double> scratch_coeffs_dP_;   // third / second-pair coefficient vector (quadSol A2)
+
+    void logSpaceResidual(
+      const Element& species,
+      const std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules,
+      const double gas_density,
+      const double y_j,
+      double& ln_P,
+      double& ln_dP,
+      double& R,
+      const bool use_all_molecules);
+
+    Eigen::VectorXdt assembleJacobian(
+      const std::vector<Element*>& species,
+      const std::vector< Element >& elements,
+      const std::vector< Molecule >& molecules,
+      Eigen::MatrixXdt& jacobian);
 
     void assembleRightHandSide(
-      const std::vector<Element<double_type>*>& species,
-      const std::vector< Element<double_type> >& elements,
-      const std::vector< Molecule<double_type> >& molecules,
+      const std::vector<Element*>& species,
+      const std::vector< Element >& elements,
+      const std::vector< Molecule >& molecules,
       const double gas_density,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      Eigen::VectorXdt<double_type>& rhs);
+      const Eigen::VectorXdt& scaling_factors,
+      Eigen::VectorXdt& rhs);
 
-    double_type AmCoeffElectron(
-      const Element<double_type>& electron,
-      const std::vector<Element<double_type>>& elements,
-      const std::vector<Molecule<double_type>>& molecules,
+    double AmCoeffElectron(
+      const Element& electron,
+      const std::vector<Element>& elements,
+      const std::vector<Molecule>& molecules,
       const int order);
 };
 

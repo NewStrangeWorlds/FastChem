@@ -31,48 +31,51 @@ namespace fastchem {
 
 //Calculates the mass action constant, see Paper I, Eq. (2.9)
 //Change this function if you want to implement your own parametrisation
-template <class double_type>
-void Molecule<double_type>::calcMassActionConstant(const double temperature, const double_type logK_limit)
+void Molecule::calcMassActionConstant(const double temperature)
 {
-  double_type log_K = mass_action_coeff[0]/temperature
+  double log_K = mass_action_coeff[0]/temperature
                     + mass_action_coeff[1]*std::log(temperature)
                     + mass_action_coeff[2]
                     + mass_action_coeff[3]*temperature
                     + mass_action_coeff[4]*temperature * temperature;
   
   //adjusting log_K from its standard pressure (1 bar = 1e-6 dyn cm-2) to the actual pressure 
-  const double_type pressure_scaling = 1.0e-6 * CONST_K * temperature;
+  const double pressure_scaling = 1.0e-6 * CONST_K * temperature;
   mass_action_constant = log_K - sigma * std::log(pressure_scaling);
-
-  if (mass_action_constant > logK_limit) mass_action_constant = logK_limit;
 }
 
 
 
 //Check for the number density of molecules
-template <class double_type>
-void Molecule<double_type>::checkN(
-  const double_type& min_limit, const double_type& gas_density)
+void Molecule::checkN(
+  const double& min_limit, const double log_gas_density)
 {
-  if (this->number_density < min_limit) this->number_density = min_limit;
+  if (this->log_number_density < static_cast<double>(LOG_DENSITY_FLOOR))
+    this->log_number_density = static_cast<double>(LOG_DENSITY_FLOOR);
 
-  if (this->number_density > gas_density) this->number_density = gas_density;
+  if (this->log_number_density > log_gas_density)
+    this->log_number_density = log_gas_density;
+
+  this->number_density = safeExp(this->log_number_density);
 }
 
 
-template <class double_type>
-void Molecule<double_type>::calcNumberDensity(const std::vector< Element<double_type> >& elements)
+//Compute log(n_i) = mac + sum_l nu_il * y_l (pure log-space arithmetic)
+void Molecule::calcLogNumberDensity(const std::vector< Element >& elements)
 {
-  this->number_density = mass_action_constant;
+  this->log_number_density = mass_action_constant;
 
   for (auto i : element_indices)
-    this->number_density += stoichiometric_vector[i] * std::log(elements[i].number_density);
+    this->log_number_density += stoichiometric_vector[i] * elements[i].log_number_density;
+}
 
-  this->number_density = std::exp(this->number_density);
+
+void Molecule::calcNumberDensity(const std::vector< Element >& elements)
+{
+  calcLogNumberDensity(elements);
+  this->number_density = safeExp(this->log_number_density);
 }
 
 
 
-template struct Molecule<double>;
-template struct Molecule<long double>;
 }

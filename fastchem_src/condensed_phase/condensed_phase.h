@@ -32,44 +32,43 @@
 namespace fastchem {
 
 
-template <class double_type>
 class CondensedPhase {
   public:
     CondensedPhase(
-      FastChemOptions<double_type>& options_,
-      ElementData<double_type>& element_data_);
+      FastChemOptions& options_,
+      ElementData& element_data_);
     CondensedPhase(
       const CondensedPhase &obj,
-      FastChemOptions<double_type>& options_,
-      ElementData<double_type>& element_data_);
+      FastChemOptions& options_,
+      ElementData& element_data_);
 
-    std::vector< Condensate<double_type> > condensates;
+    std::vector< Condensate > condensates;
 
     void selectActiveCondensates(
-      std::vector<Condensate<double_type>*>& condensates_act,
-      std::vector<Element<double_type>*>& elements_cond);
-    
+      std::vector<Condensate*>& condensates_act,
+      std::vector<Element*>& elements_cond);
+
     size_t nb_condensates = 0;
     size_t nb_elements = 0;
 
     bool is_initialised = false;
 
     bool calculate(
-      std::vector<Condensate<double_type>*>& condensates_act,
-      std::vector<Element<double_type>*>& elements_cond,
+      std::vector<Condensate*>& condensates_act,
+      std::vector<Element*>& elements_cond,
       const double temperature,
       const double density,
       const double total_element_density,
-      std::vector<Molecule<double_type>>& molecules,
+      std::vector<Molecule>& molecules,
       unsigned int& nb_iterations);
 
     double totalElementDensity();
   private:
-    FastChemOptions<double_type>& options;
-    ElementData<double_type>& element_data;
-    std::vector<Element<double_type>>& elements;
+    FastChemOptions& options;
+    ElementData& element_data;
+    std::vector<Element>& elements;
 
-    CondPhaseSolver<double_type> solver;
+    CondPhaseSolver solver;
 
     void init();
 
@@ -81,66 +80,39 @@ class CondensedPhase {
       const std::vector<int> stoichiometric_coeff,
       const std::string phase,
       const std::vector<double>& fit_coeff_limits,
-      const std::vector<std::vector<double_type>>& fit_coeff);
+      const std::vector<std::vector<double>>& fit_coeff);
 
     void selectJacobianCondensates(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& number_density_cond,
-      const std::vector<double_type>& activity_corr,
+      const std::vector<Condensate*>& condensates,
+      const std::vector<double>& number_density_cond,
+      const std::vector<double>& activity_corr,
       std::vector<unsigned int>& condensates_jac,
       std::vector<unsigned int>& condensates_rem);
 
-    void selectJacobianCondensates2(
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& number_density_cond,
-      const std::vector<double_type>& activity_corr,
-      std::vector<unsigned int>& condensates_jac,
-      std::vector<unsigned int>& condensates_rem,
-      Eigen::MatrixXdt<double_type>& jacobian);
-
-    double_type correctValues(
-      const Eigen::VectorXdt<double_type>& result,
-      const std::vector<Condensate<double_type>*>& condensates,
+    double correctValues(
+      const Eigen::VectorXdt& result,
+      const std::vector<Condensate*>& condensates,
       const std::vector<unsigned int>& condensates_jac,
       const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double_type>& activity_corr_old,
-      std::vector<double_type>& activity_corr_new,
-      const std::vector<double_type>& cond_number_dens_old,
-      std::vector<double_type>& cond_number_dens_new,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<double_type>& elem_number_dens_old,
-      std::vector<double_type>& elem_number_dens_new,
+      const std::vector<double>& log_activity_corr_old,
+      std::vector<double>& log_activity_corr_new,
+      const std::vector<double>& log_cond_dens_old,
+      std::vector<double>& log_cond_dens_new,
+      const std::vector<Element*>& elements,
+      const std::vector<double>& log_elem_dens_old,
+      std::vector<double>& log_elem_dens_new,
       const double max_change);
 
-    double_type correctValuesFull(
-      const Eigen::VectorXdt<double_type>& result,
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<double_type>& activity_corr_old,
-      std::vector<double_type>& activity_corr_new,
-      const std::vector<double_type>& cond_number_dens_old,
-      std::vector<double_type>& cond_number_dens_new,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<double_type>& elem_number_dens_old,
-      std::vector<double_type>& elem_number_dens_new);
-
-    double_type newtonBacktrack(
-      const double_type objective_function_0,
-      const Eigen::VectorXdt<double_type>& result,
-      const Eigen::VectorXdt<double_type>& scaling_factors,
-      const std::vector<Condensate<double_type>*>& condensates,
-      const std::vector<unsigned int>& condensates_jac,
-      const std::vector<unsigned int>& condensates_rem,
-      const std::vector<double_type>& activity_corr_old,
-      std::vector<double_type>& activity_corr_new,
-      const std::vector<double_type>& cond_number_dens_old,
-      std::vector<double_type>& cond_number_dens_new,
-      const std::vector<Element<double_type>*>& elements,
-      const std::vector<double_type>& elem_number_dens_old,
-      std::vector<double_type>& elem_number_dens_new,
-      std::vector<Molecule<double_type>>& molecules,
-      const double total_element_density,
-      const double temperature,
-      const double max_change);
+    double correctValuesFull(
+      const Eigen::VectorXdt& result,
+      const std::vector<Condensate*>& condensates,
+      const std::vector<double>& log_activity_corr_old,
+      std::vector<double>& log_activity_corr_new,
+      const std::vector<double>& log_cond_dens_old,
+      std::vector<double>& log_cond_dens_new,
+      const std::vector<Element*>& elements,
+      const std::vector<double>& log_elem_dens_old,
+      std::vector<double>& log_elem_dens_new);
 };
 
 

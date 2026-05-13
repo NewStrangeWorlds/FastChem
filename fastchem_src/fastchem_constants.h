@@ -23,6 +23,8 @@
 
 #include <string>
 #include <vector>
+#include <cmath>
+#include <limits>
 
 namespace fastchem {
 
@@ -44,6 +46,73 @@ const std::vector<std::string> FASTCHEM_MSG =
 //Physical constants
 constexpr double CONST_K = 1.380649e-16;    //Boltzmann's constant in erg K-1
 constexpr double CONST_AMU = 1.66055e-24;   //Atomic mass unit in g
+
+
+//Log-space utilities for numerical stability
+constexpr double LOG_DENSITY_FLOOR = -1e8;
+
+//Threshold for condensate stability: condensates with log_activity above this are considered stable
+constexpr double LOG_ACTIVITY_THRESHOLD = -0.01;
+
+
+//Clamped exponential: returns 0 for very negative arguments, clamps at max representable value
+inline double safeExp(double x)
+{
+  static const double max_arg = std::log(std::numeric_limits<double>::max()) * 0.99;
+
+  if (x < -max_arg) return 0.0;
+  if (x > max_arg) x = max_arg;
+
+  return std::exp(x);
+}
+
+
+//Safe logarithm: returns LOG_DENSITY_FLOOR for non-positive arguments
+inline double safeLog(double x)
+{
+  return (x > 0.0) ? std::log(x) : static_cast<double>(LOG_DENSITY_FLOOR);
+}
+
+
+//Stable computation of ln(sum_k coeffs[k] * exp(log_args[k]))
+//Uses the log-sum-exp shift trick to avoid overflow/underflow
+inline double logSumExp(
+  const std::vector<double>& log_args,
+  const std::vector<double>& coeffs)
+{
+  if (log_args.empty()) return static_cast<double>(LOG_DENSITY_FLOOR);
+
+  double x_max = static_cast<double>(LOG_DENSITY_FLOOR);
+
+  for (size_t k = 0; k < log_args.size(); ++k)
+    if (log_args[k] > x_max) x_max = log_args[k];
+
+  if (x_max <= static_cast<double>(LOG_DENSITY_FLOOR))
+    return static_cast<double>(LOG_DENSITY_FLOOR);
+
+  double sum = 0.0;
+
+  for (size_t k = 0; k < log_args.size(); ++k)
+  {
+    double shifted = log_args[k] - x_max;
+
+    if (shifted > -700)
+      sum += coeffs[k] * std::exp(shifted);
+  }
+
+  if (sum <= 0.0) return static_cast<double>(LOG_DENSITY_FLOOR);
+
+  return x_max + std::log(sum);
+}
+
+
+//Stable computation of log(exp(a) + exp(b)) without overflow/underflow
+//The exp argument is always <= 0, so log1p argument is always in [0, 1]
+inline double logAddExp(double a, double b)
+{
+  if (a > b) return a + std::log1p(std::exp(b - a));
+  else       return b + std::log1p(std::exp(a - b));
+}
 
 
 }

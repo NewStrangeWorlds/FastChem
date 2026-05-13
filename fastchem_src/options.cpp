@@ -30,27 +30,15 @@
 namespace fastchem {
 
 
-template <class double_type>
-void FastChemOptions<double_type>::init()
+void FastChemOptions::init()
 {
-  //init accuracy limit based on the numerical precision
-  if (std::numeric_limits<double_type>::max_exponent10 > 1000)
-  {
-    element_density_minlimit = 1e-512L;
-    molecule_density_minlimit = 1e-512L;
-  }
-  else
-  {
-    element_density_minlimit = 1e-155;
-    molecule_density_minlimit = 1e-155;
-  }
-
+  element_density_minlimit = 1e-155;
+  molecule_density_minlimit = 1e-155;
 }
 
 
 
-template <class double_type>
-ParameterFloat FastChemOptions<double_type>::resolveParameter(
+ParameterFloat FastChemOptions::resolveParameter(
   const std::string& parameter)
 {
   static const std::map<std::string, ParameterFloat> parameter_strings = 
@@ -61,10 +49,9 @@ ParameterFloat FastChemOptions<double_type>::resolveParameter(
     { std::string("accuracyElementConservation"), ParameterFloat::element_conserve_accuracy },
     { std::string("accuracyCond"), ParameterFloat::cond_accuracy },
     { std::string("accuracyNewton"), ParameterFloat::newton_err },
-    { std::string("additionalScaling"), ParameterFloat::additional_scaling_factor },
     { std::string("minDensityExponentElement"), ParameterFloat::element_minlimit },
     { std::string("minDensityExponentMolecules"), ParameterFloat::molecule_minlimit },
-    { std::string("maxLogK"), ParameterFloat::logK_limit }
+    { std::string("condTraceDensityThreshold"), ParameterFloat::cond_trace_density_threshold }
   };
 
   auto itr = parameter_strings.find(parameter);
@@ -77,18 +64,15 @@ ParameterFloat FastChemOptions<double_type>::resolveParameter(
 
 
 
-template <class double_type>
-ParameterBool FastChemOptions<double_type>::resolveParameterBool(
+ParameterBool FastChemOptions::resolveParameterBool(
   const std::string& parameter)
 {
   static const std::map<std::string, ParameterBool> parameter_strings = 
   {
-    { std::string("condSolveFullSystem"), ParameterBool::cond_solve_full_system },
     { std::string("condReduceSystemSize"), ParameterBool::cond_reduce_system_size },
-    { std::string("condUseFullPivot"), ParameterBool::cond_use_full_pivot },
     { std::string("condUseSVD"), ParameterBool::cond_use_svd },
-    { std::string("useScalingFactor"), ParameterBool::use_scaling_factor },
-    { std::string("useCondDataValidityLimit"), ParameterBool::cond_use_data_validity_limits }
+    { std::string("useCondDataValidityLimit"), ParameterBool::cond_use_data_validity_limits },
+    { std::string("condUseLM"), ParameterBool::cond_use_lm }
   };
 
   auto itr = parameter_strings.find(parameter);
@@ -101,8 +85,7 @@ ParameterBool FastChemOptions<double_type>::resolveParameterBool(
 
 
 
-template <class double_type>
-ParameterInt FastChemOptions<double_type>::resolveParameterInt(
+ParameterInt FastChemOptions::resolveParameterInt(
   const std::string& parameter)
 {
   static const std::map<std::string, ParameterInt> parameter_strings = 
@@ -113,7 +96,8 @@ ParameterInt FastChemOptions<double_type>::resolveParameterInt(
     { std::string("nbIterationsChem"), ParameterInt::nb_max_fastchem_iter },
     { std::string("nbIterationsNelderMead"), ParameterInt::nb_max_neldermead_iter },
     { std::string("nbIterationsNewton"), ParameterInt::nb_max_newton_iter },
-    { std::string("nbSwitchToNewton"), ParameterInt::nb_switch_to_newton }
+    { std::string("nbSwitchToNewton"), ParameterInt::nb_switch_to_newton },
+    { std::string("nbSwitchToJoint"), ParameterInt::nb_switch_to_joint }
   };
 
   auto itr = parameter_strings.find(parameter);
@@ -125,6 +109,4 @@ ParameterInt FastChemOptions<double_type>::resolveParameterInt(
 }
 
 
-template class FastChemOptions<double>;
-template class FastChemOptions<long double>;
 }

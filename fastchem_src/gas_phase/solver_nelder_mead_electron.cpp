@@ -33,19 +33,18 @@ namespace fastchem {
 
 
 //Nelder-Mead downhill simplex method in one dimension for the electron density
-template <class double_type>
-bool GasPhaseSolver<double_type>::nelderMeadElectron(
-  Element<double_type>& species,
-  std::vector< Element<double_type> >& elements,
-  const std::vector< Molecule<double_type> >& molecules, 
-  const double_type initial_solution,
+bool GasPhaseSolver::nelderMeadElectron(
+  Element& species,
+  std::vector< Element >& elements,
+  const std::vector< Molecule >& molecules, 
+  const double initial_solution,
   const double gas_density)
 {
   const unsigned int N = 1; //dimension of Nelder-Mead method
 
 
-  std::vector<double_type> Aj_cation(order_cation+1, 0.0);
-  std::vector<double_type> Aj_anion(order_anion+1, 0.0);
+  std::vector<double> Aj_cation(order_cation+1, 0.0);
+  std::vector<double> Aj_anion(order_anion+1, 0.0);
 
 
   for (int k=1; k<order_cation+1; ++k)
@@ -56,26 +55,26 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
 
 
   //The function we want to minimise
-  auto charge_conservation = [&] (const double_type &log_x)
+  auto charge_conservation = [&] (const double &log_x)
     {
-      const double_type x = std::exp(log_x);
+      const double x = std::exp(log_x);
       
       //Anions are calculated with Horner's method
-      double_type P_anion = Aj_anion[order_anion];
+      double P_anion = Aj_anion[order_anion];
 
       for (int k = order_anion-1; k >= 1; --k)
         P_anion = Aj_anion[k] + x * P_anion;
 
       //Contribution of cations
       //Due to the negative exponents, we can't use Horner's method here
-      double_type P_cation = 0.0;
+      double P_cation = 0.0;
 
       for (int k=1; k<order_cation+1; k++)
         P_cation += Aj_cation[k] * std::pow(x, -k);
 
 
       //charge conservation
-      const double_type Pj = - x - (x * P_anion + P_cation);
+      const double Pj = - x - (x * P_anion + P_cation);
   
 
       return Pj;
@@ -83,24 +82,24 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
 
 
   //construct initial simplex
-  std::vector<double_type> x;
+  std::vector<double> x;
 
-  double_type initial_distance = (1.0 + 0.05) * initial_solution;
+  double initial_distance = (1.0 + 0.05) * initial_solution;
 
-  double_type simplex_point = initial_distance;
+  double simplex_point = initial_distance;
   x.push_back(simplex_point);
 
   x.push_back(initial_solution);
 
 
-  std::vector<double_type> vf(1+1,0);   //values of function evaluated at simplex vertexes
+  std::vector<double> vf(1+1,0);   //values of function evaluated at simplex vertexes
 
   unsigned int x1 = 0;    //index of best solution
   unsigned int xn = 0;    //index of second worst solution
   unsigned int xnp1 = 0;  //index of worst solution
 
 
-  const double_type rho = 1.0, chi = 2.0, psi = 0.5, sigma = 0.5; //standard coefficients for Nelder-Mead method
+  const double rho = 1.0, chi = 2.0, psi = 0.5, sigma = 0.5; //standard coefficients for Nelder-Mead method
 
   bool converged = false;
 
@@ -124,15 +123,15 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
     xn = xnp1;  //in 1D they are equal
 
 
-    const double_type xg = x[x1]; //xg: centroid of the N best vertexes; in 1D corresponds to the solution x1
+    const double xg = x[x1]; //xg: centroid of the N best vertexes; in 1D corresponds to the solution x1
 
 
     //check if the function has a root in a delta region around xg
-    const double_type delta = xg * options.chem_accuracy*1e-4;
+    const double delta = xg * options.chem_accuracy*1e-4;
 
  
-    const double_type vf_epsilon_plus = charge_conservation(xg+delta);
-    const double_type vf_epsilon_minus = charge_conservation(xg-delta);
+    const double vf_epsilon_plus = charge_conservation(xg+delta);
+    const double vf_epsilon_minus = charge_conservation(xg-delta);
 
     
     //if the function changes sign, we have the solution
@@ -145,16 +144,16 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
 
 
     //reflection:
-    const double_type xr = (1.0 + rho) * xg - rho*x[xnp1];
+    const double xr = (1.0 + rho) * xg - rho*x[xnp1];
 
-    double_type fxr = std::fabs(charge_conservation(xr));
+    double fxr = std::fabs(charge_conservation(xr));
 
 
     if (fxr < vf[x1])
     {
       //expansion
-      const double_type xe = (1.0 + rho*chi) * xg - rho*chi*x[xnp1];
-      const double_type fxe = std::fabs(charge_conservation(xe));
+      const double xe = (1.0 + rho*chi) * xg - rho*chi*x[xnp1];
+      const double fxe = std::fabs(charge_conservation(xe));
 
       if (fxe < fxr)
         x[xnp1] = xe;
@@ -172,8 +171,8 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
         if (fxr < vf[xnp1])
         {
           //outward contraction
-          const double_type xc = (1.0 + psi*rho) * xg - psi*rho*x[xnp1];
-          const double_type fxc = std::fabs(charge_conservation(xc));
+          const double xc = (1.0 + psi*rho) * xg - psi*rho*x[xnp1];
+          const double fxc = std::fabs(charge_conservation(xc));
 
           if (fxc <= fxr)
             x[xnp1] = xc;
@@ -184,8 +183,8 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
         else
         {
           //inward contraction
-          const double_type xc = (1.0 - psi) * xg + psi*rho*x[xnp1];
-          const double_type fxc = std::fabs(charge_conservation(xc));
+          const double xc = (1.0 - psi) * xg + psi*rho*x[xnp1];
+          const double fxc = std::fabs(charge_conservation(xc));
 
 
           if (fxc < vf[xnp1])
@@ -214,7 +213,10 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
 
   }//optimisation is finished
 
-  species.number_density = std::exp(x[x1]);
+  //Use log(element_density_minlimit) as floor for electron log density
+  const double electron_log_floor = std::log(options.element_density_minlimit);
+  species.log_number_density = std::max(x[x1], electron_log_floor);
+  species.number_density = safeExp(species.log_number_density);
 
   if (!converged && options.verbose_level >= 3)
     std::cout << "Nelder-Mead iteration limit reached, result may not be optimal." << "\t" << x[x1] << "\n";
@@ -223,6 +225,4 @@ bool GasPhaseSolver<double_type>::nelderMeadElectron(
 }
 
 
-template class GasPhaseSolver<double>;
-template class GasPhaseSolver<long double>;
 }

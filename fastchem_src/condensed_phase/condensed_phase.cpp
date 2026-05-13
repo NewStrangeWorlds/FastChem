@@ -21,6 +21,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cmath>
+#include <algorithm>
 
 #include "condensed_phase.h"
 
@@ -30,10 +32,9 @@
 
 namespace fastchem {
 
-template <class double_type>
-CondensedPhase<double_type>::CondensedPhase(
-  FastChemOptions<double_type>& options_,
-  ElementData<double_type>& element_data_)
+CondensedPhase::CondensedPhase(
+  FastChemOptions& options_,
+  ElementData& element_data_)
     : options(options_)
     , element_data(element_data_)
     , elements(element_data.elements)
@@ -87,11 +88,10 @@ CondensedPhase<double_type>::CondensedPhase(
 
 
 
-template <class double_type>
-CondensedPhase<double_type>::CondensedPhase(
+CondensedPhase::CondensedPhase(
   const CondensedPhase &obj,
-  FastChemOptions<double_type>& options_,
-  ElementData<double_type>& element_data_)
+  FastChemOptions& options_,
+  ElementData& element_data_)
     : condensates(obj.condensates)
     , nb_condensates(obj.nb_condensates)
     , nb_elements(obj.nb_elements)
@@ -106,8 +106,7 @@ CondensedPhase<double_type>::CondensedPhase(
 
 
 
-template <class double_type>
-void CondensedPhase<double_type>::init()
+void CondensedPhase::init()
 {
   for (auto & i : condensates) 
     i.findReferenceElement(elements);
@@ -115,10 +114,9 @@ void CondensedPhase<double_type>::init()
 
 
 
-template <class double_type>
-void CondensedPhase<double_type>::selectActiveCondensates(
-  std::vector< Condensate<double_type>* >& condensates_act,
-  std::vector< Element<double_type>* >& elements_cond)
+void CondensedPhase::selectActiveCondensates(
+  std::vector< Condensate* >& condensates_act,
+  std::vector< Element* >& elements_cond)
 {
   if (condensates_act.capacity() == 0)
     condensates_act.reserve(nb_condensates);
@@ -159,11 +157,10 @@ void CondensedPhase<double_type>::selectActiveCondensates(
 
 
 
-template <class double_type>
-void CondensedPhase<double_type>::selectJacobianCondensates(
-  const std::vector<Condensate<double_type>*>& condensates_act,
-  const std::vector<double_type>& number_density_cond,
-  const std::vector<double_type>& activity_corr,
+void CondensedPhase::selectJacobianCondensates(
+  const std::vector<Condensate*>& condensates_act,
+  const std::vector<double>& number_density_cond,
+  const std::vector<double>& activity_corr,
   std::vector<unsigned int>& condensates_jac,
   std::vector<unsigned int>& condensates_rem)
 {
@@ -181,8 +178,7 @@ void CondensedPhase<double_type>::selectJacobianCondensates(
 
 
 
-template <class double_type>
-double CondensedPhase<double_type>::totalElementDensity()
+double CondensedPhase::totalElementDensity()
 {
   double n_tot = 0.0;
 
@@ -201,7 +197,5 @@ double CondensedPhase<double_type>::totalElementDensity()
 
 
 
-template class CondensedPhase<double>;
-template class CondensedPhase<long double>;
 
 }

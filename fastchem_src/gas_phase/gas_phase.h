@@ -33,19 +33,18 @@
 namespace fastchem {
 
 
-template <class double_type>
 class GasPhase {
   public:
     GasPhase(
-      FastChemOptions<double_type>& options_,
-      ElementData<double_type>& element_data_);
+      FastChemOptions& options_,
+      ElementData& element_data_);
     GasPhase(
       const GasPhase &obj,
-      FastChemOptions<double_type>& options_,
-      ElementData<double_type>& element_data_);
+      FastChemOptions& options_,
+      ElementData& element_data_);
 
-    std::vector<Molecule<double_type>> molecules;
-    std::vector< ChemicalSpecies<double_type>* > species;
+    std::vector<Molecule> molecules;
+    std::vector< ChemicalSpecies* > species;
 
     size_t nb_molecules = 0;
     size_t nb_elements = 0;
@@ -54,18 +53,21 @@ class GasPhase {
     bool is_initialised = false;
 
     bool calculate(
-      const double temperature_gas, const double gas_density, unsigned int& nb_iterations);
+      const double temperature_gas, 
+      const double gas_density, 
+      unsigned int& nb_iterations);
 
     double meanMolecularWeight(const double gas_density);
     double totalElementDensity();
+    void updateMoleculeDensities();
 
     void reInitialise();
   private:
-    FastChemOptions<double_type>& options;
-    ElementData<double_type>& element_data;
-    std::vector<Element<double_type>>& elements;
+    FastChemOptions& options;
+    ElementData& element_data;
+    std::vector<Element>& elements;
 
-    GasPhaseSolver<double_type> solver;
+    GasPhaseSolver solver;
     std::vector<unsigned int> element_calculation_order;
 
     unsigned int e_ = FASTCHEM_UNKNOWN_SPECIES; //electron element index
@@ -78,11 +80,11 @@ class GasPhase {
       const std::string& symbol,
       const std::vector<std::string>& species_elements,
       const std::vector<int>& stoichiometric_coeff,
-      const std::vector<double_type>& mass_action_coeff,
+      const std::vector<double>& mass_action_coeff,
       const int charge);
     bool checkForDuplicates();
 
-    unsigned int determineSolverOrder(const Element<double_type>& species);
+    unsigned int determineSolverOrder(const Element& species);
     void determineSolverOrder();
     void determineElementCalculationOrder();
     
@@ -90,24 +92,25 @@ class GasPhase {
     void createMoleculeLists();
 
     void calculateElementDensities(
-      Element<double_type>& species,
-      const double_type gas_density,
+      Element& species,
+      const double gas_density,
       bool use_backup_solver,
-      double_type& n_major);
-    double_type calculateMoleculeDensities(
-      Element<double_type>& species, const double_type gas_density);
+      double& n_major,
+      const double log_gas_density);
+    double calculateMoleculeDensities(
+      Element& species, const double log_gas_density);
 
     void calculateElectronDensities(
-      Element<double_type>& species,
-      const double_type& old_number_density,
-      const double_type gas_density);
+      Element& species,
+      const double& old_number_density,
+      const double gas_density);
     void calculateSinglyIonElectrons(
-      Element<double_type>& electron,
-      const double_type& old_number_density);
+      Element& electron,
+      const double& old_number_density);
     void calculateMultIonElectrons(
-      Element<double_type>& electron,
-      const double_type& old_number_density,
-      const double_type& gas_density);
+      Element& electron,
+      const double& old_number_density,
+      const double& gas_density);
 };
 
 

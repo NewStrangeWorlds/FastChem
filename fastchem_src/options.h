@@ -38,10 +38,9 @@ enum class ParameterFloat {
     element_conserve_accuracy,
     newton_err,
     cond_accuracy,
-    additional_scaling_factor,
     element_minlimit,
     molecule_minlimit,
-    logK_limit
+    cond_trace_density_threshold
 };
 
 
@@ -53,22 +52,20 @@ enum class ParameterInt {
     nb_max_bisection_iter,
     nb_max_newton_iter,
     nb_max_neldermead_iter,
-    nb_switch_to_newton
+    nb_switch_to_newton,
+    nb_switch_to_joint
 };
 
 
 enum class ParameterBool {
     invalid_parameter,
-    cond_solve_full_system,
     cond_reduce_system_size,
-    cond_use_full_pivot,
     cond_use_svd,
-    use_scaling_factor,
-    cond_use_data_validity_limits
+    cond_use_data_validity_limits,
+    cond_use_lm
 };
 
 
-template <class double_type>
 struct FastChemOptions{
   FastChemOptions(
     const std::string& parameter_file,
@@ -96,31 +93,32 @@ struct FastChemOptions{
   unsigned int nb_max_newton_iter = 3000;
   unsigned int nb_max_neldermead_iter = 3000;
   unsigned int nb_max_cond_iter = 3000;
-  unsigned int nb_chem_cond_iter = 3000;
+  unsigned int nb_max_comb_iter = 30000;
   unsigned int nb_switch_to_newton = 400;
+  unsigned int nb_switch_to_joint = 3000;
 
   double chem_accuracy = 1e-5;
   double newton_err = 1e-5;
   double cond_accuracy = 1e-5;
   double element_conserve_accuracy = 1e-4;
-
-  double_type element_density_minlimit = 1e-155; //smallest allowed particle number densities
-  double_type molecule_density_minlimit = 1e-155;
+  
+  //smallest allowed particle number densities
+  double element_density_minlimit = 1e-155; 
+  double molecule_density_minlimit = 1e-155;
+  //condensates with a max_number_density below this are skipped in the Newton solver 
+  //(number_density set to 0) to avoid Jacobian ill-conditioning from near-depleted trace 
+  //elements after rainout
+  double condensate_density_threshhold = 1e-100; 
 
   unsigned int verbose_level = 1;
 
-  bool use_scaling_factor = false;
-  double additional_scaling_factor = 0.0;
-
-  double_type logK_limit = 1e10;
   bool cond_use_data_validity_limits = true;
 
   bool chem_use_backup_solver = false;
 
   bool cond_use_svd = false;
-  bool cond_use_full_pivot = false;
-  bool cond_solve_full_matrix = false;
   bool cond_reduce_system_size = true;
+  bool cond_use_lm = true;
   double cond_iter_change_limit = 5;
   double cond_tau = 1e-15;
 

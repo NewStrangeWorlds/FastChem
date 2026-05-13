@@ -33,9 +33,10 @@ namespace fastchem {
 
 
 //This is the main FastChem iteration for the gas phase
-template <class double_type>
-bool GasPhase<double_type>::calculate(
-  const double temperature_gas, const double gas_density, unsigned int& nb_iterations)
+bool GasPhase::calculate(
+  const double temperature_gas, 
+  const double gas_density, 
+  unsigned int& nb_iterations)
 {
   for (auto & i : elements) i.number_density_maj = 0.0;
 
@@ -43,11 +44,16 @@ bool GasPhase<double_type>::calculate(
   //starting values for contribution of minor species
   for (auto & i : elements) i.calcMinorSpeciesDensities(molecules);
 
+  const double log_gas_density = std::log(gas_density);
 
-  std::vector<double_type> number_density_old(nb_species, 0.0);
+  std::vector<double> number_density_old(nb_species, 0.0);
+  std::vector<double> log_density_old(nb_species, static_cast<double>(LOG_DENSITY_FLOOR));
 
   for (size_t i=0; i<nb_species; ++i)
+  {
     number_density_old[i] = species[i]->number_density;
+    log_density_old[i] = species[i]->log_number_density;
+  }
 
 
   bool converged = false;
@@ -58,25 +64,25 @@ bool GasPhase<double_type>::calculate(
 
   for (iter_step=0; iter_step<max_iter; ++iter_step)
   {
-    double_type n_maj = 0.0;
+    double n_maj = 0.0;
 
     //check if n_j_min are small enough, if not use backup solver
-    for (auto & i : elements)
-      if ( (i.number_density_min + i.number_density_maj > i.phi * gas_density) && use_backup_solver == false)
-      {
-        use_backup_solver = true;
+    // for (auto & i : elements)
+    //   if ( (i.number_density_min + i.number_density_maj > i.phi * gas_density) && use_backup_solver == false)
+    //   {
+    //     use_backup_solver = true;
        
-        if (options.verbose_level >= 4)
-          std::cout << "Too large n_min and n_maj for species " 
-            << i.symbol << ". Switching to backup.  Iteration step: " 
-            << iter_step << "\n";
+    //     if (options.verbose_level >= 4)
+    //       std::cout << "Too large n_min and n_maj for species " 
+    //         << i.symbol << ". Switching to backup.  Iteration step: " 
+    //         << iter_step << "\n";
 
-        break;
-      }
+    //     break;
+    //   }
 
     //calculate the element densities in their respective order
     for (auto it = element_calculation_order.begin(); it<element_calculation_order.end(); it++)
-      calculateElementDensities(elements[*it], gas_density, use_backup_solver, n_maj);
+      calculateElementDensities(elements[*it], gas_density, use_backup_solver, n_maj, log_gas_density);
 
 
     //calculate the molecule densities
@@ -103,35 +109,30 @@ bool GasPhase<double_type>::calculate(
       }
 
 
-    //convergence check
+    //convergence check in log-space: |y_new - y_old| is the relative change |dn/n|
+    //Skip species at the density floor (effectively zero)
     if (iter_step > 0)
     {
       converged = true;
-      
+
       for (size_t i=0; i<nb_species; ++i)
-        if (std::fabs((species[i]->number_density - number_density_old[i])) > options.chem_accuracy*number_density_old[i]
-             && species[i]->number_density/gas_density > 1.e-155)
-        { 
-          // std::cout << iter_step << "\t" << species[i]->symbol << "\t" 
-          //           << std::fabs((species[i]->number_density - number_density_old[i]))/number_density_old[i] << "\t" 
-          //           << options.chem_accuracy*number_density_old[i] << "\t" 
-          //           << species[i]->number_density << "\t" 
-          //           <<  number_density_old[i] << "\t" 
-          //           << use_backup_solver << "\n";
+        if (std::fabs(species[i]->log_number_density - log_density_old[i]) > options.chem_accuracy
+             && species[i]->log_number_density > static_cast<double>(LOG_DENSITY_FLOOR) + 1.0)
+        {
           converged = false;
           break;
         }
     }
-
-
+    
     //sanity check
     for (auto & e : elements)
     {
-      if (std::isnan(e.number_density) || std::isinf(e.number_density))
+      if (std::isnan(e.number_density) || std::isinf(e.number_density)
+          || std::isnan(e.log_number_density))
       {
         if (options.verbose_level >= 4)
-          std::cout << "Encountered NaN or Inf number density for element " 
-                    << e.symbol 
+          std::cout << "Encountered NaN or Inf number density for element "
+                    << e.symbol
                     << ". Stopping calculation.\n";
 
         nb_iterations = iter_step;
@@ -140,20 +141,18 @@ bool GasPhase<double_type>::calculate(
       }
     }
 
-
     if (converged)
       break;
-
 
     //switch to multi-dimensional Newton solver if the system
     //hasn't converged yet
     if (iter_step > options.nb_switch_to_newton)
-    {
+    { 
       if (options.verbose_level >= 4)
         std::cout << "Standard FastChem iteration failed. Switching to multi-dimensional Newton. " << "\n";
 
-      std::vector<Element<double_type>*> newton_elements;
-
+      std::vector<Element*> newton_elements;
+      
       solver.selectNewtonElements(
         elements,
         molecules,
@@ -172,18 +171,17 @@ bool GasPhase<double_type>::calculate(
           total_element_density);
 
         //update densities
-        for (auto & e : elements) 
-          calculateMoleculeDensities(e, gas_density);
+        for (auto & e : elements)
+          calculateMoleculeDensities(e, log_gas_density);
 
         for (auto & e : elements) 
           e.calcMinorSpeciesDensities(molecules);
       }
-
     }
 
 
     //in case the standard FastChem iteration doesn't converge, switch to the backup solver
-    if (iter_step == 390 && !converged && use_backup_solver == false)
+    if (iter_step == 0.975*options.nb_switch_to_newton && !converged && use_backup_solver == false)
     {
       if (options.verbose_level >= 4)
         std::cout << "Standard FastChem iteration failed. Switching to backup. " << "\n";
@@ -193,7 +191,10 @@ bool GasPhase<double_type>::calculate(
 
 
     for (size_t i=0; i<nb_species; ++i)
+    {
       number_density_old[i] = species[i]->number_density;
+      log_density_old[i] = species[i]->log_number_density;
+    }
   }
   
 
@@ -204,7 +205,5 @@ bool GasPhase<double_type>::calculate(
 
 
 
-template class GasPhase<double>;
-template class GasPhase<long double>;
 
 } 

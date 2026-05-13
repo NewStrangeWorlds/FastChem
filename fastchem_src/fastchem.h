@@ -38,7 +38,6 @@ namespace fastchem {
 
 
 //FastChem class
-template <class double_type>
 class FastChem {
   public:
     FastChem(
@@ -88,26 +87,28 @@ class FastChem {
 
     //functions to set internal variables during runtime
     //they will override any read-in values
-    void setElementAbundances(std::vector<double> abundances);
+    void setElementAbundances(const std::vector<double>& abundances);
 
     std::string convertToHillNotation(const std::string& formula) const;
 
     void setVerboseLevel(const unsigned int level) { 
       if (level > 4) options.verbose_level = 4; else options.verbose_level = level;}
 
-    void setParameter(const std::string& parameter, const double_type param_value);
-    void setParameter(const std::string& parameter, const bool param_value);
-    void setParameter(const std::string& parameter, const unsigned int param_value);
+    [[nodiscard]] bool setParameter(const std::string& parameter, const double param_value);
+    [[nodiscard]] bool setParameter(const std::string& parameter, const bool param_value);
+    [[nodiscard]] bool setParameter(const std::string& parameter, const unsigned int param_value);
 
   private:
-    FastChemOptions<double_type> options;
+    FastChemOptions options;
     
-    ElementData<double_type> element_data;
-    GasPhase<double_type> gas_phase;
-    CondensedPhase<double_type> condensed_phase;
+    ElementData element_data;
+    GasPhase gas_phase;
+    CondensedPhase condensed_phase;
 
     bool is_initialised = false;
     bool is_busy = false;
+
+    std::vector<FastChem> thread_copies_;
 
     //Initialisation functions
     void init();
@@ -137,6 +138,14 @@ class FastChem {
       unsigned int& nb_combined_iter);
 
     void rainoutCondensation(FastChemInput& input, FastChemOutput& output);
+
+    void jointNewtonStep(
+      const std::vector<Condensate*>& condensates_act,
+      const double temperature,
+      const double gas_density,
+      double& total_element_density);
+
+    void updatePhi(double total_element_density);
 };
 
 

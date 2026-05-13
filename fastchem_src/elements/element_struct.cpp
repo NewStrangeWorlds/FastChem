@@ -30,9 +30,8 @@ namespace fastchem {
 //Determination of the correction factor n_j_min, that contains the number density of an element j contained in molecules
 //with elements that are less abundant than j
 //See Eq. (2.23)
-template <class double_type>
-void Element<double_type>::calcMinorSpeciesDensities(
-  const std::vector< Molecule<double_type> > &molecules)
+void Element::calcMinorSpeciesDensities(
+  const std::vector< Molecule > &molecules)
 {
   number_density_min = 0.0;
 
@@ -43,10 +42,9 @@ void Element<double_type>::calcMinorSpeciesDensities(
 
 
 
-template <class double_type>
-void Element<double_type>::calcEpsilon(const std::vector< Element<double_type> > &elements)
+void Element::calcEpsilon(const std::vector< Element > &elements)
 { 
-  double_type element_sum = 0.0;
+  double element_sum = 0.0;
 
   for (auto & i : elements)
     element_sum += i.abundance;
@@ -56,59 +54,26 @@ void Element<double_type>::calcEpsilon(const std::vector< Element<double_type> >
 
 
 
-template <class double_type>
-void Element<double_type>::calcSolverScalingFactor(
-  const std::vector<Element<double_type>> &elements, 
-  const std::vector<Molecule<double_type>> &molecules,
-  const double additional_scaling_factor)
+//Check for the number density of elements
+void Element::checkN(
+  const double& min_limit, const double log_gas_density)
 {
-  solver_scaling_factor = 0.0;
-
-
-  for (auto & i : molecule_list)
+  if (!this->fixed_by_condensation)
   {
-    if (molecules[i].stoichiometric_vector[index] < 1 || molecules[i].stoichiometric_vector[index] > static_cast<int>(solver_order) )
-      continue;
-
-    double_type sum = 0.0;
-
-    if (molecules[i].abundance == this->abundance)
-    {
-      for (auto & l : molecules[i].element_indices)
-      {
-        if (l != index)
-          sum += molecules[i].stoichiometric_vector[l] * std::log(elements[l].number_density);
-
-      }
-
-      sum += molecules[i].mass_action_constant;
-    }
-
-
-    if (sum > solver_scaling_factor)
-      solver_scaling_factor = sum;
+    if (this->log_number_density < static_cast<double>(LOG_DENSITY_FLOOR))
+      this->log_number_density = static_cast<double>(LOG_DENSITY_FLOOR);
   }
 
-  //scale the factor by an additional, optional factor supplied by the user
-  solver_scaling_factor -= additional_scaling_factor;
-}
+  if (this->log_number_density > log_gas_density)
+    this->log_number_density = log_gas_density;
 
-
-//Check for the number density of elements
-template <class double_type>
-void Element<double_type>::checkN(
-  const double_type& min_limit, const double_type& gas_density)
-{
-  if (this->number_density < min_limit && !this->fixed_by_condensation) this->number_density = min_limit;
-
-  if (this->number_density > gas_density) this->number_density = gas_density;
+  this->number_density = safeExp(this->log_number_density);
 }
 
 
 //Check for charge conservation
-template <class double_type>
-bool Element<double_type>::checkChargeConservation(
-  const std::vector< Molecule<double_type> >& molecules, const double_type& accuracy)
+bool Element::checkChargeConservation(
+  const std::vector< Molecule >& molecules, const double& accuracy)
 {
   //Am I the electron?
   if (this->symbol != "e-") return false;
@@ -124,8 +89,8 @@ bool Element<double_type>::checkChargeConservation(
   bool charge_conserved = false;
 
   //sum up all positive and negative charges in the network
-  double_type positive_charge = 0;
-  double_type negative_charge = this->number_density;
+  double positive_charge = 0;
+  double negative_charge = this->number_density;
 
   for (auto & i : molecule_list)
   {
@@ -135,15 +100,15 @@ bool Element<double_type>::checkChargeConservation(
     if (molecules[i].stoichiometric_vector[index] > 0)
       negative_charge += molecules[i].stoichiometric_vector[index] * molecules[i].number_density;
   }
+  
+  double max_charge = std::max(positive_charge, negative_charge);
 
-
-  if (std::fabs(positive_charge - negative_charge)/std::sqrt(positive_charge*negative_charge) < accuracy)
+  if (max_charge == 0 || std::fabs(positive_charge - negative_charge) / max_charge < accuracy)
     charge_conserved = true;
   else
     charge_conserved = false;
 
   element_conserved = charge_conserved;
-
 
   return charge_conserved;
 }
@@ -151,12 +116,11 @@ bool Element<double_type>::checkChargeConservation(
 
 
 //Check for element conservation
-template <class double_type>
-bool Element<double_type>::checkElementConservation(
-  const std::vector< Molecule<double_type> >& molecules, 
-  const std::vector< Condensate<double_type> >& condensates,
-  const double_type total_density,
-  const double_type& accuracy)
+bool Element::checkElementConservation(
+  const std::vector< Molecule >& molecules, 
+  const std::vector< Condensate >& condensates,
+  const double total_density,
+  const double& accuracy)
 {
   //electrons are subject to charge conservation
   if (this->symbol == "e-")
@@ -167,41 +131,45 @@ bool Element<double_type>::checkElementConservation(
     return true;
 
   //sum up the elements contained in each molecule and compare the result to its elemental abundance
-  double_type sum_gas = this->number_density;
+  double sum_gas = this->number_density;
 
 
   for (auto & i : molecule_list)
     sum_gas += molecules[i].stoichiometric_vector[index] * molecules[i].number_density;
 
-  double_type sum_cond = 0;
+  double sum_cond = 0;
 
   for (auto & i : condensate_list)
     sum_cond += condensates[i].stoichiometric_vector[index] * condensates[i].number_density;
   
-  double_type sum_total = sum_gas + sum_cond;
+  double sum_total = sum_gas + sum_cond;
 
   sum_total /= total_density*epsilon;
   
-  //std::cout << this->symbol << "\t" << sum_gas << "\t" << sum_cond << "\t" << sum_total << "\t" << total_density*epsilon << "\t" << phi << "\t" << epsilon << "\n";
-
   if (std::fabs(sum_total - 1.0L) < accuracy || molecule_list.size() == 0)
     element_conserved = 1;
   else
     element_conserved = 0;
+
+  // std::cout << "El " << this->symbol << " nd " << this->number_density << "  " << this->log_number_density 
+  //           << " sg " << sum_gas << " sd " << sum_cond
+  //           << " sum_total = " << sum_total 
+  //           << " total_eps " << total_density*epsilon
+  //           << " tot " << total_density << " eps " << epsilon
+  //           << " conserved: " << element_conserved << "\n";
 
   return element_conserved;
 }
 
 
 
-template <class double_type>
-void Element<double_type>::calcDegreeOfCondensation(
-  const std::vector< Condensate<double_type> > &condensates,
-  const double_type total_element_density)
+void Element::calcDegreeOfCondensation(
+  const std::vector< Condensate > &condensates,
+  const double total_element_density)
 {
   if (this->symbol == "e-") return;
 
-  double_type density_cond = 0;
+  double density_cond = 0;
 
   for (auto & i : condensate_list)
   {
@@ -221,8 +189,7 @@ void Element<double_type>::calcDegreeOfCondensation(
 }
 
 
-template <class double_type>
-void Element<double_type>::normalisePhi(const double_type element_phi_sum)
+void Element::normalisePhi(const double element_phi_sum)
 {
 
   phi /= element_phi_sum;
@@ -231,6 +198,4 @@ void Element<double_type>::normalisePhi(const double_type element_phi_sum)
 
 
 
-template struct Element<double>;
-template struct Element<long double>;
 }

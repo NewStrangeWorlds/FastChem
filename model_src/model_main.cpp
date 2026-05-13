@@ -55,26 +55,28 @@ int main(int argc, char *argv[])
 
 
   //create a FastChem object and set the read-in values from the config file
-  fastchem::FastChem<long double> fastchem(
-    config.element_abundance_file, 
-    config.species_data_file, 
+  fastchem::FastChem fastchem(
+    config.element_abundance_file,
+    config.species_data_file,
     config.cond_species_data_file,
     config.verbose_level);
 
   //we could also create a FastChem object using a separate parameter file
-  //fastchem::FastChem<long double> fastchem("input/parameters.dat", config.verbose_level); 
+  //fastchem::FastChem fastchem("input/parameters.dat", config.verbose_level);
 
 
   //set the FastChem parameters from the config file
-  fastchem.setParameter(std::string("accuracyChem"), (long double) config.chemistry_accuracy);
-  fastchem.setParameter(std::string("accuracyElementConservation"), (long double) config.element_conservation_accuracy);
-  fastchem.setParameter(std::string("accuracyNewton"), (long double) config.newton_error);
-  fastchem.setParameter(std::string("nbIterationsChem"), config.nb_chemistry_iterations);
-  fastchem.setParameter(std::string("nbIterationsNewton"), config.nb_newton_iterations);
-  fastchem.setParameter(std::string("nbIterationsNelderMead"), config.nb_nelder_mead_iterations);
-  fastchem.setParameter(std::string("nbIterationsBisection"), config.nb_bisection_iterations);
-
-
+  if (!fastchem.setParameter(std::string("accuracyChem"), (double) config.chemistry_accuracy)) return 1;
+  if (!fastchem.setParameter(std::string("accuracyElementConservation"), (double) config.element_conservation_accuracy)) return 1;
+  if (!fastchem.setParameter(std::string("accuracyNewton"), (double) config.newton_error)) return 1;
+  if (!fastchem.setParameter(std::string("nbIterationsChem"), config.nb_chemistry_iterations)) return 1;
+  if (!fastchem.setParameter(std::string("nbIterationsNewton"), config.nb_newton_iterations)) return 1;
+  if (!fastchem.setParameter(std::string("nbIterationsNelderMead"), config.nb_nelder_mead_iterations)) return 1;
+  if (!fastchem.setParameter(std::string("nbIterationsBisection"), config.nb_bisection_iterations)) return 1;
+  
+  //fastchem.setParameter(std::string("condUseLM"), false);
+  unsigned int nb_switch_to_newton = 300;
+  fastchem.setParameter(std::string("nbSwitchToNewton"), nb_switch_to_newton);
   //read in the temperature-pressure structure
   std::vector<double> temperature;
   std::vector<double> pressure;
@@ -116,7 +118,7 @@ int main(int argc, char *argv[])
   input.pressure = pressure;
   input.equilibrium_condensation = config.calc_condensation;
   input.rainout_condensation = config.rainout_condensation;
-
+  
   unsigned int fastchem_flag = fastchem.calcDensities(input, output);
 
   

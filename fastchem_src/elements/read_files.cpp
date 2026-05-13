@@ -36,8 +36,7 @@ namespace fastchem {
 
 
 //Read the chemical elements file
-template <class double_type>
-bool ElementData<double_type>::readElementList(const std::string& file_path)
+bool ElementData::readElementList(const std::string& file_path)
 { 
   //if no file for the element data has been found in the options file
   //use the standard set
@@ -90,8 +89,7 @@ bool ElementData<double_type>::readElementList(const std::string& file_path)
 
 
 //Read the elemental abundances file
-template <class double_type>
-bool ElementData<double_type>::readElementAbundances(const std::string& file_path)
+bool ElementData::readElementAbundances(const std::string& file_path)
 {
   std::fstream file(file_path.c_str(), std::ios::in);
 
@@ -137,7 +135,5 @@ bool ElementData<double_type>::readElementAbundances(const std::string& file_pat
 
 
 
-template class ElementData<double>;
-template class ElementData<long double>;
 
 } 
