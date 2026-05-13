@@ -49,7 +49,7 @@ input_data.temperature = temperature
 input_data.pressure = pressure
 
 #use equilibrium condensation
-input_data.equilibrium_condensation = True
+input_data.equilibrium_condensation = False
 
 #this would turn on the rainout condensation approach
 input_data.rainout_condensation = True

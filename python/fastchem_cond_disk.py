@@ -14,9 +14,9 @@ from astropy import constants as const
 data = np.atleast_2d(np.loadtxt("../input/example_p_t_structures/protoplanetary_disk.dat"))
 
 #and extract temperature and pressure values
-temperature = data[0:200,1]
-pressure = data[0:200,0]
-distance = data[0:200,2]
+temperature = data[:,1]
+pressure = data[:,0]
+distance = data[:,2]
 
 
 #define the directory for the output
@@ -34,7 +34,7 @@ plot_species_cond = ['MgSiO3(s,l)', 'Mg2SiO4(s,l)', 'H2O(s,l)', 'CH4(s,l)']
 #create a FastChem object
 fastchem = pyfastchem.FastChem(
   '../input/element_abundances/asplund_2021.dat',
-  '../input/logK/logK.dat',
+  '../input/logK/logK_wo_ions.dat',
   '../input/logK/logK_condensates.dat',
   1)
 
