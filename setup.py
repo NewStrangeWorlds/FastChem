@@ -5,10 +5,13 @@ import subprocess
 from setuptools import setup
 import tempfile
 from pybind11.setup_helpers import Pybind11Extension, build_ext
-from setuptools._distutils.errors import CCompilerError
+try:
+    from distutils.errors import CCompilerError
+except ImportError:
+    from setuptools._distutils.errors import CCompilerError
 
 
-__version__ = "3.1.3"
+__version__ = "4.0"
 
 def __read__(file_name):
     return open(os.path.join(os.path.dirname(__file__), file_name)).read()
