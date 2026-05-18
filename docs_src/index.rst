@@ -6,7 +6,7 @@
 FastChem Documentation
 ======================
 
-Welcome to FastChem Cond (FastChem Version 3.x)!
+Welcome to FastChem 4!
 
 On this page you find the documentation for FastChem, the ultrafast equilibrium chemistry.
 If you find any new errors or inaccuracies, please send them to daniel.kitzmann@unibe.ch .

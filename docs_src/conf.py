@@ -7,9 +7,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'FastChem'
-copyright = '2019 - 2023, Daniel Kitzmann, Joachim Stock'
+copyright = '2019 - 2025, Daniel Kitzmann, Joachim Stock'
 author = 'Daniel Kitzmann'
-release = '3.0'
+release = '4.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -24,20 +24,13 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = 'furo'
 html_static_path = ['static']
 
-
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
-#
 html_theme_options = {
-	'logo': 'logo_l.png',
-	'description': 'FastChem - Ultrafast Equilibrium Chemistry',
-	'github_button': 'true',
-	'github_user': 'newstrangeworlds',
-    'github_repo': 'fastchem',
-	'github_type': 'watch',
-	'page_width' : '1001px',
-	}
+	'source_repository': 'https://github.com/newstrangeworlds/FastChem/',
+	'source_branch': 'master',
+	'source_directory': 'docs_src/',
+}
+
+html_logo = 'static/fastchem_logo_dark.png'

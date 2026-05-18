@@ -4,12 +4,12 @@ Detailed C++ object class description
 .. _sec:fc_class:
 
 
-``FastChem`` has been written in an object oriented way, split across
+``FastChem`` has been written in an object-oriented way, split across
 several different object classes. The entire source code of ``FastChem``
-is contained in the folder ``fastchem_src/``. For including ``FastChem``
-in another ``C++`` project, only adding the main fastchem header file
+is contained in the folder ``fastchem_src/``. To include ``FastChem``
+in another ``C++`` project, only adding the main header file
 ``fastchem.h`` is required. All ``FastChem`` code is encapsulated in its
-own namespace called ``fastchem`` to avoid clashing with other
+own namespace called ``fastchem`` to avoid clashes with other
 libraries.
 
 Some comments on coding conventions
@@ -34,8 +34,8 @@ Class and structure names are always capitalised, for example
 
 Variable names are always written in lowercase and compound nouns are
 separated by a \_. For example: ``FastChem.element_calculation_order``
-or ``Element.molecule_list`` The only exceptions are global constants.
-They contain only capitalised letters, e.g.:
+or ``Element.molecule_list``. The only exceptions are global constants,
+which contain only capitalised letters, e.g.:
 ``constexpr unsigned int FASTCHEM_UNKNOWN_SPECIES`` or
 ``constexpr double CONST_AMU``
 
@@ -51,18 +51,16 @@ specify which of the two versions should be used:
 
 .. code:: cpp
 
+  FastChem<double> fastchem("model_parameter_file.dat", 1);
   FastChem<long double> fastchem("model_parameter_file.dat", 1);
-  FastChem<double> fastchem("model_parameter_file.dat", 1); 
 
-The ``long double`` version has a slightly higher computational overhead and
-larger memory requirements than the ``double`` one. On the other hand,
-it offers a higher numerical precision which is especially important
-when dealing with chemical systems where the mass action constants and
-number densities can vary by many orders of magnitudes. We strongly
-suggest to always use the ``long double`` version despite the additional
-computational overhead. In fact, in our experience the increased
-numerical precision of ``long double`` can effectively lead to a smaller
-number of iterations.
+The current version of ``FastChem`` uses log-based element densities as
+primary variables, which avoids numerical underflow and enables
+convergence at temperatures as low as 1 K (without ions) using
+``double`` precision alone. The ``long double`` version is still
+available but is no longer required for convergence at low temperatures.
+Note that Apple Silicon processors do not support quadruple-precision
+arithmetic, so ``long double`` provides no benefit on those systems.
 
 .. _sec:fastchem_constants:
 
@@ -84,7 +82,7 @@ that is returned by some ``FastChem`` methods when a chemical species is not fou
   Indicates that the calculation was not successful, i.e. that the chemistry did not converge within the allowed maximum number of iterations steps given in the config file or set manually via ``FastChem.setMaxChemistryIter`` (see :ref:`here<sec:fastchem_methods>`). One way to solve such a problem is to increase the maximum number of iteration steps.
 
 ``constexpr unsigned int fastchem::FASTCHEM_INITIALIZATION_FAILED``
-  Indicates that something went wrong during reading one of the input files. To find the source of the problem, one can set the verbose level in the config file or manually via ``FastChem.setVerboseLevel`` (see :ref:`here<sec:fastchem_methods>`) to a higher value and look at the terminal output.
+  Indicates that something went wrong while reading one of the input files. To find the source of the problem, one can set the verbose level in the config file or manually via ``FastChem.setVerboseLevel`` (see :ref:`here<sec:fastchem_methods>`) to a higher value and look at the terminal output.
 
 ``constexpr unsigned int fastchem::FASTCHEM_IS_BUSY``
   The chemistry calculations of ``FastChem`` can only be called once for each object class instance. Attempting to start a new calculation while another is still running, for example via OpenMP, will result in ``FastChem`` returning this flag.
@@ -93,7 +91,7 @@ that is returned by some ``FastChem`` methods when a chemical species is not fou
   ``FastChem`` returns this flag if some input values are wrong. Currently, this refers to the temperature and pressure vectors in the input structure not having the same size (see :ref:`here<sec:fastchem_input_struct>` for details on the input structure).
 
 ``constexpr unsigned int fastchem::FASTCHEM_PHASE_RULE_VIOLATION``
-  ``FastChem`` returns this flag if condensation is used and the system violates the phase rule. This happens when the number of elements contained in condensates equals the total number of elements. In this case, the gas phase lacks a degree of freedom to yield the correct gas pressure. Such a system cannot be solved as there has always to be at least one incondensable element in the gas phase (see the section about the phase rule in Paper III).
+  ``FastChem`` returns this flag if condensation is used and the system violates the phase rule. This happens when the number of elements contained in condensates equals the total number of elements. In this case, the gas phase lacks a degree of freedom to yield the correct gas pressure. Such a system cannot be solved because there must always be at least one incondensable element in the gas phase (see the section on the phase rule in Paper III).
 
 In addition to these flags, ``fastchem_constants.h`` also includes a
 constant string vector
@@ -129,7 +127,7 @@ FastChem constructor
 
 ..
 
-  This constructor requires two parameters: the location of the parameter file, described :ref:`here<sec:fc_parameter_file>`, as well as the initial verbose, i.e. the amount of debug output in the terminal window. All main options and parameters will be read from the parameter file, but can be changed later by using the appropriate methods described :ref:`here<sec:fastchem_methods>`.
+  This constructor requires two parameters: the location of the parameter file, described :ref:`here<sec:fc_parameter_file>`, as well as the initial verbose level, i.e. the amount of debug output in the terminal window. All main options and parameters will be read from the parameter file but can be changed later by using the appropriate methods described :ref:`here<sec:fastchem_methods>`.
 
 .. code:: cpp
 
@@ -139,7 +137,7 @@ FastChem constructor
 
 ..
 
-  This constructor requires three parameters: the locations of the element abundance and gas phase species data files, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:fastchem_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to :math:`10^{-4}`. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
+  This constructor requires three parameters: the locations of the element abundance and gas phase species data files, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:fastchem_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of Newton's method and the chemistry iterations is set to :math:`10^{-4}`. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
 
 .. code:: cpp
 
@@ -150,11 +148,11 @@ FastChem constructor
 
 ..
 
-  This constructor requires four parameters: the locations of the element abundance and gas phase species data files, the condensate data file, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:fastchem_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to :math:`10^{-4}`. Note that instead of a location for the condensate data, a string containing ``"none"`` can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
+  This constructor requires four parameters: the locations of the element abundance and gas phase species data files, the condensate data file, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:fastchem_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of Newton's method and the chemistry iterations is set to :math:`10^{-4}`. Note that instead of a location for the condensate data, a string containing ``"none"`` can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
 
 A fourth way to create a ``FastChem`` object is to make a copy of an
 existing one. ``FastChem`` contains an internal copy constructor that
-manages the copy of all the object class’ data structures. Assuming that
+manages the copying of all the object class’ data structures. Assuming that
 ``fastchem_a`` is a valid object instance of the ``FastChem`` class, a
 second object, say ``fastchem_b``, can simply be created by using
 
@@ -177,7 +175,7 @@ When the chemistry calculation of FastChem,
   FastChem.calcDensities(FastChemInput, FastChemOutput)
 
 is called, input and output structures are required. Their definitions can be found
-in the source file ``fastchem_src/input_output_struct.h``
+in the source file ``fastchem_src/input_output_struct.h``.
 
 .. _sec:fastchem_input_struct:
 
@@ -213,7 +211,7 @@ ignored.
 Output structure
 ^^^^^^^^^^^^^^^^
 
-The outout structure is defined as
+The output structure is defined as
 
 .. code:: c++
 
@@ -236,7 +234,7 @@ The outout structure is defined as
 It has the following variables:
 
 ``std::vector<std::vector<double>> number_densities``
-  The two-dimensional array contains the number densities in of all gas phase species (elements, molecules, ions). The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of ``FastChem.getGasSpeciesNumber()`` (see :ref:`here<sec:fastchem_methods>`).
+  The two-dimensional array contains the number densities of all gas phase species (elements, molecules, ions). The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of ``FastChem.getGasSpeciesNumber()`` (see :ref:`here<sec:fastchem_methods>`).
 
 ``std::vector<double> total_element_density``
   Contains the total number density of all atoms :math:`j`, i.e. :math:`n_\mathrm{tot} = \sum_j \left( n_j + \sum_i \nu_{ij} n_i + \sum_c \nu_{cj} n_c \right)`, summed over their atomic number densities, as well as the ones contained in all other molecules/ions :math:`j` as well as condensate species :math:`c`. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the vector is equal to that of the input temperature and pressure vectors.
@@ -245,7 +243,7 @@ It has the following variables:
   Contains the mean molecular weight of the mixture in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of g/mol. The dimension of the vector is equal to that of the input temperature and pressure vectors.
 
 ``std::vector<std::vector<double>> number_densities_cond``
-  The two-dimensional array contains the fictitious number densities in of all condensate species. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of ``FastChem.getCondSpeciesNumber()`` (see :ref:`here<sec:fastchem_methods>`).
+  The two-dimensional array contains the fictitious number densities of all condensate species. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of species and has a length of ``FastChem.getCondSpeciesNumber()`` (see :ref:`here<sec:fastchem_methods>`).
 
 ``std::vector<std::vector<double>> element_cond_degree``
   The two-dimensional array contains the degree of condensation for all elements. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of ``FastChem.getElementNumber()`` (see :ref:`here<sec:fastchem_methods>`).
@@ -256,14 +254,14 @@ It has the following variables:
 ``std::vector<unsigned int> nb_chemistry_iterations``
   Contains the total number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
 
+``std::vector<unsigned int> nb_cond_iterations``
+  Contains the total number of condensate calculation iterations that were required for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
+
 ``std::vector<unsigned int> nb_iterations``
   Contains the total number of coupled condensation-gas phase chemistry calculation iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
 
-``std::vector<unsigned int> nb_chemistry_iterations``
-  Contains the total number of chemistry iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
-
 ``std::vector<unsigned int> fastchem_flag``
-  Contains flags that give information on potential issues of the chemistry calculation for each temperature-pressure point. The set of potential values is stated :ref:`here<sec:fastchem_constants>`. A string message for each corresponding flag can also be obtained from the constant ``fastchem::FASTCHEM_MSG`` vector of strings, via ``fastchem::FASTCHEM_MSG[flag]``. The dimension of the vector is equal to that of the input temperature and pressure vectors.
+  Contains flags that provide information on potential issues with the chemistry calculation for each temperature-pressure point. The set of possible values is described :ref:`here<sec:fastchem_constants>`. A string message for each corresponding flag can also be obtained from the constant ``fastchem::FASTCHEM_MSG`` vector of strings, via ``fastchem::FASTCHEM_MSG[flag]``. The dimension of the vector is equal to that of the input temperature and pressure vectors.
 
 The vectors of the output structure don’t need to be pre-allocated. This
 will be done internally within ``FastChem`` when running the chemistry
@@ -286,12 +284,12 @@ Public methods of the FastChem object class
   
 .. code:: c++
 
-  void FastChem.setParameter(std::string param_name, 
+  bool FastChem.setParameter(std::string param_name,
                              param_type param_value)
 
 ..
 
-  Sets an internal ``FastChem`` parameter with the name ``param_name``. Depending on the parameter, the variable type ``param_type`` can either be an ``unsigned int``, a ``bool``, or a ``double`` value. A list of parameters and their types can be found in the next section.
+  Sets an internal ``FastChem`` parameter with the name ``param_name``. Depending on the parameter, the variable type ``param_type`` can either be an ``unsigned int``, a ``bool``, or a ``double`` value. Returns ``true`` if the parameter was set successfully, ``false`` if the parameter name was not found. The return value is marked ``[[nodiscard]]``. A list of parameters and their types can be found in the next section.
 
 .. code:: c++
 
@@ -396,7 +394,7 @@ Public methods of the FastChem object class
 
 ..
 
-  Returns the index of a condensate species formula ``symbol`` as ``unsigned int``; returns the constant ``fastchem::FASTCHEM_UNKOWN_SPECIES`` if species does not exist
+  Returns the index of a condensate species with formula ``symbol`` as ``unsigned int``; returns the constant ``fastchem::FASTCHEM_UNKOWN_SPECIES`` if species does not exist
 
 .. code:: c++
 
@@ -408,7 +406,7 @@ Public methods of the FastChem object class
 
 .. code:: c++
 
-  std::vector<double> FastChem.getElementAbundance()
+  std::vector<double> FastChem.getElementAbundances()
 
 ..
 
@@ -440,7 +438,7 @@ Returns the weight of a condensate species with index ``species_index`` as ``dou
 
 .. code:: c++
 
-  void FastChem.setElementAbundances(std::vector<double> abundances)
+  void FastChem.setElementAbundances(const std::vector<double>& abundances)
 
 ..
 
@@ -455,7 +453,7 @@ Returns the weight of a condensate species with index ``species_index`` as ``dou
 
   Converts a chemical formula to the Hill notation that is used for the gas-phase species in ``FastChem``. For example, ``H2O`` would be returned as ``H2O1``. 
   The conversion can also treat formulas with brackets, for example, ``Na(OH)2`` or ions, such as ``Fe+`` or ``Fe++``. The latter two would be returned as ``Fe1+`` and ``Fe1++``, respectively.
-  Higher ionsation stages are supported via ``^``, even though they are currently not included in the standard ``FastChem`` data files. For example, ``Fe^3+`` would be returned as ``Fe1^3+``.
+  Higher ionisation stages are supported via ``^``, even though they are currently not included in the standard ``FastChem`` data files. For example, ``Fe^3+`` would be returned as ``Fe1^3+``.
 
 
 .. code:: c++

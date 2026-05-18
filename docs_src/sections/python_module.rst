@@ -4,14 +4,13 @@ Detailed pyFastChem module description
 =================================================
 
 | By using the library ``PyBind11``, ``FastChem`` can be called directly
-  within Python. This requires the compilation of ``FastChem``\ ’s
+  within Python. This requires the compilation of ``FastChem``\ ‘s
   Python wrapper that is located in the file
-  ``python/fastchem_python_wrapper.cpp``. ``pyFastChem`` currently only
-  links to the ``long double`` ``C++`` version of ``FastChem``.
+  ``python/fastchem_python_wrapper.cpp``.
 | As described :ref:`here<sec:install_config>`, when using the
   ``CMake`` approach, ``pyFastChem`` will be automatically compiled when
   ``cmake`` is configured with the corresponding option. If the
-  configuration and compilation is successful, a module file should be
+  configuration and compilation are successful, a module file should be
   present in the ``python/`` folder that contains the Python module
   which acts as a wrapper between Python and the ``C++`` version of
   ``FastChem``. The file should be named ``pyfastchem.cpython-xxxx``,
@@ -19,7 +18,7 @@ Detailed pyFastChem module description
   operating system.
 | If ``pyFastChem`` has been built using the ``setup.py`` script or
   installed via ``PyPI``, then the module will be located in your normal
-  Python module library path. It, thus, can be accessed from everywhere
+  Python module library path and can thus be accessed from anywhere
   on your system like any other standard Python package. The location
   and additional module information can be obtained via
 
@@ -71,7 +70,7 @@ pyFastChem constants
   Indicates that the calculation was not successful, i.e. that the chemistry did not converge within the allowed maximum number of iterations steps given in the config file or set manually via the ``setParameter`` method together with the ``nbIterationsChem`` parameter (see :ref:`here<sec:pfc_methods>`). One way to solve such a problem is to increase the maximum number of iteration steps.
 
 ``pyfastchem.FASTCHEM_INITIALIZATION_FAILED``
-  Indicates that something went wrong during reading one of the input files. To find the source of the problem, one can set the verbose level in the config file or manually via ``setVerboseLevel`` (see :ref:`here<sec:pfc_methods>`) to a higher value and look at the terminal output.
+  Indicates that something went wrong while reading one of the input files. To find the source of the problem, one can set the verbose level in the config file or manually via ``setVerboseLevel`` (see :ref:`here<sec:pfc_methods>`) to a higher value and look at the terminal output.
 
 ``pyfastchem.FASTCHEM_IS_BUSY``
   The chemistry calculations of ``FastChem`` can only be called once for each object class instance. Attempting to start a new calculation while another is still running will result in ``FastChem`` returning this flag.
@@ -80,12 +79,12 @@ pyFastChem constants
   ``FastChem`` returns this flag if some input values are wrong. Currently, this refers to the temperature and pressure vectors in the input structure not having the same size (see :ref:`here<sec:fastchem_input_struct>` for details on the input structure).
 
 ``pyfastchem.FASTCHEM_PHASE_RULE_VIOLATION``
-  ``FastChem`` returns this flag if condensation is used and the system violates the phase rule. This happens when the number of elements contained in condensates equals the total number of elements. In this case, the gas phase lacks a degree of freedom to yield the correct gas pressure. Such a system cannot be solved as there has always to be at least one incondensable element in the gas phase (see the section about the phase rule in Paper III).
+  ``FastChem`` returns this flag if condensation is used and the system violates the phase rule. This happens when the number of elements contained in condensates equals the total number of elements. In this case, the gas phase lacks a degree of freedom to yield the correct gas pressure. Such a system cannot be solved because there must always be at least one incondensable element in the gas phase (see the section on the phase rule in Paper III).
 
 In addition to these flags, the ``pyFastChem`` module also includes a
 constant string array ``pyfastchem.FASTCHEM_MSG`` that contains string
 expressions for each of these flags. Using this array with any of the
-aforementioned flags ``pyfastchen.FASTCHEM_MSG[flag]`` returns a string
+aforementioned flags ``pyfastchem.FASTCHEM_MSG[flag]`` returns a string
 with a description of the corresponding flag’s meaning. For example,
 
 .. code:: python
@@ -111,7 +110,7 @@ pyFastChem constructor
 
 ..
 
-  This constructor requires three parameters: the locations of the element abundance and gas phase species data files, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:pfc_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to :math:`10^{-4}`. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
+  This constructor requires three parameters: the locations of the element abundance and gas phase species data files, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:pfc_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of Newton's method and the chemistry iterations is set to :math:`10^{-4}`. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
 
 .. code:: python
 
@@ -122,16 +121,16 @@ pyFastChem constructor
 
 ..
 
-  This constructor requires four parameters: the locations of the element abundance and gas phase species data files, the condensate data file, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:pfc_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of the of Newton method and the chemistry iterations is set to :math:`10^{-4}`. Note that instead of a location for the condensate data, a ``str`` containing ``'none'`` can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
+  This constructor requires four parameters: the locations of the element abundance and gas phase species data files, the condensate data file, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:pfc_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of Newton's method and the chemistry iterations is set to :math:`10^{-4}`. Note that instead of a location for the condensate data, a ``str`` containing ``'none'`` can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
 
 .. code:: python
 
   pyfastchem.FastChem(str parameter_file, 
-                      int intial_verbose_level)
+                      int initial_verbose_level)
 
 ..
 
-  The constructor requires two different arguments: the location of the parameter file and the initial verbose level. The latter one will be replaced by the corresponding value read in from the parameter file. The structure of this parameter file is discussed :ref:`here<sec:fc_parameter_file>`. All of parameter values read in from the file can also be adjusted during runtime by using the methods listed :ref:`here<sec:pfc_methods>`.
+  This constructor requires two arguments: the location of the parameter file and the initial verbose level. The latter will be replaced by the corresponding value read from the parameter file. The structure of this parameter file is discussed :ref:`here<sec:fc_parameter_file>`. All parameter values read from the file can also be adjusted during runtime by using the methods listed :ref:`here<sec:pfc_methods>`.
 
 .. _sec:pfc_input_ouput_struct:
 
@@ -219,7 +218,7 @@ following structure in Python:
 It has the following variables:
 
 ``number_densities``
-  The two-dimensional array contains the number densities in of all gas phase species (elements, molecules, ions) as ``float`` numbers. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure arrays of the input structure. The second dimension refers to the number of species and has a length of ``getGasSpeciesNumber()`` (see :ref:`here<sec:pfc_methods>`).
+  The two-dimensional array contains the number densities of all gas phase species (elements, molecules, ions) as ``float`` numbers. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure arrays of the input structure. The second dimension refers to the number of species and has a length of ``getGasSpeciesNumber()`` (see :ref:`here<sec:pfc_methods>`).
 
 ``total_element_density``
   One-dimensional array of ``float`` numbers that contains the total number density of all atoms :math:`j`, i.e. :math:`n_\mathrm{tot} = \sum_j \left( n_j + \sum_i \nu_{ij} n_i + \sum_c \nu_{cj} n_c \right)`, summed over their atomic number densities, as well as the ones contained in all other molecules/ions :math:`j` and condensates :math:`c`. This quantity is usually only a diagnostic output and not relevant for other calculations. The dimension of the array is equal to that of the input temperature and pressure vectors.
@@ -228,7 +227,7 @@ It has the following variables:
   One-dimensional array of ``float`` numbers. Contains the mean molecular weight of the mixture in units of the unified atomic mass unit. For all practical purposes, this can also be converted into units of g/mol. The dimension of the array is equal to that of the input temperature and pressure vectors.
 
 ``number_densities_cond``
-  The two-dimensional array contains the fictitious number densities in of all condensate species as ``float`` numbers. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure arrays of the input structure. The second dimension refers to the number of species and has a length of ``getCondSpeciesNumber()`` (see :ref:`here<sec:pfc_methods>`).
+  The two-dimensional array contains the fictitious number densities of all condensate species as ``float`` numbers. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure arrays of the input structure. The second dimension refers to the number of species and has a length of ``getCondSpeciesNumber()`` (see :ref:`here<sec:pfc_methods>`).
 
 ``element_cond_degree``
   The two-dimensional array contains the degree of condensation for all elements. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of ``getElementNumber()`` (see :ref:`here<sec:pfc_methods>`).
@@ -246,7 +245,7 @@ It has the following variables:
   One-dimensional array of ``int`` numbers. Contains the total number of coupled condensation-gas phase chemistry calculation iterations that were required to solve the system for each temperature-pressure point. The dimension of the vector is equal to that of the input temperature and pressure vectors.
 
 ``fastchem_flag``
-  One-dimensional array of ``int`` numbers. Contains flags that give information on potential issues of the chemistry calculation for each temperature-pressure point. The set of potential values is stated :ref:`here<sec:pfc_constants>`. A string message for each corresponding flag can also be obtained from the constant ``pyfastchem.FASTCHEM_MSG`` vector of strings, via ``pyfastchem.FASTCHEM_MSG[flag]``. The dimension of the array is equal to that of the input temperature and pressure vectors.
+  One-dimensional array of ``int`` numbers. Contains flags that provide information on potential issues with the chemistry calculation for each temperature-pressure point. The set of possible values is described :ref:`here<sec:pfc_constants>`. A string message for each corresponding flag can also be obtained from the constant ``pyfastchem.FASTCHEM_MSG`` vector of strings, via ``pyfastchem.FASTCHEM_MSG[flag]``. The dimension of the array is equal to that of the input temperature and pressure vectors.
 
 The output structure from the ``pyFastChem`` module, in the example here
 called ``output_data``, can be defined in the following way:
@@ -271,7 +270,7 @@ pyFastChem functions
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 | The ``pyFastChem`` object returned from ``pyfastchem.FastChem()`` has
-  several methods that allow to interact with ``FastChem``. These
+  several methods that allow interaction with ``FastChem``. These
   methods are equivalent to those of the ``C++`` object class discussed
   :ref:`here<sec:fastchem_methods>`. 
   
@@ -298,7 +297,7 @@ pyFastChem functions
 
 ..
 
-  Sets an internal ``FastChem`` parameter. Depending on the parameter, the variable type ``param_type`` can either be an ``int``, a ``bool``, or a ``float`` value. A list of parameters and their types can be found :ref:`here<sect:fc_param>`. The ``C++``\ ``double`` types listed there should be replaced by Python ``float`` values, while ``unsigned int`` are used as ``int``. ``PyBind11`` often converts the Python ``bool`` type to an integer value rather than a ``C++``\ ``bool`` type. Setting a boolean parameter will then result in an error message. In such a case, instead of using a simple ``True`` as parameter value, an explicit conversion has to be done instead, for example via ``np.bool_(True)``.   
+  Sets an internal ``FastChem`` parameter. Depending on the parameter, the variable type ``param_type`` can either be an ``int``, a ``bool``, or a ``float`` value. A list of parameters and their types can be found :ref:`here<sect:fc_param>`. The ``C++``\ ``double`` types listed there should be replaced by Python ``float`` values, while ``unsigned int`` are used as ``int``. Python ``bool`` values (``True``/``False``) are correctly dispatched to the ``bool`` overload without requiring explicit conversion.   
   
 .. code:: python
 
@@ -461,7 +460,7 @@ Returns the abundance of an element with ``int`` index ``species_index`` as ``fl
 
   Converts a chemical formula to the Hill notation that is used for the gas-phase species in ``FastChem``. For example, ``H2O`` would be returned as ``H2O1``. 
   The conversion can also treat formulas with brackets, for example, ``Na(OH)2`` or ions, such as ``Fe+`` or ``Fe++``. The latter two would be returned as ``Fe1+`` and ``Fe1++``, respectively.
-  Higher ionsation stages are supported via ``^``, even though they are currently not included in the standard ``FastChem`` data files. For example, ``Fe^3+`` would be returned as ``Fe1^3+``.
+  Higher ionisation stages are supported via ``^``, even though they are currently not included in the standard ``FastChem`` data files. For example, ``Fe^3+`` would be returned as ``Fe1^3+``.
 
 
 .. code:: python
