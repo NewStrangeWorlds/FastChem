@@ -190,8 +190,8 @@ structure:
   principle have the same formula in the Hill notation. For example, the
   two species ``HCN`` and ``HNC`` would both be referred to as ``C1H1N1``. To
   distinguish the two in the standard set of ``FastChem``, underscores
-  are used, such that ``C1H1N1_1`` refers to ``HCN``, while ``C1H1N1_2``
-  represents ``HNC``. The use of the Hill notation is not a requirement. In a
+  followed by a short descriptor are used, such that ``C1H1N1_hcn`` refers to ``HCN``,
+  while ``C1H1N1_hnc`` represents ``HNC``. The use of the Hill notation is not a requirement. In a
   custom version of the species file, a different chemical notation
   could be used.
 | The sum formula is followed by an optional name for the species, for
@@ -535,13 +535,13 @@ for the formulas of all non-element species. If, for example, you are looking fo
 abundance of carbon dioxide, you need to locate the ``C1O2`` column rather than
 ``CO2``, whereas ``NH3`` would be listed as ``H3N1``.
 
-There are special cases of isomers that have the same Hill notation. These are distinguished by 
-adding ``_1`` and ``_2`` after their Hill notation. Isomers included in the standard set
+There are special cases of isomers that have the same Hill notation. These are distinguished by
+adding an underscore followed by a short descriptor. Isomers included in the standard set
 of FastChem species and their corresponding Hill notations are:
 
-| ``HCN`` (``C1H1N1_1``) and ``HNC`` (``C1H1N1_2``), 
-| ``AlOH`` (``Al1H1O1_1``) and ``OAlH`` (``Al1H1O1_2``), as well as 
-| ``S2F2`` (``F2S2_1``) and ``FS2F`` (``F2S2_2``).
+| ``HCN`` (``C1H1N1_hcn``) and ``HNC`` (``C1H1N1_hnc``),
+| ``AlOH`` (``Al1H1O1_aloh``) and ``OAlH`` (``Al1H1O1_oalh``), as well as
+| ``S2F2`` (``F2S2_ssf2``) and ``FS2F`` (``F2S2_fs2f``).
 
 Since version 3.1.3, ``FastChem`` now includes the API function 
 

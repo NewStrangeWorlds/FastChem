@@ -90,30 +90,15 @@ Advanced parameters
   should only be adjusted by users who know exactly what these
   parameters actually do and which side effects they may have.
 
-| ``useScalingFactor``
-|  Enable the additional scaling factor for the :math:`\log K` values in case they become too large. ``FastChem`` will estimate a corresponding scaling factor. An additional one can be added via the ``additionalScaling`` parameter.
-|  Type: ``bool``
-|  Default value: ``false``
-
-| ``additionalScaling``
-|  Additional scaling factor, added to the one ``FastChem`` estimates internally. Only used if ``useScalingFactor`` is set to ``true``.
-|  Type: ``double``
-|  Default value: 0
-
 | ``minDensityExponentElement``
 |  Exponent for the minimum number density of elements.
 |  Type: ``double``
-|  Default value: -155 (double) or -512 (long double)
+|  Default value: -155
 
 | ``minDensityExponentMolecules``
 |  Exponent for the minimum number density of molecules and ions.
 |  Type: ``double``
-|  Default value: -155 (double) or -512 (long double)
-
-| ``maxLogK``
-|  Maximum value for the :math:`\log K` of molecules and ions.
-|  Type: ``double``
-|  Default value: 1e10
+|  Default value: -155
 
 | ``condTau``
 |  Baseline :math:`\tau` value for condensates.
@@ -125,23 +110,13 @@ Advanced parameters
 |  Type: ``double``
 |  Default value: 5
 
-| ``condSolveFullSystem``
-|  Solve the full condensate system of equations without eliminating the :math:`\lambda_c`. Iteration will be slower but potentially more stable.
-|  Type: ``bool``
-|  Default value: ``false``
-
 | ``condReduceSystemSize``
 |  Reduce the size of the condensate system of equations by removing unstable condensates.
 |  Type: ``bool``
 |  Default value: ``true``
 
-| ``condUseFullPivot``
-|  Solve the condensate system of equations using an LU decomposition with full pivoting. This enables the detection of singular Jacobians but is slower than the default partial pivoting. If a singular matrix is detected, the system is solved by a perturbed Hessian matrix or by using a singular value decomposition.
-|  Type: ``bool``
-|  Default value: ``false``
-
 | ``condUseSVD``
-|  Solve the condensate system of equations using a singular value decomposition (SVD) when the Jacobian is singular. This requires ``condUseFullPivot`` to be set to ``true`` as well in order to detect a singular matrix.
+|  Solve the condensate system of equations using a singular value decomposition (SVD) when the Jacobian is singular.
 |  Type: ``bool``
 |  Default value: ``false``
 

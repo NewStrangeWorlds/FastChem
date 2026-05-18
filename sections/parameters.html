@@ -362,27 +362,11 @@ should only be adjusted by users who know exactly what these
 parameters actually do and which side effects they may have.</div>
 </div>
 <div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">useScalingFactor</span></code></div>
-<div class="line-block">
-<div class="line">Enable the additional scaling factor for the <span class="math notranslate nohighlight">\(\log K\)</span> values in case they become too large. <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will estimate a corresponding scaling factor. An additional one can be added via the <code class="docutils literal notranslate"><span class="pre">additionalScaling</span></code> parameter.</div>
-<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
-<div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">false</span></code></div>
-</div>
-</div>
-<div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">additionalScaling</span></code></div>
-<div class="line-block">
-<div class="line">Additional scaling factor, added to the one <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> estimates internally. Only used if <code class="docutils literal notranslate"><span class="pre">useScalingFactor</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</div>
-<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
-<div class="line">Default value: 0</div>
-</div>
-</div>
-<div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">minDensityExponentElement</span></code></div>
 <div class="line-block">
 <div class="line">Exponent for the minimum number density of elements.</div>
 <div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
-<div class="line">Default value: -155 (double) or -512 (long double)</div>
+<div class="line">Default value: -155</div>
 </div>
 </div>
 <div class="line-block">
@@ -390,15 +374,7 @@ parameters actually do and which side effects they may have.</div>
 <div class="line-block">
 <div class="line">Exponent for the minimum number density of molecules and ions.</div>
 <div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
-<div class="line">Default value: -155 (double) or -512 (long double)</div>
-</div>
-</div>
-<div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">maxLogK</span></code></div>
-<div class="line-block">
-<div class="line">Maximum value for the <span class="math notranslate nohighlight">\(\log K\)</span> of molecules and ions.</div>
-<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
-<div class="line">Default value: 1e10</div>
+<div class="line">Default value: -155</div>
 </div>
 </div>
 <div class="line-block">
@@ -418,14 +394,6 @@ parameters actually do and which side effects they may have.</div>
 </div>
 </div>
 <div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">condSolveFullSystem</span></code></div>
-<div class="line-block">
-<div class="line">Solve the full condensate system of equations without eliminating the <span class="math notranslate nohighlight">\(\lambda_c\)</span>. Iteration will be slower but potentially more stable.</div>
-<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
-<div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">false</span></code></div>
-</div>
-</div>
-<div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">condReduceSystemSize</span></code></div>
 <div class="line-block">
 <div class="line">Reduce the size of the condensate system of equations by removing unstable condensates.</div>
@@ -434,17 +402,9 @@ parameters actually do and which side effects they may have.</div>
 </div>
 </div>
 <div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">condUseFullPivot</span></code></div>
-<div class="line-block">
-<div class="line">Solve the condensate system of equations using an LU decomposition with full pivoting. This enables the detection of singular Jacobians but is slower than the default partial pivoting. If a singular matrix is detected, the system is solved by a perturbed Hessian matrix or by using a singular value decomposition.</div>
-<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
-<div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">false</span></code></div>
-</div>
-</div>
-<div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">condUseSVD</span></code></div>
 <div class="line-block">
-<div class="line">Solve the condensate system of equations using a singular value decomposition (SVD) when the Jacobian is singular. This requires <code class="docutils literal notranslate"><span class="pre">condUseFullPivot</span></code> to be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> as well in order to detect a singular matrix.</div>
+<div class="line">Solve the condensate system of equations using a singular value decomposition (SVD) when the Jacobian is singular.</div>
 <div class="line">Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code></div>
 <div class="line">Default value: <code class="docutils literal notranslate"><span class="pre">false</span></code></div>
 </div>

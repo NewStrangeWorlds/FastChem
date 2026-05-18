@@ -428,8 +428,8 @@ modified Hill notation for the formulas. Isomeric species would in
 principle have the same formula in the Hill notation. For example, the
 two species <code class="docutils literal notranslate"><span class="pre">HCN</span></code> and <code class="docutils literal notranslate"><span class="pre">HNC</span></code> would both be referred to as <code class="docutils literal notranslate"><span class="pre">C1H1N1</span></code>. To
 distinguish the two in the standard set of <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, underscores
-are used, such that <code class="docutils literal notranslate"><span class="pre">C1H1N1_1</span></code> refers to <code class="docutils literal notranslate"><span class="pre">HCN</span></code>, while <code class="docutils literal notranslate"><span class="pre">C1H1N1_2</span></code>
-represents <code class="docutils literal notranslate"><span class="pre">HNC</span></code>. The use of the Hill notation is not a requirement. In a
+followed by a short descriptor are used, such that <code class="docutils literal notranslate"><span class="pre">C1H1N1_hcn</span></code> refers to <code class="docutils literal notranslate"><span class="pre">HCN</span></code>,
+while <code class="docutils literal notranslate"><span class="pre">C1H1N1_hnc</span></code> represents <code class="docutils literal notranslate"><span class="pre">HNC</span></code>. The use of the Hill notation is not a requirement. In a
 custom version of the species file, a different chemical notation
 could be used.</div>
 <div class="line">The sum formula is followed by an optional name for the species, for
@@ -727,12 +727,12 @@ for the formulas of all non-element species. If, for example, you are looking fo
 abundance of carbon dioxide, you need to locate the <code class="docutils literal notranslate"><span class="pre">C1O2</span></code> column rather than
 <code class="docutils literal notranslate"><span class="pre">CO2</span></code>, whereas <code class="docutils literal notranslate"><span class="pre">NH3</span></code> would be listed as <code class="docutils literal notranslate"><span class="pre">H3N1</span></code>.</p>
 <p>There are special cases of isomers that have the same Hill notation. These are distinguished by
-adding <code class="docutils literal notranslate"><span class="pre">_1</span></code> and <code class="docutils literal notranslate"><span class="pre">_2</span></code> after their Hill notation. Isomers included in the standard set
+adding an underscore followed by a short descriptor. Isomers included in the standard set
 of FastChem species and their corresponding Hill notations are:</p>
 <div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">HCN</span></code> (<code class="docutils literal notranslate"><span class="pre">C1H1N1_1</span></code>) and <code class="docutils literal notranslate"><span class="pre">HNC</span></code> (<code class="docutils literal notranslate"><span class="pre">C1H1N1_2</span></code>),</div>
-<div class="line"><code class="docutils literal notranslate"><span class="pre">AlOH</span></code> (<code class="docutils literal notranslate"><span class="pre">Al1H1O1_1</span></code>) and <code class="docutils literal notranslate"><span class="pre">OAlH</span></code> (<code class="docutils literal notranslate"><span class="pre">Al1H1O1_2</span></code>), as well as</div>
-<div class="line"><code class="docutils literal notranslate"><span class="pre">S2F2</span></code> (<code class="docutils literal notranslate"><span class="pre">F2S2_1</span></code>) and <code class="docutils literal notranslate"><span class="pre">FS2F</span></code> (<code class="docutils literal notranslate"><span class="pre">F2S2_2</span></code>).</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">HCN</span></code> (<code class="docutils literal notranslate"><span class="pre">C1H1N1_hcn</span></code>) and <code class="docutils literal notranslate"><span class="pre">HNC</span></code> (<code class="docutils literal notranslate"><span class="pre">C1H1N1_hnc</span></code>),</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">AlOH</span></code> (<code class="docutils literal notranslate"><span class="pre">Al1H1O1_aloh</span></code>) and <code class="docutils literal notranslate"><span class="pre">OAlH</span></code> (<code class="docutils literal notranslate"><span class="pre">Al1H1O1_oalh</span></code>), as well as</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">S2F2</span></code> (<code class="docutils literal notranslate"><span class="pre">F2S2_ssf2</span></code>) and <code class="docutils literal notranslate"><span class="pre">FS2F</span></code> (<code class="docutils literal notranslate"><span class="pre">F2S2_fs2f</span></code>).</div>
 </div>
 <p>Since version 3.1.3, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> now includes the API function</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">FastChem</span><span class="p">.</span><span class="n">convertToHillNotation</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">formula</span><span class="p">)</span>

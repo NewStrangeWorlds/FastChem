@@ -413,7 +413,7 @@ Returns the abundance of an element with ``int`` index ``species_index`` as ``fl
 
 .. code:: python
 
-  float [] getElementAbundance()
+  float [] getElementAbundances()
 
 ..
 

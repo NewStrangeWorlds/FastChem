@@ -44,23 +44,15 @@ FastChem object class
 
 The entire ``FastChem`` model is encapsulated in an object class called
 ``FastChem`` that is defined in the header file ``fastchem.h``. The
-object class is programmed as a template that can be used in either
-``double`` or ``long double`` precision. When creating an object of this
-class by calling a corresponding constructor, one therefore has to
-specify which of the two versions should be used:
+class uses ``double`` precision throughout. ``FastChem`` uses log-based
+element densities as primary variables, which avoids numerical underflow
+and enables convergence at temperatures as low as 1 K (without ions).
+An object is created by calling one of the constructors described below,
+for example:
 
 .. code:: cpp
 
-  FastChem<double> fastchem("model_parameter_file.dat", 1);
-  FastChem<long double> fastchem("model_parameter_file.dat", 1);
-
-The current version of ``FastChem`` uses log-based element densities as
-primary variables, which avoids numerical underflow and enables
-convergence at temperatures as low as 1 K (without ions) using
-``double`` precision alone. The ``long double`` version is still
-available but is no longer required for convergence at low temperatures.
-Note that Apple Silicon processors do not support quadruple-precision
-arithmetic, so ``long double`` provides no benefit on those systems.
+  FastChem fastchem("model_parameter_file.dat", 1);
 
 .. _sec:fastchem_constants:
 
@@ -79,7 +71,7 @@ that is returned by some ``FastChem`` methods when a chemical species is not fou
   Indicates that the calculation has been successful, i.e. that the chemistry iterations converged.
 
 ``constexpr unsigned int fastchem::FASTCHEM_NO_CONVERGENCE``
-  Indicates that the calculation was not successful, i.e. that the chemistry did not converge within the allowed maximum number of iterations steps given in the config file or set manually via ``FastChem.setMaxChemistryIter`` (see :ref:`here<sec:fastchem_methods>`). One way to solve such a problem is to increase the maximum number of iteration steps.
+  Indicates that the calculation was not successful, i.e. that the chemistry did not converge within the allowed maximum number of iterations steps given in the config file or set manually via ``FastChem.setParameter("nbIterationsChem", ...)`` (see :ref:`here<sec:fastchem_methods>`). One way to solve such a problem is to increase the maximum number of iteration steps.
 
 ``constexpr unsigned int fastchem::FASTCHEM_INITIALIZATION_FAILED``
   Indicates that something went wrong while reading one of the input files. To find the source of the problem, one can set the verbose level in the config file or manually via ``FastChem.setVerboseLevel`` (see :ref:`here<sec:fastchem_methods>`) to a higher value and look at the terminal output.
@@ -137,7 +129,7 @@ FastChem constructor
 
 ..
 
-  This constructor requires three parameters: the locations of the element abundance and gas phase species data files, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:fastchem_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of Newton's method and the chemistry iterations is set to :math:`10^{-4}`. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
+  This constructor requires three parameters: the locations of the element abundance and gas phase species data files, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:fastchem_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of Newton's method and the chemistry iterations is set to :math:`10^{-5}`. This constructor will not read in any condensate data. Trying to use an object created via this method for a calculation using condensation will result in an error message.
 
 .. code:: cpp
 
@@ -148,7 +140,7 @@ FastChem constructor
 
 ..
 
-  This constructor requires four parameters: the locations of the element abundance and gas phase species data files, the condensate data file, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:fastchem_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of Newton's method and the chemistry iterations is set to :math:`10^{-4}`. Note that instead of a location for the condensate data, a string containing ``"none"`` can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
+  This constructor requires four parameters: the locations of the element abundance and gas phase species data files, the condensate data file, as well as the verbose level. All other options and parameters within ``FastChem`` will be set to their default values but can be later changed by using the appropriate methods described :ref:`here<sec:fastchem_methods>`. The default maximum number of chemistry iterations is 3000, the number of Newton, bisection and Nelder-Mead method iterations is 3000, and the default accuracy of Newton's method and the chemistry iterations is set to :math:`10^{-5}`. Note that instead of a location for the condensate data, a string containing ``"none"`` can be used here as well. In that case, no condensate data will be read in and trying to use the object for a calculation using condensation will result in an error message.
 
 A fourth way to create a ``FastChem`` object is to make a copy of an
 existing one. ``FastChem`` contains an internal copy constructor that

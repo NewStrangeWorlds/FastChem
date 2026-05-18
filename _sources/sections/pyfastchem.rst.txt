@@ -190,14 +190,16 @@ use ``'none'`` for this argument:
 
 .. code:: python
 
-   saveMonitorOutput(output_dir + '/monitor.dat', 
-                     temperature, 
-                     pressure, 
-                     output_data.element_conserved, 
-                     output_data.fastchem_flag, 
-                     output_data.nb_chemistry_iterations, 
-                     output_data.total_element_density, 
-                     output_data.mean_molecular_weight, 
+   saveMonitorOutput(output_dir + '/monitor.dat',
+                     temperature,
+                     pressure,
+                     output_data.element_conserved,
+                     output_data.fastchem_flag,
+                     output_data.nb_iterations,
+                     output_data.nb_chemistry_iterations,
+                     output_data.nb_cond_iterations,
+                     output_data.total_element_density,
+                     output_data.mean_molecular_weight,
                      fastchem)
 
 | A more detailed description of the output functions can be found in
