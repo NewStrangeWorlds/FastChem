@@ -15,7 +15,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        include:
+          - os: ubuntu-latest
+          - os: windows-latest
+          - os: macos-13
+            macosx_deployment_target: "13.0"
+          - os: macos-14
+            macosx_deployment_target: "14.0"
     if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +36,7 @@ jobs:
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
+          MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
           CIBW_BEFORE_BUILD_MACOS: "brew install libomp"
           CIBW_ENVIRONMENT_MACOS: >
             CC=/usr/bin/clang
@@ -38,7 +45,7 @@ jobs:
             CFLAGS="-I$(brew --prefix libomp)/include"
             CXXFLAGS="-I$(brew --prefix libomp)/include"
             LDFLAGS="-Wl,-rpath,$(brew --prefix libomp)/lib -L$(brew --prefix libomp)/lib -lomp"
-            MACOSX_DEPLOYMENT_TARGET="$(sw_vers -productVersion | cut -d. -f1).0"
+            MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET
 
       - uses: actions/upload-artifact@v4
         with:
