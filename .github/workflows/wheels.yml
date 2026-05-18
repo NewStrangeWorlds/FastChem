@@ -1,7 +1,7 @@
 name: Build
 
 env:
-  CIBW_SKIP: pp*
+  CIBW_SKIP: "pp* cp36-* cp37-* cp38-* cp39-*"
 
 on:
   push:
