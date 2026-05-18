@@ -129,7 +129,8 @@ ext_modules = [
 
 
 setup(
-  name        = "pyfastchem",
+  name             = "pyfastchem",
+  python_requires  = ">=3.10",
   description = "FastChem, an ultra-fast equilibrium chemistry",
   long_description=__read__('README.md'),
   long_description_content_type="text/markdown",
