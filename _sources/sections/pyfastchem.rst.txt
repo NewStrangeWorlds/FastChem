@@ -95,8 +95,8 @@ use ``'none'`` for this argument:
    fastchem = pyfastchem.FastChem('input/parameters_py.dat', 1)
 
 | where the first argument is the location of the parameter file and the
-  second one the initial verbose level. The latter one will later be
-  replaced by the corresponding value read in from the parameter file.
+  second one the initial verbose level. The latter will be
+  replaced by the corresponding value read from the parameter file.
   The structure of this parameter file is discussed :ref:`here<sec:fc_parameter_file>`.
 
 | Creating a ``FastChem`` object with the first two methods will set
@@ -154,7 +154,7 @@ use ``'none'`` for this argument:
 | This method returns an integer flag that describes the overall outcome
   of the calculation. A description of the different flags can be found
   :ref:`here<sec:pfc_constants>`. After calling the
-  ``calcDensity`` method, the output structure will be filled with the
+  ``calcDensities`` method, the output structure will be filled with the
   corresponding output data. For example,
 | ``output_data.number_densities`` will contain the number densities of
   the chemical species. This is a 2D list, where the first dimension
@@ -268,15 +268,15 @@ with the following arguments:
   Optional parameter. Is an array of ``str`` values that contains the chemical symbols of species the chemistry output file should be saved for. Without this optional parameter, the output function will by default save all species. The symbols have to match the ones used in the ``FastChem`` input file for the equilibrium constants. For the standard files supplied with ``FastChem``, the Hill notation, therefore, needs to be used here.
 
 ``additional_columns=None, additional_columns_desc=None``
-  Optional parameters. Sometimes, ``FastChem`` calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow to print additional columns in the output file. The first parameter ``additional_columns`` is an :math:`N\times N_\mathrm{tp}`-dimensional array of ``float`` values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays.
+  Optional parameters. Sometimes, ``FastChem`` calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow printing additional columns in the output file. The first parameter ``additional_columns`` is an :math:`N\times N_\mathrm{tp}`-dimensional array of ``float`` values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays.
 
-  The second optional parameter ``additional_columns_desc`` contains an array of ``str`` values with the header descriptions of the additional columns. The dimension has to be equal to number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled ``unk`` instead.
+  The second optional parameter ``additional_columns_desc`` contains an array of ``str`` values with the header descriptions of the additional columns. The dimension has to be equal to the number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled ``unk`` instead.
 
 | All of these function arguments, except for the optional parameters,
   are contained within the input and output structures of
   ``pyFastChem``, discussed :ref:`here<sec:pfc_input_ouput_struct>`.
 
-| Saving the chemistry output with the panda ``DataFrame`` format in a
+| Saving the chemistry output with the pandas ``DataFrame`` format in a
   pickle file is possible via the function:
 
 .. code:: python
@@ -293,7 +293,7 @@ with the following arguments:
                             additional_columns_desc=None)
 
 All arguments are identical to those of the previous ASCII output
-function. The saved panda DataFrame contains the same columns and
+function. The saved pandas DataFrame contains the same columns and
 headers as the simple text output.
 
 Condensate output script
@@ -336,14 +336,14 @@ Condensate output script
   Optional parameter. Is an array of ``str`` values that contains the chemical symbols of condensates the chemistry output file should be saved for. Without this optional parameter, the output function will by default save all species. The symbols have to match the ones used in the ``FastChem`` input file for the equilibrium constants.
 
 ``additional_columns=None, additional_columns_desc=None``
-  Optional parameters. Sometimes, ``FastChem`` calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow to print additional columns in the output file. The first parameter ``additional_columns`` is an :math:`N\times N_\mathrm{tp}`-dimensional array of ``float`` values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays.
+  Optional parameters. Sometimes, ``FastChem`` calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow printing additional columns in the output file. The first parameter ``additional_columns`` is an :math:`N\times N_\mathrm{tp}`-dimensional array of ``float`` values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays.
 
-  The second optional parameter ``additional_columns_desc`` contains an array of ``str`` values with the header descriptions of the additional columns. The dimension has to be equal to number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled ``unk`` instead.
+  The second optional parameter ``additional_columns_desc`` contains an array of ``str`` values with the header descriptions of the additional columns. The dimension has to be equal to the number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled ``unk`` instead.
 
 | All of these function arguments, except for the optional parameters,
   are contained within the input and output structures of
   ``pyFastChem``, discussed :ref:`here<sec:pfc_input_ouput_struct>`.
-| Saving the condensate output with the panda ``DataFrame`` format in a
+| Saving the condensate output with the pandas ``DataFrame`` format in a
   pickle file is possible via the function:
 
 .. code:: python
@@ -359,14 +359,14 @@ Condensate output script
                        additional_columns_desc=None)
 
 All arguments are identical to those of the previous ASCII output
-function. The saved panda DataFrame contains the same columns and
+function. The saved pandas DataFrame contains the same columns and
 headers as the simple text output.
 
 Monitor output scripts
 ^^^^^^^^^^^^^^^^^^^^^^
 
 ``save_output.py`` also contains two functions for the ``FastChem``
-monitor output. The first, ``savMonitorOutput``, saves the debug output
+monitor output. The first, ``saveMonitorOutput``, saves the debug output
 in a text file that is identical to the one of the ``C++`` version. Just
 like for the chemistry output, saving the results for a large number of
 calculations can be quite slow. Therefore, we also provide an
@@ -403,7 +403,7 @@ with the following arguments:
   The two-dimensional array of ``int`` numbers contains information on the state of element conservation. A value of 0 indicates that element conservation is not fulfilled, whereas a value of 1 means that the element has been conserved. The first dimension refers to the temperature-pressure grid and has the same size as the temperature and pressure vectors of the input structure. The second dimension refers to the number of elements and has a length of ``getElementNumber()`` (see :ref:`here<sec:pfc_methods>`).
 
 ``fastchem_flags``
-  One-dimensional array of ``int`` numbers. Contains flags that give information on potential issues of the chemistry calculation for each temperature-pressure point. The set of potential values is stated :ref:`here<sec:pfc_constants>`. A string message for each corresponding flag can also be obtained from the constant ``pyfastchem.FASTCHEM_MSG`` vector of strings, via ``pyfastchem.FASTCHEM_MSG[flag]``. The dimension of the array is equal to that of the input temperature and pressure vectors.
+  One-dimensional array of ``int`` numbers. Contains flags that provide information on potential issues with the chemistry calculation for each temperature-pressure point. The set of possible values is described :ref:`here<sec:pfc_constants>`. A string message for each corresponding flag can also be obtained from the constant ``pyfastchem.FASTCHEM_MSG`` vector of strings, via ``pyfastchem.FASTCHEM_MSG[flag]``. The dimension of the array is equal to that of the input temperature and pressure vectors.
 
 ``nb_iterations``
   One-dimensional array of ``int`` numbers. Contains the number of coupled chemistry-condensation iterations that were required to solve the system for each temperature-pressure point. The dimension of the array is equal to that of the input temperature and pressure vectors.
@@ -424,13 +424,13 @@ with the following arguments:
   An object of the ``pyFastChem`` class that has been used to calculate the chemistry.
 
 ``additional_columns=None, additional_columns_desc=None``
-  Optional parameters. Sometimes, ``FastChem`` calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow to print additional columns in the output file. The first parameter ``additional_columns`` is an :math:`N\times N_\mathrm{tp}`-dimensional array of ``float`` values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays.
+  Optional parameters. Sometimes, ``FastChem`` calculations are not iterated only over temperature or pressure but also other variables, such as the metallicity or C/O ratio. The output function therefore contains these optional parameters that allow printing additional columns in the output file. The first parameter ``additional_columns`` is an :math:`N\times N_\mathrm{tp}`-dimensional array of ``float`` values, where the first dimension refers to the number of additional columns and the second dimension has to be equal to the dimensions of the temperature and pressure arrays.
 
-  The second optional parameter ``additional_columns_desc`` contains an array of ``str`` values with the header descriptions of the additional columns. The dimension has to be equal to number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled ``unk`` instead.
+  The second optional parameter ``additional_columns_desc`` contains an array of ``str`` values with the header descriptions of the additional columns. The dimension has to be equal to the number of additional columns. If this is not the case, or if the parameter is missing entirely, the columns will be labelled ``unk`` instead.
 
 The monitor output file has the same format as the one produced by the
 ``C++`` version discussed :ref:`here<sec:fc_cpp_output>`. Saving
-the chemistry output with the panda ``DataFrame`` format in a pickle
+the chemistry output with the pandas ``DataFrame`` format in a pickle
 file is possible via the function:
 
 .. code:: python
@@ -450,7 +450,7 @@ file is possible via the function:
                           additional_columns_desc=None)
 
 All arguments are identical to those of the previous ASCII output
-function. The saved panda ``DataFrame`` contains the same columns and
+function. The saved pandas ``DataFrame`` contains the same columns and
 headers as the simple text output. The only difference between the
 outputs is that for the ``DataFrame`` format, the element conservation
 and ``FastChem`` flags are not converted to strings (i.e. to ``fail`` or

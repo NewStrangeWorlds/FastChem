@@ -4,11 +4,11 @@
 Standard input and output files
 ===============================
 
-Besides optional other parameter files that are used within the ``C++``
+In addition to optional parameter files used by the ``C++``
 stand-alone version or the Python version, ``FastChem`` requires two
-special input files, one for the element abundances and a second
+special input files: one for the element abundances and a second
 describing the mass action law constant parametrisations. Both are
-described in the following.
+described below.
 
 Element abundance file
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -96,7 +96,7 @@ readable by ``FastChem``:
 
 The first line is always a header line that provides important
 information for the user and is ignored by ``FastChem``. All subsequent
-lines contain each the symbol for an element and its element abundance.
+lines each contain the symbol of an element and its abundance.
 Molecules that contain elements not present in this file are ignored.
 The element abundance for the electron has an arbitrary value. It is
 only present in the file to inform ``FastChem`` that the electrons (and
@@ -107,20 +107,23 @@ required to be in any particular order.
 
 Standard files
 --------------
-              
+
 
 Together with ``FastChem``, we provide several different element
 abundance files, located in the ``input/element_abundances/`` folder.
-The folder includes three different sets of element abundances:
-`Asplund et al. (2009) <http://adsabs.harvard.edu/abs/2009ARA&A..47..481A>`_,
-`Asplund et al. (2021) <http://adsabs.harvard.edu/abs/2021A&A...653A.141A>`_, and
-`Lodders (2003) <http://adsabs.harvard.edu/abs/2003ApJ...591.1220L>`_ .
+The folder includes four different sets of element abundances:
+`Asplund et al. (2009) <http://adsabs.harvard.edu/abs/2009ARA%26A..47..481A>`_,
+`Asplund et al. (2021) <http://adsabs.harvard.edu/abs/2021A%26A...653A.141A>`_,
+`Lodders (2003) <http://adsabs.harvard.edu/abs/2003ApJ...591.1220L>`_, and
+`Lodders (2025) <https://www.aanda.org/articles/aa/full_html/2025/04/aa53363-24/aa53363-24.html>`_.
 
-The standard files provide the solar element abundances for species that
-are at least as abundant as germanium. As alternative versions, we also
-include additional files ``*_extended.dat`` for each compilation, that
-includes more elements, up to uranium. These files can be used for the
-extended set of ion species described in the next section.
+Each compilation is provided in three variants:
+
+- The standard files (``*.dat``) contain abundances for elements at least as abundant as germanium.
+- The ``*_extended.dat`` files contain additional elements down to at least as abundant as lead (Pb), and also include lithium.
+- The ``*_full.dat`` files contain most elements up to uranium.
+
+The extended and full files can be used together with the extended species data files described in the next section.
 
 Species data files
 ~~~~~~~~~~~~~~~~~~
@@ -192,11 +195,11 @@ structure:
   custom version of the species file, a different chemical notation
   could be used.
 | The sum formula is followed by an optional name for the species, for
-  example ``Aluminum Chloride``. The name is read until the seperator
+  example ``Aluminum Chloride``. The name is read until the separator
   ``:`` is encountered. Note that there has to be a white space between
   the last part of the species’ name and the ``:``.
 
-| After the seperator ``:``, ``FastChem`` expects the stoichiometric
+| After the separator ``:``, ``FastChem`` expects the stoichiometric
   information of the species, i.e. the elements and their stoichiometric
   coefficients. The elements need to be present in the element abundance
   file as well, otherwise the species will be discarded. They don’t need
@@ -251,7 +254,7 @@ currently recognises three different states: ``s`` (solid), ``l``
 (liquid), and ``sl`` (solid and liquid).
 
 Condensates can have multiple data fits attached to them. Phase changes
-can result in non-monotonic slopes within the Gibb’s free energy of
+can result in non-monotonic slopes within the Gibbs free energy of
 formation. To allow for a better fit to the resulting mass action
 coefficients, it is therefore usually beneficial to fit each phase
 separately. Additionally, thermochemical data for condensates is often
@@ -265,7 +268,7 @@ the critical point or the last tabulated data point.
 
 ``FastChem`` will use these temperature limits of the phase states when
 it calculates the activities of the condensates. By default,
-``FastChem`` will also *not* extrapolate the date fits beyond the last
+``FastChem`` will also *not* extrapolate the data fits beyond the last
 listed temperature. The user can override this behaviour by setting a
 special ``FastChem`` parameter. More information on this can be found :ref:`here<sect:fc_param>`.
 
@@ -280,24 +283,65 @@ Standard files
 --------------
               
 
-Together with ``FastChem``, we provide two different files for gas phase
-species, located in the ``input/logK/`` folder. The file ``logK.dat``
-provides the standard set, discussed in
-`Stock et al. (2018) <http://adsabs.harvard.edu/abs/2018MNRAS.479..865S>`_ and
-`Stock, Kitzmann & Patzer (2022) <http://adsabs.harvard.edu/abs/2022MNRAS.517.4070S>`_. This includes species for
-all elements at least as abundant as germanium.
+Together with ``FastChem``, we provide several files for gas phase
+species, located in the ``input/logK/`` folder:
 
-As an alternative version, we also provide an additional file
-``logK_extended.dat`` that includes more ions for elements up to
-uranium. The data for this file is discussed in
-`Hoeijmakers et al. (2019) <http://adsabs.harvard.edu/abs/2019A%26A...627A.165H>`_.
+- ``logK.dat``: the standard gas-phase compilation, discussed in
+  `Stock et al. (2018) <http://adsabs.harvard.edu/abs/2018MNRAS.479..865S>`_ and
+  `Stock, Kitzmann & Patzer (2022) <http://adsabs.harvard.edu/abs/2022MNRAS.517.4070S>`_.
+  Includes species for all elements at least as abundant as germanium.
 
-For condensate species we provide the file ``logK_condensates.dat`` in
-the ``input/logK/`` folder that contains all species discussed in
-`Kitzmann, Stock & Patzer (2023) <http://adsabs.harvard.edu/abs/2023arXiv230902337K>`_. We note that these condensates
-should only be used in combination with the standard ``logK.dat`` file
-for the gas phase since it lacks condensate species for the additional
-elements contained in the species listed in ``logK_extended.dat``.
+- ``logK_wo_ions.dat``: identical to ``logK.dat`` but without ion species.
+  Recommended for calculations at lower temperatures where ions are not expected to be present.
+
+- ``logK_extended.dat``: an extended gas-phase compilation introduced as part of FastChem 4,
+  covering elements at least as abundant as lead (Pb).
+  To be used together with the ``*_extended.dat`` element abundance files.
+
+- ``logK_extended_wo_ions.dat``: identical to ``logK_extended.dat`` but without ion species.
+
+- ``logK_hoeijmakers2019.dat``: a further extended list of gas-phase species including ions and anions
+  up to uranium, based on `Hoeijmakers et al. (2019) <http://adsabs.harvard.edu/abs/2019A%26A...627A.165H>`_.
+
+For condensate species, two files are provided:
+
+- ``logK_condensates.dat``: the standard condensate compilation, discussed in
+  `Kitzmann, Stock & Patzer (2023) <http://adsabs.harvard.edu/abs/2023arXiv230902337K>`_.
+  Covers elements at least as abundant as germanium, and should be used together with ``logK.dat``.
+
+- ``logK_condensates_extended.dat``: an extended condensate compilation introduced as part of FastChem 4,
+  covering elements at least as abundant as lead (Pb).
+  To be used together with ``logK_extended.dat`` and the ``*_extended.dat`` element abundance files.
+
+Creating custom compilations
+----------------------------
+
+The ``input/`` folder includes a Python script ``create_custom_compilation.py``
+that can be used to create a custom subset of the standard species and element
+abundance files. This is useful when only a small number of elements are needed,
+since restricting the network size can significantly speed up calculations.
+
+The script reads an element abundance file and gas-phase and condensate species
+data files, then selects only the species whose stoichiometry is fully covered
+by a user-supplied list of elements. The resulting subset files are written to
+new output files. The script requires the helper module ``add_functions.py``
+(also located in ``input/``) to be present in the same directory.
+
+To use it, edit the top of ``create_custom_compilation.py`` to set:
+
+- ``element_abundance_file``, ``gas_species_file``, ``cond_species_file``: paths to the input files.
+- ``new_element_abundance_file``, ``new_gas_species_file``, ``new_cond_species_file``: paths for the output files.
+- ``element_list``: a Python list of element symbols to include, e.g. ``['H', 'He', 'C', 'N', 'O']``.
+  To include ions, add ``'e-'`` to the list.
+
+Then run the script from the ``input/`` folder:
+
+.. code:: bash
+
+   python create_custom_compilation.py
+
+The script prints the number of elements, gas-phase species, and condensate species
+in the resulting custom network.
 
 Basic element data file (optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -383,7 +427,7 @@ of the code and, therefore, does not require the code to be recompiled.
 The ``input/`` folder of the ``FastChem`` repository contains two example files:
 ``parameters.dat`` and ``parameters_py.dat``. The former is to be used for the C++ 
 version, while the latter is intended for the Python version. The only difference 
-between the two files are the relative locations of the other input files since the Python 
+between the two files is the relative locations of the other input files since the Python 
 scripts are called from within a separate folder.
 
 .. _file-structure-2:
@@ -425,9 +469,9 @@ condensation, though.
 
 The next parameter determines the convergence criterion of the chemistry
 iteration. This value is also used for the internal Newton’s method and
-the condensation calculation iteration. The latter ones can be adjusted
-within in the code by the methods listed :ref:`here<sec:fastchem_methods>` 
-C++ version and :ref:`here<sec:pfc_methods>` for Python. This is
+the condensation calculation iteration. The latter can be adjusted
+within the code by the methods listed :ref:`here<sec:fastchem_methods>`
+for the C++ version and :ref:`here<sec:pfc_methods>` for Python. This is
 followed by the (relative) accuracy of the element conservation checks.
 
 The maximum number of chemistry iterations is listed next. The value
@@ -440,7 +484,7 @@ includes the Newton, Nelder-Mead, and bisection methods. Using the
 corresponding functions of the ``FastChem`` object class, this
 number can be adjusted for each of these numerical methods individually.
 The last parameter is optional and does not need to be present in the
-file. It contains the path to the file for an alternative basic element
+file. It contains the path to an alternative basic element
 data file. If this parameter is not present, ``FastChem`` will use the
 standard set that is directly located in the ``FastChem`` source code
 (see previous section).
@@ -513,7 +557,7 @@ Condensate species output
 -------------------------
                          
 
-The output for the condensate species has a similar structure than the
+The output for the condensate species has a similar structure to the
 one for the gas phase discussed above. The first two columns again refer
 to the pressures and temperatures. The subsequent columns for the
 various elements contain the corresponding degrees of condensation.
@@ -536,32 +580,32 @@ Monitor file
 
 The monitor output file is a **very** important diagnostic output that
 provides crucial details on the outcome of the chemistry calculations.
-You should further investigate any chemistry calculations that shows
+You should further investigate any chemistry calculation that shows
 problems in this file. It is, therefore, advisable to check this file
 after each calculation to verify that everything went fine. The first
 line of the file is a header that describes the content of each column.
 
 The monitor output is organised in columns, where the first column
-contains a simple integer that refers to index of the input
+contains a simple integer that refers to the index of the input
 temperature-pressure structure. The second column lists the number of
 coupled gas-phase chemistry and condensed phase iterations that were
 required to solve the system. If the number is zero, then no condensates
 were stable and only a pure gas-phase chemistry calculation was
 required.
 
-The third columns contains the total number of gas-phase chemistry
+The third column contains the total number of gas-phase chemistry
 iterations, while the fourth column lists the total number of iterations
 for the condensed phase.
 
 The next columns contain information on the convergence of the chemistry
 and on the status of overall element conservation. If the chemistry did
-converge properly ``ok`` will be listed as output, whereas ``fail`` is
+converge properly, ``ok`` will be listed as output, whereas ``fail`` is
 used when the chemistry failed to converge in the maximum allowed number
 of steps. The same keywords are used for the element conservation
 status: ``ok`` if all elements were conserved, ``fail`` if any element
 was not conserved.
 
-The next four columns contain basic chemistry output, that is also found
+The next four columns contain basic chemistry output that is also found
 in the chemistry output file: the pressure, temperature, total element
 density, gas number density, and mean molecular weight.
 

@@ -1,60 +1,278 @@
-<!DOCTYPE html>
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="C++ stand-alone executable" href="cpp_standalone.html"><link rel="prev" title="Installation" href="installation.html">
+        <link rel="prefetch" href="../_static/fastchem_logo_dark.png" as="image">
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>Standard input and output files - FastChem 4.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
 
-    <title>Standard input and output files &#8212; FastChem 3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=6625fa76" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=5bc47236" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=d636b35b"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="C++ stand-alone executable" href="cpp_standalone.html" />
-    <link rel="prev" title="Installation" href="installation.html" />
-   
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
   
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
 
-          <div class="body" role="main">
-            
-  <section id="standard-input-and-output-files">
-<span id="sec-fastchem-input-files"></span><h1>Standard input and output files<a class="headerlink" href="#standard-input-and-output-files" title="Permalink to this heading">¶</a></h1>
-<p>Besides optional other parameter files that are used within the <code class="docutils literal notranslate"><span class="pre">C++</span></code>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">FastChem 4.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/fastchem_logo_dark.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">FastChem 4.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Standard input and output files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_standalone.html">C++ stand-alone executable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyfastchem.html">Running pyFastChem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_class.html">Detailed C++ object class description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python_module.html">Detailed pyFastChem module description</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Internal parameters</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/newstrangeworlds/FastChem/blob/master/docs_src/sections/input_output.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/newstrangeworlds/FastChem/edit/master/docs_src/sections/input_output.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="standard-input-and-output-files">
+<span id="sec-fastchem-input-files"></span><h1>Standard input and output files<a class="headerlink" href="#standard-input-and-output-files" title="Link to this heading">¶</a></h1>
+<p>In addition to optional parameter files used by the <code class="docutils literal notranslate"><span class="pre">C++</span></code>
 stand-alone version or the Python version, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> requires two
-special input files, one for the element abundances and a second
+special input files: one for the element abundances and a second
 describing the mass action law constant parametrisations. Both are
-described in the following.</p>
+described below.</p>
 <section id="element-abundance-file">
-<h2>Element abundance file<a class="headerlink" href="#element-abundance-file" title="Permalink to this heading">¶</a></h2>
+<h2>Element abundance file<a class="headerlink" href="#element-abundance-file" title="Link to this heading">¶</a></h2>
 <p>This file should contain the element abundances for all chemical
 elements that are used in <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. The location of this file is
 usually supplied either within a separate parameter file or directly in
 the constructor of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object class.</p>
 <section id="a-note-on-element-abundances">
-<h3>A note on element abundances<a class="headerlink" href="#a-note-on-element-abundances" title="Permalink to this heading">¶</a></h3>
+<h3>A note on element abundances<a class="headerlink" href="#a-note-on-element-abundances" title="Link to this heading">¶</a></h3>
 <p>It is important to note that there are two different ways to define an
 element abundance. Both variants, denoted by <span class="math notranslate nohighlight">\(x_j\)</span> and
 <span class="math notranslate nohighlight">\(\epsilon_j\)</span>, are related via:</p>
+<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\epsilon_j = 10^{x_j - 12}\]</div>
+</div>
 <p>or</p>
+<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[x_j = \log\left(\epsilon_j\right) + 12 \ .\]</div>
+</div>
 <p>In the <span class="math notranslate nohighlight">\(x_i\)</span> version, widely used in the astronomical literature,
 hydrogen has a value of 12 for solar element abundances, such that its
 <span class="math notranslate nohighlight">\(\epsilon_i\)</span> is unity.</p>
@@ -79,7 +297,7 @@ change element abundances on the fly, one would need to set it to a
 value of <span class="math notranslate nohighlight">\(\epsilon_\mathrm{O} = 10 \cdot 0.00048978 =  0.0048978\)</span>.</p>
 </section>
 <section id="file-structure">
-<h3>File structure<a class="headerlink" href="#file-structure" title="Permalink to this heading">¶</a></h3>
+<h3>File structure<a class="headerlink" href="#file-structure" title="Link to this heading">¶</a></h3>
 <p>The element abundance file should have the following structure to be
 readable by <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Solar element abundances based on Asplund et al. (2009)</span>
@@ -115,7 +333,7 @@ readable by <code class="docutils literal notranslate"><span class="pre">FastChe
 </div>
 <p>The first line is always a header line that provides important
 information for the user and is ignored by <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>. All subsequent
-lines contain each the symbol for an element and its element abundance.
+lines each contain the symbol of an element and its abundance.
 Molecules that contain elements not present in this file are ignored.
 The element abundance for the electron has an arbitrary value. It is
 only present in the file to inform <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> that the electrons (and
@@ -125,22 +343,25 @@ number density is determined by charge balance. The elements are not
 required to be in any particular order.</p>
 </section>
 <section id="standard-files">
-<h3>Standard files<a class="headerlink" href="#standard-files" title="Permalink to this heading">¶</a></h3>
+<h3>Standard files<a class="headerlink" href="#standard-files" title="Link to this heading">¶</a></h3>
 <p>Together with <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, we provide several different element
 abundance files, located in the <code class="docutils literal notranslate"><span class="pre">input/element_abundances/</span></code> folder.
-The folder includes three different sets of element abundances:
-<a class="reference external" href="http://adsabs.harvard.edu/abs/2009ARA&amp;A..47..481A">Asplund et al. (2009)</a>,
-<a class="reference external" href="http://adsabs.harvard.edu/abs/2021A&amp;A...653A.141A">Asplund et al. (2021)</a>, and
-<a class="reference external" href="http://adsabs.harvard.edu/abs/2003ApJ...591.1220L">Lodders (2003)</a> .</p>
-<p>The standard files provide the solar element abundances for species that
-are at least as abundant as germanium. As alternative versions, we also
-include additional files <code class="docutils literal notranslate"><span class="pre">*_extended.dat</span></code> for each compilation, that
-includes more elements, up to uranium. These files can be used for the
-extended set of ion species described in the next section.</p>
+The folder includes four different sets of element abundances:
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2009ARA%26A..47..481A">Asplund et al. (2009)</a>,
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2021A%26A...653A.141A">Asplund et al. (2021)</a>,
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2003ApJ...591.1220L">Lodders (2003)</a>, and
+<a class="reference external" href="https://www.aanda.org/articles/aa/full_html/2025/04/aa53363-24/aa53363-24.html">Lodders (2025)</a>.</p>
+<p>Each compilation is provided in three variants:</p>
+<ul class="simple">
+<li><p>The standard files (<code class="docutils literal notranslate"><span class="pre">*.dat</span></code>) contain abundances for elements at least as abundant as germanium.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">*_extended.dat</span></code> files contain additional elements down to at least as abundant as lead (Pb), and also include lithium.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">*_full.dat</span></code> files contain most elements up to uranium.</p></li>
+</ul>
+<p>The extended and full files can be used together with the extended species data files described in the next section.</p>
 </section>
 </section>
 <section id="species-data-files">
-<h2>Species data files<a class="headerlink" href="#species-data-files" title="Permalink to this heading">¶</a></h2>
+<h2>Species data files<a class="headerlink" href="#species-data-files" title="Link to this heading">¶</a></h2>
 <div class="line-block">
 <div class="line">Another important input is the thermochemical data for all gas phase
 species (molecules and ions) as well as condensates. This includes in
@@ -152,9 +373,11 @@ logarithm of the dimensionless mass action constant of species
 <span class="math notranslate nohighlight">\(i\)</span></div>
 </div>
 <blockquote>
-<div><div class="math notranslate nohighlight">
+<div><div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
 \[\ln\bar{K}_i(T) = - \frac{\Delta_\mathrm{r} G_i(T)}{R\,T} \ ,
 \label{eq:lnK}\]</div>
+</div>
 </div></blockquote>
 <div class="line-block">
 <div class="line">where <span class="math notranslate nohighlight">\(G_i(T)\)</span> is the Gibbs free energy of dissociation.
@@ -162,9 +385,11 @@ For <code class="docutils literal notranslate"><span class="pre">FastChem</span>
 expression</div>
 </div>
 <blockquote>
-<div><div class="math notranslate nohighlight">
+<div><div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
 \[\ln\bar{K}_i(T) = \frac{a_0}{T} + a_1\,\ln T + b_0 + b_1\,T + b_2\,T^2 \ ,
 \label{eq:fit}\]</div>
+</div>
 </div></blockquote>
 <div class="line-block">
 <div class="line">where <span class="math notranslate nohighlight">\(a_0\)</span>, <span class="math notranslate nohighlight">\(a_1\)</span>, <span class="math notranslate nohighlight">\(b_0\)</span>, <span class="math notranslate nohighlight">\(b_1\)</span>, and
@@ -177,7 +402,7 @@ code can be found in the source file
 located in <code class="docutils literal notranslate"><span class="pre">condensed_phase/condensate_struct.cpp</span></code>.</div>
 </div>
 <section id="file-structure-for-gas-phase-species">
-<h3>File structure for gas phase species<a class="headerlink" href="#file-structure-for-gas-phase-species" title="Permalink to this heading">¶</a></h3>
+<h3>File structure for gas phase species<a class="headerlink" href="#file-structure-for-gas-phase-species" title="Link to this heading">¶</a></h3>
 <p>For <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, the species information file should have the following
 structure:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:</span>
@@ -208,12 +433,12 @@ represents <code class="docutils literal notranslate"><span class="pre">HNC</spa
 custom version of the species file, a different chemical notation
 could be used.</div>
 <div class="line">The sum formula is followed by an optional name for the species, for
-example <code class="docutils literal notranslate"><span class="pre">Aluminum</span> <span class="pre">Chloride</span></code>. The name is read until the seperator
+example <code class="docutils literal notranslate"><span class="pre">Aluminum</span> <span class="pre">Chloride</span></code>. The name is read until the separator
 <code class="docutils literal notranslate"><span class="pre">:</span></code> is encountered. Note that there has to be a white space between
 the last part of the species’ name and the <code class="docutils literal notranslate"><span class="pre">:</span></code>.</div>
 </div>
 <div class="line-block">
-<div class="line">After the seperator <code class="docutils literal notranslate"><span class="pre">:</span></code>, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> expects the stoichiometric
+<div class="line">After the separator <code class="docutils literal notranslate"><span class="pre">:</span></code>, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> expects the stoichiometric
 information of the species, i.e. the elements and their stoichiometric
 coefficients. The elements need to be present in the element abundance
 file as well, otherwise the species will be discarded. They don’t need
@@ -227,7 +452,7 @@ find in that line but for its own parametrisation it will only use the first fiv
 </div>
 </section>
 <section id="file-structure-for-condensate-species">
-<h3>File structure for condensate species<a class="headerlink" href="#file-structure-for-condensate-species" title="Permalink to this heading">¶</a></h3>
+<h3>File structure for condensate species<a class="headerlink" href="#file-structure-for-condensate-species" title="Link to this heading">¶</a></h3>
 <p>For <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, the species information file should have the following
 structure:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#logK = a1/T + a2 ln T + a3 + a4 T + a5 T^2 for FastChem:</span>
@@ -265,7 +490,7 @@ state.</div>
 currently recognises three different states: <code class="docutils literal notranslate"><span class="pre">s</span></code> (solid), <code class="docutils literal notranslate"><span class="pre">l</span></code>
 (liquid), and <code class="docutils literal notranslate"><span class="pre">sl</span></code> (solid and liquid).</p>
 <p>Condensates can have multiple data fits attached to them. Phase changes
-can result in non-monotonic slopes within the Gibb’s free energy of
+can result in non-monotonic slopes within the Gibbs free energy of
 formation. To allow for a better fit to the resulting mass action
 coefficients, it is therefore usually beneficial to fit each phase
 separately. Additionally, thermochemical data for condensates is often
@@ -277,7 +502,7 @@ is usually the melting point, whereas for liquids this can typically be
 the critical point or the last tabulated data point.</p>
 <p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will use these temperature limits of the phase states when
 it calculates the activities of the condensates. By default,
-<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will also <em>not</em> extrapolate the date fits beyond the last
+<code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will also <em>not</em> extrapolate the data fits beyond the last
 listed temperature. The user can override this behaviour by setting a
 special <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> parameter. More information on this can be found <a class="reference internal" href="parameters.html#sect-fc-param"><span class="std std-ref">here</span></a>.</p>
 <p>The following lines finally contain the fit coefficients for the
@@ -286,27 +511,61 @@ for the gas phase species discussed above. The number of data fits has
 to be equal to the number of temperature limits discussed above.</p>
 </section>
 <section id="standard-files-1">
-<span id="id2"></span><h3>Standard files<a class="headerlink" href="#standard-files-1" title="Permalink to this heading">¶</a></h3>
-<p>Together with <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, we provide two different files for gas phase
-species, located in the <code class="docutils literal notranslate"><span class="pre">input/logK/</span></code> folder. The file <code class="docutils literal notranslate"><span class="pre">logK.dat</span></code>
-provides the standard set, discussed in
+<span id="id2"></span><h3>Standard files<a class="headerlink" href="#standard-files-1" title="Link to this heading">¶</a></h3>
+<p>Together with <code class="docutils literal notranslate"><span class="pre">FastChem</span></code>, we provide several files for gas phase
+species, located in the <code class="docutils literal notranslate"><span class="pre">input/logK/</span></code> folder:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">logK.dat</span></code>: the standard gas-phase compilation, discussed in
 <a class="reference external" href="http://adsabs.harvard.edu/abs/2018MNRAS.479..865S">Stock et al. (2018)</a> and
-<a class="reference external" href="http://adsabs.harvard.edu/abs/2022MNRAS.517.4070S">Stock, Kitzmann &amp; Patzer (2022)</a>. This includes species for
-all elements at least as abundant as germanium.</p>
-<p>As an alternative version, we also provide an additional file
-<code class="docutils literal notranslate"><span class="pre">logK_extended.dat</span></code> that includes more ions for elements up to
-uranium. The data for this file is discussed in
-<a class="reference external" href="http://adsabs.harvard.edu/abs/2019A%26A...627A.165H">Hoeijmakers et al. (2019)</a>.</p>
-<p>For condensate species we provide the file <code class="docutils literal notranslate"><span class="pre">logK_condensates.dat</span></code> in
-the <code class="docutils literal notranslate"><span class="pre">input/logK/</span></code> folder that contains all species discussed in
-<a class="reference external" href="http://adsabs.harvard.edu/abs/2023arXiv230902337K">Kitzmann, Stock &amp; Patzer (2023)</a>. We note that these condensates
-should only be used in combination with the standard <code class="docutils literal notranslate"><span class="pre">logK.dat</span></code> file
-for the gas phase since it lacks condensate species for the additional
-elements contained in the species listed in <code class="docutils literal notranslate"><span class="pre">logK_extended.dat</span></code>.</p>
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2022MNRAS.517.4070S">Stock, Kitzmann &amp; Patzer (2022)</a>.
+Includes species for all elements at least as abundant as germanium.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logK_wo_ions.dat</span></code>: identical to <code class="docutils literal notranslate"><span class="pre">logK.dat</span></code> but without ion species.
+Recommended for calculations at lower temperatures where ions are not expected to be present.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logK_extended.dat</span></code>: an extended gas-phase compilation introduced as part of FastChem 4,
+covering elements at least as abundant as lead (Pb).
+To be used together with the <code class="docutils literal notranslate"><span class="pre">*_extended.dat</span></code> element abundance files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logK_extended_wo_ions.dat</span></code>: identical to <code class="docutils literal notranslate"><span class="pre">logK_extended.dat</span></code> but without ion species.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logK_hoeijmakers2019.dat</span></code>: a further extended list of gas-phase species including ions and anions
+up to uranium, based on <a class="reference external" href="http://adsabs.harvard.edu/abs/2019A%26A...627A.165H">Hoeijmakers et al. (2019)</a>.</p></li>
+</ul>
+<p>For condensate species, two files are provided:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">logK_condensates.dat</span></code>: the standard condensate compilation, discussed in
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2023arXiv230902337K">Kitzmann, Stock &amp; Patzer (2023)</a>.
+Covers elements at least as abundant as germanium, and should be used together with <code class="docutils literal notranslate"><span class="pre">logK.dat</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logK_condensates_extended.dat</span></code>: an extended condensate compilation introduced as part of FastChem 4,
+covering elements at least as abundant as lead (Pb).
+To be used together with <code class="docutils literal notranslate"><span class="pre">logK_extended.dat</span></code> and the <code class="docutils literal notranslate"><span class="pre">*_extended.dat</span></code> element abundance files.</p></li>
+</ul>
+</section>
+<section id="creating-custom-compilations">
+<h3>Creating custom compilations<a class="headerlink" href="#creating-custom-compilations" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">input/</span></code> folder includes a Python script <code class="docutils literal notranslate"><span class="pre">create_custom_compilation.py</span></code>
+that can be used to create a custom subset of the standard species and element
+abundance files. This is useful when only a small number of elements are needed,
+since restricting the network size can significantly speed up calculations.</p>
+<p>The script reads an element abundance file and gas-phase and condensate species
+data files, then selects only the species whose stoichiometry is fully covered
+by a user-supplied list of elements. The resulting subset files are written to
+new output files. The script requires the helper module <code class="docutils literal notranslate"><span class="pre">add_functions.py</span></code>
+(also located in <code class="docutils literal notranslate"><span class="pre">input/</span></code>) to be present in the same directory.</p>
+<p>To use it, edit the top of <code class="docutils literal notranslate"><span class="pre">create_custom_compilation.py</span></code> to set:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">element_abundance_file</span></code>, <code class="docutils literal notranslate"><span class="pre">gas_species_file</span></code>, <code class="docutils literal notranslate"><span class="pre">cond_species_file</span></code>: paths to the input files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new_element_abundance_file</span></code>, <code class="docutils literal notranslate"><span class="pre">new_gas_species_file</span></code>, <code class="docutils literal notranslate"><span class="pre">new_cond_species_file</span></code>: paths for the output files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">element_list</span></code>: a Python list of element symbols to include, e.g. <code class="docutils literal notranslate"><span class="pre">['H',</span> <span class="pre">'He',</span> <span class="pre">'C',</span> <span class="pre">'N',</span> <span class="pre">'O']</span></code>.
+To include ions, add <code class="docutils literal notranslate"><span class="pre">'e-'</span></code> to the list.</p></li>
+</ul>
+<p>Then run the script from the <code class="docutils literal notranslate"><span class="pre">input/</span></code> folder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>create_custom_compilation.py
+</pre></div>
+</div>
+<p>The script prints the number of elements, gas-phase species, and condensate species
+in the resulting custom network.</p>
 </section>
 </section>
 <section id="basic-element-data-file-optional">
-<h2>Basic element data file (optional)<a class="headerlink" href="#basic-element-data-file-optional" title="Permalink to this heading">¶</a></h2>
+<h2>Basic element data file (optional)<a class="headerlink" href="#basic-element-data-file-optional" title="Link to this heading">¶</a></h2>
 <div class="line-block">
 <div class="line">In addition to the element abundances, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> also needs to have
 additional basic data for the elements, such as their atomic weight to
@@ -320,7 +579,7 @@ isotopes, you can change it directly in the header file and re-compile
 file with the required information.</div>
 </div>
 <section id="file-structure-1">
-<span id="id4"></span><h3>File structure<a class="headerlink" href="#file-structure-1" title="Permalink to this heading">¶</a></h3>
+<span id="id4"></span><h3>File structure<a class="headerlink" href="#file-structure-1" title="Link to this heading">¶</a></h3>
 <p>The optional file has the following, simple structure, starting with a
 header line that is ignored when reading in the file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Basic element data based on Meija et al. (2016)</span>
@@ -367,7 +626,7 @@ example of this file can be found in the folder
 </section>
 </section>
 <section id="fastchem-parameter-file-optional">
-<span id="sec-fc-parameter-file"></span><h2>FastChem parameter file (optional)<a class="headerlink" href="#fastchem-parameter-file-optional" title="Permalink to this heading">¶</a></h2>
+<span id="sec-fc-parameter-file"></span><h2>FastChem parameter file (optional)<a class="headerlink" href="#fastchem-parameter-file-optional" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">FastChem</span></code> is able to load a specific parameter file when one of its
 instances is created through the object class constructor. This
 parameter file includes the most important parameters and options used
@@ -380,10 +639,10 @@ of the code and, therefore, does not require the code to be recompiled.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">input/</span></code> folder of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> repository contains two example files:
 <code class="docutils literal notranslate"><span class="pre">parameters.dat</span></code> and <code class="docutils literal notranslate"><span class="pre">parameters_py.dat</span></code>. The former is to be used for the C++
 version, while the latter is intended for the Python version. The only difference
-between the two files are the relative locations of the other input files since the Python
+between the two files is the relative locations of the other input files since the Python
 scripts are called from within a separate folder.</p>
 <section id="file-structure-2">
-<span id="id5"></span><h3>File structure<a class="headerlink" href="#file-structure-2" title="Permalink to this heading">¶</a></h3>
+<span id="id5"></span><h3>File structure<a class="headerlink" href="#file-structure-2" title="Link to this heading">¶</a></h3>
 <p>The optional parameter file has the following structure:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#element abundance file</span>
 <span class="nb">input</span><span class="o">/</span><span class="n">element_abundances</span><span class="o">/</span><span class="n">asplund_2009</span><span class="o">.</span><span class="n">dat</span>
@@ -414,9 +673,9 @@ case, <code class="docutils literal notranslate"><span class="pre">FastChem</spa
 condensation, though.</p>
 <p>The next parameter determines the convergence criterion of the chemistry
 iteration. This value is also used for the internal Newton’s method and
-the condensation calculation iteration. The latter ones can be adjusted
-within in the code by the methods listed <a class="reference internal" href="cpp_class.html#sec-fastchem-methods"><span class="std std-ref">here</span></a>
-C++ version and <a class="reference internal" href="python_module.html#sec-pfc-methods"><span class="std std-ref">here</span></a> for Python. This is
+the condensation calculation iteration. The latter can be adjusted
+within the code by the methods listed <a class="reference internal" href="cpp_class.html#sec-fastchem-methods"><span class="std std-ref">here</span></a>
+for the C++ version and <a class="reference internal" href="python_module.html#sec-pfc-methods"><span class="std std-ref">here</span></a> for Python. This is
 followed by the (relative) accuracy of the element conservation checks.</p>
 <p>The maximum number of chemistry iterations is listed next. The value
 here is also used for the maximum number of condensation iterations and
@@ -427,20 +686,20 @@ includes the Newton, Nelder-Mead, and bisection methods. Using the
 corresponding functions of the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object class, this
 number can be adjusted for each of these numerical methods individually.
 The last parameter is optional and does not need to be present in the
-file. It contains the path to the file for an alternative basic element
+file. It contains the path to an alternative basic element
 data file. If this parameter is not present, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> will use the
 standard set that is directly located in the <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> source code
 (see previous section).</p>
 </section>
 </section>
 <section id="output-files">
-<span id="sec-fc-cpp-output"></span><h2>Output files<a class="headerlink" href="#output-files" title="Permalink to this heading">¶</a></h2>
+<span id="sec-fc-cpp-output"></span><h2>Output files<a class="headerlink" href="#output-files" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">C++</span></code> stand-alone version will produce two output files: a
 detailed chemistry output and a monitor file with diagnostic
 information. The file names of both files can be chosen in the config
 file discussed in the previous section.</p>
 <section id="gas-phase-chemistry-output">
-<h3>Gas phase chemistry output<a class="headerlink" href="#gas-phase-chemistry-output" title="Permalink to this heading">¶</a></h3>
+<h3>Gas phase chemistry output<a class="headerlink" href="#gas-phase-chemistry-output" title="Link to this heading">¶</a></h3>
 <p>The chemistry output is organised in columns. The first line of the file
 is a header that describes the content of each column.</p>
 <p>The first and second column contain the pressure in bar and the
@@ -461,7 +720,7 @@ cm<span class="math notranslate nohighlight">\(^{-3}\)</span>) or the mixing rat
 choice of output made in the config file. By default, elements will be
 placed in the beginning, followed by molecules and ions.</p>
 <section id="hill-notation">
-<h4>Hill notation<a class="headerlink" href="#hill-notation" title="Permalink to this heading">¶</a></h4>
+<h4>Hill notation<a class="headerlink" href="#hill-notation" title="Link to this heading">¶</a></h4>
 <p>In its species data files, <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> employs the modified Hill notation
 as used in the JANAF thermochemical tables (<a class="reference external" href="https://janaf.nist.gov/">Chase, 1986</a>)
 for the formulas of all non-element species. If, for example, you are looking for the
@@ -484,8 +743,8 @@ of FastChem species and their corresponding Hill notations are:</p>
 </section>
 </section>
 <section id="condensate-species-output">
-<h3>Condensate species output<a class="headerlink" href="#condensate-species-output" title="Permalink to this heading">¶</a></h3>
-<p>The output for the condensate species has a similar structure than the
+<h3>Condensate species output<a class="headerlink" href="#condensate-species-output" title="Link to this heading">¶</a></h3>
+<p>The output for the condensate species has a similar structure to the
 one for the gas phase discussed above. The first two columns again refer
 to the pressures and temperatures. The subsequent columns for the
 various elements contain the corresponding degrees of condensation.</p>
@@ -500,31 +759,31 @@ not present.</p>
 their normal chemical formulas.</p>
 </section>
 <section id="monitor-file">
-<h3>Monitor file<a class="headerlink" href="#monitor-file" title="Permalink to this heading">¶</a></h3>
+<h3>Monitor file<a class="headerlink" href="#monitor-file" title="Link to this heading">¶</a></h3>
 <p>The monitor output file is a <strong>very</strong> important diagnostic output that
 provides crucial details on the outcome of the chemistry calculations.
-You should further investigate any chemistry calculations that shows
+You should further investigate any chemistry calculation that shows
 problems in this file. It is, therefore, advisable to check this file
 after each calculation to verify that everything went fine. The first
 line of the file is a header that describes the content of each column.</p>
 <p>The monitor output is organised in columns, where the first column
-contains a simple integer that refers to index of the input
+contains a simple integer that refers to the index of the input
 temperature-pressure structure. The second column lists the number of
 coupled gas-phase chemistry and condensed phase iterations that were
 required to solve the system. If the number is zero, then no condensates
 were stable and only a pure gas-phase chemistry calculation was
 required.</p>
-<p>The third columns contains the total number of gas-phase chemistry
+<p>The third column contains the total number of gas-phase chemistry
 iterations, while the fourth column lists the total number of iterations
 for the condensed phase.</p>
 <p>The next columns contain information on the convergence of the chemistry
 and on the status of overall element conservation. If the chemistry did
-converge properly <code class="docutils literal notranslate"><span class="pre">ok</span></code> will be listed as output, whereas <code class="docutils literal notranslate"><span class="pre">fail</span></code> is
+converge properly, <code class="docutils literal notranslate"><span class="pre">ok</span></code> will be listed as output, whereas <code class="docutils literal notranslate"><span class="pre">fail</span></code> is
 used when the chemistry failed to converge in the maximum allowed number
 of steps. The same keywords are used for the element conservation
 status: <code class="docutils literal notranslate"><span class="pre">ok</span></code> if all elements were conserved, <code class="docutils literal notranslate"><span class="pre">fail</span></code> if any element
 was not conserved.</p>
-<p>The next four columns contain basic chemistry output, that is also found
+<p>The next four columns contain basic chemistry output that is also found
 in the chemistry output file: the pressure, temperature, total element
 density, gas number density, and mean molecular weight.</p>
 <p>All remaining columns list the status of the element conservation for
@@ -535,7 +794,7 @@ conservation.</p>
 </section>
 </section>
 <section id="benchmark-input-and-output-files">
-<h2>Benchmark input and output files<a class="headerlink" href="#benchmark-input-and-output-files" title="Permalink to this heading">¶</a></h2>
+<h2>Benchmark input and output files<a class="headerlink" href="#benchmark-input-and-output-files" title="Link to this heading">¶</a></h2>
 <p>The input folder contains a selected sample of atmospheric structures of
 various objects, from AGB stars to exoplanets.  The
 pre-computed chemistry output of these benchmark structures can be found
@@ -546,102 +805,108 @@ be used to validate that the FastChem installation works correctly.</p>
 </section>
 </section>
 
-
-          </div>
-          
-        </div>
+        </article>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="../index.html">
-    <img class="logo" src="../_static/logo_l.png" alt="Logo"/>
-    
-  </a>
-</p>
-
-
-
-<p class="blurb">FastChem - Ultrafast Equilibrium Chemistry</p>
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=newstrangeworlds&repo=fastchem&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="licence.html">Licence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Standard input and output files</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#element-abundance-file">Element abundance file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#species-data-files">Species data files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#basic-element-data-file-optional">Basic element data file (optional)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#fastchem-parameter-file-optional">FastChem parameter file (optional)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#output-files">Output files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#benchmark-input-and-output-files">Benchmark input and output files</a></li>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="cpp_standalone.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">C++ stand-alone executable</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="installation.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Installation</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2019 - 2025, Daniel Kitzmann, Joachim Stock
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Standard input and output files</a><ul>
+<li><a class="reference internal" href="#element-abundance-file">Element abundance file</a><ul>
+<li><a class="reference internal" href="#a-note-on-element-abundances">A note on element abundances</a></li>
+<li><a class="reference internal" href="#file-structure">File structure</a></li>
+<li><a class="reference internal" href="#standard-files">Standard files</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cpp_standalone.html">C++ stand-alone executable</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyfastchem.html">Running pyFastChem</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cpp_class.html">Detailed C++ object class description</a></li>
-<li class="toctree-l1"><a class="reference internal" href="python_module.html">Detailed pyFastChem module description</a></li>
-<li class="toctree-l1"><a class="reference internal" href="parameters.html">Internal parameters</a></li>
+<li><a class="reference internal" href="#species-data-files">Species data files</a><ul>
+<li><a class="reference internal" href="#file-structure-for-gas-phase-species">File structure for gas phase species</a></li>
+<li><a class="reference internal" href="#file-structure-for-condensate-species">File structure for condensate species</a></li>
+<li><a class="reference internal" href="#standard-files-1">Standard files</a></li>
+<li><a class="reference internal" href="#creating-custom-compilations">Creating custom compilations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#basic-element-data-file-optional">Basic element data file (optional)</a><ul>
+<li><a class="reference internal" href="#file-structure-1">File structure</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fastchem-parameter-file-optional">FastChem parameter file (optional)</a><ul>
+<li><a class="reference internal" href="#file-structure-2">File structure</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#output-files">Output files</a><ul>
+<li><a class="reference internal" href="#gas-phase-chemistry-output">Gas phase chemistry output</a><ul>
+<li><a class="reference internal" href="#hill-notation">Hill notation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#condensate-species-output">Condensate species output</a></li>
+<li><a class="reference internal" href="#monitor-file">Monitor file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#benchmark-input-and-output-files">Benchmark input and output files</a></li>
+</ul>
+</li>
 </ul>
 
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
-      <li>Next: <a href="cpp_standalone.html" title="next chapter">C++ stand-alone executable</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-
-
-
-
-
-
-
-
+          </div>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019 - 2023, Daniel Kitzmann, Joachim Stock.
       
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
-      |
-      <a href="../_sources/sections/input_output.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=9f5556dd"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    </body>
 </html>

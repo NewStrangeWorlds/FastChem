@@ -20,7 +20,7 @@ program, ``model_src/read_config.h`` for reading in the config file, and
 to add another parameter to the config file, you would need to edit
 ``model_src/read_config.h``, while changes to the format of the output
 files can be made in ``model_src/save_output.h``. Changing the contents
-of these files obviously require a re-compilation of the code.
+of these files obviously requires a re-compilation of the code.
 
 Running the FastChem executable
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,11 +35,11 @@ directory. The executable is started via
 
 where the second argument is the location of the config file that is
 explained in the next section. ``FastChem`` will read in a pre-defined
-pressure-temperature structures, the location of which is also specified
+pressure-temperature structure, the location of which is also specified
 in the config file. After a successful calculation, ``FastChem`` will
 produce two output files with a detailed chemistry output and one with
-diagnostic output. The location of these files is also contained in the
-config file and its contents are discussed :ref:`here<sec:fc_cpp_output>`.
+diagnostic output. The locations of these files are also specified in the
+config file, and their contents are discussed :ref:`here<sec:fc_cpp_output>`.
 
 
 Config file
@@ -50,7 +50,7 @@ Config file
   initialise the chemistry and to perform the calculations. The
   numerical methods that these parameters refer to are described in
   Paper II. An example of such an input file is located in the input
-  folder: ``input/config.input``. While this config file allows to set
+  folder: ``input/config.input``. While this config file allows setting
   the most important ``FastChem`` parameters, some more advanced ones
   are not contained in this file and can only be set by invoking special
   ``FastChem`` functions during runtime. This, in particular, refers to
@@ -122,7 +122,7 @@ It contains the required parameters in the following order:
 
 -  Verbose level, where a level of ``1`` is almost silent and ``4``
    produces a lot of diagnostic output on the terminal. Increase this
-   level if you encounter issues to identify the source of the problems.
+   level if you encounter issues in order to identify the source of the problems.
 
 -  The output format for the gas-phase species’ abundances. By default,
    ``FastChem`` will use number densities in units of cm\ :math:`^{-3}`.

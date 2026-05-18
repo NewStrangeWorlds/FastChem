@@ -2,23 +2,22 @@ Installation
 ============
 
 
-``FastChem`` can be installed in three different ways: either using
-``CMake``, by calling a Python setup function ``setup.py`` or by 
-using the Python Package Index ``PyPI``. The former
+``FastChem`` can be installed in three different ways: using
+``CMake``, using the ``setup.py`` script, or via the Python Package
+Index ``PyPI``. The ``CMake`` approach
 will install the ``C++`` stand-alone executable and optionally the
 Python module, while the latter two will only provide the ``pyFastChem``
 Python module. The Python module created by ``CMake`` will only be
 available locally in the ``python`` directory, while the one produced by
-``setup.py`` will be integrated in your standard Python library and,
-thus, work as a normal Python package. Additionally, we also support a
-Python installation via ``PyPI``, the Python Package Index.
+``setup.py`` or ``PyPI`` will be integrated into your standard Python
+library and, thus, work as a normal Python package.
 
 Obtaining the code
 ~~~~~~~~~~~~~~~~~~
 
 ``FastChem`` is hosted on the NewStrangeWorlds GitHub page:
 https://github.com/newstrangeworlds/fastchem. If ``git`` is available on a
-computer, the repository can be simply cloned with
+computer, the repository can simply be cloned with
 
 .. code:: bash
 
@@ -27,7 +26,7 @@ computer, the repository can be simply cloned with
 Prerequisites
 ~~~~~~~~~~~~~
 
-``FastChem`` is written in ``C++``. It uses features of the ``C++11``
+``FastChem`` is written in ``C++``. It uses features of the ``C++17``
 standard and, therefore, requires a compiler that implements this
 standard. We also provide an optional Python interface, allowing
 ``FastChem`` to be called directly from within a Python script. The
@@ -39,9 +38,9 @@ Prerequisites for installation via ``CMake``
 The complete list of prerequisites for a basic ``CMake`` installation
 is:
 
--  a ``C++`` compiler (e.g. ``g++`` or ``Clang`` on MacOS)
+-  a ``C++`` compiler (e.g. ``g++`` or ``Clang`` on macOS)
 
--  ``CMake``, at least version 3.10
+-  ``CMake``, at least version 3.12
 
 The ``C++`` compiler will be detected by the CMake script when it
 generates the makefiles. For some of its optional components
@@ -55,16 +54,16 @@ Prerequisites for Python installation via ``setup.py`` or ``PyPI``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``PyPI`` repository of ``pyFastChem`` includes binary wheels for 
-many platforms, such as Linux, MacOS, and Windows and supports several
-different versions of Python. If no binary wheel for your system is 
+many platforms, such as Linux, macOS, and Windows, and supports several
+different versions of Python. If no binary wheel for your system is
 available, ``pip`` will need to compile the package from source.
 
-For an installation of ``pyFastChem`` from source with the ``setup.py`` 
+An installation of ``pyFastChem`` from source via the ``setup.py``
 script or ``PyPI`` requires
 
 -  a Python 3.x interpreter
 
--  a ``C++`` compiler (e.g. ``g++`` or ``Clang`` on MacOS)
+-  a ``C++`` compiler (e.g. ``g++`` or ``Clang`` on macOS)
 
 -  an ``OpenMP`` library (optional, required to run ``FastChem`` in
    parallel)
@@ -76,8 +75,6 @@ as well as the following Python modules:
 -  PyBind11
 
 -  setuptools
-
--  distutils
 
 -  glob
 
@@ -94,8 +91,8 @@ different compilers and platforms. In particular, it was verified that
 
 -  Clang 12.0 (including Apple’s Clang 12.0)
 
-Since ``FastChem`` just uses plain ``C++`` without any external library,
-any compiler that supports the ``C++11`` standard should be able to
+Since ``FastChem`` uses plain ``C++`` without any external libraries,
+any compiler that supports the ``C++17`` standard should be able to
 compile the code successfully.
 
 PyBind11 Library
@@ -115,7 +112,7 @@ installation of ``PyBind11`` is required. During the setup stage,
 code will be placed into a separate ``_deps`` folder.
 
 If you choose to install ``pyFastChem`` via the ``setup.py`` function,
-then the ``PyBind11`` library has to already present in your local
+then the ``PyBind11`` library has to already be present in your local
 Python installation.
 
 .. _sec:install_config:
@@ -125,19 +122,19 @@ Configuration and compilation with CMake
 
 | Before ``FastChem`` can be compiled, ``CMake`` is required to
   configure the compilation files, locate libraries, and write the
-  makefiles that will perform the actual compilations. If required
+  makefiles that will perform the actual compilation. If required
   libraries are missing, ``CMake`` will report a corresponding error
   message. In this case, the missing libraries or compilers need to be
   installed before the configuration can be completed.
 | To run the ``CMake`` configuration, first create the ``build`` folder
-  inside the ``FastChem`` source code folder and switch to the folder:
+  inside the ``FastChem`` source code folder and navigate to it:
 
 .. code:: bash
 
    mkdir build
    cd build
 
-For a basic installation, within the folder run ``CMake``:
+For a basic installation, run ``CMake`` from within this folder:
 
 .. code:: bash
 
@@ -151,14 +148,17 @@ If the Python interface should be installed as well, run
 
 ``CMake`` will also try to locate an ``OpenMP`` library to allow
 ``FastChem`` to be run in parallel. If it cannot detect the library,
-only the single-core version of ``FastChem`` will be compiled. If
-``FastChem`` is to be run on MacOS, using ``OpenMP`` might be difficult
-since Apple’s ``Clang`` compiler does not directly support ``OpenMP``,
-even if the corresponding library has been installed. It might be
-possible, though, to install an alternative compiler, for example
-``g++``, that supports the use of ``OpenMP``.
+only the single-core version of ``FastChem`` will be compiled. On
+macOS, Apple’s ``Clang`` compiler does not ship with ``OpenMP`` support
+by default. To enable it, install ``libomp`` via Homebrew:
 
-After ``CMake`` successfully configured the compilation files,
+.. code:: bash
+
+   brew install libomp
+
+``CMake`` and the Python build system will automatically detect and use it.
+
+After ``CMake`` has successfully configured the compilation files,
 ``FastChem`` can be compiled by running:
 
 .. code:: bash
@@ -173,22 +173,16 @@ because the Python version requires different compiler options.
 Notes on MacOS
 ^^^^^^^^^^^^^^
 
-Newer Apple computers contain an ARM-based processor (a.k.a. Apple Silicon, Mx), 
-which is not compatible with the x86 architecture used by many other Linux and Windows machines.
-This ARM processor has **no** hardware support for quadruple-precision numbers that
-are used in ``FastChem``. Consequently, ``FastChem`` will run only with double-precision on
-these computers, which will cause convergence issues at lower temperatures.
-Since this is a hardware limitation of the Apple Silicon chip, there is no way to
-change this behavior within ``FastChem``.
+Previous versions of ``FastChem`` relied on long double (quadruple) precision for convergence at low temperatures. Since Apple Silicon (Mx) processors have no hardware support for quadruple-precision arithmetic, this caused convergence issues on these machines. The current version of ``FastChem`` has been redesigned to work fully in double precision, resolving this limitation.
 
 
-``FastChem`` can be compiled and run on MacOS, but requires some
-libraries and apps that are not installed by default. This especially
-includes ``CMake``. In order to compile ``FastChem`` on MacOS, the the
+``FastChem`` can be compiled and run on macOS, but requires some
+libraries and tools that are not installed by default. This especially
+includes ``CMake``. In order to compile ``FastChem`` on macOS, the
 prerequisites listed above need to be installed. This can be easily
 achieved by, for example, using ``brew``.
 
-In a standard installation of MacOS, no compiler is available. The Apple
+In a standard installation of macOS, no compiler is available. The Apple
 version of the Clang compiler can be installed through Xcode and the
 command line tools by running
 
@@ -198,35 +192,34 @@ command line tools by running
 
 in the terminal.
 
-Alternatives (e.g. ``g++``) to the default Clang shipped with MacOS can
+Alternatives (e.g. ``g++``) to the default Clang shipped with macOS can
 also be installed via ``brew``. However, ``CMake`` is not always able to
-detect these compilers and will still use Clang. This also applies to
-the optional ``OpenMP`` library that allows ``FastChem`` to be run in
-parallel. The Clang compiler does not directly support the library, even
-if it has been installed via ``brew``.
+detect these compilers and will still use Clang. For ``OpenMP`` support,
+installing ``libomp`` via ``brew install libomp`` is sufficient — no
+alternative compiler is needed.
 
-If the Python interface of ``FastChem`` is used, a corresponding Python
-3 installation is also required. By default, MacOS ships only with an
-outdated Python 2 version that cannot be used for ``FastChem``. A more
-up-to-date version can also be installed by, for example, ``brew``.
-However, one has to make sure that the ``python3`` executable and things
-like ``pip3`` (to install other required Python modules) actually link
+If the Python interface of ``FastChem`` is used, a Python 3
+installation is also required. By default, macOS ships only with an
+outdated Python 2 version that cannot be used with ``FastChem``. A more
+up-to-date version can also be installed via, for example, ``brew``.
+However, one has to make sure that the ``python3`` executable and
+``pip3`` (to install other required Python modules) actually point
 to that version. An alternative way to install and manage different
-versions of Python without interference from MacOS’ internal Python
-version is ``pyenv``, which can be found under
+versions of Python without interference from macOS’ internal Python
+version is ``pyenv``, which can be found at
 https://github.com/pyenv/pyenv.
 
 Notes on Windows
 ^^^^^^^^^^^^^^^^
 
-While in theory ``FastChem`` could be run on Windows if meeting all the
-prerequisites, we have never tested the compilation and execution of
-``FastChem`` on such a system. In principle, this should be possible
+While in theory ``FastChem`` could be run on Windows provided all the
+prerequisites are met, we have never tested its compilation and execution
+on such a system. In principle, this should be possible
 under a virtual Linux environment, such as ``cygwin``, or with the
-Windows Subsystem for Linux (WSL) shipped with the newer versions of
+Windows Subsystem for Linux (WSL) shipped with newer versions of
 Windows 10. However, due to the lack of a Windows system, we are unable
-to test this and, therefore, officially at least we cannot support
-``FastChem`` running on Windows.
+to test this and, therefore, cannot officially support
+``FastChem`` on Windows.
 
 .. _sec:install_python:
 
@@ -243,17 +236,16 @@ When setting up ``pyFastChem`` with ``PyPI``, it is installed via
 Depending on the Python installation, ``pip`` might need to be replaced
 by ``pip3`` in case ``pip`` is linked to Python 2.x.
 
-| This command will download and compile the ``pyFastChem`` package and
-  resolve potential dependencies. It is important to note, though, that
-  one still has to download the chemistry input data and other Python
-  scripts from the ``FastChem`` repository in order to use the package
-  properly.
+| This command will download and install the ``pyFastChem`` package and
+  resolve any dependencies. Note, however, that you will still need to
+  download the chemistry input data and other Python scripts from the
+  ``FastChem`` repository in order to use the package properly.
 
-| The ``PyPI`` repository of ``pyFastChem`` includes binary wheels for 
-  most platforms, such as Linux, MacOS, and Windows and supports several
-  different versions of Python. If no binary wheel for your system is 
-  available, ``pip`` will try to compile the package from source. This will 
-  require a working compiler and the necessary Python development headers.
+| The ``PyPI`` repository of ``pyFastChem`` includes binary wheels for
+  most platforms, such as Linux, macOS, and Windows, and supports several
+  different versions of Python. If no binary wheel for your system is
+  available, ``pip`` will try to compile the package from source. This
+  requires a working compiler and the necessary Python development headers.
 
 | As an alternative, ``pyFastChem`` can also be directly installed from
   source via the ``setup.py`` script located in the root directory of
@@ -279,7 +271,5 @@ by ``pip3`` in case ``pip`` is linked to Python 2.x.
 
 The setup script will also try to detect the presence of compiler
 support for ``OpenMP`` to run ``FastChem`` calculations in parallel.
-This is currently likely to fail in case of MacOS since Apple’s Clang
-compiler officially does not support this library. We might adapt the
-``setup.py`` script in the future to allow for alternative compilers
-under MacOS. 
+On macOS, install ``libomp`` via ``brew install libomp`` before building
+to enable ``OpenMP`` support.
