@@ -38,6 +38,7 @@ jobs:
             CFLAGS="-I$(brew --prefix libomp)/include"
             CXXFLAGS="-I$(brew --prefix libomp)/include"
             LDFLAGS="-Wl,-rpath,$(brew --prefix libomp)/lib -L$(brew --prefix libomp)/lib -lomp"
+            MACOSX_DEPLOYMENT_TARGET="$(sw_vers -productVersion | cut -d. -f1).0"
 
       - uses: actions/upload-artifact@v4
         with:
