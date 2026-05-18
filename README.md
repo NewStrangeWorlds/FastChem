@@ -72,6 +72,11 @@ FastChem comes with a user guide available at: https://newstrangeworlds.github.i
 It describes the installation and usage of FastChem and covers both the C++ stand-alone version and the Python interface. The manual also contains detailed information on the internal interface functions that the FastChem object class and its Python interface provide.
 
 
+## Updated chemistry data
+
+This FastChem release contains updated chemistry data, including new elements, gas-phase species, and condensates. As part of the update, some gas-phase isomers have been renamed. Since by default the gas-phase species in FastChem use the Hill notation, isomers were identified with an underscore. For example, HCN was declared as C1H1N1_1, while the isomer HNC was C1H1N1_2. In the new FastChem database, isomers now contain their actual molecular formular as part of the Hill notation. So, HCN is now referred to by C1H1N1_hcn, while HNC is C1H1N1_hnc. The same applies to AlOH (Al1H1O1_aloh), OAlH (Al1H1O1_oalh), SSF2 (F2S2_ssf2), and FS2F (F2S2_fs2f). The new function ConvertToHill notation automatically converts these isomers to the internal FastChem notation properly.
+
+
 ## References
 
 If you use FastChem in your work, please cite the relevant papers:

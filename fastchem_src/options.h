@@ -93,7 +93,7 @@ struct FastChemOptions{
   unsigned int nb_max_newton_iter = 3000;
   unsigned int nb_max_neldermead_iter = 3000;
   unsigned int nb_max_cond_iter = 3000;
-  unsigned int nb_max_comb_iter = 30000;
+  unsigned int nb_max_comb_iter = 3000;
   unsigned int nb_switch_to_newton = 400;
   unsigned int nb_switch_to_joint = 3000;
 
