@@ -40,16 +40,24 @@ namespace fastchem {
 //Returns FASTCHEM_UNKNOWN_SPECIES if the species does not exist
 unsigned int FastChem::getGasSpeciesIndex(const std::string symbol)
 {
-  auto it = std::find_if(
-    gas_phase.species.begin(),
-    gas_phase.species.end(),
-    [&] (const ChemicalSpecies* a) {
-      return a->symbol == symbol;});
+  // auto it = std::find_if(
+  //   gas_phase.species.begin(),
+  //   gas_phase.species.end(),
+  //   [&] (const ChemicalSpecies* a) {
+  //     return a->symbol == symbol;});
 
-  if (it == gas_phase.species.end()) 
-    return FASTCHEM_UNKNOWN_SPECIES;
-  else
-    return it - gas_phase.species.begin();
+  // if (it == gas_phase.species.end()) 
+  //   return FASTCHEM_UNKNOWN_SPECIES;
+  // else
+  //   return it - gas_phase.species.begin();
+
+  // Plain loop avoids a GCC -O3 loop-unrolling relocation bug that manifests
+  // when the symbol is absent (tail call resolves to file offset 0 in .so).
+  for (size_t i = 0; i < gas_phase.species.size(); ++i)
+    if (gas_phase.species[i]->symbol == symbol)
+      return static_cast<unsigned int>(i);
+
+  return FASTCHEM_UNKNOWN_SPECIES;
 }
 
 
