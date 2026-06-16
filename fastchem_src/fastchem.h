@@ -130,12 +130,13 @@ class FastChem {
       std::vector<double>& number_densities,
       std::vector<double>& number_densities_cond,
       std::vector<double>& element_cond_degree,
-      double& total_element_density, 
+      double& total_element_density,
       double& mean_molecular_weight,
       std::vector<unsigned int>& element_conserved,
       unsigned int& nb_chemistry_iterations,
       unsigned int& nb_cond_iterations,
-      unsigned int& nb_combined_iter);
+      unsigned int& nb_combined_iter,
+      const bool use_previous_solution = false);
 
     void rainoutCondensation(FastChemInput& input, FastChemOutput& output);
 

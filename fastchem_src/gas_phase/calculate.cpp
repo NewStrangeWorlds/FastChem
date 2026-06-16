@@ -62,6 +62,10 @@ bool GasPhase::calculate(
 
   unsigned int max_iter = options.nb_max_fastchem_iter;
 
+  //reset the adaptive Levenberg-Marquardt regularisation of the multidimensional
+  //Newton accelerator for this (fresh) gas-phase solve
+  solver.resetLM();
+
   for (iter_step=0; iter_step<max_iter; ++iter_step)
   {
     double n_maj = 0.0;
@@ -99,10 +103,10 @@ bool GasPhase::calculate(
       if ( (i.number_density_min + i.number_density_maj > i.phi * gas_density) && use_backup_solver == false)
       {
         use_backup_solver = true;
-       
+
         if (options.verbose_level >= 4)
-          std::cout << "Too large n_min and n_maj for species " 
-            << i.symbol << ". Switching to backup.  Iteration step: " 
+          std::cout << "Too large n_min and n_maj for species "
+            << i.symbol << ". Switching to backup.  Iteration step: "
             << iter_step << "\n";
 
         break;
@@ -110,20 +114,30 @@ bool GasPhase::calculate(
 
 
     //convergence check in log-space: |y_new - y_old| is the relative change |dn/n|
-    //Skip species at the density floor (effectively zero)
+    //Skip species whose mixing ratio is negligible. Such species carry no mass, but
+    //high-order clusters (e.g. C5, C2H4 in a carbon-poor gas) are proportional to a
+    //power of a trace parent density and therefore amplify its numerical noise; they
+    //can oscillate indefinitely and would otherwise prevent convergence even though
+    //they are physically zero. The threshold is relative to the gas density so it
+    //scales with the problem. (Note: this guard previously compared against
+    //LOG_DENSITY_FLOOR = -1e8, which no real density ever falls below, so it never
+    //actually skipped anything.)
     if (iter_step > 0)
     {
       converged = true;
 
+      const double log_conv_floor = log_gas_density
+        + std::log(options.chem_conv_mixing_ratio_floor);
+
       for (size_t i=0; i<nb_species; ++i)
         if (std::fabs(species[i]->log_number_density - log_density_old[i]) > options.chem_accuracy
-             && species[i]->log_number_density > static_cast<double>(LOG_DENSITY_FLOOR) + 1.0)
+             && species[i]->log_number_density > log_conv_floor)
         {
           converged = false;
           break;
         }
     }
-    
+
     //sanity check
     for (auto & e : elements)
     {
@@ -147,12 +161,12 @@ bool GasPhase::calculate(
     //switch to multi-dimensional Newton solver if the system
     //hasn't converged yet
     if (iter_step > options.nb_switch_to_newton)
-    { 
+    {
       if (options.verbose_level >= 4)
         std::cout << "Standard FastChem iteration failed. Switching to multi-dimensional Newton. " << "\n";
 
       std::vector<Element*> newton_elements;
-      
+
       solver.selectNewtonElements(
         elements,
         molecules,
@@ -174,7 +188,7 @@ bool GasPhase::calculate(
         for (auto & e : elements)
           calculateMoleculeDensities(e, log_gas_density);
 
-        for (auto & e : elements) 
+        for (auto & e : elements)
           e.calcMinorSpeciesDensities(molecules);
       }
     }

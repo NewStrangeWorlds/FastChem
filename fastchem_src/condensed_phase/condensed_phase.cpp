@@ -114,16 +114,44 @@ void CondensedPhase::init()
 
 
 
+//A condensate is a "ghost" if its maximum possible density (set by its most
+//depleted constituent element) is negligible compared to the total element
+//density. This happens in rainout calculations once an element has essentially
+//fully condensed out at higher temperatures: its remaining abundance is so small
+//that the condensate cannot meaningfully form, yet its activity can still be
+//strongly supersaturated. Feeding such condensates into the Newton solver creates
+//a degenerate, ill-conditioned system that produces NaNs.
+bool CondensedPhase::isGhostCondensate(
+  const Condensate& condensate,
+  const double total_element_density) const
+{
+  if (!std::isfinite(total_element_density) || total_element_density <= 0)
+    return false;
+
+  // for (auto & e : condensate.element_indices)
+  //   std::cout << condensate.symbol << "  " << elements[e].symbol << "  " << elements[e].phi << "\t" << elements[e].degree_of_condensation << "\n";
+
+  // for (auto & e : condensate.element_indices)
+  //   if (elements[e].phi < 1e-10) return true;
+
+  return condensate.max_number_density
+    < options.cond_limiting_density_ratio * total_element_density;
+}
+
+
+
 void CondensedPhase::selectActiveCondensates(
   std::vector< Condensate* >& condensates_act,
-  std::vector< Element* >& elements_cond)
+  std::vector< Element* >& elements_cond,
+  const double total_element_density)
 {
   if (condensates_act.capacity() == 0)
     condensates_act.reserve(nb_condensates);
 
   for (auto & i : condensates)
   {
-    if (i.log_activity >= 0 && i.is_calculated == false) 
+    if (i.log_activity >= 0 && i.is_calculated == false
+        && !isGhostCondensate(i, total_element_density))
     {
       condensates_act.push_back(&i);
       i.is_calculated = true;

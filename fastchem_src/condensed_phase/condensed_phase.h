@@ -46,7 +46,12 @@ class CondensedPhase {
 
     void selectActiveCondensates(
       std::vector<Condensate*>& condensates_act,
-      std::vector<Element*>& elements_cond);
+      std::vector<Element*>& elements_cond,
+      const double total_element_density);
+
+    bool isGhostCondensate(
+      const Condensate& condensate,
+      const double total_element_density) const;
 
     size_t nb_condensates = 0;
     size_t nb_elements = 0;

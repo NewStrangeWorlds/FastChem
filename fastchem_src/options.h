@@ -40,7 +40,9 @@ enum class ParameterFloat {
     cond_accuracy,
     element_minlimit,
     molecule_minlimit,
-    cond_trace_density_threshold
+    cond_trace_density_threshold,
+    chem_conv_mixing_ratio_floor,
+    newton_lm_lambda
 };
 
 
@@ -101,14 +103,33 @@ struct FastChemOptions{
   double newton_err = 1e-5;
   double cond_accuracy = 1e-5;
   double element_conserve_accuracy = 1e-4;
+  //Levenberg-Marquardt regularisation added to the diagonal of the (row-scaled)
+  //gas-phase Newton Jacobian. Keeps the multidimensional Newton accelerator stable when
+  //the Jacobian becomes near-singular for strongly non-solar / rained-out compositions.
+  double newton_lm_lambda = 1e-4;
   
   //smallest allowed particle number densities
-  double element_density_minlimit = 1e-155; 
+  double element_density_minlimit = 1e-155;
   double molecule_density_minlimit = 1e-155;
-  //condensates with a max_number_density below this are skipped in the Newton solver 
-  //(number_density set to 0) to avoid Jacobian ill-conditioning from near-depleted trace 
+  //species with a mixing ratio (n_i / n_gas) below this value are ignored by the
+  //gas-phase convergence test. They carry no mass, but high-order clusters (e.g. C5,
+  //C2H4) are proportional to a power of a trace parent density and so amplify its
+  //numerical noise; they can oscillate forever and prevent convergence even though
+  //they are physically zero. The value is far below any abundance that can affect
+  //element conservation, so it does not change the converged result.
+  double chem_conv_mixing_ratio_floor = 1e-150;
+  //condensates with a max_number_density below this are skipped in the Newton solver
+  //(number_density set to 0) to avoid Jacobian ill-conditioning from near-depleted trace
   //elements after rainout
-  double condensate_density_threshhold = 1e-100; 
+  double condensate_density_threshhold = 1e-100;
+  //a condensate whose maximum possible density (limited by its most depleted
+  //constituent element) falls below this fraction of the total element density is
+  //treated as a "ghost": its limiting element has effectively rained out, so the
+  //condensate cannot form. Such condensates are excluded from the active set and the
+  //convergence checks. This avoids feeding a degenerate, ill-conditioned system
+  //(element densities ~1e-60 against a gas of ~1e18) into the Newton solver, which
+  //otherwise produces NaNs in rainout calculations with strongly depleted elements.
+  double cond_limiting_density_ratio = 1e-20;
 
   unsigned int verbose_level = 1;
 

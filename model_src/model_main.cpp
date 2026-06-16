@@ -74,9 +74,6 @@ int main(int argc, char *argv[])
   if (!fastchem.setParameter(std::string("nbIterationsNelderMead"), config.nb_nelder_mead_iterations)) return 1;
   if (!fastchem.setParameter(std::string("nbIterationsBisection"), config.nb_bisection_iterations)) return 1;
   
-  //fastchem.setParameter(std::string("condUseLM"), false);
-  unsigned int nb_switch_to_newton = 300;
-  fastchem.setParameter(std::string("nbSwitchToNewton"), nb_switch_to_newton);
   //read in the temperature-pressure structure
   std::vector<double> temperature;
   std::vector<double> pressure;

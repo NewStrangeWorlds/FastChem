@@ -182,6 +182,23 @@ void GasPhaseSolver::newtonSolMult(
     rhs);
 
 
+  //Adaptive Levenberg-Marquardt regularisation of the (row-scaled) Jacobian. For
+  //strongly non-solar or rained-out compositions the gas-phase Jacobian can become
+  //near-singular - e.g. a heavily depleted element (n ~ 1e-20) contributes a near-zero
+  //column - which the plain LU solve turns into an astronomically large Newton step.
+  //The step limiter then clips it to a fixed, essentially random direction, so the
+  //iteration stalls on a slow manifold with a finite element-conservation residual (the
+  //gas phase "converges" in the per-step sense but does not conserve elements). Adding
+  //lambda to the diagonal keeps the system invertible and the step well-scaled.
+  //
+  //lambda adapts to the problem: it is raised when the conservation residual stops
+  //improving (overshoot / near-singular) and lowered when it improves, so it shrinks
+  //towards a true Newton step near convergence and does not bias the final solution.
+  adaptLM(rhs.norm());
+
+  for (int d=0; d<jacobian.rows(); ++d)
+    jacobian(d,d) += lm_lambda;
+
   Eigen::PartialPivLU<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> solver;
   solver.compute(jacobian);
   Eigen::VectorXdt result = solver.solve(rhs);
@@ -194,10 +211,45 @@ void GasPhaseSolver::newtonSolMult(
     result_scaled *= 2.0/max_value;
 
   for (size_t i=0; i<species.size(); ++i)
-  { 
+  {
     species[i]->log_number_density += result_scaled[i];
     species[i]->number_density = safeExp(species[i]->log_number_density);
   }
+}
+
+
+
+//Reset the adaptive Levenberg-Marquardt state. Call once before each fresh gas-phase
+//solve so the regularisation does not carry over between independent grid points.
+void GasPhaseSolver::resetLM()
+{
+  lm_lambda = options.newton_lm_lambda;
+  lm_objective_prev = 0.0;
+  lm_has_prev_objective = false;
+}
+
+
+
+//Adapt the Levenberg-Marquardt parameter based on whether the conservation residual
+//(the objective) improved since the previous Newton step: shrink lambda towards a true
+//Newton step when it improves, grow it (more damping) when it does not. lambda is
+//clamped to [newton_lm_lambda, 1e2]; the lower bound is the user-set base value so the
+//behaviour reduces to the fixed-lambda scheme if adaptation never triggers.
+void GasPhaseSolver::adaptLM(const double objective)
+{
+  if (lm_has_prev_objective)
+  {
+    if (objective < lm_objective_prev)
+      lm_lambda *= 0.5;
+    else
+      lm_lambda *= 2.0;
+
+    if (lm_lambda < options.newton_lm_lambda) lm_lambda = options.newton_lm_lambda;
+    if (lm_lambda > 1e2) lm_lambda = 1e2;
+  }
+
+  lm_objective_prev = objective;
+  lm_has_prev_objective = true;
 }
 
 

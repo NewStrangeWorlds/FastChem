@@ -82,8 +82,12 @@ class GasPhaseSolver{
     void newtonSolMult(
       std::vector<Element*>& species,
       std::vector<Element>& elements,
-      const std::vector<Molecule>& molecules, 
+      const std::vector<Molecule>& molecules,
       const double gas_density);
+
+    //reset the adaptive Levenberg-Marquardt state; call once before each fresh
+    //gas-phase solve
+    void resetLM();
 
     void newtonSolElectron(
       Element& species,
@@ -117,6 +121,16 @@ class GasPhaseSolver{
    
   private:
     FastChemOptions& options;
+
+    //Adaptive Levenberg-Marquardt regularisation of the multidimensional Newton
+    //Jacobian (see newtonSolMult). lm_lambda is raised when a step fails to reduce the
+    //conservation residual (near-singular Jacobian / overshoot) and lowered when it
+    //succeeds, so it approaches a true Newton step near convergence.
+    double lm_lambda = 1e-4;
+    double lm_objective_prev = 0.0;
+    bool lm_has_prev_objective = false;
+
+    void adaptLM(const double objective);
 
     //Scratch buffers for logSpaceResidual, linSol, quadSol — allocated once, reused across calls
     std::vector<double> scratch_log_terms_;   // first log-term vector

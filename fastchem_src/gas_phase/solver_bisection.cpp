@@ -65,18 +65,53 @@ bool GasPhaseSolver::bisection(
   int sign_lo = signF(y_lo);
   int sign_hi = signF(y_hi);
 
-  //Check that the root is bracketed
+  //Check that the root is bracketed by the interval endpoints.
   if (sign_lo * sign_hi > 0)
   {
-    //Root not bracketed, use midpoint as best guess
-    species.log_number_density = 0.5 * (y_lo + y_hi);
-    species.number_density = safeExp(species.log_number_density);
+    //The endpoints do not bracket a root. This does not necessarily mean no root
+    //exists: the log-space residual F = P - R can be non-monotonic for strongly
+    //element-dominated, low-temperature gases. There, high-order molecules acquire a
+    //negative effective coefficient (kappa = nu_j + phi_j*sigma_i < 0 once phi_j is
+    //large) and, combined with the enormous low-T mass-action constants, drive P
+    //negative at large y. The physical root then lies at a moderate y, bracketed by
+    //two interior points, while both endpoints report the same sign. Scan the interval
+    //for the first (lowest-y, i.e. physical) sign change and bisect that sub-interval.
+    const double scan_lo = std::log(options.element_density_minlimit);
+    const unsigned int nb_scan = 1000;
 
-    if (options.verbose_level >= 3)
-      std::cout << "FastChem: WARNING: Bisection root not bracketed for "
-                << species.symbol << "\n";
+    bool bracket_found = false;
+    double y_prev = scan_lo;
+    int sign_prev = signF(scan_lo);
 
-    return false;
+    for (unsigned int s=1; s<=nb_scan; ++s)
+    {
+      const double y_cur = scan_lo + (y_hi - scan_lo) * static_cast<double>(s)/nb_scan;
+      const int sign_cur = signF(y_cur);
+
+      if (sign_prev * sign_cur <= 0)
+      {
+        y_lo = y_prev;   sign_lo = sign_prev;
+        y_hi = y_cur;    sign_hi = sign_cur;
+        bracket_found = true;
+        break;
+      }
+
+      y_prev = y_cur;
+      sign_prev = sign_cur;
+    }
+
+    if (!bracket_found)
+    {
+      //Genuinely no sign change in the scanned range, use midpoint as best guess
+      species.log_number_density = 0.5 * (y_lo + y_hi);
+      species.number_density = safeExp(species.log_number_density);
+
+      if (options.verbose_level >= 3)
+        std::cout << "FastChem: WARNING: Bisection root not bracketed for "
+                  << species.symbol << "\n";
+
+      return false;
+    }
   }
 
 

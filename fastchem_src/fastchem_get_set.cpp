@@ -514,6 +514,14 @@ bool FastChem::setParameter(const std::string& parameter, const double value)
       options.condensate_density_threshhold = value;
       break;
 
+    case ParameterFloat::chem_conv_mixing_ratio_floor:
+      options.chem_conv_mixing_ratio_floor = std::pow(10.0, value);
+      break;
+
+    case ParameterFloat::newton_lm_lambda:
+      options.newton_lm_lambda = value;
+      break;
+
     default:
       std::cout << "Unknown parameter \"" << parameter << "\"  with a floatint-point value!\n";
       return false;

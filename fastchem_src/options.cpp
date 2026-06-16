@@ -51,7 +51,9 @@ ParameterFloat FastChemOptions::resolveParameter(
     { std::string("accuracyNewton"), ParameterFloat::newton_err },
     { std::string("minDensityExponentElement"), ParameterFloat::element_minlimit },
     { std::string("minDensityExponentMolecules"), ParameterFloat::molecule_minlimit },
-    { std::string("condTraceDensityThreshold"), ParameterFloat::cond_trace_density_threshold }
+    { std::string("condTraceDensityThreshold"), ParameterFloat::cond_trace_density_threshold },
+    { std::string("minConvergenceMixingRatioExponent"), ParameterFloat::chem_conv_mixing_ratio_floor },
+    { std::string("newtonRegularisation"), ParameterFloat::newton_lm_lambda }
   };
 
   auto itr = parameter_strings.find(parameter);

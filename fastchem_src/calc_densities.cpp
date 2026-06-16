@@ -297,18 +297,22 @@ void FastChem::rainoutCondensation(
 
   for (unsigned int i=0; i<input.temperature.size(); i++)
   {
+    //warm-start every grid point (except the first) from the previous point's
+    //converged solution; in a rainout calculation the points are processed in sequence
+    //and adjacent layers have nearly identical chemistry.
     output.fastchem_flag[i] = equilibriumCondensation(
       input.temperature[i],
       input.pressure[i]*1e6,
       output.number_densities[i],
       output.number_densities_cond[i],
       output.element_cond_degree[i],
-      output.total_element_density[i], 
+      output.total_element_density[i],
       output.mean_molecular_weight[i],
       output.element_conserved[i],
       output.nb_chemistry_iterations[i],
       output.nb_cond_iterations[i],
-      output.nb_iterations[i]);
+      output.nb_iterations[i],
+      i > 0);
 
     //if the calculation at a point fails,
     //we stop the entire calculation along the p-T structure
@@ -382,8 +386,9 @@ unsigned int FastChem::equilibriumCondensation(
   std::vector<unsigned int>& element_conserved,
   unsigned int& nb_chem_iter,
   unsigned int& nb_cond_iter,
-  unsigned int& nb_combined_iter)
-{ 
+  unsigned int& nb_combined_iter,
+  const bool use_previous_solution)
+{
 
   for (auto & i : gas_phase.molecules) i.calcMassActionConstant(temperature);
   for (auto & i : condensed_phase.condensates) i.calcMassActionConstant(temperature);
@@ -391,24 +396,53 @@ unsigned int FastChem::equilibriumCondensation(
   //this value will be fixed.
   double gas_density = pressure/(CONST_K * temperature);
 
-  //for a fresh start set all species to the minimum value
+  if (use_previous_solution)
   {
+    //Warm start: reuse the converged solution of the previous (adjacent) grid point.
+    //Between grid points the densities are kept as mixing ratios (see the end of this
+    //function), so they are converted back to number densities for the new gas density.
+    //Adjacent layers have nearly identical chemistry, which makes this a far better
+    //initial guess than the density floor and lets the gas-phase solver converge
+    //compositions (e.g. strongly oxygen-dominated, hydrogen-poor rainout layers) that
+    //it cannot reach from a cold start.
+    //
+    //Note: this must restore the densities WITHOUT going through element_data.init(),
+    //which would reset every element (and the electron) back to the density floor.
+    //Only the per-grid-point condensation bookkeeping is reset here.
+    for (auto & i : gas_phase.species)
+    {
+      i->number_density *= gas_density;
+      i->log_number_density = safeLog(i->number_density);
+    }
+
+    for (auto & e : element_data.elements)
+    {
+      e.degree_of_condensation = 0.0;
+      e.phi = e.epsilon;
+      e.fixed_by_condensation = false;
+    }
+  }
+  else
+  {
+    //reset the per-element condensation state and set all element densities to the
+    //minimum value
+    element_data.init(options.element_density_minlimit);
+
+    //for a fresh start set all species to the minimum value
     const double log_min = std::log(options.element_density_minlimit);
     for (auto & i : gas_phase.species)
     {
       i->number_density = options.element_density_minlimit;
       i->log_number_density = log_min;
     }
-  }
 
-  //set the initial electron density to 1 (for stability reasons)
-  if (element_data.e_ != FASTCHEM_UNKNOWN_SPECIES)
-  {
-    element_data.elements[element_data.e_].number_density = 1.0;
-    element_data.elements[element_data.e_].log_number_density = 0.0;
+    //set the initial electron density to 1 (for stability reasons)
+    if (element_data.e_ != FASTCHEM_UNKNOWN_SPECIES)
+    {
+      element_data.elements[element_data.e_].number_density = 1.0;
+      element_data.elements[element_data.e_].log_number_density = 0.0;
+    }
   }
-
-  element_data.init(options.element_density_minlimit);
 
   for (auto & c : condensed_phase.condensates)
   {
@@ -424,10 +458,11 @@ unsigned int FastChem::equilibriumCondensation(
 
   unsigned int nb_iter = 0;
 
-  //call the main FastChem solver  
+
+  //call the main FastChem solver
   bool fastchem_converged = gas_phase.calculate(
-    temperature, 
-    gas_density, 
+    temperature,
+    gas_density,
     nb_iter);
 
   nb_chem_iter += nb_iter;
@@ -444,9 +479,8 @@ unsigned int FastChem::equilibriumCondensation(
 
   std::vector<Condensate*> condensates_act;
   std::vector<Element*> elements_cond;
-
-  condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
-
+  
+  condensed_phase.selectActiveCondensates(condensates_act, elements_cond, total_element_density);
 
   bool cond_converged = false;
   bool combined_converged = false;
@@ -487,7 +521,7 @@ unsigned int FastChem::equilibriumCondensation(
     for (nb_combined_iter=0; nb_combined_iter<options.nb_max_comb_iter; ++nb_combined_iter)
     {
       double total_element_density_old = total_element_density;
-      condensed_phase.selectActiveCondensates(condensates_act, elements_cond);
+      condensed_phase.selectActiveCondensates(condensates_act, elements_cond, total_element_density);
 
       for (auto & i : condensates_act)
       {
@@ -529,7 +563,7 @@ unsigned int FastChem::equilibriumCondensation(
               break;
             }
           }
-          
+
           if (!is_condensed)
             e.fixed_by_condensation = false;
         }
@@ -556,7 +590,8 @@ unsigned int FastChem::equilibriumCondensation(
       //these are handled separately in selectActiveCondensates and their activity
       //is not a reliable convergence indicator.
       for (auto & i : condensed_phase.condensates)
-        if (i.log_activity > 0.001 && i.max_number_density >= options.condensate_density_threshhold)
+        if (i.log_activity > 0.001
+            && !condensed_phase.isGhostCondensate(i, total_element_density))
         {
           cond_converged = false;
         }
@@ -617,17 +652,19 @@ unsigned int FastChem::equilibriumCondensation(
 
     //sanity check for the condensate activities
     for (auto & i : condensed_phase.condensates)
-      if (i.log_activity > 0.001 && i.max_number_density >= 1.0e-100)
+      if (i.log_activity > 0.001
+          && !condensed_phase.isGhostCondensate(i, total_element_density))
       {
         cond_converged = false;
       }
 
     //remove condensates that are not present
-    //i.e. those with an activity smaller than 1
-    //Exception: trace condensates (max_number_density < 1e-100) keep their
-    //density so that updatePhi correctly reflects their degree of condensation
+    //i.e. those with an activity smaller than 1.
+    //Ghost condensates (limiting element rained out) are never activated, so their
+    //density is already zero and they are left untouched here.
     for (auto & i : condensed_phase.condensates)
-      if (i.log_activity < LOG_ACTIVITY_THRESHOLD && i.max_number_density >= 1.0e-100)
+      if (i.log_activity < LOG_ACTIVITY_THRESHOLD
+          && !condensed_phase.isGhostCondensate(i, total_element_density))
         i.number_density = 0.0;
 
     //recompute total_element_density after zeroing so that the subsequent phi
@@ -718,12 +755,22 @@ unsigned int FastChem::equilibriumCondensation(
 
   unsigned int return_state = FASTCHEM_SUCCESS;
 
-  if (!fastchem_converged || !cond_converged || !combined_converged) 
+  if (!fastchem_converged || !cond_converged || !combined_converged)
     return_state = FASTCHEM_NO_CONVERGENCE;
 
   //check for the phase rule
   if (nb_condensed_elements == element_data.elements_wo_e.size())
     return_state = FASTCHEM_PHASE_RULE_VIOLATION;
+
+  //store the gas-phase densities as mixing ratios so that the next (adjacent) grid
+  //point can warm-start from them (see the use_previous_solution branch above). This
+  //must come after all output and conservation quantities have been computed from the
+  //absolute number densities.
+  for (auto & i : gas_phase.species)
+  {
+    i->number_density /= gas_density;
+    i->log_number_density = safeLog(i->number_density);
+  }
 
   return return_state;
 }
