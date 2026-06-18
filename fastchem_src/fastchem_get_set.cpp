@@ -511,7 +511,7 @@ bool FastChem::setParameter(const std::string& parameter, const double value)
       break;
 
     case ParameterFloat::cond_trace_density_threshold:
-      options.condensate_density_threshhold = value;
+      options.cond_limiting_density_ratio = value;
       break;
 
     case ParameterFloat::chem_conv_mixing_ratio_floor:
