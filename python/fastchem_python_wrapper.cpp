@@ -3,8 +3,8 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 #else
-#include "../_deps/pybind11-src/include/pybind11/pybind11.h"
-#include "../_deps/pybind11-src/include/pybind11/stl.h"
+#include "../build/_deps/pybind11-src/include/pybind11/pybind11.h"
+#include "../build/_deps/pybind11-src/include/pybind11/stl.h"
 #endif
 
 #include "../fastchem_src/fastchem.h"
