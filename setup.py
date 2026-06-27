@@ -11,7 +11,7 @@ except ImportError:
     from setuptools._distutils.errors import CCompilerError
 
 
-__version__ = "4.0.2"
+__version__ = "4.0.3"
 
 def __read__(file_name):
     return open(os.path.join(os.path.dirname(__file__), file_name)).read()

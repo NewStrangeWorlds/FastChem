@@ -102,7 +102,7 @@ unsigned int FastChem::calcDensities(
 
     #pragma omp parallel for schedule(dynamic, 1) num_threads(nb_omp_threads)
     for (unsigned int i=0; i<input.temperature.size(); i++)
-    { //std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
+    { std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
       if (!input.equilibrium_condensation)
       {
         output.fastchem_flag[i] =
@@ -296,7 +296,7 @@ void FastChem::rainoutCondensation(
 
 
   for (unsigned int i=0; i<input.temperature.size(); i++)
-  {
+  { std::cout << i << " of " << input.temperature.size() << "\n";
     //warm-start every grid point (except the first) from the previous point's
     //converged solution; in a rainout calculation the points are processed in sequence
     //and adjacent layers have nearly identical chemistry.
@@ -395,34 +395,35 @@ unsigned int FastChem::equilibriumCondensation(
 
   //this value will be fixed.
   double gas_density = pressure/(CONST_K * temperature);
+  
+  
+  // if (use_previous_solution)
+  // {
+  //   //Warm start: reuse the converged solution of the previous (adjacent) grid point.
+  //   //Between grid points the densities are kept as mixing ratios (see the end of this
+  //   //function), so they are converted back to number densities for the new gas density.
+  //   //Adjacent layers have nearly identical chemistry, which makes this a far better
+  //   //initial guess than the density floor and lets the gas-phase solver converge
+  //   //compositions (e.g. strongly oxygen-dominated, hydrogen-poor rainout layers) that
+  //   //it cannot reach from a cold start.
+  //   //
+  //   //Note: this must restore the densities WITHOUT going through element_data.init(),
+  //   //which would reset every element (and the electron) back to the density floor.
+  //   //Only the per-grid-point condensation bookkeeping is reset here.
+  //   for (auto & i : gas_phase.species)
+  //   {
+  //     i->number_density *= gas_density;
+  //     i->log_number_density = safeLog(i->number_density);
+  //   }
 
-  if (use_previous_solution)
-  {
-    //Warm start: reuse the converged solution of the previous (adjacent) grid point.
-    //Between grid points the densities are kept as mixing ratios (see the end of this
-    //function), so they are converted back to number densities for the new gas density.
-    //Adjacent layers have nearly identical chemistry, which makes this a far better
-    //initial guess than the density floor and lets the gas-phase solver converge
-    //compositions (e.g. strongly oxygen-dominated, hydrogen-poor rainout layers) that
-    //it cannot reach from a cold start.
-    //
-    //Note: this must restore the densities WITHOUT going through element_data.init(),
-    //which would reset every element (and the electron) back to the density floor.
-    //Only the per-grid-point condensation bookkeeping is reset here.
-    for (auto & i : gas_phase.species)
-    {
-      i->number_density *= gas_density;
-      i->log_number_density = safeLog(i->number_density);
-    }
-
-    for (auto & e : element_data.elements)
-    {
-      e.degree_of_condensation = 0.0;
-      e.phi = e.epsilon;
-      e.fixed_by_condensation = false;
-    }
-  }
-  else
+  //   for (auto & e : element_data.elements)
+  //   {
+  //     e.degree_of_condensation = 0.0;
+  //     e.phi = e.epsilon;
+  //     e.fixed_by_condensation = false;
+  //   }
+  // }
+  // else
   {
     //reset the per-element condensation state and set all element densities to the
     //minimum value
@@ -687,6 +688,71 @@ unsigned int FastChem::equilibriumCondensation(
       temperature,
       gas_density,
       nb_iter);
+
+    //The alternating gas-condensation iteration converges on per-step changes and can leave
+    //a small element-conservation bias for stiff, strongly-condensing mixtures. The joint
+    //gas-condensate Newton couples the gas-phase element densities and the condensate
+    //densities and removes it - but it is more expensive than the standard solver, so it is
+    //only invoked when the cheap final gas-phase solve above actually left elements
+    //unconserved. Inert elements (noble gases: no molecules and no condensate) are excluded
+    //from this test - they are corrected exactly further below and would otherwise trigger
+    //the joint solver needlessly.
+    total_element_density = gas_phase.totalElementDensity()
+                          + condensed_phase.totalElementDensity();
+
+    bool needs_joint = false;
+    for (auto & e : element_data.elements)
+    {
+      if (e.symbol == "e-" || e.epsilon <= 0) continue;
+      if (e.molecule_list.empty() && e.condensate_list.empty()) continue;
+
+      double a = e.number_density;
+      for (auto & m : e.molecule_list)
+        a += gas_phase.molecules[m].stoichiometric_vector[e.index]
+             * gas_phase.molecules[m].number_density;
+      for (auto & c : e.condensate_list)
+        a += condensed_phase.condensates[c].stoichiometric_vector[e.index]
+             * condensed_phase.condensates[c].number_density;
+
+      if (std::fabs(a/(total_element_density*e.epsilon) - 1.0)
+            > options.element_conserve_accuracy)
+      { needs_joint = true; break; }
+    }
+
+    if (needs_joint)
+    {
+      std::vector<double> log_density_joint(element_data.nb_elements,
+                                            static_cast<double>(LOG_DENSITY_FLOOR));
+
+      bool joint_converged = false;
+      for (unsigned int k=0; k<options.nb_max_comb_iter; ++k)
+      {
+        for (auto & e : element_data.elements)
+          log_density_joint[e.index] = e.log_number_density;
+
+        jointNewtonStep(condensates_act, temperature, gas_density, total_element_density);
+
+        for (auto & i : condensed_phase.condensates)
+          i.calcActivity(temperature, element_data.elements, options.cond_use_data_validity_limits);
+
+        total_element_density = gas_phase.totalElementDensity()
+                              + condensed_phase.totalElementDensity();
+
+        double max_change = 0;
+        for (auto & e : element_data.elements)
+          max_change = std::max(max_change,
+            std::fabs(e.log_number_density - log_density_joint[e.index]));
+
+        if (max_change < options.chem_accuracy) { joint_converged = true; break; }
+      }
+
+      //if the joint Newton reached a fixed point, the coupled system is converged
+      if (joint_converged)
+      {
+        combined_converged = true;
+        cond_converged = true;
+      }
+    }
   }
   else
   { //no condensates stable...
@@ -722,17 +788,50 @@ unsigned int FastChem::equilibriumCondensation(
     std::cout << "Convergence problem in FastChem: Combined gas-phase & equilibrium condensation calculation failed :(\n";
 
 
+  //Enforce exact conservation for inert elements, i.e. those that form no molecules
+  //and enter no condensate (e.g. the noble gases). For such an element the entire
+  //abundance is in the free atom, so the exact result is n = eps * N_total. The
+  //gas-phase solve fixes such an element solely through the gas-phase reference (phi
+  //together with the major/minor and degree-of-condensation bookkeeping), which can be
+  //marginally inconsistent with the atom-based total budget. For an element that forms
+  //molecules this small discrepancy is absorbed by its atomic/molecular partition, but
+  //an inert element has no such buffer and is left slightly off; because the total
+  //budget is fixed, that error is then redistributed as a (uniform) conservation offset
+  //onto every other element. The fixed-point passes make the correction self-consistent
+  //with the total it feeds back into.
+  {
+    auto is_inert = [](const Element& e)
+      { return e.symbol != "e-" && e.epsilon > 0
+               && e.molecule_list.empty() && e.condensate_list.empty(); };
+
+    bool any_inert = false;
+    for (auto & e : element_data.elements) if (is_inert(e)) { any_inert = true; break; }
+
+    if (any_inert)
+      for (int pass=0; pass<3; ++pass)
+      {
+        const double tot = gas_phase.totalElementDensity() + condensed_phase.totalElementDensity();
+        for (auto & e : element_data.elements)
+          if (is_inert(e))
+          {
+            e.number_density = e.epsilon * tot;
+            e.log_number_density = std::log(e.number_density);
+          }
+      }
+  }
+
+
   //return output
   number_densities.assign(gas_phase.nb_species, 0.0);
 
   for (size_t i=0; i<gas_phase.nb_species; ++i)
-    number_densities[i] = gas_phase.species[i]->number_density; 
+    number_densities[i] = gas_phase.species[i]->number_density;
 
   number_densities_cond.assign(condensed_phase.nb_condensates, 0.0);
 
   for (size_t i=0; i<condensed_phase.nb_condensates; ++i)
     number_densities_cond[i] = condensed_phase.condensates[i].number_density;
-  
+
   element_cond_degree.assign(element_data.nb_elements, 0.0);
 
   for (size_t i=0; i<element_data.nb_elements; ++i)
@@ -751,7 +850,6 @@ unsigned int FastChem::equilibriumCondensation(
 
   for (size_t i=0; i<element_data.nb_elements; ++i)
     element_conserved[i] = element_data.elements[i].element_conserved;
-
 
   unsigned int return_state = FASTCHEM_SUCCESS;
 
