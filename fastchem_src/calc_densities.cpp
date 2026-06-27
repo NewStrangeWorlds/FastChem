@@ -102,7 +102,7 @@ unsigned int FastChem::calcDensities(
 
     #pragma omp parallel for schedule(dynamic, 1) num_threads(nb_omp_threads)
     for (unsigned int i=0; i<input.temperature.size(); i++)
-    { std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
+    { //std::cout << i << " of " << input.temperature.size() << "  " << omp_get_thread_num() << "\n";
       if (!input.equilibrium_condensation)
       {
         output.fastchem_flag[i] =
@@ -296,7 +296,7 @@ void FastChem::rainoutCondensation(
 
 
   for (unsigned int i=0; i<input.temperature.size(); i++)
-  { std::cout << i << " of " << input.temperature.size() << "\n";
+  { //std::cout << i << " of " << input.temperature.size() << "\n";
     //warm-start every grid point (except the first) from the previous point's
     //converged solution; in a rainout calculation the points are processed in sequence
     //and adjacent layers have nearly identical chemistry.
