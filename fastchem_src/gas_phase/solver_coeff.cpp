@@ -112,9 +112,37 @@ void GasPhaseSolver::logSpaceResidual(
     scratch_coeffs_dP_.push_back(static_cast<double>(nu_j) * kappa);
   }
 
-  //Compute ln(P) and ln(dP/dy) using logSumExp for numerical stability
-  ln_P = logSumExp(scratch_log_terms_, scratch_coeffs_P_);
-  ln_dP = logSumExp(scratch_log_terms_, scratch_coeffs_dP_);
+  // Compute both sums using the same exponentials.
+  const double floor = static_cast<double>(LOG_DENSITY_FLOOR);
+  double x_max = floor;
+
+  for (double x : scratch_log_terms_)
+    if (x > x_max) x_max = x;
+
+  if (x_max <= floor)
+  {
+    ln_P = floor;
+    ln_dP = floor;
+    return;
+  }
+
+  double sum_P = 0.0;
+  double sum_dP = 0.0;
+
+  for (size_t k = 0; k < scratch_log_terms_.size(); ++k)
+  {
+    const double shifted = scratch_log_terms_[k] - x_max;
+
+    if (shifted > -700)
+    {
+      const double e = std::exp(shifted);
+      sum_P += scratch_coeffs_P_[k] * e;
+      sum_dP += scratch_coeffs_dP_[k] * e;
+    }
+  }
+
+  ln_P = sum_P <= 0.0 ? floor : x_max + std::log(sum_P);
+  ln_dP = sum_dP <= 0.0 ? floor : x_max + std::log(sum_dP);
 }
 
 
