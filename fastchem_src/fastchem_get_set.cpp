@@ -522,6 +522,10 @@ bool FastChem::setParameter(const std::string& parameter, const double value)
       options.newton_lm_lambda = value;
       break;
 
+    case ParameterFloat::electron_min_temperature:
+      options.electron_min_temperature = value;
+      break;
+
     default:
       std::cout << "Unknown parameter \"" << parameter << "\"  with a floatint-point value!\n";
       return false;

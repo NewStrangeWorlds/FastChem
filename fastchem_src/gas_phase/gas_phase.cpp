@@ -321,4 +321,26 @@ void GasPhase::createMoleculeLists()
 
 
 
+//Calculates the mass action constants of all molecules for the given temperature
+//Below the electron temperature cap, the ions are switched off by setting their
+//mass action constants to the log density floor. Their densities then evaluate to
+//zero in every solver, and the electron is set to its floor in calculateElectronDensities.
+//Pinning only the electron would not be sufficient: a cation density is
+//K * n_X / n_e, so an electron at the floor would make the cations blow up instead.
+void GasPhase::calcMassActionConstants(const double temperature)
+{
+  const bool ions_off = (e_ != FASTCHEM_UNKNOWN_SPECIES)
+                        && (temperature < options.electron_min_temperature);
+
+  for (auto & i : molecules)
+  {
+    i.calcMassActionConstant(temperature);
+
+    if (ions_off && i.stoichiometric_vector[e_] != 0)
+      i.mass_action_constant = LOG_DENSITY_FLOOR;
+  }
+}
+
+
+
 }

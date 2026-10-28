@@ -60,6 +60,7 @@ class GasPhase {
     double meanMolecularWeight(const double gas_density);
     double totalElementDensity();
     void updateMoleculeDensities();
+    void calcMassActionConstants(const double temperature);
 
     void reInitialise();
   private:
@@ -103,7 +104,8 @@ class GasPhase {
     void calculateElectronDensities(
       Element& species,
       const double& old_number_density,
-      const double gas_density);
+      const double gas_density,
+      const double temperature);
     void calculateSinglyIonElectrons(
       Element& electron,
       const double& old_number_density);

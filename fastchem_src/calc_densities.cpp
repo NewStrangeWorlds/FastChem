@@ -195,7 +195,7 @@ unsigned int FastChem::calcDensity(
   std::vector<unsigned int>& element_conserved,
   unsigned int& nb_chemistry_iterations)
 {
-  for (auto & i : gas_phase.molecules)  i.calcMassActionConstant(temperature);
+  gas_phase.calcMassActionConstants(temperature);
 
   //this value will be fixed.
   double gas_density = pressure/(CONST_K * temperature);
@@ -390,7 +390,7 @@ unsigned int FastChem::equilibriumCondensation(
   const bool use_previous_solution)
 {
 
-  for (auto & i : gas_phase.molecules) i.calcMassActionConstant(temperature);
+  gas_phase.calcMassActionConstants(temperature);
   for (auto & i : condensed_phase.condensates) i.calcMassActionConstant(temperature);
 
   //this value will be fixed.

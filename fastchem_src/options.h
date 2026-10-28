@@ -42,7 +42,8 @@ enum class ParameterFloat {
     molecule_minlimit,
     cond_trace_density_threshold,
     chem_conv_mixing_ratio_floor,
-    newton_lm_lambda
+    newton_lm_lambda,
+    electron_min_temperature
 };
 
 
@@ -107,7 +108,13 @@ struct FastChemOptions{
   //gas-phase Newton Jacobian. Keeps the multidimensional Newton accelerator stable when
   //the Jacobian becomes near-singular for strongly non-solar / rained-out compositions.
   double newton_lm_lambda = 1e-4;
-  
+  //below this temperature (in K) the ionisation equilibrium is not solved: all ions are
+  //switched off (mass action constants set to the log density floor) and the electron
+  //density is set to the element density floor, as if no ions were present. At very low
+  //temperatures the ionisation equilibrium is numerically meaningless (mass action
+  //constants of the ions become extreme) and only costs iterations. 0 disables the cap.
+  double electron_min_temperature = 1000.0;
+
   //smallest allowed particle number densities
   double element_density_minlimit = 1e-155;
   double molecule_density_minlimit = 1e-155;

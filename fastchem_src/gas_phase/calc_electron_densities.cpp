@@ -39,9 +39,10 @@ namespace fastchem {
 void GasPhase::calculateElectronDensities(
   Element& electron,
   const double& old_number_density,
-  const double gas_density)
+  const double gas_density,
+  const double temperature)
 {
-  //Am I the electron? 
+  //Am I the electron?
   if (electron.symbol != "e-") return;
 
   //Electron log density floor: use log(element_density_minlimit) instead of LOG_DENSITY_FLOOR
@@ -49,8 +50,10 @@ void GasPhase::calculateElectronDensities(
   //would create astronomically large ion contributions in the element conservation equation.
   const double electron_log_floor = std::log(options.element_density_minlimit);
 
-  //no ions present
-  if (electron.molecule_list.size() == 0)
+  //no ions present, or temperature below the electron cap
+  //In the latter case the ionisation equilibrium is not solved for; the electron density
+  //is set to the floor. This also overwrites the initial/warm-start value of the electron.
+  if (electron.molecule_list.size() == 0 || temperature < options.electron_min_temperature)
   {
     electron.number_density = 0.0;
     electron.log_number_density = electron_log_floor;

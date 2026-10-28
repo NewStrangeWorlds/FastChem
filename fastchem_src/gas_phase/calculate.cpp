@@ -95,7 +95,7 @@ bool GasPhase::calculate(
 
     //only calculate electrons if they are present
     if (e_ != FASTCHEM_UNKNOWN_SPECIES) 
-      calculateElectronDensities(elements[e_], number_density_old[e_], gas_density);
+      calculateElectronDensities(elements[e_], number_density_old[e_], gas_density, temperature_gas);
  
     
     //check if n_j_min are small enough, if not use backup solver
