@@ -11,7 +11,7 @@ except ImportError:
     from setuptools._distutils.errors import CCompilerError
 
 
-__version__ = "4.0.3"
+__version__ = "4.0.4"
 
 def __read__(file_name):
     return open(os.path.join(os.path.dirname(__file__), file_name)).read()
@@ -134,7 +134,7 @@ setup(
   description = "FastChem, an ultra-fast equilibrium chemistry",
   long_description=__read__('README.md'),
   long_description_content_type="text/markdown",
-  author      = "Daniel Kitzmann, Joachim Stock, Brett Morris",
+  author      = "Daniel Kitzmann, Joachim Stock",
   license     = "GPL 3.0",
   url         = "https://github.com/NewStrangeWorlds/FastChem",
   version     = __version__,
