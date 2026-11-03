@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Detailed C++ object class description" href="cpp_class.html"><link rel="prev" title="C++ stand-alone executable" href="cpp_standalone.html">
         <link rel="prefetch" href="../_static/fastchem_logo_dark.png" as="image">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+    <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
         <title>Running pyFastChem - FastChem 4.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
@@ -295,8 +295,8 @@ constructor.</div>
 </div>
 <p>If we’re only interested in a pure gas phase chemistry calculation, we
 can use</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">&#39;input/element_abundances/asplund_2009.dat&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;input/logK/logK.dat&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">'input/element_abundances/asplund_2009.dat'</span><span class="p">,</span>
+                               <span class="s1">'input/logK/logK.dat'</span><span class="p">,</span>
                                <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -307,18 +307,18 @@ equilibrium constants, and the verbose level.</div>
 <div class="line">For a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object that also includes condensed species, we
 have:</div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">&#39;input/element_abundances/asplund_2009.dat&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;input/logK/logK.dat&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;input/logK/logK_condensates.dat&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">'input/element_abundances/asplund_2009.dat'</span><span class="p">,</span>
+                               <span class="s1">'input/logK/logK.dat'</span><span class="p">,</span>
+                               <span class="s1">'input/logK/logK_condensates.dat'</span><span class="p">,</span>
                                <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where the additional argument is the location of the input file with the
 equilibrium constants of the condensed species. It is also possible to
 use <code class="docutils literal notranslate"><span class="pre">'none'</span></code> for this argument:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">&#39;input/element_abundances/asplund_2009.dat&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;input/logK/logK.dat&#39;</span><span class="p">,</span>
-                               <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">'input/element_abundances/asplund_2009.dat'</span><span class="p">,</span>
+                               <span class="s1">'input/logK/logK.dat'</span><span class="p">,</span>
+                               <span class="s1">'none'</span><span class="p">,</span>
                                 <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -328,7 +328,7 @@ behaves like the first one by only allowing the calculation of the
 pure gas phase composition.</div>
 <div class="line">Alternatively, a <code class="docutils literal notranslate"><span class="pre">FastChem</span></code> object can also be created via</div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">&#39;input/parameters_py.dat&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fastchem</span> <span class="o">=</span> <span class="n">pyfastchem</span><span class="o">.</span><span class="n">FastChem</span><span class="p">(</span><span class="s1">'input/parameters_py.dat'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="line-block">
@@ -413,7 +413,7 @@ easily converted into a NumPy array via:</div>
 functions that save the output into files, identical to those from the
 <code class="docutils literal notranslate"><span class="pre">C++</span></code> version. They can be called by:</div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveChemistryOutput</span><span class="p">(</span><span class="n">output_dir</span> <span class="o">+</span> <span class="s1">&#39;/chemistry.dat&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveChemistryOutput</span><span class="p">(</span><span class="n">output_dir</span> <span class="o">+</span> <span class="s1">'/chemistry.dat'</span><span class="p">,</span>
                     <span class="n">temperature</span><span class="p">,</span>
                     <span class="n">pressure</span><span class="p">,</span>
                     <span class="n">output_data</span><span class="o">.</span><span class="n">total_element_density</span><span class="p">,</span>
@@ -422,7 +422,7 @@ functions that save the output into files, identical to those from the
                     <span class="n">fastchem</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveCondOutput</span><span class="p">(</span><span class="n">output_dir</span> <span class="o">+</span> <span class="s1">&#39;/condensates.dat&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveCondOutput</span><span class="p">(</span><span class="n">output_dir</span> <span class="o">+</span> <span class="s1">'/condensates.dat'</span><span class="p">,</span>
                <span class="n">temperature</span><span class="p">,</span>
                <span class="n">pressure</span><span class="p">,</span>
                <span class="n">output_data</span><span class="o">.</span><span class="n">element_cond_degree</span><span class="p">,</span>
@@ -430,7 +430,7 @@ functions that save the output into files, identical to those from the
                <span class="n">fastchem</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveMonitorOutput</span><span class="p">(</span><span class="n">output_dir</span> <span class="o">+</span> <span class="s1">&#39;/monitor.dat&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">saveMonitorOutput</span><span class="p">(</span><span class="n">output_dir</span> <span class="o">+</span> <span class="s1">'/monitor.dat'</span><span class="p">,</span>
                   <span class="n">temperature</span><span class="p">,</span>
                   <span class="n">pressure</span><span class="p">,</span>
                   <span class="n">output_data</span><span class="o">.</span><span class="n">element_conserved</span><span class="p">,</span>
@@ -704,7 +704,7 @@ by <code class="docutils literal notranslate"><span class="pre">FastChem</span><
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2019 - 2025, Daniel Kitzmann, Joachim Stock
+                Copyright &#169; 2019 - 2026, Daniel Kitzmann, Joachim Stock
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

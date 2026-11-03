@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="prev" title="Detailed pyFastChem module description" href="python_module.html">
         <link rel="prefetch" href="../_static/fastchem_logo_dark.png" as="image">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+    <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
         <title>Internal parameters - FastChem 4.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
@@ -353,6 +353,14 @@ parameters that can be adjusted via the aforementioned</div>
 <div class="line">Default value: 3000</div>
 </div>
 </div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">electronMinTemperature</span></code></div>
+<div class="line-block">
+<div class="line">Temperature (in K) below which the ionisation equilibrium is not solved. For temperatures below this value, all ions are switched off and the electron density is set to its minimum value, i.e. the gas phase is treated as if no ions were present. At low temperatures, the mass action constants of ions become extreme and the ionisation equilibrium is numerically meaningless, while still costing a large number of iterations. Setting this parameter to 0 disables the cap and always solves for the ionisation equilibrium.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 1000</div>
+</div>
+</div>
 </section>
 <section id="advanced-parameters">
 <h2>Advanced parameters<a class="headerlink" href="#advanced-parameters" title="Link to this heading">¶</a></h2>
@@ -428,7 +436,7 @@ parameters actually do and which side effects they may have.</div>
 <div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">nbSwitchToJoint</span></code></div>
 <div class="line-block">
-<div class="line">Maximum number of combined gas phase / condensate outer-loop iterations before the solver switches to a joint gas+condensate Newton step. The joint step is also activated adaptively when stagnation or divergence is detected. Setting this to a large value effectively disables the fixed trigger.</div>
+<div class="line">Number of combined gas phase / condensate outer-loop iterations after which the solver switches to a joint gas+condensate Newton step that couples the gas-phase element densities and the condensate densities. With the default value, the joint step is never triggered during the outer loop. Independent of this parameter, the joint Newton solver is always applied as a post-processing step when the final gas-phase calculation leaves elements unconserved with respect to <code class="docutils literal notranslate"><span class="pre">accuracyElementConservation</span></code>, which can happen for stiff, strongly-condensing mixtures.</div>
 <div class="line">Type: <code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span></code></div>
 <div class="line">Default value: 3000</div>
 </div>
@@ -436,9 +444,25 @@ parameters actually do and which side effects they may have.</div>
 <div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">condTraceDensityThreshold</span></code></div>
 <div class="line-block">
-<div class="line">Threshold for the maximum possible number density of a condensate (in cm<sup>-3</sup>). Condensates whose maximum possible number density (computed from element abundances and stoichiometry) falls below this value are excluded from the condensate Newton solver and their number density is set to zero. This avoids Jacobian ill-conditioning caused by trace elements that have been nearly completely rained out.</div>
+<div class="line">Relative threshold for the maximum possible number density of a condensate. The maximum possible number density of a condensate is limited by its most depleted constituent element. If this value falls below <code class="docutils literal notranslate"><span class="pre">condTraceDensityThreshold</span></code> times the total element density, the limiting element has effectively rained out and the condensate is treated as a ghost condensate that cannot form. Ghost condensates are excluded from the condensate Newton solver and from the convergence checks, and their number density is set to zero. This avoids an ill-conditioned system of equations caused by trace elements that have been nearly completely rained out, which would otherwise lead to NaN values in rainout calculations.</div>
 <div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
-<div class="line">Default value: 1e-100</div>
+<div class="line">Default value: 1e-20</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">newtonRegularisation</span></code></div>
+<div class="line-block">
+<div class="line">Base value of the Levenberg–Marquardt regularisation that is added to the diagonal of the Jacobian in the multi-dimensional Newton’s method of the gas phase. The regularisation is adapted automatically during the iteration: it is increased when a Newton step fails to reduce the element conservation residual and decreased when it succeeds, but never falls below this base value. This keeps the Newton solver stable when the Jacobian becomes near-singular, for example for strongly non-solar compositions or after rainout of elements. A value of 0 corresponds to a pure Newton’s method.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: 1e-4</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">minConvergenceMixingRatioExponent</span></code></div>
+<div class="line-block">
+<div class="line">Exponent for the minimum mixing ratio (number density of a species divided by the total gas number density) a species needs to have in order to be included in the convergence test of the gas-phase iteration. Species below this mixing ratio carry no mass, but high-order molecules (e.g. C<sub>5</sub>) that are proportional to a power of a trace element’s density amplify its numerical noise and can oscillate indefinitely, preventing convergence even though they are physically absent. The default value is far below any abundance that could affect the element conservation and therefore does not change the converged result.</div>
+<div class="line">Type: <code class="docutils literal notranslate"><span class="pre">double</span></code></div>
+<div class="line">Default value: -150</div>
 </div>
 </div>
 </section>
@@ -465,7 +489,7 @@ parameters actually do and which side effects they may have.</div>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2019 - 2025, Daniel Kitzmann, Joachim Stock
+                Copyright &#169; 2019 - 2026, Daniel Kitzmann, Joachim Stock
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
