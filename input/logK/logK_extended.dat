@@ -586,10 +586,10 @@ C1H1F1O1 Formyl_Fluoride : C 1 H 1 F 1 O 1 # Chase, M. et al., JANAF thermochemi
 C1H1F3 Trifluoromethane : C 1 H 1 F 3 # Chase, M. et al., JANAF thermochemical tables, 1998.
    2.2368929203016960e+05  -5.6226861606049852e+00  -2.3263454751261634e+01   2.0487307565586477e-03  -1.1240010497630916e-07 
 
-C1H1N1_hcn Hydrogen_Cyanide_HCN : C 1 H 1 N 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   1.5220770936532610e+05  -3.2044022899036122e+00  -6.2670328370286370e+00   9.8433301098929671e-04  -5.1782570298829157e-08 
+C1H1N1_hcn Hydrogen_Cyanide_HCN : C 1 H 1 N 1 # Goos et al., Extended Third Millennium Ideal Gas Thermochemical Database, 2023.
+   1.5281916243376781e+05   -3.2553951782995711e+00   -5.9159043461952807e+00    1.0101019438732398e-03   -5.3488185063095000e-08
 
-C1H1N1_hnc Hydrogen_Isocyanide_HNC : C 1 H 1 N 1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database [...] , 2023.
+C1H1N1_hnc Hydrogen_Isocyanide_HNC : C 1 H 1 N 1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database, 2023.
    1.453839706728254e+05   -2.938196985615019e+00   -7.380414445068316e+00    8.66421612553809e-04    -4.695937733428566e-08
 
 C1H1N1O1 Hydrogen_Isocyanate : C 1 H 1 N 1 O 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
@@ -1897,11 +1897,11 @@ Si3 Silicon : Si 3 # Chase, M. et al., JANAF thermochemical tables, 1998.
 Te2 Tellurium : Te 2 # Barklem, P.S. and Collet, R., 2016, Astron. & Astrophys., 588, A96.
    3.08670009441136e+04    -5.119686351108497e-02  -1.141756726714613e+01    -1.327464439158169e-04   -8.96135094512734e-10
 
-Al1+ Aluminum_Ion : Al 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -6.9384933139380344e+04   2.4651724146892207e+00  -1.5762861057252167e+01   1.6134409709614439e-05  -1.1689720134946971e-09 
+Al1+ Aluminum_Ion : Al 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -6.9381134254513105e+04    2.4644073645639040e+00   -1.5758486471398912e+01    1.6969399348845604e-05   -1.2677101066892810e-09 
 
-Al1- Aluminum_Ion : Al 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   5.1359252255370402e+03  -2.5817234136412548e+00   1.5083785709191687e+01   1.4614230169824639e-04  -1.0270702856327867e-08 
+Al1- Aluminum_Ion : Al 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   5.0594458049286131e+03   -2.5680507987180183e+00    1.4989101304017694e+01    1.4155663001634255e-04   -1.0131942416221565e-08 
 
 Al1Cl1+ Aluminum_Chloride_Ion : Al 1 Cl 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -4.8973606786558150e+04   1.4110005651883455e+00  -1.8810667406404264e+01   1.8811094940832801e-04  -2.1005842836280822e-09 
@@ -1951,20 +1951,20 @@ Al2O1+ Aluminum_Oxide_Ion : Al 2 O 1 e- -1 # Chase, M. et al., JANAF thermochemi
 Al2O2+ Aluminum_Oxide_Ion : Al 2 O 2 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    7.1578290951360206e+04   1.4610668887395661e+00  -5.1307625117298358e+01   4.1349479180306792e-04  -2.5965742651801037e-08 
 
-Ar1+ Argon_Ion : Ar 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.8280736633004464e+05   2.7211487404629793e+00  -1.4372905123843339e+01  -8.3747019183066929e-06  -1.3211381815535846e-09 
+Ar1+ Argon_Ion : Ar 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.8278844517196118e+05    2.7367458574344989e+00   -1.4483105014164067e+01   -1.5674254945027328e-05   -8.5949580256611494e-10 
 
-As1+ Arsenic_Ion : As 1 e- -1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-  -1.1325234176900011e+05   3.7561973741283849e+00  -2.3903434458693667e+01  -1.1675517629367766e-04  -8.8362268092391078e-09
+As1+ Arsenic_Ion : As 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.1305540401000383e+05    4.1661677742537249e+00   -2.6750370894031793e+01   -3.2484848087519148e-04    5.2273513852905753e-09 
 
-As1- Arsenic_Ion : As 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   9.3340822552460759e+03  -2.5843511100315797e+00   1.4864947015884116e+01   2.3735488551980649e-04  -2.3650109937753245e-08
+As1- Arsenic_Ion : As 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   9.4805490831165607e+03   -2.0724554506892523e+00    1.1552300347471123e+01   -4.7329522628361107e-05   -7.8741968259254284e-09 
 
-B1+ Boron_Ion : B 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   -9.62808982366564e+04    2.498060576396739e+00   -1.599971345227006e+01    1.376549945203749e-06   -1.404988809356764e-10
+B1+ Boron_Ion : B 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -9.6279326453554473e+04    2.5022439514217369e+00   -1.6027023938815713e+01   -1.7922626315513728e-06    1.7858412042913351e-10 
 
-B1- Boron_Ion : B 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   3.218042244461792e+03   -2.505035486520399e+00    1.465971743284772e+01    3.630190679272664e-06   -3.5284182445449e-10
+B1- Boron_Ion : B 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   3.2516043774679556e+03   -2.5005226310819575e+00    1.4630008089619826e+01    2.5460384185986568e-07   -1.9036832332113093e-11 
 
 B1Cl1+ Chloroborane_Cation : B 1 Cl 1 e- -1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database [...] , 2023.
   -6.548511189892932e+04    1.251586185232767e+00   -1.805649025584109e+01    2.658156936645271e-04   -1.292353942034435e-08
@@ -1993,11 +1993,11 @@ B1H1S1+ Boron_Hydride_Sulfide_Ion : B 1 H 1 S 1 e- -1 # Chase, M. et al., JANAF 
 B1O2- Boron_Oxide_Anion : B 1 O 2 e- 1 # Goos et al., Extended Third Millenium Ideal Gas Thermochemical Database [...] , 2023.
    2.125549560188998e+05   -4.882778693385042e+00   -1.90227241630644e+00     8.3739160059616e-04     -4.760263695729689e-08
 
-Ba1+ Barium_Ion : Ba 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -6.043216188113318e+04    2.42859845718928e+00    -1.334800852691856e+01    3.2866945359052e-04     -5.557787885261112e-08
+Ba1+ Barium_Ion : Ba 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -6.0421300838308671e+04    2.4198585659715905e+00   -1.3326889270620523e+01    3.5910260422744871e-04   -6.0525719153131852e-08 
 
-Ba1- Barium_Ion : Ba 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   1.7500817832076509e+03  -2.2332502834308450e+00   1.3653455621750055e+01   4.9252901522112038e-04  -7.1945855550024793e-08
+Ba1- Barium_Ion : Ba 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.9471716903734662e+03   -1.2827976071174267e+00    7.5467954849115069e+00   -5.3705990249194760e-04   -1.0864510448239323e-08 
 
 Ba1F1+ Barium_Fluoride_Ion : Ba 1 F 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.373104284524457e+04    2.124846101564738e+00   -2.272320517691818e+01   -1.252313893207767e-04   -6.308954798432648e-09
@@ -2005,20 +2005,20 @@ Ba1F1+ Barium_Fluoride_Ion : Ba 1 F 1 e- -1 # Chase, M. et al., JANAF thermochem
 Ba1H1O1+ Barium_Hydroxide_Ion : Ba 1 H 1 O 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    4.573922682800782e+04    1.522624448991948e+00   -3.201398055344401e+01    6.576607931212758e-05   -3.815115671366495e-08
 
-Br1+ Bromine_Ion : Br 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.369927193226892e+05    2.475157472144314e+00   -1.387621779504922e+01    5.713662488387752e-05   -2.468072455527506e-09
+Br1+ Bromine_Ion : Br 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.3708874180405619e+05    2.4815952683505698e+00   -1.3921310878922705e+01    5.4095709260507025e-05   -2.2776881727293310e-09 
 
-Br1- Bromine_Ion : Br 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   3.908148819372403e+04   -2.368593692059047e+00    1.201600871637887e+01   -1.309319389477614e-04    7.480339767322931e-09
+Br1- Bromine_Ion : Br 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   3.9067123223273338e+04   -2.3644897454334162e+00    1.1987895243565260e+01   -1.3322242602961651e-04    7.6475187237445029e-09 
 
 Br2Mg1+ Magnesium_Bromide_Ion : Br 2 Mg 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -4.2602427059203e+04      2.519668236748396e+00   -3.562140490427205e+01   -1.368168909889693e-04    4.670827393023597e-09
 
-C1+ Carbon_Ion : C 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.3068953171206239e+05   2.5040117237235791e+00  -1.4664691187789231e+01   7.5463363273797768e-06  -2.5447923409301662e-09 
+C1+ Carbon_Ion : C 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.3068216242139932e+05    2.5035615799501159e+00   -1.4661831464080540e+01    7.8163520166512250e-06   -2.5703378087197027e-09 
 
-C1- Carbon_Ion : C 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   1.4680059752591962e+04  -2.5356271099549517e+00   1.3669151899380950e+01  -2.1784949695430322e-06   6.4311567867551147e-09 
+C1- Carbon_Ion : C 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.4667514258017363e+04   -2.5403266544411207e+00    1.3702959751481337e+01   -2.6597072602791257e-07    6.3496490931674522e-09 
 
 C1F1+ Fluoromethylidyne_Ion : C 1 F 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -4.2121465271103349e+04   1.0040848774474540e+00  -1.8440467645733406e+01   3.7361772687677375e-04  -2.1479001880391732e-08 
@@ -2050,17 +2050,17 @@ C1O2- Carbon_Dioxide_Ion : C 1 O 2 e- 1 # Chase, M. et al., JANAF thermochemical
 C2- Carbon_Ion : C 2 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.1788684174085445e+05  -4.0978143736983839e+00   1.0256591651465669e+01   3.7838834574352442e-04  -1.5713910380838264e-08 
 
-Ca1+ Calcium_Ion : Ca 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -7.1024198931164487e+04   2.2426084168072009e+00  -1.1861243662227025e+01   2.1170817987284374e-04  -2.3275060186835147e-08 
+Ca1+ Calcium_Ion : Ca 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -7.1040150568595811e+04    2.1959093207310838e+00   -1.1544678457003826e+01    2.4036351412516299e-04   -2.5702834191621708e-08 
 
-Ca1- Calcium_ion : Ca 1 e- 1 # based on Saha equation with partition functions from Kurucz/NIST & ionisation energies from NIST
-  2.4912255657019540e+02  -2.3300288293151170e+00   1.5300527600561811e+01  -6.7960352864080735e-05   5.0882520198301422e-09
+Ca1- Calcium_ion : Ca 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.4504090674908835e+02   -2.9282655939459881e+00    1.8783108176139248e+01    3.6148405886334516e-04   -4.2595915392310843e-08 
 
 Ca1H1O1+ Calcium_Hydroxide_Ion : Ca 1 H 1 O 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.3334683074305307e+04   2.0271023780114206e-01  -2.3530978660598919e+01   8.4745326634219631e-04  -6.5162012562664586e-08 
 
-Cl1+ Chlorine_Ion : Cl 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.5047678939545641e+05   2.6385439619295425e+00  -1.4804759978610491e+01  -6.5392853203116719e-05   5.5690096959918532e-09 
+Cl1+ Chlorine_Ion : Cl 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.5047192638307344e+05    2.6320843553824314e+00   -1.4759140723234795e+01   -6.2579121378818616e-05    5.4008001885500144e-09 
 
 Cl1Mg1+ Magnesium_Chloride_Ion : Cl 1 Mg 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -4.5887129855248029e+04   1.1620037567775654e+00  -1.5610624679791044e+01   3.7218510509129388e-04  -1.2891490317110246e-09 
@@ -2068,8 +2068,8 @@ Cl1Mg1+ Magnesium_Chloride_Ion : Cl 1 Mg 1 e- -1 # Chase, M. et al., JANAF therm
 Cl1S1+ Sulfur_Chloride_Ion : Cl 1 S 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -7.9440826115426025e+04   1.1536957730389759e+00  -1.7053171122131744e+01   3.1218365212128119e-04  -1.3861207189152175e-08 
 
-Cl1- Chlorine_Ion : Cl 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   4.1889934909013085e+04  -2.8143533392499336e+00   1.4880118073403537e+01   8.3394353267020327e-05  -3.8321948094492151e-09 
+Cl1- Chlorine_Ion : Cl 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   4.1836555595069251e+04   -2.8175607002313163e+00    1.4902832235982542e+01    8.5019443315098491e-05   -3.9420944269427145e-09 
 
 Cl1Pb1+ Lead_Chloride_Cation : Cl 1 Pb 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -5.098192957142866e+04    1.972538905074585e+00   -2.105781317708778e+01   -2.831265833478117e-05   -1.474411243416798e-08
@@ -2080,29 +2080,29 @@ Cl2Pb1+ Lead_Dichloride_Cation : Cl 2 Pb 1 e- -1 # Chase, M. et al., JANAF therm
 Cl2S1+ Sulfur_Chloride_Ion : Cl 2 S 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -4.5636467449855183e+04   7.2366762451879652e-01  -2.8067157435429635e+01   3.9673510632352166e-04  -2.1790601066273176e-08 
 
-Co1+ Cobalt_Ion : Co 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -9.2604442587617494e+04  -1.4710801433797940e+00   1.1897353227103849e+01   2.5230305792718205e-03  -1.1367414555761194e-07 
+Co1+ Cobalt_Ion : Co 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -9.1498618312984123e+04    2.2703616237956794e+00   -1.2926557237321825e+01    1.6844117759613685e-04   -1.1489355999828668e-08 
 
-Co1- Cobalt_Ion : Co 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   7.6840769263624961e+03  -2.4199775675285480e+00   1.3666310058738731e+01  -1.9922858419553491e-04   8.6448337790489302e-09 
+Co1- Cobalt_Ion : Co 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   7.6782979840898251e+03   -2.4083566251605975e+00    1.3675072615010292e+01   -2.2633971826794628e-04    1.0795226167377852e-08 
 
-Cr1+ Chromium_Ion : Cr 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -7.8391512117825201e+04   2.8863774750992661e+00  -1.6912720907435414e+01  -2.6436491903987502e-04   1.2804950882569015e-08 
+Cr1+ Chromium_Ion : Cr 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -7.8375340869967957e+04    2.9252152648016221e+00   -1.7183378070851045e+01   -2.8433130667247233e-04    1.4240025471791429e-08 
 
-Cr1- Chromium_Ion : Cr 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   7.7954764471770550e+03  -2.3323250441899503e+00   1.2912922702240763e+01  -4.9808749670306879e-05  -1.7285380810721744e-08 
+Cr1- Chromium_Ion : Cr 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   7.9271500817276592e+03   -2.2956996969001171e+00    1.2661844747819503e+01   -7.0683324303273567e-05   -1.5615641974862257e-08 
 
-Cu1+ Copper_Ion : Cu 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -8.9675021182253462e+04   2.4422923775544234e+00  -7.1587369190635854e+00   8.8457934425231755e-05  -1.7371142281207914e-08 
+Cu1+ Copper_Ion : Cu 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -8.9623885593989748e+04    2.5801105756742384e+00   -1.5479514822551282e+01   -1.7905886641012819e-05   -6.2463194220472082e-09 
 
-Cu1- Copper_Ion : Cu 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   1.4241828912762840e+04  -2.5574268465240806e+00   1.3862146285033759e+01   8.8195205310948044e-05  -1.7355032807654567e-08 
+Cu1- Copper_Ion : Cu 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.4331444568473580e+04   -2.5585580351991686e+00    1.3868802755361310e+01    8.9557462800546445e-05   -1.7498391720791224e-08 
 
-F1+ Fluorine_Ion : F 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -2.0221066354185450e+05   2.5455693055304778e+00  -1.4141475653203997e+01  -2.0738581647472554e-05   1.4783573695800159e-09 
+F1+ Fluorine_Ion : F 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -2.0220065724718486e+05    2.5430454238032514e+00   -1.4123817424985022e+01   -1.9622526252673528e-05    1.4075254517833644e-09 
 
-F1- Fluorine_Ion : F 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   3.9445342482505504e+04  -2.6832198429931537e+00   1.3794403275155787e+01   6.4399588905826588e-05  -3.5667454786310244e-09 
+F1- Fluorine_Ion : F 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   3.9473240764189744e+04   -2.6752745973282392e+00    1.3738470642973773e+01    6.0839607516312232e-05   -3.3467059810975746e-09 
 
 F1Mg1+ Magnesium_Fluoride_Ion : F 1 Mg 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -3.3485053512651604e+04   2.1445082547852081e+00  -2.3870665389438841e+01   6.2149117721451569e-04  -5.3397906823047955e-08 
@@ -2167,29 +2167,29 @@ F5S1- Sulfur_Fluoride_Ion : F 5 S 1 e- 1 # Chase, M. et al., JANAF thermochemica
 F6S1- Sulfur_Fluoride_Ion : F 6 S 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    2.5076267216718409e+05  -6.1345786594174569e+00  -6.2168704957162390e+01   1.8876098818958464e-03  -1.0931663179639291e-07 
 
-Fe1+ Iron_Ion : Fe 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -9.1228903844689674e+04   2.7592573287436437e+00  -1.5939416841765251e+01   5.9150711440345005e-05  -1.4310802782890555e-08 
+Fe1+ Iron_Ion : Fe 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -9.1575089464318502e+04    2.7962186080299496e+00   -1.6198434875050470e+01    4.0896931810037173e-05   -1.3047189574320822e-08 
 
-Fe1- Iron_Ion : Fe 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   1.9944317404168514e+03  -2.3044098864280338e+00   1.2827582863287560e+01  -3.3848809238414511e-05  -1.0365296101185036e-08 
+Fe1- Iron_Ion : Fe 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.8727611904661219e+03   -2.3121712844576474e+00    1.2916081314913443e+01   -3.9822947266264465e-05   -9.6626415697484103e-09 
 
-Ga1+ Gallium_Ion : Ga 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -6.98130901772465e+04     1.590695631540347e+00  -9.2025045661853e+00       3.096883091429032e-04   -1.682443248772891e-08
+Ga1+ Gallium_Ion : Ga 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -6.9804151119482354e+04    1.6075128475785816e+00   -9.3218208598447969e+00    3.0264864623028736e-04   -1.6469372753281994e-08 
 
-Ga1- Gallium_Ion : Ga 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   5.0578174031550207e+03  -1.8914471473721053e+00  1.0061447395652729e+01   -2.0513028326189417e-04   1.4513109681412177e-08
+Ga1- Gallium_Ion : Ga 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   3.0936984448111643e+03   -3.1698168917711724e+00    1.9679772800912733e+01    2.1856271695614679e-04   -1.1632653550252261e-08 
 
-Ge1+ Germanium_Ion : Ge 1 e- -1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-  -9.1766342085350523e+04   1.4258264492255106e+00 -7.4836452266457369e+00    5.9632140330767591e-04  -4.2972093427839368e-08
+Ge1+ Germanium_Ion : Ge 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -9.1531164354808192e+04    1.9111075518789780e+00   -1.0859139100277250e+01    3.5255137821486431e-04   -2.6643523979645111e-08 
 
-Ge1- Germanium_Ion : Ge 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   1.4136454591015299e+04  -3.7474783279416171e+00  2.2988213660574402e+01    3.2203509715603650e-04  -9.5284894763463815e-09
+Ge1- Germanium_Ion : Ge 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.4031493346109710e+04   -4.1075162034721808e+00    2.5327006687145058e+01    5.8680090677118793e-04   -2.6064467877316755e-08 
 
-H1+ Hydrogen_Ion : H 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.5781252265890539e+05   2.4992447354491105e+00  -1.4909391712601973e+01   4.2674331157677159e-07  -2.7731753320513089e-11 
+H1+ Hydrogen_Ion : H 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.5780328076099633e+05    2.4999999400570911e+00   -1.4913973543425236e+01    4.1740748018472702e-11   -3.7748670894367134e-15 
 
-H1- Hydrogen_Ion : H 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   8.7523766678444208e+03  -2.5007686019576738e+00   1.3533601599552753e+01   3.3935862759834623e-07  -2.3082577741670992e-11 
+H1- Hydrogen_Ion : H 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   8.7520695234472732e+03   -2.5000000599432730e+00    1.3527679976555223e+01    4.1740898485162856e-11   -3.7748807448811520e-15 
 
 H1K1O1+ Potassium_Hydroxide_Ion : H 1 K 1 O 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    7.2681682892357385e+03   6.8521714510282905e-01  -2.4763534751693783e+01   5.7741353720577003e-04  -3.9942426808548943e-08 
@@ -2227,38 +2227,38 @@ H2- Hydrogen_Ion : H 2 e- 1 # Chase, M. et al., JANAF thermochemical tables, 199
 H3O1+ Hydronium_Ion : H 3 O 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    3.7769062100436939e+04  -3.9109922548385754e+00  -1.0075452132108239e+01   1.6591702450411139e-03  -7.6989128668848784e-08 
 
-He1+ Helium_Ion : He 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -2.8534066199816583e+05   2.5005123463769223e+00  -1.3531332790121269e+01  -1.6959503384983421e-07   1.0448661097987475e-11
+He1+ Helium_Ion : He 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -2.8532480134455755e+05    2.5000000000003015e+00   -1.3527679579431354e+01   -7.3845904207507751e-17    1.1668103311938413e-20 
 
-K1+ Potassium_Ion : K 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -5.0428870606528901e+04   2.3150845131435887e+00  -1.3728565713479838e+01   1.6536722298159112e-04  -2.0732569821040420e-08 
+K1+ Potassium_Ion : K 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -5.0486538575327380e+04    2.1458938650194752e+00   -1.2610177984375092e+01    2.8683612756814203e-04   -3.2395521899315332e-08 
 
-K1- Potassium_Ion : K 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   5.7650573200695299e+03  -2.6845839635826163e+00   1.4710554025691494e+01   1.6506281784860188e-04  -2.0711757386596689e-08 
+K1- Potassium_Ion : K 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   5.7039623926738295e+03   -2.8541061349805354e+00    1.5831475535602836e+01    2.8683612756813466e-04   -3.2395521899315669e-08 
 
 K1O1- Potassium_Oxide_Ion : K 1 O 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.6309505906108825e+04  -3.3572739851456674e+00   8.3449897981148524e+00   2.9279316268482347e-04  -2.5642585526266669e-08 
 
-Kr1+ Krypton_Ion : Kr 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.624927189968504e+05    2.391765384179527e+00  -1.21310427585274e+01      7.924893442251925e-05   -2.817302272892461e-09
+Kr1+ Krypton_Ion : Kr 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.6249702107841987e+05    2.3822779142402757e+00   -1.2065049946743217e+01    8.4017049982353507e-05   -3.1340145089518857e-09 
 
-Li1+ Lithium_Ion : Li 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -6.259592808921504e+04    2.407250465725296e+00  -1.431942023620216e+01     8.26128255622995e-05    -1.022951970165752e-08
+Li1+ Lithium_Ion : Li 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -6.2602923049627731e+04    2.3900465258195354e+00   -1.4202910813478073e+01    9.3245809491370778e-05   -1.1122652108034142e-08 
 
-Li1- Lithium_Ion : Li 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   7.14397393545332e+03    -2.592815027357978e+00   1.412286157011277e+01     8.26979030004363e-05    -1.023631059512047e-08
+Li1- Lithium_Ion : Li 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   7.1374921493682868e+03   -2.6099534741807191e+00    1.4238742706501577e+01    9.3245809491471568e-05   -1.1122652108041524e-08 
 
 Li1O1- Lithium_Oxide_Ion : Li 1 O 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.618223843760425e+04   -3.528204123038413e+00   8.7501287953655e+00       2.863918204758897e-04   -2.081363487606121e-08
 
-Mg1+ Magnesium_Ion : Mg 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -8.8761196414037680e+04   2.4195086440312821e+00  -1.3005004898805055e+01   6.4833567236258216e-05  -6.9614303746945037e-09 
+Mg1+ Magnesium_Ion : Mg 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -8.8759816753713210e+04    2.4129504830523745e+00   -1.2958835283215544e+01    6.7774446057368510e-05   -7.1455995976558716e-09 
 
-Mn1+ Manganese_Ion : Mn 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -8.6347520897931754e+04   2.3730625107058643e+00  -1.3227753748209125e+01   8.5517476009155935e-05  -5.7669106332033368e-09 
+Mn1+ Manganese_Ion : Mn 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -8.6318706094794063e+04    2.3599545794513657e+00   -1.3136018261952273e+01    9.1849899912409735e-05   -6.1976953400243490e-09 
 
-N1+ Nitrogen_Ion : N 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.6878653418538481e+05   2.4982719557883115e+00  -1.3417571517173656e+01   1.0674037153574067e-05  -1.4802398961531331e-09 
+N1+ Nitrogen_Ion : N 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.6877893786101622e+05    2.4948588683222619e+00   -1.3393428972253643e+01    1.2084010303419676e-05   -1.5608826893603881e-09 
 
 N1- Nitrogen_Ion : N 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -8.5905438711901718e+02  -2.5279989858475034e+00   1.5203290756010039e+01   2.7936044070395009e-05  -3.3370729887067071e-09 
@@ -2278,29 +2278,29 @@ N2- Nitrogen_Ion : N 2 e- 1 # Chase, M. et al., JANAF thermochemical tables, 199
 N2O1+ Nitrogen_Oxide_Ion : N 2 O 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -1.6413691035248838e+04   4.3363159056045220e-01  -2.9232783353649552e+01   7.5844951946882691e-04  -4.5962327130299389e-08 
 
-Na1+ Sodium_Ion : Na 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -5.9669080626193601e+04   2.4064428067534038e+00  -1.4302114992768679e+01   7.7345550006338581e-05  -8.6895126886874272e-09 
+Na1+ Sodium_Ion : Na 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -5.9673412810307411e+04    2.3876872939582383e+00   -1.4181773796956058e+01    8.9269503368950717e-05   -9.7363852797691597e-09 
 
-Na1- Sodium_Ion : Na 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   6.3296034031755198e+03  -2.5936418806016892e+00   1.4139890005831901e+01   7.7259164786231196e-05  -8.6833900176458248e-09 
+Na1- Sodium_Ion : Na 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   6.3215160974331347e+03   -2.6123127060421334e+00    1.4259879723024406e+01    8.9269503369114161e-05   -9.7363852797805467e-09 
 
 Na1O1- Sodium_Oxide_Ion : Na 1 O 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    5.6514730636639404e+04  -3.3149849819007216e+00   7.8116901136644401e+00   2.1977596789989062e-04  -1.4659556023709595e-08 
 
-Ne1+ Neon_Ion : Ne 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -2.5018525110155848e+05   2.8089667037494337e+00  -1.4808191268049541e+01  -8.9246175792256910e-05   4.3698054631872215e-09 
+Ne1+ Neon_Ion : Ne 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -2.5017137564218251e+05    2.8089716611449198e+00   -1.4808174433058586e+01   -8.9436720311907725e-05    4.3914072164905620e-09 
 
-Ni1+ Nickel_Ion : Ni 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -8.9759627960625963e+04   3.8462175388030175e+00  -1.8240803234565419e+01  -7.8444839233568486e-04   5.1826215439678699e-08 
+Ni1+ Nickel_Ion : Ni 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -8.8724112742794649e+04    2.0469686992161331e+00   -1.2127863396533428e+01    1.2062792021581174e-04    4.8669250741070084e-09 
 
-Ni1- Nickel_Ion : Ni 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   1.3402834160179535e+04  -2.8210220312594387e+00   1.5402531555694310e+01   8.0939420763231906e-05  -5.0542700803686964e-09 
+Ni1- Nickel_Ion : Ni 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.3416133357598961e+04   -2.8229820896503290e+00    1.5412634312590747e+01    8.2572012998855080e-05   -5.1571991796899301e-09 
 
-O1+ Oxygen_Ion : O 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.5798743615741289e+05   2.4320710423120318e+00  -1.4536939247739156e+01   2.8955199754404637e-05  -2.1381405323816154e-09 
+O1+ Oxygen_Ion : O 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.5797673867195280e+05    2.4351723916999717e+00   -1.4559047322648707e+01    2.7537902132685792e-05   -2.0540393628828685e-09 
 
-O1- Oygen_Ion : O 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   1.6969904473940256e+04  -2.5228822020637551e+00   1.3970544360906160e+01   1.5466488161853392e-05  -1.6609628602980906e-09 
+O1- Oygen_Ion : O 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.6968828568019129e+04   -2.5249637426500935e+00    1.3986020084721124e+01    1.6305553638478142e-05   -1.7095893318497888e-09 
 
 O2+ Oxygen_Ion : O 2 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
   -8.0591402862676987e+04   7.7071407799604685e-01  -1.6932862257462602e+01   4.2578411435352514e-04  -2.3258634882607410e-08 
@@ -2308,95 +2308,95 @@ O2+ Oxygen_Ion : O 2 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998
 O2- Oxygen_Ion : O 2 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    6.4741847447346707e+04  -3.7615389935106691e+00   8.7933832835090016e+00   3.1891315414278587e-04  -1.7826639716565977e-08
 
-P1+ Phosphorus_Ion : P 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.2190295030462663e+05   2.7291662940824040e+00  -1.5166447835436657e+01  -4.3246010902608933e-05  -3.1370734850544069e-09 
+P1+ Phosphorus_Ion : P 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.2191020607344959e+05    2.7054047576719205e+00   -1.4999416481887851e+01   -3.2114014481214728e-05   -3.8523738622046409e-09 
 
-P1- Phosphorus_Ion : P 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   8.5759348497803221e+03  -2.5393735761156719e+00   1.5202255165305303e+01   7.7986657200053433e-05  -1.0029763061114570e-08 
+P1- Phosphorus_Ion : P 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   8.5978165647951719e+03   -2.4749997646969732e+00    1.4778680179334616e+01    3.8445522302401370e-05   -1.0380102064729798e-08 
 
-Pb1+ Lead_Ion : Pb 1 e- -1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-  -8.5999454262453321e+04   2.7355462328387703e+00  -1.5070825209913634e+01  -1.2998127245983433e-04  -9.0326623838760682e-09
+Pb1+ Lead_Ion : Pb 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -8.5900837617800411e+04    2.9375987399216816e+00   -1.6478207819025982e+01   -2.3050124031880401e-04   -2.3734178951704113e-09 
 
-Pb1- Lead_Ion : Pb 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   4.1601112559382536e+03  -2.3886589151883930e+00   1.4908462767745108e+01  -6.3958846493906816e-05  -1.2467172664982342e-08
+Pb1- Lead_Ion : Pb 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   4.2901468197077520e+03   -2.1155427657498089e+00    1.2995651628193606e+01   -1.8077030001063132e-04   -9.0135520956691669e-09 
 
-Rb1+ Rubidium_Ion : Rb 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -4.853661094450496e+04    2.286702490978133e+00  -1.354873461746938e+01     1.928457826932697e-04   -2.44596103624873e-08
+Rb1+ Rubidium_Ion : Rb 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -4.8624615473065911e+04    2.0366652665260894e+00   -1.1898329537923754e+01    3.7394283603377242e-04   -4.1968656065589447e-08 
 
-Rb1- Rubidium_Ion : Rb 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   5.575867499586573e+03   -2.713235847986824e+00   1.489241433503882e+01     1.928970070780213e-04   -2.446690923227921e-08
+Rb1- Rubidium_Ion : Rb 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   5.4877642878827810e+03   -2.9633347334740732e+00    1.6543323982055277e+01    3.7394283603384024e-04   -4.1968656065595766e-08 
 
-S1+ Sulfur_Ion : S 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.2020445925421201e+05   2.3089150224319610e+00  -1.3534694276225309e+01   3.4930118326531590e-05   9.9941900712712623e-11 
+S1+ Sulfur_Ion : S 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.2018986459511580e+05    2.3259573076576507e+00   -1.3655373320949371e+01    2.7179126416061337e-05    5.7416614434460721e-10 
 
-S1- Sulfur_Ion : S 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   2.4127692176683471e+04  -2.5355801110013232e+00   1.4072072703820311e+01   2.0359183178882828e-05  -3.5897290419901403e-09 
+S1- Sulfur_Ion : S 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   2.4129747392357262e+04   -2.5295852014767850e+00    1.4029618921041806e+01    1.7805060767230474e-05   -3.4402572280183136e-09 
 
-Sc1+ Scandium_Ion : Sc 1 e- -1 # Gordon & McBride, NASA/TP--1999-208523, 1999. 
-  -7.630457131024679e+04    1.939670870002992e+00  -1.029000744137492e+01     5.553202048467648e-04   -4.992972245981864e-08 
+Sc1+ Scandium_Ion : Sc 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -7.6314840797515702e+04    1.9188892936755251e+00   -1.0145641769357919e+01    5.6605425375637190e-04   -5.0686522789845772e-08 
 
-Sc1- Scandium_Ion : Sc 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   2.1789752695472071e+03  -2.3609976979799554e+00  1.3806217538036170e+01    2.3565290420670530e-05   5.0897105926917323e-10
+Sc1- Scandium_Ion : Sc 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   2.5027956232898305e+03   -1.4643884495594881e+00    6.6810399530060138e+00   -1.3752592713296743e-04   -1.5977346445348889e-08 
 
-Se1+ Selenium_Ion : Se 1 e- -1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-  -1.1317789667970981e+05   2.5546451822190970e+00 -1.4666640824758352e+01   -2.1144242486914881e-04   1.8394303956137405e-08
+Se1+ Selenium_Ion : Se 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.1321774452399256e+05    2.4724580711617903e+00   -1.4095054664196462e+01   -1.7030857340536224e-04    1.5649779936153314e-08 
 
-Se1- Selenium_Ion : Se 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   2.3438960371113983e+04  -2.5240853167920565e+00  1.4201148955857573e+01   -8.1355456312457678e-05   6.4629518541483588e-09
+Se1- Selenium_Ion : Se 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   2.3412552850103228e+04   -2.5785812813815214e+00    1.4564329510685740e+01   -8.4233531804818005e-06   -8.7126172905572484e-10 
 
-Si1+ Silicon_Ion : Si 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -9.4527889338269320e+04   2.7097315454013824e+00  -1.6095110412287568e+01  -1.0499128803841129e-04   3.5999007088051248e-09 
+Si1+ Silicon_Ion : Si 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -9.4524107416584564e+04    2.7073498868412638e+00   -1.6078491072250248e+01   -1.0389386576209876e-04    3.5252766171754043e-09 
 
-Si1- Silicon_Ion : Si 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   1.6166593409993871e+04  -2.7235335205804176e+00   1.4971545179144016e+01   8.9089449415651056e-05   5.3228833518988584e-09
+Si1- Silicon_Ion : Si 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.6181545492302695e+04   -2.8349220613237582e+00    1.5695986758422151e+01    1.7751983116085282e-04   -1.9471884610757951e-09 
 
-Sn1+ Tin_Ion : Sn 1 e- -1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-  -8.5506161929535563e+04   1.6361825135321986e+00  -7.5834242787030082e+00  -9.3940518319146760e-06   1.3289519993496103e-08
+Sn1+ Tin_Ion : Sn 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -8.5847684660180224e+04    9.2850330793075264e-01   -2.6659916941644592e+00    3.4814894841261467e-04   -1.0793780459533706e-08 
 
-Sn1- Tin_Ion : Sn 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   1.2862510090380518e+04  -2.5489998650895980e+00   1.6287339847478826e+01  -6.7781214033974869e-04   6.5723708002779750e-08
+Sn1- Tin_Ion : Sn 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   1.2259305421944457e+04   -4.0414908139821435e+00    2.6391326233223879e+01    2.1874592300911503e-04    3.3946318991177280e-09 
 
-Sr1+ Strontium_Ion : Sr 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -6.617142957670571e+04    2.208509012379765e+00  -1.166350953939205e+01     2.637309660119985e-04   -3.295642737830435e-08
+Sr1+ Strontium_Ion : Sr 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -6.6195117968270453e+04    2.1505486906827147e+00   -1.1272266655432578e+01    3.0004491097353274e-04   -3.6042210831378773e-08 
 
-Sr1- Strontium_Ion : Sr 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   6.6279338972347125e+02  -1.9928760495150351e+00  1.2692029765142147e+01   -1.3705731600719483e-04   4.6289441904113050e-09
+Sr1- Strontium_Ion : Sr 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   3.8997337002521647e+02   -2.9701061874337511e+00    1.9029337909949312e+01    4.1585724982241270e-04   -5.1221071134569135e-08 
 
-Te1+ Tellurium_Ion : Te 1 e- -1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-  -1.0483581598267001e+05   1.6361775687938627e+00 -7.5833914684155612e+00   -9.3908864379118445e-06   1.3289275304886476e-08
+Te1+ Tellurium_Ion : Te 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.0447904113128997e+05    2.7546438709743568e+00   -1.6077507085066596e+01   -2.1481333001711425e-04    1.5611357438089981e-08 
 
-Te1- Tellurium_Ion : Te 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   2.2882862334431389e+04  -2.4210799547671553e+00  1.3528496308496862e+01   -8.7251586442490200e-05   2.4396408472082625e-09
+Te1- Tellurium_Ion : Te 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   2.2899828398868689e+04   -2.4100679125606215e+00    1.3411524876884773e+01   -6.4401679692381095e-05    9.4354141852912124e-10 
 
-Ti1+ Titanium_Ion : Ti 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -7.9011746166995086e+04   3.0965593354627856e+00  -1.7787025861122174e+01  -1.5537199012977121e-04  -3.9312772096812421e-09 
+Ti1+ Titanium_Ion : Ti 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -7.9083660175726545e+04    3.1252175039826793e+00   -1.7987887690392430e+01   -1.6530050788021052e-04   -5.1323128412600499e-09 
 
-Ti1- Titanium_Ion : Ti 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   9.6174442606194054e+02  -2.4336565832806976e+00   1.4111641305437889e+01  -2.0735306746179696e-05  -1.8170616004197175e-08 
+Ti1- Titanium_Ion : Ti 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   9.1862445873426361e+02   -2.3492516875252267e+00    1.3490471247488806e+01   -5.1204799428031680e-05   -1.6616449543791935e-08 
 
-V1+ Vanadium_Ion : V 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -7.8361318720719268e+04   1.9369805150609238e+00  -1.0483281952555217e+01   3.0809093060001069e-04  -2.1789460056005645e-08 
+V1+ Vanadium_Ion : V 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -7.8433169371041833e+04    1.9322773924574235e+00   -1.0451806808611238e+01    3.1131833019042556e-04   -2.2148174560212964e-08 
 
-V1- Vanadium_Ion : V 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   5.9188021537196828e+03  -3.0307996310473833e+00   1.7938927314554263e+01   9.8101195553568742e-05  -1.4197747302651425e-08 
+V1- Vanadium_Ion : V 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   5.9102400828199397e+03   -2.9865214326224403e+00    1.7603552375377550e+01    8.4703140489351494e-05   -1.3627907855167648e-08 
 
-Xe1+ Xenon_Ion : Xe 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.407608604032029e+05    2.505373391965676e+00  -1.286412795922323e+01    -1.049702534617935e-05    2.381028722731171e-09
+Xe1+ Xenon_Ion : Xe 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.4076107062733485e+05    2.5043036311360800e+00   -1.2856466351354257e+01   -1.0061465195547703e-05    2.3601240370524156e-09 
 
-Y1+ Yttrium_Ion : Y 1 e- -1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-  -7.1762764835589594e+04   4.1883611092882544e+00 -2.6417486761076034e+01   -4.3240531015799008e-04   7.8146259030316061e-09
+Y1+ Yttrium_Ion : Y 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -7.1858887094219128e+04    4.0043138830408758e+00   -2.5127730704787634e+01   -3.4513150595918203e-04    2.3589071396462961e-09 
 
-Y1- Yttrium_Ion : Y 1 e- 1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-   3.5567550957988724e+03  -2.6344096831445611e+00  1.5077072217140438e+01    4.5612362349110918e-04  -3.7249806281408231e-08
+Y1- Yttrium_Ion : Y 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   3.5298005330224223e+03   -2.5165430160277422e+00    1.4995305894672780e+01    1.7341001047478717e-04   -3.3213989415712377e-08 
 
-Zn1+ Zinc_Ion : Zn 1 e- -1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-  -1.0834048795881924e+05   2.4913955817305862e+00  -1.3471360624902445e+01   6.5979380676484123e-06  -6.5171580710224905e-10 
+Zn1+ Zinc_Ion : Zn 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -1.0901808611150311e+05    2.4914153740145442e+00   -1.3471189884494175e+01    6.3150915864696650e-06   -6.1501867752178108e-10 
 
 Zn1- Zinc_Ion : Zn 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
    1.7232196990282414e+03  -2.5092835574388204e+00   1.4281706067404460e+01   6.8019574853347975e-06  -6.6534372585404459e-10
 
-Zr1+ Zirconium_Ion : Zr 1 e- -1 # Hoeijmakers, H.J. et al., Astron. & Astrophys. 627, A165, 2019.
-  -7.7013333427215286e+04   2.6279481237765019e+00 -1.4846421354321576e+01    3.7789269413487186e-05  -1.4043384331711200e-08
+Zr1+ Zirconium_Ion : Zr 1 e- -1 # based on Saha equation with partition functions from NIST & ionisation energies from NIST ASD
+  -7.6982783007411606e+04    2.7014340893029054e+00   -1.5350273135411717e+01   -4.3952295483720938e-06   -1.0603341992211718e-08 
 
-Zr1- Zirconium_Ion : Zr 1 e- 1 # Chase, M. et al., JANAF thermochemical tables, 1998.
-   4.850383589142576e+03   -1.727072870508503e+00   9.72742027723587e+00     -6.037040264461102e-04    2.280452145122315e-08
+Zr1- Zirconium_Ion : Zr 1 e- 1 # based on Saha equation with NIST partition functions, bound anion levels after Andersen et al. 1999 & electron affinities from NIST/Andersen et al.
+   4.9513880242553669e+03   -2.2792640255603711e+00    1.3496603216295687e+01   -3.3341744624306471e-04    7.5968776057093850e-09 
