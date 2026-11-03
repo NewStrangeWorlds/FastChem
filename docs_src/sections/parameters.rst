@@ -82,6 +82,11 @@ Standard parameters
 |  Type: ``unsigned int``
 |  Default value: 3000
 
+| ``electronMinTemperature``
+|  Temperature (in K) below which the ionisation equilibrium is not solved. For temperatures below this value, all ions are switched off and the electron density is set to its minimum value, i.e. the gas phase is treated as if no ions were present. At low temperatures, the mass action constants of ions become extreme and the ionisation equilibrium is numerically meaningless, while still costing a large number of iterations. Setting this parameter to 0 disables the cap and always solves for the ionisation equilibrium.
+|  Type: ``double``
+|  Default value: 1000
+
 
 Advanced parameters
 -------------------
@@ -131,12 +136,22 @@ Advanced parameters
 |  Default value: ``true``
 
 | ``nbSwitchToJoint``
-|  Maximum number of combined gas phase / condensate outer-loop iterations before the solver switches to a joint gas+condensate Newton step. The joint step is also activated adaptively when stagnation or divergence is detected. Setting this to a large value effectively disables the fixed trigger.
+|  Number of combined gas phase / condensate outer-loop iterations after which the solver switches to a joint gas+condensate Newton step that couples the gas-phase element densities and the condensate densities. With the default value, the joint step is never triggered during the outer loop. Independent of this parameter, the joint Newton solver is always applied as a post-processing step when the final gas-phase calculation leaves elements unconserved with respect to ``accuracyElementConservation``, which can happen for stiff, strongly-condensing mixtures.
 |  Type: ``unsigned int``
 |  Default value: 3000
 
 | ``condTraceDensityThreshold``
-|  Threshold for the maximum possible number density of a condensate (in cm\ :sup:`-3`). Condensates whose maximum possible number density (computed from element abundances and stoichiometry) falls below this value are excluded from the condensate Newton solver and their number density is set to zero. This avoids Jacobian ill-conditioning caused by trace elements that have been nearly completely rained out.
+|  Relative threshold for the maximum possible number density of a condensate. The maximum possible number density of a condensate is limited by its most depleted constituent element. If this value falls below ``condTraceDensityThreshold`` times the total element density, the limiting element has effectively rained out and the condensate is treated as a ghost condensate that cannot form. Ghost condensates are excluded from the condensate Newton solver and from the convergence checks, and their number density is set to zero. This avoids an ill-conditioned system of equations caused by trace elements that have been nearly completely rained out, which would otherwise lead to NaN values in rainout calculations.
 |  Type: ``double``
-|  Default value: 1e-100
+|  Default value: 1e-20
+
+| ``newtonRegularisation``
+|  Base value of the Levenberg–Marquardt regularisation that is added to the diagonal of the Jacobian in the multi-dimensional Newton's method of the gas phase. The regularisation is adapted automatically during the iteration: it is increased when a Newton step fails to reduce the element conservation residual and decreased when it succeeds, but never falls below this base value. This keeps the Newton solver stable when the Jacobian becomes near-singular, for example for strongly non-solar compositions or after rainout of elements. A value of 0 corresponds to a pure Newton's method.
+|  Type: ``double``
+|  Default value: 1e-4
+
+| ``minConvergenceMixingRatioExponent``
+|  Exponent for the minimum mixing ratio (number density of a species divided by the total gas number density) a species needs to have in order to be included in the convergence test of the gas-phase iteration. Species below this mixing ratio carry no mass, but high-order molecules (e.g. C\ :sub:`5`) that are proportional to a power of a trace element's density amplify its numerical noise and can oscillate indefinitely, preventing convergence even though they are physically absent. The default value is far below any abundance that could affect the element conservation and therefore does not change the converged result.
+|  Type: ``double``
+|  Default value: -150
 

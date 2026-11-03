@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'FastChem'
-copyright = '2019 - 2025, Daniel Kitzmann, Joachim Stock'
+copyright = '2019 - 2026, Daniel Kitzmann, Joachim Stock'
 author = 'Daniel Kitzmann'
 release = '4.0'
 
